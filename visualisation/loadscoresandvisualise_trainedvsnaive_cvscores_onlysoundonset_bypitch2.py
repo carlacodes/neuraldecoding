@@ -489,12 +489,13 @@ def plot_by_pitch(scores_mu_nala, scores_su_nala, scores_mu_cruella, scores_su_c
     plt.sca(ax[1, 0])
 
     plt.xticks([1, 2, 3, 4, 5], labels=['109 Hz', '124 Hz', '144 Hz', '191 Hz', '251 Hz'])
-    fig.suptitle('Female talker decoding scores by F0 ', fontsize = 20)  # or plt.suptitle('Main title')
+    fig.suptitle('Female talker decoding scores by mean F0 ', fontsize = 20)  # or plt.suptitle('Main title')
     ax[0,0].set_xlim(2.5,5.5)
     ax[0,1].set_xlim(2.5,5.5)
     ax[1,0].set_xlim(2.5,5.5)
     ax[1,1].set_xlim(2.5,5.5)
 
+    plt.savefig('D:/Data/decodingbypitchresults/LSTM_decoding_scores_by_pitch_female.png', dpi=1000)
 
     plt.show()
 
@@ -502,7 +503,6 @@ def plot_by_pitch(scores_mu_nala, scores_su_nala, scores_mu_cruella, scores_su_c
 
 
 
-    fig.savefig('LSTM_decoding_scores_by_pitch_female.png', dpi=300)
     plot_su_and_mu_by_pitch(male_array_zola_mu, male_array_zola_su, male_array_cruella_mu, male_array_cruella_su, male_array_eclair_mu, male_array_eclair_su, male_array_crumble_mu, male_array_crumble_su)
 
 def plot_su_and_mu_by_pitch(female_array_zola_mu, female_array_zola_su, female_array_cruella_mu, female_array_cruella_su, female_array_eclair_mu, female_array_eclair_su, female_array_crumble_mu, female_array_crumble_su):
@@ -611,11 +611,13 @@ def plot_su_and_mu_by_pitch(female_array_zola_mu, female_array_zola_su, female_a
     plt.sca(ax[1, 0])
 
     plt.xticks([1, 2, 3, 4, 5], labels=['109 Hz', '124 Hz', '144 Hz', '191 Hz', '251 Hz'])
-    fig.suptitle('Male talker decoding scores by F0 ', fontsize = 20)  # or plt.suptitle('Main title')
+    fig.suptitle('Male talker decoding scores by mean F0 ', fontsize = 20)  # or plt.suptitle('Main title')
     ax[0,0].set_xlim(0.5, 3.5)
     ax[0,1].set_xlim(0.5, 3.5)
     ax[1,0].set_xlim(0.5, 3.5)
     ax[1,1].set_xlim(0.5, 3.5)
+    plt.savefig('D:/Data/decodingbypitchresults/LSTM_decoding_scores_by_pitch_male.png', dpi=1000)
+
     plt.show()
 
 
