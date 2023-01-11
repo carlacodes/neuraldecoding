@@ -182,8 +182,8 @@ def target_vs_probe_just_rasters(blocks, talker=1, probewords=[20, 22], pitchshi
 
         plt.setp(ax, xlim=custom_xlim)
 
-        plt.suptitle('Target firings for Crumble,  clus id '+ str(cluster_id)+'pitch '+str(selectedpitch), fontsize = 20)
-        plt.savefig('D:/Data/rasterplotsfromdecoding/targ_clusterid'+str(cluster_id)+'probeword'+str(probeword)+'pitch'+str(selectedpitch))
+        plt.suptitle('Target firings for Eclair, clus id '+ str(cluster_id)+'pitch '+str(selectedpitch), fontsize = 20)
+        plt.savefig('D:/Data/rasterplotsfromdecoding/eclair/eclair_targ_clusterid'+str(cluster_id)+'probeword'+str(probeword)+'pitch'+str(selectedpitch))
         #plt.show()
 
         spiketrains = []
@@ -200,14 +200,12 @@ def target_vs_probe_just_rasters(blocks, talker=1, probewords=[20, 22], pitchshi
 
         ax[0].set_ylabel('trial')
         ax[0].set_xlabel('Time (s)')
-        custom_xlim = (-0.1, 0.5)
-
         plt.setp(ax, xlim=custom_xlim)
-        plt.suptitle('Distractor firings for Crumble,  clus id '+ str(cluster_id)+' , pitch '+str(selectedpitch)+ 'probeword '+str(probeword), fontsize = 20)
+        plt.suptitle('Distractor firings for Eclair, clus id '+ str(cluster_id)+' , pitch '+str(selectedpitch)+ 'probeword '+ str(probeword), fontsize=20)
 
 
 
-        plt.savefig('D:/Data/rasterplotsfromdecoding/dist_clusterid'+  str(cluster_id)+'probe'+str(probeword)+' , pitch '+str(selectedpitch)+'.png')
+        plt.savefig('D:/Data/rasterplotsfromdecoding/eclair/eclair_dist_clusterid'+  str(cluster_id)+'probe'+str(probeword)+' , pitch '+str(selectedpitch)+'.png')
         #plt.show()
 
 
@@ -427,7 +425,10 @@ def save_pdf_classification_lstm_bothtalker(scores, saveDir, title):
 
 
 def run_raster_plotting(dir):
-    datapath = Path(f'D:\ms4output\F1901_Crumble\wpsoutput17112022bb2bb3\phy')
+
+
+
+    datapath = Path(f'D:\ms4output\F1902_Eclair\wpsoutput08112022bb2bb3\phy')
     fname = 'blocks.pkl'
     with open(datapath / 'blocks.pkl', 'rb') as f:
         blocks = pickle.load(f)
@@ -439,7 +440,7 @@ def run_raster_plotting(dir):
     dt_string = now.strftime("%d%m%Y_%H_%M_%S")
     pitchlist = [3, 4, 2,1,5]
 
-    tarDir = Path(f'/Users/cgriffiths/resultsms4/lstmclass_CVDATA_bypitch_20122022')
+    tarDir = Path(f'/Users/cgriffiths/resultsms4/lstmclass_SHUFFLEDDATA_02122022')
     saveDir = tarDir / dt_string
     saveDir.mkdir(exist_ok=True, parents=True)
     for probeword in probewords_list:
