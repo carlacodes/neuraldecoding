@@ -52,6 +52,7 @@ class concatenatedWarpData:
             with open(phy_folder / 'blocks.pkl', 'rb') as f:
                 self.blocks = pickle.load(f)
         else:
+            print('running phy concat rec io')
             self.reader = PhyConcatRecIO(dirname=phy_folder, currWarpDataPath=self.warpData)
             self.blocks = self.reader.read()
 
