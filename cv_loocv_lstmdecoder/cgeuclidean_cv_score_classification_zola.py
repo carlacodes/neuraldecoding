@@ -77,7 +77,7 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
         try:
             raster_target = get_word_aligned_raster(blocks, cluster_id, word=1, pitchshift=pitchshift,
                                                                 correctresponse=True,
-                                                                df_filter=target_filter, selectedpitch =2 )
+                                                                df_filter=target_filter)
             raster_target = raster_target[raster_target['talker'] == int(talker)]
             if len(raster_target) == 0:
                 print('no relevant spikes for this talker')
@@ -91,7 +91,7 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
         try:
             raster_probe = get_word_aligned_raster(blocks, cluster_id, word=probeword, pitchshift=pitchshift,
                                                    correctresponse=True,
-                                                   df_filter=probe_filter, selectedpitch = 2)
+                                                   df_filter=probe_filter)
             raster_probe = raster_probe[raster_probe['talker'] == talker]
             raster_probe['trial_num'] = raster_probe['trial_num'] + np.max(raster_target['trial_num'])
             if len(raster_probe) == 0:
@@ -168,7 +168,9 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
             # Fit model
             history = model_lstm.fit(X[train], y[train])
 
-            y_pred = model_lstm.predict(X[test])
+            #y_pred = model_lstm.predict(X[test])
+            y_pred = model_lstm.model(X[test], training=False)
+            y_pred = np.argmax(y_pred, axis=1)
 
 
 
