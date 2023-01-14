@@ -74,22 +74,22 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
 
         target_filter = ['Target trials', 'No Level Cue']  # , 'Non Correction Trials']
 
-        # try:
-        raster_target = get_word_aligned_raster_with_pitchshift(blocks, cluster_id, word=1, pitchshift=pitchshift,
+        try:
+            raster_target = get_word_aligned_raster(blocks, cluster_id, word=1, pitchshift=pitchshift,
                                                                 correctresponse=True,
                                                                 df_filter=target_filter, selectedpitch =2 )
-        raster_target = raster_target[raster_target['talker'] == int(talker)]
-        if len(raster_target) == 0:
-            print('no relevant spikes for this talker')
+            raster_target = raster_target[raster_target['talker'] == int(talker)]
+            if len(raster_target) == 0:
+                print('no relevant spikes for this talker')
+                continue
+        except:
+            print('No relevant target firing')
+            cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
             continue
-        # except:
-        #     print('No relevant target firing')
-        #     cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
-        #     continue
 
         probe_filter = ['No Level Cue']  # , 'Non Correction Trials']
         try:
-            raster_probe = get_word_aligned_raster_with_pitchshift(blocks, cluster_id, word=probeword, pitchshift=pitchshift,
+            raster_probe = get_word_aligned_raster(blocks, cluster_id, word=probeword, pitchshift=pitchshift,
                                                    correctresponse=True,
                                                    df_filter=probe_filter, selectedpitch = 2)
             raster_probe = raster_probe[raster_probe['talker'] == talker]
@@ -475,7 +475,7 @@ def run_classification(dir):
     now = datetime.now()
     dt_string = now.strftime("%d%m%Y_%H_%M_%S")
 
-    tarDir = Path(f'/Users/cgriffiths/resultsms4/lstmclass_CVDATA_11122022zola')
+    tarDir = Path(f'/Users/cgriffiths/resultsms4/lstmclass_CVDATA_14012023zola')
     saveDir = tarDir / dt_string
     saveDir.mkdir(exist_ok=True, parents=True)
     for probeword in probewords_list:

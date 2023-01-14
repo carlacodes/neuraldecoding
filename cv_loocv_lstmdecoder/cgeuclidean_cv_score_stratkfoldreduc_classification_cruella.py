@@ -463,7 +463,7 @@ def run_classification(dir, datapath, ferretid):
 
     dt_string = now.strftime("%d%m%Y_%H_%M_%S")
 
-    tarDir = Path(f'/Users/cgriffiths/resultsms4/lstmclass_stratkfoldnalaDATA_09122022')
+    tarDir = Path(f'/Users/cgriffiths/resultsms4/lstmclass_stratkfoldnalaDATA_14012023')
     saveDir = tarDir / dt_string
     saveDir.mkdir(exist_ok=True, parents=True)
     for probeword in probewords_list:
