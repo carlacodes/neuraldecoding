@@ -1048,7 +1048,7 @@ if __name__ == '__main__':
 
     plt.legend( fontsize=12, ncol=2)
     fig.tight_layout()
-    plt.savefig('D:/scattermuaandsuregplot_mod_1112022.png', dpi=1000)
+    plt.savefig('D:/scattermuaandsuregplot_mod_17012023.png', dpi=1000)
 
     plt.show()
 
@@ -1106,7 +1106,7 @@ if __name__ == '__main__':
     plt.xlabel('Control - roved F0 \n LSTM decoder scores divided by control F0', fontsize = 20)
     plt.ylabel('Density', fontsize = 20)
     ax.legend(fontsize = 18)
-    plt.savefig('D:/diffF0distribution_frac_11122022wlegend.png', dpi=1000)
+    plt.savefig('D:/diffF0distribution_frac_17012023wlegend.png', dpi=1000)
     plt.show()
 
 
@@ -1125,7 +1125,7 @@ if __name__ == '__main__':
     manwhitscorecontrolf0 = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatenaive_nonps, alternative = 'greater')
 
     #ax.legend()
-    plt.savefig('D:/controlF0distribution11122022.png', dpi=1000)
+    plt.savefig('D:/controlF0distribution17012023.png', dpi=1000)
 
     plt.show()
 
@@ -1144,7 +1144,7 @@ if __name__ == '__main__':
     manwhitscorerovedf0 = mannwhitneyu(bigconcatenatetrained_ps, bigconcatenatenaive_ps, alternative = 'greater')
 
     ax.legend(fontsize=18)
-    plt.savefig('D:/rovedF0distribution_11122022.png', dpi=1000)
+    plt.savefig('D:/rovedF0distribution_17012023.png', dpi=1000)
 
     plt.show()
 
@@ -1156,7 +1156,7 @@ if __name__ == '__main__':
     plt.title('Roved and Control F0 Distributions for the Trained Animals', fontsize = 18)
     plt.xlabel(' LSTM decoder scores', fontsize = 20)
 
-    plt.savefig('D:/rovedF0vscontrolF0traineddistribution_11122022.png', dpi=1000)
+    plt.savefig('D:/rovedF0vscontrolF0traineddistribution_17012023.png', dpi=1000)
 
     plt.show()
 
@@ -1168,7 +1168,7 @@ if __name__ == '__main__':
     plt.xlabel(' LSTM decoder scores', fontsize = 20)
     plt.title('Roved and Control F0 Distributions for the Naive Animals', fontsize = 18)
 
-    plt.savefig('D:/rovedF0vscontrolF0naivedistribution_11122022.png', dpi=1000)
+    plt.savefig('D:/rovedF0vscontrolF0naivedistribution_17012023.png', dpi=1000)
     plt.show()
     manwhitscorecontrolf0vsrovedtrained = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, alternative = 'greater')
 
