@@ -62,7 +62,7 @@ multiunitlist_soundonset_crumble = [13, 14, 23, 25, 27, 29]
 
 
 def scatterplot_and_visualise(probewordlist,
-                              saveDir='D:/Users/cgriffiths/resultsms4/lstmclass_CVDATA_08122022/lstm_kfold_06122022_crumble',
+                              saveDir='D:/Users/cgriffiths/resultsms4/lstm_output_frommyriad_15012023/lstm_kfold_14012023_crumble',
                               ferretname='Crumble',
                               singleunitlist=singlunitlistsoundonset_crumble,
                               multiunitlist=multiunitlist_soundonset_crumble, noiselist=[19, 18, ]):
@@ -318,7 +318,7 @@ if __name__ == '__main__':
         probewordlist)
 
     dictoutput_eclair = scatterplot_and_visualise(probewordlist,
-                                                  saveDir='D:/Users/cgriffiths/resultsms4/lstmclass_CVDATA_08122022/lstm_kfold_06122022_eclair/',
+                                                  saveDir='D:/Users/cgriffiths/resultsms4/lstm_output_frommyriad_15012023/lstm_kfold_14012023_eclair/',
                                                   ferretname='Eclair',
                                                   singleunitlist=[20, 21, 28, 35, 37, 39],
                                                   multiunitlist=[3, 4, 8, 9, 10, 11, 16, 17, 18, 19, 21, 22, 23, 24, 25,
@@ -327,7 +327,7 @@ if __name__ == '__main__':
                                                   )
     dictoutput_zola = scatterplot_and_visualise(probewordlist,
                                                 #saveDir='D:/Users/cgriffiths/resultsms4/lstmclass_CVDATA_08122022/08122022_14_40_02/',
-                                                saveDir = 'D:/Users/cgriffiths/resultsms4/lstmclass_CVDATA_11122022zola/11122022_13_17_29/',
+                                                saveDir = 'D:/Users/cgriffiths/resultsms4/lstm_output_frommyriad_15012023/lstm_kfold_14012023_zola/',
                                                 ferretname='Zola',
 
                                                 singleunitlist=[13, 18, 37, 39],
@@ -336,14 +336,14 @@ if __name__ == '__main__':
     # D:\Users\cgriffiths\resultsms4\lstmclass_18112022\27112022_21_54_08
     dictoutput_cruella = scatterplot_and_visualise(probewordlist,
                                                    #saveDir='D:/Users/cgriffiths/resultsms4/lstmclass_CVDATA_05122022/06122022_00_40_15/',
-                                                   saveDir = 'D:/Users/cgriffiths/resultsms4/cruellamyriad11122022/11122022/',
+                                                   saveDir = 'D:/Users/cgriffiths/resultsms4/lstm_output_frommyriad_15012023/lstm_kfold_14012023_cruella/',
                                                    ferretname='Cruella',
                                                    singleunitlist=singleunitlist_cruella_soundonset,
                                                    multiunitlist=multiunitlist_cruella_soundonset
                                                    , noiselist=[])
 
     dictoutput_nala = scatterplot_and_visualise(probewordlist,
-                                                saveDir='D:/Users/cgriffiths/resultsms4/lstmclass_stratkfoldnalaDATA_09122022/myriad11122022/',
+                                                saveDir='D:/Users/cgriffiths/resultsms4/lstm_output_frommyriad_15012023/lstm_kfold_14012023_nala/',
                                                 ferretname='Nala',
                                                 singleunitlist=singleunitlist_nala,
                                                 multiunitlist=multiunitlist_nala
