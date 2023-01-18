@@ -54,7 +54,7 @@ multiunitlist_soundonset_crumble = [13, 14, 23, 25, 27, 29]
 
 
 def scatterplot_and_visualise(probewordlist,
-                              saveDir='D:/decodingbypitchoutput/lstm_kfold_18122022_crumble_bypitch/',
+                              saveDir='D:/Users/cgriffiths/resultsms4/lstmoutputfrommyriad_18012023/lstm_kfold_18122022_crumble_bypitch/',
                               ferretname='Crumble',
                               singleunitlist=singlunitlistsoundonset_crumble,
                               multiunitlist=multiunitlist_soundonset_crumble, noiselist=[19, 18, ]):
@@ -410,14 +410,14 @@ def plot_by_pitch(scores_mu_nala, scores_su_nala, scores_mu_cruella, scores_su_c
     #plot box and whisker plot for each condition
     fig, ax = plt.subplots(2, 2, figsize=(10, 10))
     ax[0, 0].boxplot([big_merged_trained_mu['1'], big_merged_trained_mu['2'], big_merged_trained_mu['3'], big_merged_trained_mu['4'], big_merged_trained_mu['5']])
-    ax[0,0].scatter(rand_jitter(3*np.ones(len(female_array_zola_mu['3']))), female_array_zola_mu['3'], s=1, color = 'cyan')
+    ax[0,0].scatter(rand_jitter(3*np.ones(len(female_array_zola_mu['3']))), female_array_zola_mu['3'],  color = 'cyan')
     ax[0,0].scatter(rand_jitter(4*np.ones(len(female_array_zola_mu['4']))), female_array_zola_mu['4'], color = 'cyan')
     ax[0,0].scatter(rand_jitter(5*np.ones(len(female_array_zola_mu['5']))), female_array_zola_mu['5'], color= 'cyan')
     for i in range(1,6):
         try:
-            ax[0, 0].scatter(rand_jitter(i*np.ones(len(female_array_cruella_mu[str(i)]))), female_array_cruella_mu[str(i)])
+            ax[0, 0].scatter(rand_jitter(i*np.ones(len(female_array_cruella_mu[str(i)]))), female_array_cruella_mu[str(i)], color ='red')
         except:
-            ax[0, 0].scatter(rand_jitter(i*np.ones(len([female_array_cruella_mu[str(i)]]))), female_array_cruella_mu[str(i)])
+            ax[0, 0].scatter(rand_jitter(i*np.ones(len([female_array_cruella_mu[str(i)]]))), female_array_cruella_mu[str(i)], color ='red')
 
 
 
@@ -627,7 +627,7 @@ if __name__ == '__main__':
         probewordlist)
     scores_su_zola, scores_mu_zola= scatterplot_and_visualise(probewordlist,
                                                 #saveDir='D:/Users/cgriffiths/resultsms4/lstmclass_CVDATA_08122022/08122022_14_40_02/',
-                                                saveDir = 'D:/decodingbypitchoutput/lstm_kfold_18122022_zola_bypitch/',
+                                                saveDir = 'D:/Users/cgriffiths/resultsms4/lstmoutputfrommyriad_18012023/lstm_kfold_18122022_zola_bypitch/',
                                                 ferretname='Zola',
 
                                                 singleunitlist=[13, 18, 37, 39],
@@ -635,7 +635,7 @@ if __name__ == '__main__':
                                                 , noiselist=[29, 15, 36, ])
 
     scores_su_eclair, scores_mu_eclair = scatterplot_and_visualise(probewordlist,
-                                                  saveDir='D:/decodingbypitchoutput/lstm_kfold_18122022_eclair_bypitch/',
+                                                  saveDir='D:/Users/cgriffiths/resultsms4/lstmoutputfrommyriad_18012023/lstm_kfold_18122022_eclair_bypitch',
                                                   ferretname='Eclair',
                                                   singleunitlist=[20, 21, 28, 35, 37, 39],
                                                   multiunitlist=[3, 4, 8, 9, 10, 11, 16, 17, 18, 19, 21, 22, 23, 24, 25,
@@ -646,14 +646,14 @@ if __name__ == '__main__':
     # D:\Users\cgriffiths\resultsms4\lstmclass_18112022\27112022_21_54_08
     scores_su_cruella, scores_mu_cruella = scatterplot_and_visualise(probewordlist,
                                                    #saveDir='D:/Users/cgriffiths/resultsms4/lstmclass_CVDATA_05122022/06122022_00_40_15/',
-                                                   saveDir = 'D:/decodingbypitchoutput/lstm_kfold_18122022_cruella_bypitch/',
+                                                   saveDir = 'D:/Users/cgriffiths/resultsms4/lstmoutputfrommyriad_18012023/lstm_kfold_18122022_cruella_bypitch/',
                                                    ferretname='Cruella',
                                                    singleunitlist=singleunitlist_cruella_soundonset,
                                                    multiunitlist=multiunitlist_cruella_soundonset
                                                    , noiselist=[])
 
     scores_su_nala, scores_mu_nala = scatterplot_and_visualise(probewordlist,
-                                                saveDir='D:/decodingbypitchoutput/lstm_kfold_18122022_nala_bypitch//',
+                                                saveDir='D:/Users/cgriffiths/resultsms4/lstmoutputfrommyriad_18012023/lstm_kfold_18122022_nala_bypitch',
                                                 ferretname='Nala',
                                                 singleunitlist=singleunitlist_nala,
                                                 multiunitlist=multiunitlist_nala
