@@ -1105,7 +1105,9 @@ if __name__ == '__main__':
     plt.title('Control - roved F0 \n LSTM decoder scores between trained and naive animals', fontsize = 18)
     plt.xlabel('Control - roved F0 \n LSTM decoder scores divided by control F0', fontsize = 20)
     plt.ylabel('Density', fontsize = 20)
-    ax.legend(fontsize = 18)
+    #ax.legend(fontsize = 18)
+
+
     plt.savefig('D:/diffF0distribution_frac_17012023wlegend.png', dpi=1000)
     plt.show()
 
@@ -1170,9 +1172,9 @@ if __name__ == '__main__':
 
     plt.savefig('D:/rovedF0vscontrolF0naivedistribution_17012023.png', dpi=1000)
     plt.show()
-    manwhitscorecontrolf0vsrovedtrained = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, alternative = 'greater')
+    manwhitscorecontrolf0vsrovedtrained = scipy.stats.kstest(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, alternative = 'two-sided')
 
-    manwhitscorecontrolf0vsrovednaive = mannwhitneyu(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, alternative='greater')
+    manwhitscorecontrolf0vsrovednaive = scipy.stats.kstest(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, alternative='two-sided')
 
     naivearray=np.concatenate((np.zeros((len(bigconcatenatetrained_nonps)+len(bigconcatenatetrained_ps),1)), np.ones((len(bigconcatenatenaive_nonps)+len(bigconcatenatenaive_ps),1))))
     trainedarray=np.concatenate((np.ones((len(bigconcatenatetrained_nonps)+len(bigconcatenatetrained_ps),1)), np.zeros((len(bigconcatenatenaive_nonps)+len(bigconcatenatenaive_ps),1))))
