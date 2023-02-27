@@ -613,7 +613,6 @@ if __name__ == '__main__':
                            mergedtrained['mu_list'][pitchshiftornot]['male_talker']])
         ax[count].legend()
         ax[count].set_ylabel('LSTM decoding score (%)')
-        # ax[count].set_yticklabels([0, 20, 40, 60, 80, 100])
 
         # as @ali14 pointed out, for python3, use this
         # for sp in ax2.spines.values():
