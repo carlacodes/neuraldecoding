@@ -1137,7 +1137,6 @@ if __name__ == '__main__':
 
     sns.distplot(bigconcatenatetrained_ps,  label='trained',ax=ax, color='purple')
     sns.distplot(bigconcatenatenaive_ps, label='naive', ax=ax, color='darkcyan')
-    #plt.axvline(x=0, color='black')
     #man whiteney test score
     #manwhitscore = mannwhitneyu(relativescoretrained, relativescorenaive, alternative = 'greater')
     plt.title('Roved F0 LSTM decoder scores between  \n trained and naive animals', fontsize = 18)
