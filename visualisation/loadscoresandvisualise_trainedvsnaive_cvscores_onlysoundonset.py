@@ -1086,11 +1086,26 @@ if __name__ == '__main__':
     plt.show()
 
     fig, ax = plt.subplots(1, figsize=(8, 8))
-    sns.distplot(relativescoretrainedfrac, bins = 20, label='trained',ax=ax, color='purple')
-    sns.distplot(relativescorenaivefrac, bins = 20, label='naive', ax=ax, color='darkcyan')
-    plt.axvline(x=0, color='black')
+    ax = sns.distplot(relativescoretrainedfrac, bins = 20, label='trained',ax=ax, color='purple')
+    x = ax.lines[0].get_xdata()  # Get the x data of the distribution
+    y = ax.lines[0].get_ydata()  # Get the y data of the distribution
+    maxidtrained_idx = np.argmax(y)
+    x_coord_trained = x[maxidtrained_idx]
 
+
+    ax2 = sns.distplot(relativescorenaivefrac, bins = 20, label='naive', ax=ax, color='darkcyan')
+
+    x = ax2.lines[0].get_xdata()  # Get the x data of the distribution
+    y = ax2.lines[0].get_ydata()  # Get the y data of the distribution
+    maxidnaive_idx = np.argmax(y)  # The id of the peak (maximum of y data)
+
+    x_coord_naive = x[maxidnaive_idx]
+    plt.axvline(x=0, color='black')
+    kstestnaive = scipy.stats.kstest(relativescorenaivefrac,  stats.norm.cdf)
+    leveneteststat = scipy.stats.levene(relativescorenaivefrac, relativescoretrainedfrac)
     manwhitscorefrac = mannwhitneyu(relativescorenaivefrac, relativescoretrainedfrac, alternative = 'less')
+    #caclulate medians of distribution
+
     sample1_trained = np.random.choice(relativescoretrainedfrac, size=10000, replace=True)
 
     # Generate a random sample of size 100 from data2 with replacement
