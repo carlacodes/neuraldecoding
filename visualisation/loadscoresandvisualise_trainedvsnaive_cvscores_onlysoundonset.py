@@ -1087,19 +1087,20 @@ if __name__ == '__main__':
 
     fig, ax = plt.subplots(1, figsize=(8, 8))
     ax = sns.distplot(relativescoretrainedfrac, bins = 20, label='trained',ax=ax, color='purple')
-    x = ax.lines[0].get_xdata()  # Get the x data of the distribution
-    y = ax.lines[0].get_ydata()  # Get the y data of the distribution
+    x = ax.lines[-1].get_xdata()  # Get the x data of the distribution
+    y = ax.lines[-1].get_ydata()  # Get the y data of the distribution
     maxidtrained_idx = np.argmax(y)
     x_coord_trained = x[maxidtrained_idx]
+    plt.show()
 
 
     ax2 = sns.distplot(relativescorenaivefrac, bins = 20, label='naive', ax=ax, color='darkcyan')
 
-    x = ax2.lines[0].get_xdata()  # Get the x data of the distribution
-    y = ax2.lines[0].get_ydata()  # Get the y data of the distribution
-    maxidnaive_idx = np.argmax(y)  # The id of the peak (maximum of y data)
+    x2 = ax2.lines[-1].get_xdata()  # Get the x data of the distribution
+    y2 = ax2.lines[-1].get_ydata()  # Get the y data of the distribution
+    maxidnaive_idx = np.argmax(y2)  # The id of the peak (maximum of y data)
 
-    x_coord_naive = x[maxidnaive_idx]
+    x_coord_naive = x2[maxidnaive_idx]
     plt.axvline(x=0, color='black')
     kstestnaive = scipy.stats.kstest(relativescorenaivefrac,  stats.norm.cdf)
     leveneteststat = scipy.stats.levene(relativescorenaivefrac, relativescoretrainedfrac)
