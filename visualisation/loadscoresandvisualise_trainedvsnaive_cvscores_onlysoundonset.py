@@ -40,6 +40,10 @@ testscorematzola = np.load('D:/Users/cgriffiths/resultsms4/lstmclass_CVDATA_1112
 # noiselist = [1, 2, 5, 9, 19, 24, 6, 20, 21, 23, 16, 28, 12, 30, 32, 33]
 singleunitlist_cruella = [16, 34, 25, 12, 2, 27, 21, 24, 17, 18, 13, 11, 22, 20, 26]
 singleunitlist_cruella_soundonset = [13, 16, 17, 21, 22, 26, 27, 28, 34]
+singleunitlist_cruella_2 = [11, 39, 35, 36, 28, 7, 23, 37, 26]
+
+multiunitlist_cruella_2 = [3, 15, 19, 25, 12, 21, 44, 2, 16, 20, 27, 1, 42, 45, 29, 43, 33, 24, 31, 8, 40, 32, 22, 5, 4, 41, 18, 10, 13, 6, 30]
+
 multiunitlist_cruella = [10, 7, 31, 29, 1, 32, 15, 9, 6, 3, 19, 23, 8, 4, 33, 14, 30, 5]
 multiunitlist_cruella_soundonset = [6, 8, 9, 14, 23, 29, 30, 21, 33]
 
@@ -316,6 +320,13 @@ if __name__ == '__main__':
     probewordlist = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
     dictoutput_crumble = scatterplot_and_visualise(
         probewordlist)
+    dictoutput_cruella2 = scatterplot_and_visualise(probewordlist,
+                                                   #saveDir='D:/Users/cgriffiths/resultsms4/lstmclass_CVDATA_05122022/06122022_00_40_15/',
+                                                   saveDir = 'E:\ms4output\lstm_kfold_22032023_cruella/',
+                                                   ferretname='Cruella',
+                                                   singleunitlist=singleunitlist_cruella_2,
+                                                   multiunitlist=multiunitlist_cruella_2
+                                                   , noiselist=[])
 
     dictoutput_eclair = scatterplot_and_visualise(probewordlist,
                                                   saveDir='D:/Users/cgriffiths/resultsms4/lstm_output_frommyriad_15012023/lstm_kfold_14012023_eclair/',
@@ -341,6 +352,8 @@ if __name__ == '__main__':
                                                    singleunitlist=singleunitlist_cruella_soundonset,
                                                    multiunitlist=multiunitlist_cruella_soundonset
                                                    , noiselist=[])
+
+
 
     dictoutput_nala = scatterplot_and_visualise(probewordlist,
                                                 saveDir='D:/Users/cgriffiths/resultsms4/lstm_output_frommyriad_15012023/lstm_kfold_14012023_nala/',
