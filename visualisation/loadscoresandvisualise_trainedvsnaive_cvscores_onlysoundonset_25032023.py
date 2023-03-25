@@ -34,7 +34,7 @@ singleunitlist_cruella = [16, 34, 25, 12, 2, 27, 21, 24, 17, 18, 13, 11, 22, 20,
 singleunitlist_cruella_soundonset = [13, 16, 17, 21, 22, 26, 27, 28, 34]
 singleunitlist_cruella_2 = [11, 7,26]
 
-multiunitlist_cruella_2 = [3, 21, 44, 40, 42, 45, 29, 43, 31, 8, 22, 5, 4, 18, 10, 13, 6, 30]
+multiunitlist_cruella_2 = [3, 21, 40, 42, 45, 29, 43, 31, 8, 22, 5, 4, 18, 10, 13, 6, 30] #cluster 44 doesnt fire during non pitch shift trials
 
 multiunitlist_cruella = [10, 7, 31, 29, 1, 32, 15, 9, 6, 3, 19, 23, 8, 4, 33, 14, 30, 5]
 multiunitlist_cruella_soundonset = [6, 8, 9, 14, 23, 29, 30, 21, 33]
