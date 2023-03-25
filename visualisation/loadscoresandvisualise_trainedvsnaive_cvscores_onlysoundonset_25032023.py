@@ -474,28 +474,18 @@ def main():
     pdoutput_eclair = pd.DataFrame.from_dict(dictoutput_eclair)
     pdoutput_crumble = pd.DataFrame.from_dict(dictoutput_crumble)
 
-    generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput_zola, dictoutput_crumble, dictoutput_eclair, dictoutput_cruella, dictoutput_nala)
+    generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput_zola, dictoutput_crumble, dictoutput_eclair, dictoutput_cruella, dictoutput_nala, dictoutput_cruella2)
 
     return mergedtrained, mergednaive, mergednaiveanimaldict, pdoutput_eclair, pdoutput_crumble
 
 
-def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput_zola, dictoutput_crumble, dictoutput_eclair, dictoutput_cruella, dictoutput_nala):
+def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput_zola, dictoutput_crumble, dictoutput_eclair, dictoutput_cruella, dictoutput_nala, dictoutput_cruella2):
 
-
-
-    ##now plot this, but flattened
-    # plotting both mu sound driven and single unit units FOR TRAINED ANIMALS
-    # for sutype in mergednaiveanimaldict.keys():
-    mergedtrained_converted = pd.DataFrame.from_dict(mergedtrained)
-    p = 'D:/dfformixedmodels/'
     from pathlib import Path
     filepath = Path('D:/dfformixedmodels/mergedtrained.csv')
     filepath.parent.mkdir(parents=True, exist_ok=True)
 
-
-
     fig, ax = plt.subplots(1, figsize=(5, 8))
-    count = 0
     emptydict = {}
     dictlist = [dictoutput_cruella, dictoutput_zola, dictoutput_nala, dictoutput_crumble, dictoutput_eclair]
     count = 0
@@ -530,7 +520,6 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
     mergedtrainedandnaive=pd.DataFrame.from_dict(emptydict)
     runboostedregressiontreeforlstmscore(mergedtrainedandnaive)
 
-    from pathlib import Path
     filepath = Path('D:/dfformixedmodels/mergedtrainedandnaive.csv')
     filepath.parent.mkdir(parents=True, exist_ok=True)
     mergedtrainedandnaive.to_csv(filepath)
@@ -551,28 +540,19 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
                 female_talker_pitchshift, male_talker_nopitchshift, male_talker_pitchshift])
     ax.legend()
     ax.set_ylabel('LSTM decoding score (%)')
-    # ax[count].set_yticklabels([0, 20, 40, 60, 80, 100])
 
-    # if sutype == 'su_list':
-    #     stringtitle = 'single'
-    # else:
-    #     stringtitle = 'multi'
-    # if pitchshiftornot == 'pitchshift':
-    #     stringtitlepitch = 'F0-roved'
-    # else:
-    #     stringtitlepitch = 'control F0'
     ax.set_title('Trained LSTM scores for' + ' F0 control vs. roved,\n ' + ' trained animals', fontsize=12)
     y_zola_su = dictoutput_zola['su_list']['nonpitchshift']['female_talker']
     y_zola_mu = dictoutput_zola['mu_list']['nonpitchshift']['female_talker']
 
-    y_cruella_su = dictoutput_cruella['su_list']['nonpitchshift']['female_talker']
-    y_cruella_mu = dictoutput_cruella['mu_list']['nonpitchshift']['female_talker']
+    y_cruella_su = np.append(dictoutput_cruella['su_list']['nonpitchshift']['female_talker'], dictoutput_cruella2['su_list']['nonpitchshift']['female_talker'])
+    y_cruella_mu = np.append(dictoutput_cruella['mu_list']['nonpitchshift']['female_talker'], dictoutput_cruella2['mu_list']['nonpitchshift']['female_talker'])
 
     y2_zola_su_male = dictoutput_zola['su_list']['nonpitchshift']['male_talker']
-    y2_cruella_su_male = dictoutput_cruella['su_list']['nonpitchshift']['male_talker']
+    y2_cruella_su_male = np.append(dictoutput_cruella['su_list']['nonpitchshift']['male_talker'], dictoutput_cruella2['su_list']['nonpitchshift']['male_talker'])
 
     y2_zola_mu_male = dictoutput_zola['mu_list']['nonpitchshift']['male_talker']
-    y2_cruella_mu_male = dictoutput_cruella['mu_list']['nonpitchshift']['male_talker']
+    y2_cruella_mu_male = np.append(dictoutput_cruella['mu_list']['nonpitchshift']['male_talker'], dictoutput_cruella2['mu_list']['nonpitchshift']['male_talker'])
 
     # Add some random "jitter" to the x-axis
     x_su = np.random.normal(1, 0.04, size=len(y_zola_su))
@@ -683,7 +663,7 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
                         dictoutput[key]['nonpitchshift'][key3][
                         :len(dictoutput[key]['pitchshift'][key3])]
 
-    dictlist = [dictoutput_cruella, dictoutput_zola]
+    dictlist = [dictoutput_cruella, dictoutput_zola, dictoutput_cruella2]
     bigconcatenatetrained_ps = np.empty(0)
     bigconcatenatetrained_nonps = np.empty(0)
     for dictouput in dictlist:
@@ -701,7 +681,6 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
     for dictouput in dictlist:
         for key in dictouput.keys():
             print(key, 'key')
-
             for key3 in dictouput[key]['pitchshift'].keys():
                 print(key3, 'key3')
                 bigconcatenatenaive_ps = np.concatenate((bigconcatenatenaive_ps, dictouput[key]['pitchshift'][key3]))
@@ -710,6 +689,8 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
 
     ax.plot(dictoutput_cruella['su_list']['nonpitchshift']['female_talker'],
             dictoutput_cruella['su_list']['pitchshift']['female_talker'], 'o', color='purple', alpha=0.5, label = 'F1815')
+    ax.plot(dictoutput_cruella2['su_list']['nonpitchshift']['female_talker'],
+            dictoutput_cruella2['su_list']['pitchshift']['female_talker'], 'o', color='purple', alpha=0.5, label = 'F1815')
 
     ax.plot(dictoutput_zola['su_list']['nonpitchshift']['female_talker'],
             dictoutput_zola['su_list']['pitchshift']['female_talker'], 'o', color='magenta', alpha=0.5,label = 'F1702')
@@ -721,6 +702,10 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
     ax.scatter(dictoutput_cruella['su_list']['nonpitchshift']['male_talker'],
                dictoutput_cruella['su_list']['pitchshift']['male_talker'], marker='o', facecolors='none',
                edgecolors='purple', alpha=0.5)
+    ax.scatter(dictoutput_cruella2['su_list']['nonpitchshift']['male_talker'],
+               dictoutput_cruella2['su_list']['pitchshift']['male_talker'], marker='o', facecolors='none',
+               edgecolors='purple', alpha=0.5)
+
     ax.scatter(dictoutput_zola['su_list']['nonpitchshift']['male_talker'],
                dictoutput_zola['su_list']['pitchshift']['male_talker'], marker='o', facecolors='none',
                edgecolors='magenta', alpha=0.5)
@@ -728,6 +713,11 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
     ax.scatter(dictoutput_cruella['mu_list']['nonpitchshift']['male_talker'],
                dictoutput_cruella['mu_list']['pitchshift']['male_talker'], marker='P', facecolors='none',
                edgecolors='purple', alpha=0.5)
+
+    ax.scatter(dictoutput_cruella2['mu_list']['nonpitchshift']['male_talker'],
+               dictoutput_cruella2['mu_list']['pitchshift']['male_talker'], marker='P', facecolors='none',
+               edgecolors='purple', alpha=0.5)
+
     ax.scatter(dictoutput_zola['mu_list']['nonpitchshift']['male_talker'],
                dictoutput_zola['mu_list']['pitchshift']['male_talker'], marker='P', facecolors='none',
                edgecolors='magenta', alpha=0.5)
@@ -1072,8 +1062,8 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
             np.std(np.concatenate((mergednaive[sutype][pitchshiftornot]['male_talker'],
                                    mergednaive[sutype][pitchshiftornot]['female_talker'])))))
 
-        x = np.random.normal(2, 0.04, size=len(y2_crum))
-        x2 = np.random.normal(2, 0.04, size=len(y2_eclair))
+        # x = np.random.normal(2, 0.04, size=len(y2_crum))
+        # x2 = np.random.normal(2, 0.04, size=len(y2_eclair))
         if count == 1:
             ax2 = ax[count].twiny()
             # Offset the twin axis below the host
