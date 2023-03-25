@@ -32,9 +32,9 @@ testscorematzola = np.load('D:/Users/cgriffiths/resultsms4/lstmclass_CVDATA_1112
 
 singleunitlist_cruella = [16, 34, 25, 12, 2, 27, 21, 24, 17, 18, 13, 11, 22, 20, 26]
 singleunitlist_cruella_soundonset = [13, 16, 17, 21, 22, 26, 27, 28, 34]
-singleunitlist_cruella_2 = [11, 7,23]
+singleunitlist_cruella_2 = [11, 7,26]
 
-multiunitlist_cruella_2 = [15, 19, 12, 44, 16,  27,  45, 43, 33, 8,10, 6]
+multiunitlist_cruella_2 = [3, 21, 44, 40, 42, 45, 29, 43, 31, 8, 22, 5, 4, 18, 10, 13, 6, 30]
 
 multiunitlist_cruella = [10, 7, 31, 29, 1, 32, 15, 9, 6, 3, 19, 23, 8, 4, 33, 14, 30, 5]
 multiunitlist_cruella_soundonset = [6, 8, 9, 14, 23, 29, 30, 21, 33]
@@ -50,10 +50,10 @@ def scatterplot_and_visualise(probewordlist,
                               saveDir='D:/Users/cgriffiths/resultsms4/lstm_output_frommyriad_15012023/lstm_kfold_14012023_crumble',
                               ferretname='Crumble',
                               singleunitlist=singlunitlistsoundonset_crumble,
-                              multiunitlist=multiunitlist_soundonset_crumble, noiselist=[19, 18, ]):
-    singleunitlist = [x - 1 for x in singleunitlist]
-    multiunitlist = [x - 1 for x in multiunitlist]
-    noiselist = [x - 1 for x in noiselist]
+                              multiunitlist=multiunitlist_soundonset_crumble, noiselist=[]):
+    # singleunitlist = [x - 1 for x in singleunitlist]
+    # multiunitlist = [x - 1 for x in multiunitlist]
+    # noiselist = [x - 1 for x in noiselist]
 
     su_pitchshiftlist_female = np.empty([0])
     su_pitchshiftlist_male = np.empty([0])
@@ -136,26 +136,20 @@ def scatterplot_and_visualise(probewordlist,
                                                                          scores[f'talker{talker}'][comp][cond][
                                                                              'lstm_avg'][
                                                                              i])
-                                    if scores[f'talker{talker}'][comp][cond][
-                                        'lstm_avg'][i] <= 0.4:
-                                        print('suspiciously low, check if noise:', clus)
+
                                 elif talker == 2:
                                     mu_pitchshiftlist_male = np.append(mu_pitchshiftlist_male,
                                                                        scores[f'talker{talker}'][comp][cond][
                                                                            'lstm_avg'][
                                                                            i])
-                                    if scores[f'talker{talker}'][comp][cond][
-                                        'lstm_avg'][i] <= 0.4:
-                                        print('suspiciously low check if noise:', clus)
+
 
                             if cond == 'nopitchshift':
                                 if talker == 1:
                                     mu_nonpitchshiftlist_female = np.append(mu_nonpitchshiftlist_female,
                                                                             scores[f'talker{talker}'][comp][cond][
                                                                                 'lstm_avg'][i])
-                                    if scores[f'talker{talker}'][comp][cond][
-                                        'lstm_avg'][i] <= 0.4:
-                                        print('suspiciously low check if noise:', clus)
+
                                 elif talker == 2:
                                     mu_nonpitchshiftlist_male = np.append(mu_nonpitchshiftlist_male,
                                                                           scores[f'talker{talker}'][comp][cond][
@@ -299,8 +293,7 @@ def runboostedregressiontreeforlstmscore(df_use):
 
 def main():
     probewordlist = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
-    dictoutput_crumble = scatterplot_and_visualise(
-        probewordlist)
+
     dictoutput_cruella2 = scatterplot_and_visualise(probewordlist,
                                                    #saveDir='D:/Users/cgriffiths/resultsms4/lstmclass_CVDATA_05122022/06122022_00_40_15/',
                                                    saveDir = 'E:\ms4output\lstm_kfold_22032023_cruella/',
@@ -308,6 +301,9 @@ def main():
                                                    singleunitlist=singleunitlist_cruella_2,
                                                    multiunitlist=multiunitlist_cruella_2
                                                    , noiselist=[])
+
+    dictoutput_crumble = scatterplot_and_visualise(
+        probewordlist)
 
     dictoutput_eclair = scatterplot_and_visualise(probewordlist,
                                                   saveDir='D:/Users/cgriffiths/resultsms4/lstm_output_frommyriad_15012023/lstm_kfold_14012023_eclair/',
@@ -579,8 +575,8 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
     ax.plot(x_mu_male, y2_zola_mu_male, "2", color='hotpink', alpha=0.5, label='F1702 - MUA')
     ax.plot(x2_mu_male, y2_cruella_mu_male, "2", color='olivedrab', alpha=0.5, label='F1815 - MUA')
 
-    x = np.random.normal(2, 0.04, size=len(y2_crum))
-    x2 = np.random.normal(2, 0.04, size=len(y2_eclair))
+    # x = np.random.normal(2, 0.04, size=len(y2_crum))
+    # x2 = np.random.normal(2, 0.04, size=len(y2_eclair))
 
     if count == 0:
         ax2 = ax.twiny()
@@ -980,10 +976,6 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
         ax[count].legend()
         ax[count].set_ylabel('LSTM decoding score (%)')
         ax[count].set_yticklabels([0, 20, 40, 60, 80, 100])
-
-        # as @ali14 pointed out, for python3, use this
-        # for sp in ax2.spines.values():
-        # and for python2, use this
 
         if sutype == 'su_list':
             stringtitle = 'single'
