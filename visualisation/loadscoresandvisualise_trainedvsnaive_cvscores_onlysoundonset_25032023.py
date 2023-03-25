@@ -32,9 +32,9 @@ testscorematzola = np.load('D:/Users/cgriffiths/resultsms4/lstmclass_CVDATA_1112
 
 singleunitlist_cruella = [16, 34, 25, 12, 2, 27, 21, 24, 17, 18, 13, 11, 22, 20, 26]
 singleunitlist_cruella_soundonset = [13, 16, 17, 21, 22, 26, 27, 28, 34]
-singleunitlist_cruella_2 = [11, 7,26]
+singleunitlist_cruella_2 = [] #unit 25+1 only fires during non pitch shift trials for male talker
 
-multiunitlist_cruella_2 = [3, 21, 40, 42, 45, 29, 43, 31, 8, 22, 5, 4, 18, 10, 13, 6, 30] #cluster 44 doesnt fire during non pitch shift trials
+multiunitlist_cruella_2 = [21, 40, 42, 44, 29, 43, 31, 22, 5, 4, 18, 10, 13,  30, 6] #, cluster 7+1, and 2+1 doesnt fire for every word, cluster 44+1 doesnt fire during non pitch shift trials
 
 multiunitlist_cruella = [10, 7, 31, 29, 1, 32, 15, 9, 6, 3, 19, 23, 8, 4, 33, 14, 30, 5]
 multiunitlist_cruella_soundonset = [6, 8, 9, 14, 23, 29, 30, 21, 33]
@@ -51,9 +51,9 @@ def scatterplot_and_visualise(probewordlist,
                               ferretname='Crumble',
                               singleunitlist=singlunitlistsoundonset_crumble,
                               multiunitlist=multiunitlist_soundonset_crumble, noiselist=[]):
-    # singleunitlist = [x - 1 for x in singleunitlist]
-    # multiunitlist = [x - 1 for x in multiunitlist]
-    # noiselist = [x - 1 for x in noiselist]
+    singleunitlist = [x - 1 for x in singleunitlist]
+    multiunitlist = [x - 1 for x in multiunitlist]
+    noiselist = [x - 1 for x in noiselist]
 
     su_pitchshiftlist_female = np.empty([0])
     su_pitchshiftlist_male = np.empty([0])
@@ -66,34 +66,18 @@ def scatterplot_and_visualise(probewordlist,
 
     mu_nonpitchshiftlist_female = np.empty([0])
     mu_nonpitchshiftlist_male = np.empty([0])
-
+    cluster_list_male_mu_nops = np.empty([0])
+    cluster_list_male_mu = np.empty([0])
     for probeword in probewordlist:
 
         probewordindex = probeword[0]
         print(probewordindex)
         stringprobewordindex = str(probewordindex)
-        # scores_Eclair_2022_2_eclair_probe_pitchshift_vs_not_by_talker_bs
-        # if ferretname == 'Zola':
-        #     scores = np.load(
-        #         saveDir + '/' + r'scores_Trifle_June_2022_' + stringprobewordindex + '_trifle_probe_pitchshift_vs_not_by_talker_bs.npy',
-        #         allow_pickle=True)[()]
-        # else:
+
         scores = np.load(
             saveDir + '/' + r'scores_' + ferretname + '_2022_' + stringprobewordindex + '_' + ferretname + '_probe_pitchshift_vs_not_by_talker_bs.npy',
             allow_pickle=True)[()]
 
-        # if ferretname=='Crumble':
-        #     scores['lstm_avg'] =[]
-        #     # scores = np.load(
-        #     #     saveDir + '/' + r'scores_' + ferretname + '_2022_' + stringprobewordindex + '_' + ferretname + '_probe_pitchshift_vs_not_by_talker_bs.npy',
-        #     #     allow_pickle=True)[()]
-        #     for talker in [1, 2]:
-        #         comparisons = [comp for comp in scores[f'talker{talker}']]
-        #         for comp in comparisons:
-        #             for cond in ['pitchshift', 'nopitchshift']:
-        #                 scores[f'talker{talker}'][comp][cond]['lstm_avg'] =np.mean(scores[f'talker{talker}'][comp][cond]['lstm_accuracylist'])
-        #                 # for i, clus in enumerate(scores[f'talker{talker}'][comp][cond]['cluster_id']):
-        #                 #     scores[f'talker{talker}'][comp][cond]['lstm_avg'][i] = np.mean(scores[f'talker{talker}'][comp][cond]['lstm_accuracylist'][i])
 
 
 
@@ -142,6 +126,7 @@ def scatterplot_and_visualise(probewordlist,
                                                                        scores[f'talker{talker}'][comp][cond][
                                                                            'lstm_avg'][
                                                                            i])
+                                    cluster_list_male_mu = np.append(cluster_list_male_mu, clus)
 
 
                             if cond == 'nopitchshift':
@@ -154,9 +139,9 @@ def scatterplot_and_visualise(probewordlist,
                                     mu_nonpitchshiftlist_male = np.append(mu_nonpitchshiftlist_male,
                                                                           scores[f'talker{talker}'][comp][cond][
                                                                               'lstm_avg'][i])
-                                    if scores[f'talker{talker}'][comp][cond][
-                                        'lstm_avg'][i] <= 0.4:
-                                        print('suspiciously low  check if noise:', clus)
+                                    cluster_list_male_mu_nops= np.append(cluster_list_male_mu_nops, clus)
+
+
                         elif clus in noiselist:
                             pass
 
