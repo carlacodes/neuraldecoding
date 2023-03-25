@@ -29,15 +29,7 @@ oldscoremat = np.load(
     allow_pickle=True)[()]
 
 testscorematzola = np.load('D:/Users/cgriffiths/resultsms4/lstmclass_CVDATA_11122022zola/11122022_13_17_29/scores_zola_2022_5_zola_probe_pitchshift_vs_not_by_talker_bs.npy', allow_pickle=True)[()]
-# probewordlist = [(20, 22), (2, 2), (5, 6), (42, 49), (32, 38)]
-# probewordlist = [(20, 22)]
-# # single unit list and multi unit list differs by animal
-# singleunitlist = [8, 11, 17, 15, 27, 29, 31]
-# singleunitlist = [6, 10, 30, 5, 26, 3, 11, 12, 21]
-# singleunitlist = [19, 18, 6, 10, 30, 5, 2,11, 30]
-# multiunitlist = [4, 7, 13, 14, 15, 18, 22]
-# multiunitlist = [22, 8, 32, 17, 25, 35, 31, 7, 23, 4, 29, 34, 9, 16, 1, 15, 13, 33, 27, 2, 28, 14, 24]
-# noiselist = [1, 2, 5, 9, 19, 24, 6, 20, 21, 23, 16, 28, 12, 30, 32, 33]
+
 singleunitlist_cruella = [16, 34, 25, 12, 2, 27, 21, 24, 17, 18, 13, 11, 22, 20, 26]
 singleunitlist_cruella_soundonset = [13, 16, 17, 21, 22, 26, 27, 28, 34]
 singleunitlist_cruella_2 = [11, 7,23]
@@ -47,17 +39,6 @@ multiunitlist_cruella_2 = [15, 19, 12, 44, 16,  27,  45, 43, 33, 8,10, 6]
 multiunitlist_cruella = [10, 7, 31, 29, 1, 32, 15, 9, 6, 3, 19, 23, 8, 4, 33, 14, 30, 5]
 multiunitlist_cruella_soundonset = [6, 8, 9, 14, 23, 29, 30, 21, 33]
 
-# exclusionlistnala=[25
-# 16
-# 36
-# 6
-# 11
-# 8
-# 3
-# 23
-# 30
-# 22
-# ]
 singleunitlist_nala = [17, 29, 5, 19, 27, 20, 4, 28, 1, 26, 21, 37] #37
 multiunitlist_nala = [10, 24, 8, 15, 12, 7, 9, 35, 2, 14, 34, 33, 32, 38, 39, 31, 40, 41, 13] #13
 saveDir = 'D:/Users/cgriffiths/resultsms4/lstmclass_18112022/19112022_12_58_54/'
@@ -214,13 +195,13 @@ def scatterplot_and_visualise(probewordlist,
     return dictofsortedscores
 
 
-def main():
-    probewordlist = [(20, 22), (2, 2), (5, 6), (42, 49), (32, 38)]
-
-    dictoutput = scatterplot_and_visualise(
-        probewordlist)
-
-    return dictoutput
+# def main():
+#     probewordlist = [(20, 22), (2, 2), (5, 6), (42, 49), (32, 38)]
+#
+#     dictoutput = scatterplot_and_visualise(
+#         probewordlist)
+#
+#     return dictoutput
 
 
 def cool_dict_merge(dicts_list): #ripped this from stackoverflow
@@ -316,7 +297,7 @@ def runboostedregressiontreeforlstmscore(df_use):
     labels = [item.get_text() for item in ax.get_yticklabels()]
     print(labels)
 
-if __name__ == '__main__':
+def main():
     probewordlist = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
     dictoutput_crumble = scatterplot_and_visualise(
         probewordlist)
@@ -362,10 +343,11 @@ if __name__ == '__main__':
                                                 multiunitlist=multiunitlist_nala
                                                 , noiselist=[])
 
-    meregedtest = cool_dict_merge([dictoutput_crumble, dictoutput_eclair])
-    meregedtest = cool_dict_merge([meregedtest, dictoutput_nala])
+    mergednaive = cool_dict_merge([dictoutput_crumble, dictoutput_eclair])
+    mergednaive = cool_dict_merge([mergednaive, dictoutput_nala])
 
     mergedtrained = cool_dict_merge([dictoutput_cruella, dictoutput_zola])
+    mergedtrained = cool_dict_merge([mergedtrained, dictoutput_cruella2])
 
     mergedtrained['su_list'] = cool_dict_merge([mergedtrained['su_list'][0], mergedtrained['su_list'][1]])
     mergedtrained['su_list']['pitchshift'] = cool_dict_merge(
@@ -419,78 +401,86 @@ if __name__ == '__main__':
                                                                                 'male_talker'][1]))
 
     ##
-    meregedtest['su_list'] = cool_dict_merge(
-        [meregedtest['su_list'][0], meregedtest['su_list'][1], meregedtest['su_list'][2]])
-    meregedtest['su_list']['pitchshift'] = cool_dict_merge(
-        [meregedtest['su_list']['pitchshift'][0], meregedtest['su_list']['pitchshift'][1],
-         meregedtest['su_list']['pitchshift'][2]])
-    meregedtest['su_list']['pitchshift']['female_talker'] = np.concatenate((meregedtest['su_list']['pitchshift'][
+    mergednaive['su_list'] = cool_dict_merge(
+        [mergednaive['su_list'][0], mergednaive['su_list'][1], mergednaive['su_list'][2]])
+    mergednaive['su_list']['pitchshift'] = cool_dict_merge(
+        [mergednaive['su_list']['pitchshift'][0], mergednaive['su_list']['pitchshift'][1],
+         mergednaive['su_list']['pitchshift'][2]])
+    mergednaive['su_list']['pitchshift']['female_talker'] = np.concatenate((mergednaive['su_list']['pitchshift'][
                                                                                 'female_talker'][0],
-                                                                            meregedtest['su_list']['pitchshift'][
+                                                                            mergednaive['su_list']['pitchshift'][
                                                                                 'female_talker'][1],
-                                                                            meregedtest['su_list']['pitchshift'][
+                                                                            mergednaive['su_list']['pitchshift'][
                                                                                 'female_talker'][2]))
-    meregedtest['su_list']['pitchshift']['male_talker'] = np.concatenate((meregedtest['su_list']['pitchshift'][
+    mergednaive['su_list']['pitchshift']['male_talker'] = np.concatenate((mergednaive['su_list']['pitchshift'][
                                                                               'male_talker'][0],
-                                                                          meregedtest['su_list']['pitchshift'][
+                                                                          mergednaive['su_list']['pitchshift'][
                                                                               'male_talker'][1],
-                                                                          meregedtest['su_list']['pitchshift'][
+                                                                          mergednaive['su_list']['pitchshift'][
                                                                               'male_talker'][2]))
 
-    meregedtest['su_list']['nonpitchshift'] = cool_dict_merge(
-        [meregedtest['su_list']['nonpitchshift'][0], meregedtest['su_list']['nonpitchshift'][1],
-         meregedtest['su_list']['nonpitchshift'][2]])
-    meregedtest['su_list']['nonpitchshift']['female_talker'] = np.concatenate((meregedtest['su_list']['nonpitchshift'][
+    mergednaive['su_list']['nonpitchshift'] = cool_dict_merge(
+        [mergednaive['su_list']['nonpitchshift'][0], mergednaive['su_list']['nonpitchshift'][1],
+         mergednaive['su_list']['nonpitchshift'][2]])
+    mergednaive['su_list']['nonpitchshift']['female_talker'] = np.concatenate((mergednaive['su_list']['nonpitchshift'][
                                                                                    'female_talker'][0],
-                                                                               meregedtest['su_list']['nonpitchshift'][
+                                                                               mergednaive['su_list']['nonpitchshift'][
                                                                                    'female_talker'][1],
-                                                                               meregedtest['su_list']['nonpitchshift'][
+                                                                               mergednaive['su_list']['nonpitchshift'][
                                                                                    'female_talker'][2]))
-    meregedtest['su_list']['nonpitchshift']['male_talker'] = np.concatenate((meregedtest['su_list']['nonpitchshift'][
+    mergednaive['su_list']['nonpitchshift']['male_talker'] = np.concatenate((mergednaive['su_list']['nonpitchshift'][
                                                                                  'male_talker'][0],
-                                                                             meregedtest['su_list']['nonpitchshift'][
+                                                                             mergednaive['su_list']['nonpitchshift'][
                                                                                  'male_talker'][1],
-                                                                             meregedtest['su_list']['nonpitchshift'][
+                                                                             mergednaive['su_list']['nonpitchshift'][
                                                                                  'male_talker'][2]))
 
-    meregedtest['mu_list'] = cool_dict_merge(
-        [meregedtest['mu_list'][0], meregedtest['mu_list'][1], meregedtest['mu_list'][2]])
+    mergednaive['mu_list'] = cool_dict_merge(
+        [mergednaive['mu_list'][0], mergednaive['mu_list'][1], mergednaive['mu_list'][2]])
 
-    meregedtest['mu_list']['nonpitchshift'] = cool_dict_merge(
-        [meregedtest['mu_list']['nonpitchshift'][0], meregedtest['mu_list']['nonpitchshift'][1],
-         meregedtest['mu_list']['nonpitchshift'][2]])
-    meregedtest['mu_list']['nonpitchshift']['female_talker'] = np.concatenate((meregedtest['mu_list']['nonpitchshift'][
+    mergednaive['mu_list']['nonpitchshift'] = cool_dict_merge(
+        [mergednaive['mu_list']['nonpitchshift'][0], mergednaive['mu_list']['nonpitchshift'][1],
+         mergednaive['mu_list']['nonpitchshift'][2]])
+    mergednaive['mu_list']['nonpitchshift']['female_talker'] = np.concatenate((mergednaive['mu_list']['nonpitchshift'][
                                                                                    'female_talker'][0],
-                                                                               meregedtest['mu_list']['nonpitchshift'][
+                                                                               mergednaive['mu_list']['nonpitchshift'][
                                                                                    'female_talker'][1],
-                                                                               meregedtest['mu_list']['nonpitchshift'][
+                                                                               mergednaive['mu_list']['nonpitchshift'][
                                                                                    'female_talker'][2]))
-    meregedtest['mu_list']['nonpitchshift']['male_talker'] = np.concatenate((meregedtest['mu_list']['nonpitchshift'][
+    mergednaive['mu_list']['nonpitchshift']['male_talker'] = np.concatenate((mergednaive['mu_list']['nonpitchshift'][
                                                                                  'male_talker'][0],
-                                                                             meregedtest['mu_list']['nonpitchshift'][
+                                                                             mergednaive['mu_list']['nonpitchshift'][
                                                                                  'male_talker'][1],
-                                                                             meregedtest['mu_list']['nonpitchshift'][
+                                                                             mergednaive['mu_list']['nonpitchshift'][
                                                                                  'male_talker'][2]))
 
-    meregedtest['mu_list']['pitchshift'] = cool_dict_merge(
-        [meregedtest['mu_list']['pitchshift'][0], meregedtest['mu_list']['pitchshift'][1],
-         meregedtest['mu_list']['pitchshift'][2]])
-    meregedtest['mu_list']['pitchshift']['female_talker'] = np.concatenate((meregedtest['mu_list']['pitchshift'][
+    mergednaive['mu_list']['pitchshift'] = cool_dict_merge(
+        [mergednaive['mu_list']['pitchshift'][0], mergednaive['mu_list']['pitchshift'][1],
+         mergednaive['mu_list']['pitchshift'][2]])
+    mergednaive['mu_list']['pitchshift']['female_talker'] = np.concatenate((mergednaive['mu_list']['pitchshift'][
                                                                                 'female_talker'][0],
-                                                                            meregedtest['mu_list']['pitchshift'][
+                                                                            mergednaive['mu_list']['pitchshift'][
                                                                                 'female_talker'][1],
-                                                                            meregedtest['mu_list']['pitchshift'][
+                                                                            mergednaive['mu_list']['pitchshift'][
                                                                                 'female_talker'][2]))
-    meregedtest['mu_list']['pitchshift']['male_talker'] = np.concatenate((meregedtest['mu_list']['pitchshift'][
+    mergednaive['mu_list']['pitchshift']['male_talker'] = np.concatenate((mergednaive['mu_list']['pitchshift'][
                                                                               'male_talker'][0],
-                                                                          meregedtest['mu_list']['pitchshift'][
+                                                                          mergednaive['mu_list']['pitchshift'][
                                                                               'male_talker'][1],
-                                                                          meregedtest['mu_list']['pitchshift'][
+                                                                          mergednaive['mu_list']['pitchshift'][
                                                                               'male_talker'][2]))
 
     mergednaiveanimaldict = {**dictoutput_eclair, **dictoutput_crumble}
     pdoutput_eclair = pd.DataFrame.from_dict(dictoutput_eclair)
     pdoutput_crumble = pd.DataFrame.from_dict(dictoutput_crumble)
+
+    generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput_zola, dictoutput_crumble, dictoutput_eclair, dictoutput_cruella, dictoutput_nala)
+
+    return mergedtrained, mergednaive, mergednaiveanimaldict, pdoutput_eclair, pdoutput_crumble
+
+
+
+def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput_zola, dictoutput_crumble, dictoutput_eclair, dictoutput_cruella, dictoutput_nala):
 
     for sutype in mergednaiveanimaldict.keys():
         fig, ax = plt.subplots(2, figsize=(5, 6))
@@ -556,8 +546,8 @@ if __name__ == '__main__':
         count = 0
 
         for pitchshiftornot in mergednaiveanimaldict[sutype].keys():
-            ax[count].boxplot([meregedtest[sutype][pitchshiftornot]['female_talker'],
-                               meregedtest[sutype][pitchshiftornot]['male_talker']])
+            ax[count].boxplot([mergednaive[sutype][pitchshiftornot]['female_talker'],
+                               mergednaive[sutype][pitchshiftornot]['male_talker']])
             ax[count].legend()
             ax[count].set_ylabel('LSTM decoding score')
             if sutype == 'su_list':
@@ -577,16 +567,16 @@ if __name__ == '__main__':
             ax[count].plot(x, y_crum, ".", color='mediumblue', alpha=0.2, label='F1901')
             ax[count].plot(x2, y_eclair, ".", color='darkorange', alpha=0.2, label='F1902')
             print('mean score for naive male ' + pitchshiftornot + sutype + 'is' + str(
-                np.mean(meregedtest[sutype][pitchshiftornot]['male_talker'])) + 'and std is' + str(
-                np.std(meregedtest[sutype][pitchshiftornot]['male_talker'])))
+                np.mean(mergednaive[sutype][pitchshiftornot]['male_talker'])) + 'and std is' + str(
+                np.std(mergednaive[sutype][pitchshiftornot]['male_talker'])))
             print('mean score for naive female ' + pitchshiftornot + sutype + 'is' + str(
-                np.mean(meregedtest[sutype][pitchshiftornot]['female_talker'])) + 'and std is' + str(
-                np.std(meregedtest[sutype][pitchshiftornot]['female_talker'])))
+                np.mean(mergednaive[sutype][pitchshiftornot]['female_talker'])) + 'and std is' + str(
+                np.std(mergednaive[sutype][pitchshiftornot]['female_talker'])))
             print('mean score for naive for both talkers' + pitchshiftornot + sutype + 'is' + str(np.mean(
-                np.concatenate((meregedtest[sutype][pitchshiftornot]['male_talker'],
-                                meregedtest[sutype][pitchshiftornot]['female_talker'])))) + 'and std is' + str(np.std(
-                np.concatenate((meregedtest[sutype][pitchshiftornot]['male_talker'],
-                                meregedtest[sutype][pitchshiftornot]['female_talker'])))))
+                np.concatenate((mergednaive[sutype][pitchshiftornot]['male_talker'],
+                                mergednaive[sutype][pitchshiftornot]['female_talker'])))) + 'and std is' + str(np.std(
+                np.concatenate((mergednaive[sutype][pitchshiftornot]['male_talker'],
+                                mergednaive[sutype][pitchshiftornot]['female_talker'])))))
 
             y2_crum = dictoutput_crumble[sutype][pitchshiftornot]['male_talker']
             y2_eclair = dictoutput_eclair[sutype][pitchshiftornot]['male_talker']
@@ -1242,10 +1232,10 @@ if __name__ == '__main__':
     count = 0
 
     for pitchshiftornot in mergednaiveanimaldict[sutype].keys():
-        ax[count].boxplot([meregedtest['su_list'][pitchshiftornot]['female_talker'],
-                           meregedtest['mu_list'][pitchshiftornot]['female_talker'],
-                           meregedtest['su_list'][pitchshiftornot]['male_talker'],
-                           meregedtest['mu_list'][pitchshiftornot]['male_talker']])
+        ax[count].boxplot([mergednaive['su_list'][pitchshiftornot]['female_talker'],
+                           mergednaive['mu_list'][pitchshiftornot]['female_talker'],
+                           mergednaive['su_list'][pitchshiftornot]['male_talker'],
+                           mergednaive['mu_list'][pitchshiftornot]['male_talker']])
         ax[count].legend()
         ax[count].set_ylabel('LSTM decoding score (%)')
         ax[count].set_yticklabels([0, 20, 40, 60, 80, 100])
@@ -1314,22 +1304,22 @@ if __name__ == '__main__':
         ax[count].plot(x3_mu_male, y2_nala_mu_male, ".", color='slategray', alpha=0.2, label='F1812')
 
         print('mean score for naive male ' + pitchshiftornot + sutype + 'is' + str(
-            np.mean(meregedtest[sutype][pitchshiftornot]['male_talker'])) + 'and std is' + str(
-            np.std(meregedtest[sutype][pitchshiftornot]['male_talker'])))
+            np.mean(mergednaive[sutype][pitchshiftornot]['male_talker'])) + 'and std is' + str(
+            np.std(mergednaive[sutype][pitchshiftornot]['male_talker'])))
         print('mean score for naive female ' + pitchshiftornot + sutype + 'is' + str(
-            np.mean(meregedtest[sutype][pitchshiftornot]['female_talker'])) + 'and std is' + str(
-            np.std(meregedtest[sutype][pitchshiftornot]['female_talker'])))
+            np.mean(mergednaive[sutype][pitchshiftornot]['female_talker'])) + 'and std is' + str(
+            np.std(mergednaive[sutype][pitchshiftornot]['female_talker'])))
         print('mean score for naive for both talkers' + pitchshiftornot + sutype + 'is' + str(np.mean(np.concatenate((
-            meregedtest[
+            mergednaive[
                 sutype][
                 pitchshiftornot][
                 'male_talker'],
-            meregedtest[
+            mergednaive[
                 sutype][
                 pitchshiftornot][
                 'female_talker'])))) + 'and std is' + str(
-            np.std(np.concatenate((meregedtest[sutype][pitchshiftornot]['male_talker'],
-                                   meregedtest[sutype][pitchshiftornot]['female_talker'])))))
+            np.std(np.concatenate((mergednaive[sutype][pitchshiftornot]['male_talker'],
+                                   mergednaive[sutype][pitchshiftornot]['female_talker'])))))
 
         x = np.random.normal(2, 0.04, size=len(y2_crum))
         x2 = np.random.normal(2, 0.04, size=len(y2_eclair))
@@ -1462,3 +1452,7 @@ if __name__ == '__main__':
     plt.ylim(0, 1)
 
     plt.show()
+
+
+if __name__ == '__main__':
+    main()
