@@ -1070,8 +1070,8 @@ if __name__ == '__main__':
 
     relativescoretrained = [bigconcatenatetrained_nonps - bigconcatenatetrained_ps for bigconcatenatetrained_nonps, bigconcatenatetrained_ps in zip(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)]
     relativescorenaive = [bigconcatenatenaive_nonps - bigconcatenatenaive_ps for bigconcatenatenaive_nonps, bigconcatenatenaive_ps in zip(bigconcatenatenaive_ps, bigconcatenatenaive_nonps)]
-    relativescoretrainedfrac = [relativescoretrained / bigconcatenatetrained_nonps for relativescoretrained, bigconcatenatetrained_nonps in zip(relativescoretrained, bigconcatenatetrained_nonps)]
-    relativescorenaivefrac = [relativescorenaive / bigconcatenatenaive_nonps for relativescorenaive, bigconcatenatenaive_nonps in zip(relativescorenaive, bigconcatenatenaive_nonps)]
+    relativescoretrainedfrac = [relativescoretrained / (bigconcatenatetrained_nonps + bigconcatenatenaive_nonps) for relativescoretrained, bigconcatenatetrained_nonps, bigconcatenatenaive_nonps in zip(relativescoretrained, bigconcatenatetrained_nonps, bigconcatenatenaive_nonps)]
+    relativescorenaivefrac = [relativescorenaive / (bigconcatenatenaive_nonps + bigconcatenatetrained_nonps) for relativescorenaive, bigconcatenatenaive_nonps, bigconcatenatetrained_nonps in zip(relativescorenaive, bigconcatenatenaive_nonps, bigconcatenatetrained_nonps)]
 
 
     sns.distplot(relativescoretrained, bins = 20, label='trained',ax=ax, color='purple')
@@ -1095,7 +1095,7 @@ if __name__ == '__main__':
     plt.xlabel('Control - roved F0 \n LSTM decoder scores', fontsize = 20)
     plt.ylabel('Density', fontsize = 20)
     #ax.legend()
-    plt.savefig('D:/diffF0distribution_11122022.png', dpi=1000)
+    plt.savefig('D:/diffF0distribution_25032023.png', dpi=1000)
     plt.show()
 
     fig, ax = plt.subplots(1, figsize=(8, 8))
@@ -1131,12 +1131,12 @@ if __name__ == '__main__':
     # Print the t-statistic and p-value
     print(t_statfrac, p_valuefrac)
     plt.title('Control - roved F0 \n LSTM decoder scores between trained and naive animals', fontsize = 18)
-    plt.xlabel('Control - roved F0 \n LSTM decoder scores divided by control F0', fontsize = 20)
+    plt.xlabel('Control - roved F0 \n LSTM decoder scores divided by control + roved F0', fontsize = 20)
     plt.ylabel('Density', fontsize = 20)
     #ax.legend(fontsize = 18)
 
 
-    plt.savefig('D:/diffF0distribution_frac_17012023wlegend.png', dpi=1000)
+    plt.savefig('D:/diffF0distribution_frac_25032023wlegend.png', dpi=1000)
     plt.show()
 
 
