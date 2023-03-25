@@ -1104,8 +1104,6 @@ if __name__ == '__main__':
     y = ax.lines[-1].get_ydata()  # Get the y data of the distribution
     maxidtrained_idx = np.argmax(y)
     x_coord_trained = x[maxidtrained_idx]
-    plt.show()
-
 
     ax2 = sns.distplot(relativescorenaivefrac, bins = 20, label='naive', ax=ax, color='darkcyan')
 
@@ -1183,6 +1181,8 @@ if __name__ == '__main__':
     sns.distplot(bigconcatenatetrained_nonps,  label='trained control',ax=ax, color='magenta')
     ax.legend(fontsize=18)
     plt.title('Roved and Control F0 Distributions for the Trained Animals', fontsize = 18)
+    plt.ylabel('Density', fontsize = 20)
+
     plt.xlabel(' LSTM decoder scores', fontsize = 20)
 
     plt.savefig('D:/rovedF0vscontrolF0traineddistribution_17012023.png', dpi=1000)
@@ -1195,6 +1195,7 @@ if __name__ == '__main__':
     sns.distplot(bigconcatenatenaive_nonps,  label='naive control',ax=ax, color='cyan')
     ax.legend(fontsize=18)
     plt.xlabel(' LSTM decoder scores', fontsize = 20)
+    plt.ylabel('Density', fontsize = 20)
     plt.title('Roved and Control F0 Distributions for the Naive Animals', fontsize = 18)
 
     plt.savefig('D:/rovedF0vscontrolF0naivedistribution_17012023.png', dpi=1000)
