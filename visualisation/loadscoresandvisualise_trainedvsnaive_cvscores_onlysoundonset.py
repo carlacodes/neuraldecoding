@@ -1058,7 +1058,7 @@ if __name__ == '__main__':
     ax.set_title('LSTM decoder scores for' + ' F0 control vs. roved,\n ' + ' trained and naive animals', fontsize=20)
 
 
-    plt.legend( fontsize=12, ncol=2)
+    plt.legend( fontsize=15, ncol=2)
     fig.tight_layout()
     plt.savefig('D:/scattermuaandsuregplot_mod_17012023.png', dpi=1000)
 
@@ -1115,7 +1115,7 @@ if __name__ == '__main__':
     plt.axvline(x=0, color='black')
     kstestnaive = scipy.stats.kstest(relativescorenaivefrac,  stats.norm.cdf)
     leveneteststat = scipy.stats.levene(relativescorenaivefrac, relativescoretrainedfrac)
-    manwhitscorefrac = mannwhitneyu(relativescorenaivefrac, relativescoretrainedfrac, alternative = 'less')
+    manwhitscorefrac = mannwhitneyu(relativescoretrainedfrac, relativescorenaivefrac, alternative = 'less')
     #caclulate medians of distribution
 
     sample1_trained = np.random.choice(relativescoretrainedfrac, size=10000, replace=True)
