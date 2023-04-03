@@ -1,7 +1,6 @@
 from pathlib import Path
 from dataclasses import dataclass
 import numpy as np
-import pandas as pd
 from elephant import statistics
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.pyplot as plt
@@ -9,10 +8,10 @@ from tqdm import tqdm
 import pickle
 from probeinterface.plotting import plot_probe
 
-from instruments.io.phyconcatrecio import PhyConcatRecIO
+from instruments.io.archive.phyconcatrecio import PhyConcatRecIO
 from instruments.helpers.neural_analysis_helpers import align_times, generate_warp32_probe
 from instruments.helpers.extract_helpers import load_bhv_data
-from instruments.config import warpDataPath, figure_output
+from instruments.config import warpDataPath
 from instruments.helpers import util
 
 

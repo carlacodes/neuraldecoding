@@ -1,7 +1,6 @@
 from pathlib import Path
 from dataclasses import dataclass
 import numpy as np
-import pandas as pd
 from elephant import statistics
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.pyplot as plt
@@ -12,7 +11,7 @@ from probeinterface.plotting import plot_probe
 from instruments.io.phyconcatrecio import PhyConcatRecIO
 from instruments.helpers.neural_analysis_helpers import align_times, generate_warp32_probe
 from instruments.helpers.extract_helpers import load_bhv_data
-from instruments.config import warpDataPath, figure_output
+from instruments.config import warpDataPath
 from instruments.helpers import util
 
 
@@ -52,7 +51,7 @@ class concatenatedWarpData:
             with open(phy_folder / 'blocks.pkl', 'rb') as f:
                 self.blocks = pickle.load(f)
         else:
-            self.reader = PhyConcatRecIO(dirname=phy_folder, currWarpDataPath=self.warpData)
+            self.reader = PhyConcatRecIO(dirname=phy_folder, datatype='neuropixels', currNeuralDataPath=self.warpData)
             self.blocks = self.reader.read()
 
             for seg in self.blocks[0].segments:
@@ -241,10 +240,11 @@ def main():
 
     dp = Path('E:\ms4output\F2003_Orecchiette/18032023_ore_s2/recording_0\pykilosort\phy_folder')
     warpData = Path('E:\Electrophysiological_Data\F2003_Orecchiette\S2/')
+    npData = Path('E:\Electrophysiological_Data\F2003_Orecchiette\S2/')
     saveDir = Path('D:/Data/spkfigs/ore/')
     saveDir.mkdir(parents=False, exist_ok=True)
 
-    dataset = concatenatedWarpData(dp, warpData=warpData)
+    dataset = concatenatedWarpData(dp, warpData=npData)
     dataset.load()
     dataset.create_summary_pdf(saveDir, title='summary_Crumble_passive')
 
