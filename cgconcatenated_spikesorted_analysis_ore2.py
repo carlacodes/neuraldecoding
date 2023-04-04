@@ -57,7 +57,9 @@ class concatenatedNeuralData:
             self.reader = PhyConcatRecIO(dirname=phy_folder,
                                          currNeuralDataPath=self.currNeuralDataPath,
                                          datatype=self.datatype)
+
             self.blocks = self.reader.read()
+
 
             for seg in self.blocks[0].segments:
                 if seg.annotations['bhv_file'] is not None:
