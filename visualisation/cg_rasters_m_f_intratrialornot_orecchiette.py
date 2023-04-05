@@ -120,9 +120,8 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
         raster = np.concatenate((raster_target, raster_probe))
         raster_lstm = np.concatenate((raster_targ_reshaped, raster_probe_reshaped))
 
-        score, d, bootScore, bootClass, cm = classify_sweeps(raster, stim, binsize=binsize, window=window, genFig=False)
-        # fit LSTM model to the same data
-        #
+        # score, d, bootScore, bootClass, cm = classify_sweeps(raster, stim, binsize=binsize, window=window, genFig=False)
+
         newraster = raster.tolist()
         raster_reshaped = np.reshape(raster_lstm, (np.size(raster_lstm, 0), np.size(raster_lstm, 1), 1)).astype(
             'float32')
@@ -179,7 +178,7 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
 
 
-        plt.savefig('D:/Data/rasterplotsfromdecoding/Cruella/mandf/Cruelladist2_clusterid'+  str(cluster_id)+'probe'+str(probeword)+' , pitch '+str(pitchshift)+'talker'+str(talker)+'.png')
+        plt.savefig('D:/Data/rasterplotsfromdecoding/Ore/mandf/Oredist2_clusterid'+  str(cluster_id)+'probe'+str(probeword)+' , pitch '+str(pitchshift)+'talker'+str(talker)+'.png')
         #plt.show()
     return
 
