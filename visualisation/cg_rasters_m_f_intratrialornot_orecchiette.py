@@ -1,22 +1,13 @@
 import pickle
 from pathlib import Path
-
-from sklearn.model_selection import train_test_split, StratifiedKFold
 from tqdm import tqdm
-from keras import backend as K
 from viziphant.rasterplot import rasterplot
-
 from datetime import datetime
-from astropy.stats import bootstrap
-import sklearn
-from instruments.helpers.util import simple_xy_axes, set_font_axes
 from instruments.helpers.neural_analysis_helpers import get_word_aligned_raster
 from instruments.helpers.euclidean_classification_minimal_function import classify_sweeps
 # Import standard packages
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy import io
-from scipy import stats
 import pickle
 
 # If you would prefer to load the '.h5' example file rather than the '.pickle' example file. You need the deepdish package
