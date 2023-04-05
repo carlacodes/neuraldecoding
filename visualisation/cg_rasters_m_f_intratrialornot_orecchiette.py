@@ -206,9 +206,8 @@ def generate_rasters_soundonset(blocks, talker=1, pitchshift=True):
 
         # try:
         print('generating raster for sound onset')
-        raster_target = get_soundonset_alignedraster(blocks, cluster_id, word=1, pitchshift=False,
-                                                correctresp=False,
-                                                df_filter=target_filter)
+        raster_target = get_soundonset_alignedraster(blocks, cluster_id,
+                                                correctresp=False)
         raster_target = raster_target[raster_target['talker'] == int(talker)]
             # if len(raster_target) == 0:
             #     print('no relevant spikes for this talker')
