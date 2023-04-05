@@ -214,13 +214,13 @@ def scatterplot_and_visualise(probewordlist,
     return dictofsortedscores
 
 
-def main():
-    probewordlist = [(20, 22), (2, 2), (5, 6), (42, 49), (32, 38)]
-
-    dictoutput = scatterplot_and_visualise(
-        probewordlist)
-
-    return dictoutput
+# def main():
+#     probewordlist = [(20, 22), (2, 2), (5, 6), (42, 49), (32, 38)]
+#
+#     dictoutput = scatterplot_and_visualise(
+#         probewordlist)
+#
+#     return dictoutput
 
 
 def cool_dict_merge(dicts_list): #ripped this from stackoverflow
@@ -318,6 +318,9 @@ def runboostedregressiontreeforlstmscore(df_use):
 
 if __name__ == '__main__':
     probewordlist = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
+
+    dictoutput_orechiette = scatterplot_and_visualise(probewordlist, saveDir = 'E:\decoding_scores\F2003_Orecchiette\lstm_kfold_04042023_ores2', ferretname='Orecchiette')
+
     dictoutput_crumble = scatterplot_and_visualise(
         probewordlist)
     dictoutput_cruella2 = scatterplot_and_visualise(probewordlist,
