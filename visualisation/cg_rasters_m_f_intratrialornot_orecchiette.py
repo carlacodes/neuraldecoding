@@ -54,7 +54,7 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
         try:
             raster_target = get_word_aligned_raster(blocks, cluster_id, word=1, pitchshift=pitchshift,
-                                                    correctresp=True,
+                                                    correctresp=False,
                                                     df_filter=target_filter)
             raster_target = raster_target[raster_target['talker'] == int(talker)]
             if len(raster_target) == 0:
@@ -68,7 +68,7 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
         probe_filter = ['No Level Cue']  # , 'Non Correction Trials']
         try:
             raster_probe = get_word_aligned_raster(blocks, cluster_id, word=probeword, pitchshift=pitchshift,
-                                                   correctresp=True,
+                                                   correctresp=False,
                                                    df_filter=probe_filter)
             raster_probe = raster_probe[raster_probe['talker'] == talker]
             raster_probe['trial_num'] = raster_probe['trial_num'] + np.max(raster_target['trial_num'])
@@ -153,7 +153,7 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
         plt.setp(ax, xlim=custom_xlim)
 
-        plt.suptitle('Target firings for Cruella,  clus id '+ str(cluster_id)+'pitchshift = '+str(pitchshift)+'talker'+str(talker), fontsize = 20)
+        plt.suptitle('Target firings for Cruella,  clus id ' + str(cluster_id)+'pitchshift = '+str(pitchshift)+'talker'+str(talker), fontsize = 20)
         plt.savefig('D:/Data/rasterplotsfromdecoding/Cruella/mandf/Cruellatarg2_clusterid'+str(cluster_id)+' probeword '+str(probeword)+' pitch '+str(pitchshift)+'talker'+str(talker)+'.png')
         #plt.show()
 
