@@ -1,23 +1,11 @@
 import pickle
 from pathlib import Path
-import tensorflow as tf
-import numpy as np
-# from sklearn.metrics import confusion_matrix
-# import matplotlib.pyplot as plt
-# import seaborn as sns
-# from numba import njit, prange
-# import time
+
 from sklearn.model_selection import train_test_split, StratifiedKFold
 from tqdm import tqdm
 from keras import backend as K
 from viziphant.rasterplot import rasterplot
 
-from sklearn.utils import resample
-import astropy
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_pdf import PdfPages
-from matplotlib.ticker import MaxNLocator
-import seaborn as sns
 from datetime import datetime
 from astropy.stats import bootstrap
 import sklearn
@@ -251,7 +239,7 @@ def run_classification(dir):
 
 def main():
 
-    directories = ['cruella_2022']  # , 'Trifle_July_2022']
+    directories = ['orecchiette_2022']  # , 'Trifle_July_2022']
     for dir in directories:
         run_classification(dir)
 
