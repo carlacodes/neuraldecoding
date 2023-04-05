@@ -191,14 +191,6 @@ def generate_rasters_soundonset(blocks, talker=1, pitchshift=True):
     clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
                  st.annotations['group'] != 'noise']
 
-    scores = {'cluster_id': [],
-              'score': [],
-              'cm': [],
-              'bootScore': [],
-              'lstm_score': [],
-              'lstm_avg': [],
-              'lstm_balanced': [],
-              'lstm_balanced_avg': [], }
     cluster_id_droplist = np.empty([])
     for cluster_id in tqdm(clust_ids):
 
@@ -208,9 +200,7 @@ def generate_rasters_soundonset(blocks, talker=1, pitchshift=True):
             print('generating raster for sound onset')
             raster_target = get_soundonset_alignedraster(blocks, cluster_id)
             raster_target = raster_target[raster_target['talker'] == int(talker)]
-                # if len(raster_target) == 0:
-                #     print('no relevant spikes for this talker')
-                #     continue
+
         except:
             print('No relevant firing')
             cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
