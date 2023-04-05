@@ -186,7 +186,7 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
 
 def run_classification(dir):
-    datapath = Path(f'D:/ms4output/F1815_Cruella/wpsoutput24112022bb2bb3/phy/')
+    datapath = Path(f'E:/ms4output/F2003_Orecchiette/18032023_ore_s2/recording_0/pykilosort/phy_folder/')
     fname = 'blocks.pkl'
     with open(datapath / 'blocks.pkl', 'rb') as f:
         blocks = pickle.load(f)
@@ -195,7 +195,7 @@ def run_classification(dir):
     now = datetime.now()
     dt_string = now.strftime("%d%m%Y_%H_%M_%S")
 
-    tarDir = Path(f'/Users/cgriffiths/resultsms4/lstmclass_CVDATA_05122022')
+    tarDir = Path(f'/Users/cgriffiths/resultsms4/lstmclass_CVDATA_05042023')
     saveDir = tarDir / dt_string
     saveDir.mkdir(exist_ok=True, parents=True)
     for probeword in probewords_list:
@@ -211,14 +211,6 @@ def run_classification(dir):
             print(f'talker {talker}')
 
             scores[f'talker{talker}'] = {}
-            # scores[f'talker{talker}']['left'] = {}
-
-            # scores[f'talker{talker}']['left']['noise'] = probe_early_vs_late(blocks, talker=talker, noise = True, df_filter=['No Level Cue', 'Sound Left'], window=window, binsize=binsize)
-            # scores[f'talker{talker}']['left']['silence'] = probe_early_vs_late(blocks, talker=talker, noise = False, df_filter=['No Level Cue', 'Sound Left'], window=window, binsize=binsize)
-
-            # scores[f'talker{talker}']['right'] = {}
-            # scores[f'talker{talker}']['right']['noise'] = probe_early_vs_late(blocks, talker=talker, noise = True, df_filter=['No Level Cue', 'Sound Right'], window=window, binsize=binsize)
-            # scores[f'talker{talker}']['right']['silence'] = probe_early_vs_late(blocks, talker=talker, noise = False, df_filter=['No Level Cue', 'Sound Right'], window=window, binsize=binsize)
 
             scores[f'talker{talker}']['target_vs_probe'] = {}
 
