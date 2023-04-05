@@ -204,17 +204,17 @@ def generate_rasters_soundonset(blocks, talker=1, pitchshift=True):
 
         target_filter = ['No Level Cue']  # , 'Non Correction Trials']
 
-        # try:
-        print('generating raster for sound onset')
-        raster_target = get_soundonset_alignedraster(blocks, cluster_id)
-        raster_target = raster_target[raster_target['talker'] == int(talker)]
-            # if len(raster_target) == 0:
-            #     print('no relevant spikes for this talker')
-            #     continue
-        # except:
-        #     print('No relevant firing')
-        #     cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
-        #     continue
+        try:
+            print('generating raster for sound onset')
+            raster_target = get_soundonset_alignedraster(blocks, cluster_id)
+            raster_target = raster_target[raster_target['talker'] == int(talker)]
+                # if len(raster_target) == 0:
+                #     print('no relevant spikes for this talker')
+                #     continue
+        except:
+            print('No relevant firing')
+            cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
+            continue
 
 
         bins = np.arange(window[0], window[1], binsize)
@@ -256,7 +256,6 @@ def generate_rasters_soundonset(blocks, talker=1, pitchshift=True):
 
         plt.suptitle('Sound onset for Ore,  clus id ' + str(cluster_id)+'pitchshift = '+str(pitchshift)+'talker'+str(talker), fontsize = 20)
         plt.savefig('D:/Data/rasterplotsfromdecoding/Ore/mandf/Ore_clusid'+str(cluster_id)+' soundonset'+ str(pitchshift)+'talker'+str(talker)+'.png')
-        plt.show()
 
 
 
