@@ -42,6 +42,9 @@ singleunitlist_cruella = [16, 34, 25, 12, 2, 27, 21, 24, 17, 18, 13, 11, 22, 20,
 singleunitlist_cruella_soundonset = [13, 16, 17, 21, 22, 26, 27, 28, 34]
 singleunitlist_cruella_2 = [11, 7,23]
 
+singleunitlist_cruella_bb4bb5=[20, 18, 16, 6, 21,5, 8, 33, 27]
+multiunitlist_cruella_bb4bb5 =[30]
+
 multiunitlist_cruella_2 = [15, 19, 12, 44, 16,  27,  45, 43, 33, 8,10, 6]
 
 multiunitlist_cruella = [10, 7, 31, 29, 1, 32, 15, 9, 6, 3, 19, 23, 8, 4, 33, 14, 30, 5]
@@ -325,10 +328,10 @@ if __name__ == '__main__':
         probewordlist)
     dictoutput_cruella2 = scatterplot_and_visualise(probewordlist,
                                                    #saveDir='D:/Users/cgriffiths/resultsms4/lstmclass_CVDATA_05122022/06122022_00_40_15/',
-                                                   saveDir = 'E:\ms4output\lstm_kfold_22032023_cruella/',
+                                                   saveDir = 'D:/Users\cgriffiths/resultsms4\lstm_kfold_22032023_cruella_bb4bb5/',
                                                    ferretname='Cruella',
-                                                   singleunitlist=singleunitlist_cruella_2,
-                                                   multiunitlist=multiunitlist_cruella_2
+                                                   singleunitlist=singleunitlist_cruella_bb4bb5,
+                                                   multiunitlist=multiunitlist_cruella_bb4bb5
                                                    , noiselist=[])
 
     dictoutput_eclair = scatterplot_and_visualise(probewordlist,
