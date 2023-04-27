@@ -815,16 +815,7 @@ if __name__ == '__main__':
                 female_talker_pitchshift, male_talker_nopitchshift, male_talker_pitchshift])
     ax.legend()
     ax.set_ylabel('LSTM decoding score (%)')
-    # ax[count].set_yticklabels([0, 20, 40, 60, 80, 100])
 
-    # if sutype == 'su_list':
-    #     stringtitle = 'single'
-    # else:
-    #     stringtitle = 'multi'
-    # if pitchshiftornot == 'pitchshift':
-    #     stringtitlepitch = 'F0-roved'
-    # else:
-    #     stringtitlepitch = 'control F0'
     ax.set_title('Trained LSTM scores for' + ' F0 control vs. roved,\n ' + ' trained animals', fontsize=12)
     y_zola_su = dictoutput_zola['su_list']['nonpitchshift']['female_talker']
     y_zola_mu = dictoutput_zola['mu_list']['nonpitchshift']['female_talker']

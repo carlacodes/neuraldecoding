@@ -45,7 +45,8 @@ saveDir = 'D:/Users/cgriffiths/resultsms4/lstmclass_18112022/19112022_12_58_54/'
 singlunitlistsoundonset_crumble = [6, 7, 11, 17, 21, 22, 26]
 multiunitlist_soundonset_crumble = [13, 14, 23, 25, 27, 29]
 
-
+singleunitlist_cruella_bb4bb5=[16, 6, 21,5, 8, 33, 27]
+multiunitlist_cruella_bb4bb5 =[]
 def scatterplot_and_visualise(probewordlist,
                               saveDir='D:/Users/cgriffiths/resultsms4/lstm_output_frommyriad_15012023/lstm_kfold_14012023_crumble',
                               ferretname='Crumble',
@@ -281,10 +282,10 @@ def main():
 
     dictoutput_cruella2 = scatterplot_and_visualise(probewordlist,
                                                    #saveDir='D:/Users/cgriffiths/resultsms4/lstmclass_CVDATA_05122022/06122022_00_40_15/',
-                                                   saveDir = 'E:\ms4output\lstm_kfold_22032023_cruella/',
+                                                   saveDir = 'D:/Users\cgriffiths/resultsms4\lstm_kfold_22032023_cruella_bb4bb5/',
                                                    ferretname='Cruella',
-                                                   singleunitlist=singleunitlist_cruella_2,
-                                                   multiunitlist=multiunitlist_cruella_2
+                                                   singleunitlist=singleunitlist_cruella_bb4bb5,
+                                                   multiunitlist=multiunitlist_cruella_bb4bb5
                                                    , noiselist=[])
 
     dictoutput_crumble = scatterplot_and_visualise(
@@ -468,7 +469,7 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
 
     fig, ax = plt.subplots(1, figsize=(5, 8))
     emptydict = {}
-    dictlist = [dictoutput_cruella, dictoutput_zola, dictoutput_nala, dictoutput_crumble, dictoutput_eclair]
+    dictlist = [dictoutput_cruella,dictoutput_cruella2, dictoutput_zola, dictoutput_nala, dictoutput_crumble, dictoutput_eclair]
     count = 0
     for dictoutput in dictlist:
 
@@ -671,7 +672,7 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
     ax.plot(dictoutput_cruella['su_list']['nonpitchshift']['female_talker'],
             dictoutput_cruella['su_list']['pitchshift']['female_talker'], 'o', color='purple', alpha=0.5, label = 'F1815')
     ax.plot(dictoutput_cruella2['su_list']['nonpitchshift']['female_talker'],
-            dictoutput_cruella2['su_list']['pitchshift']['female_talker'], 'o', color='purple', alpha=0.5, label = 'F1815')
+            dictoutput_cruella2['su_list']['pitchshift']['female_talker'], 'o', color='purple', alpha=0.5)
 
     ax.plot(dictoutput_zola['su_list']['nonpitchshift']['female_talker'],
             dictoutput_zola['su_list']['pitchshift']['female_talker'], 'o', color='magenta', alpha=0.5,label = 'F1702')
