@@ -11,7 +11,7 @@ from probeinterface.plotting import plot_probe
 
 from instruments.io.phyconcatrecio import PhyConcatRecIO
 from instruments.helpers.neural_analysis_helpers import NeuralDataset, align_times, generate_warp32_probe
-from instruments.helpers.extract_helpers import load_bhv_data
+from instruments.helpers.extract_helpers import load_bhv_data, load_fra_data
 from instruments.config import warpDataPath, figure_output
 from instruments.helpers import util
 
@@ -63,7 +63,11 @@ class concatenatedNeuralData:
 
             for seg in self.blocks[0].segments:
                 if seg.annotations['bhv_file'] is not None:
-                    seg.df_bhv = load_bhv_data(seg.annotations['bhv_file'])
+                    try:
+                        seg.df_bhv = load_bhv_data(seg.annotations['bhv_file'])
+                    except:
+                        print('Failed to load bhv file for:', seg.annotations['bhv_file'])
+                        seg.df_bhv = load_fra_data(seg.annotations['bhv_file'])
                 else:
                     seg.df_bhv = None
 
