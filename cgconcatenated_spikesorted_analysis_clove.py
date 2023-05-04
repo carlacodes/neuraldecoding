@@ -66,7 +66,7 @@ class concatenatedNeuralData:
                     try:
                         seg.df_bhv = load_bhv_data(seg.annotations['bhv_file'])
                     except:
-                        print('Failed to load bhv file for:', seg.annotations['bhv_file'])
+                        print('Failed to load bhv file for:', seg.annotations['bhv_file'], 'trying FRA block')
                         seg.df_bhv = load_fra_data(seg.annotations['bhv_file'])
                 else:
                     seg.df_bhv = None

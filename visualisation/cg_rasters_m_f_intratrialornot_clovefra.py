@@ -3,7 +3,7 @@ from pathlib import Path
 from tqdm import tqdm
 from viziphant.rasterplot import rasterplot
 from datetime import datetime
-from instruments.helpers.neural_analysis_helpers import get_word_aligned_raster, get_soundonset_alignedraster
+from instruments.helpers.neural_analysis_helpers import get_word_aligned_raster, get_soundonset_alignedraster, get_fra_raster
 from instruments.helpers.euclidean_classification_minimal_function import classify_sweeps
 # Import standard packages
 import numpy as np
@@ -195,26 +195,27 @@ def generate_rasters_soundonset(blocks, talker=1, pitchshift=True):
     for cluster_id in tqdm(clust_ids):
 
         target_filter = ['No Level Cue']  # , 'Non Correction Trials']
-
         try:
             print('generating raster for sound onset')
-            raster_target = get_soundonset_alignedraster(blocks, cluster_id)
-            raster_target = raster_target[raster_target['talker'] == int(talker)]
+            raster_target = get_fra_raster(blocks, cluster_id)
+            lengthoftargraster = len(raster_target['spike_time'])
 
+        # raster_target = raster_target[raster_target['talker'] == int(talker)]
+        #
         except:
-            print('No relevant firing')
+            print('No sound onset firing')
             cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
             continue
 
 
         bins = np.arange(window[0], window[1], binsize)
 
-        lengthoftargraster = len(raster_target['spike_time'])
 
         unique_trials_targ = np.unique(raster_target['trial_num'])
 
         raster_targ_reshaped = np.empty([len(unique_trials_targ), len(bins) - 1])
         count = 0
+        raster_target['spike_time'] = raster_target['spike_time'] *(30e3/30000.289121338912)
         for trial in (unique_trials_targ):
             raster_targ_reshaped[count, :] = \
             np.histogram(raster_target['spike_time'][raster_target['trial_num'] == trial], bins=bins,
@@ -245,7 +246,7 @@ def generate_rasters_soundonset(blocks, talker=1, pitchshift=True):
         plt.setp(ax, xlim=custom_xlim)
 
         plt.suptitle('Sound onset for Ore,  clus id ' + str(cluster_id)+'pitchshift = '+str(pitchshift)+'talker'+str(talker), fontsize = 20)
-        plt.savefig('D:/Data/rasterplotsfromdecoding/Ore/mandf/Ore_clusid'+str(cluster_id)+' soundonset'+ str(pitchshift)+'talker'+str(talker)+'.png')
+        plt.savefig('figs/Clove_clusid'+str(cluster_id)+' soundonset'+ str(pitchshift)+'talker'+str(talker)+'.png')
 
 
 
@@ -315,7 +316,7 @@ def run_soundonset_rasters(dir):
 
 def main():
 
-    directories = ['orecchiette_2022']  # , 'Trifle_July_2022']
+    directories = ['clove_2022']  # , 'Trifle_July_2022']
     for dir in directories:
         run_soundonset_rasters(dir)
         #run_classification(dir)
