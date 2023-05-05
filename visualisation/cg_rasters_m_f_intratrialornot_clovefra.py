@@ -165,16 +165,16 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
 
         #ax.scatter(raster_target['spike_time'], np.ones_like(raster_target['spike_time']))
-        fig2,ax = plt.subplots(2, figsize=(20, 10))
+        fig2,ax = plt.subplots(2, figsize=(10, 5))
 
-        rasterplot(spiketrains, c='blue', histogram_bins=100, s=3, axes=ax)
+        rasterplot(spiketrains, c='blue', histogram_bins=100, s=1, axes=ax)
 
         ax[0].set_ylabel('trial')
         ax[0].set_xlabel('Time relative to word presentation (s)')
-        custom_xlim = (-0.1, 0.6)
+        custom_xlim = (-0.1, 0.3)
 
         plt.setp(ax, xlim=custom_xlim)
-        plt.suptitle('Distractor firings for Cruella,  clus id '+ str(cluster_id)+' , pitchshift = '+str(pitchshift)+ 'probeword '+str(probeword)+'talker'+str(talker), fontsize = 20)
+        plt.suptitle('Distractor firings for Cruella,  clus id '+ str(cluster_id)+' , pitchshift = '+str(pitchshift)+ 'probeword '+str(probeword)+'talker'+str(talker), fontsize = 12)
 
 
 
@@ -215,17 +215,13 @@ def generate_rasters_soundonset(blocks, talker=1, pitchshift=True):
 
         raster_targ_reshaped = np.empty([len(unique_trials_targ), len(bins) - 1])
         count = 0
-        raster_target['spike_time'] = raster_target['spike_time'] *(30e3/30000.289121338912)
+        # raster_target['spike_time'] = raster_target['spike_time'] *(30e3/30000.289121338912)
         for trial in (unique_trials_targ):
             raster_targ_reshaped[count, :] = \
             np.histogram(raster_target['spike_time'][raster_target['trial_num'] == trial], bins=bins,
                          range=(window[0], window[1]))[0]
             count += 1
 
-
-        stim0 = np.full(len(raster_target), 0)  # 0 = target word
-
-        stim0 = np.full(len(raster_targ_reshaped), 0)  # 0 = target word
         import neo
 
         spiketrains = []
@@ -236,16 +232,16 @@ def generate_rasters_soundonset(blocks, talker=1, pitchshift=True):
 
         print(spiketrains)
 
-        fig,ax = plt.subplots(2, figsize=(20, 10))
-        rasterplot(spiketrains, c='black', histogram_bins=100, s=3, axes=ax)
+        fig,ax = plt.subplots(2, figsize=(5, 10))
+        rasterplot(spiketrains, c='black', histogram_bins=100, s=1, axes=ax)
 
         ax[0].set_ylabel('trial')
         ax[0].set_xlabel('Time relative to sound onset presentation (s)')
-        custom_xlim = (-0.1, 0.6)
+        custom_xlim = (-0.1, 0.3)
 
         plt.setp(ax, xlim=custom_xlim)
 
-        plt.suptitle('Sound onset for Ore,  clus id ' + str(cluster_id)+'pitchshift = '+str(pitchshift)+'talker'+str(talker), fontsize = 20)
+        plt.suptitle('Sound onset for Clove during FRA,  clus id ' + str(cluster_id), fontsize = 12)
         plt.savefig('figs/Clove_clusid'+str(cluster_id)+' soundonset'+ str(pitchshift)+'talker'+str(talker)+'.png')
 
 
