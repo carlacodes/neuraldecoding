@@ -232,12 +232,12 @@ def generate_rasters_soundonset(blocks, talker=1, pitchshift=True):
 
         print(spiketrains)
 
-        fig,ax = plt.subplots(2, figsize=(5, 10))
+        fig,ax = plt.subplots(2, figsize=(10, 10))
         rasterplot(spiketrains, c='black', histogram_bins=100, s=1, axes=ax)
 
         ax[0].set_ylabel('trial')
         ax[0].set_xlabel('Time relative to sound onset presentation (s)')
-        custom_xlim = (-0.1, 0.3)
+        custom_xlim = (-0.1, 0.6)
 
         plt.setp(ax, xlim=custom_xlim)
 
