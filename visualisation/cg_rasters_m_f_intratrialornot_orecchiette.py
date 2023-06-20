@@ -153,8 +153,8 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
         plt.setp(ax, xlim=custom_xlim)
 
-        plt.suptitle('Target firings for Cruella,  clus id ' + str(cluster_id)+'pitchshift = '+str(pitchshift)+'talker'+str(talker), fontsize = 20)
-        plt.savefig('D:/Data/rasterplotsfromdecoding/Cruella/mandf/Cruellatarg2_clusterid'+str(cluster_id)+' probeword '+str(probeword)+' pitch '+str(pitchshift)+'talker'+str(talker)+'.png')
+        plt.suptitle('Target firings for ore,  clus id ' + str(cluster_id)+'pitchshift = '+str(pitchshift)+'talker'+str(talker), fontsize = 20)
+        plt.savefig('D:/Data/rasterplotsfromdecoding/ore/mandf/oretarg2_clusterid'+str(cluster_id)+' probeword '+str(probeword)+' pitch '+str(pitchshift)+'talker'+str(talker)+'.png')
         #plt.show()
 
         spiketrains = []
@@ -174,11 +174,11 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
         custom_xlim = (-0.1, 0.6)
 
         plt.setp(ax, xlim=custom_xlim)
-        plt.suptitle('Distractor firings for Cruella,  clus id '+ str(cluster_id)+' , pitchshift = '+str(pitchshift)+ 'probeword '+str(probeword)+'talker'+str(talker), fontsize = 20)
+        plt.suptitle('Distractor firings for ore,  clus id '+ str(cluster_id)+' , pitchshift = '+str(pitchshift)+ 'probeword '+str(probeword)+'talker'+str(talker), fontsize = 20)
 
 
 
-        plt.savefig('D:/Data/rasterplotsfromdecoding/Ore/mandf/Oredist2_clusterid'+  str(cluster_id)+'probe'+str(probeword)+' , pitch '+str(pitchshift)+'talker'+str(talker)+'.png')
+        plt.savefig('D:/Data/rasterplotsfromdecoding/Ore/Oredist2_clusterid'+  str(cluster_id)+'probe'+str(probeword)+' , pitch '+str(pitchshift)+'talker'+str(talker)+'.png')
         #plt.show()
     return
 
@@ -285,7 +285,7 @@ def run_classification(dir):
 
 
 def run_soundonset_rasters(dir):
-    datapath = Path(f'E:/ms4output/F2003_Orecchiette/18032023_ore_s2/recording_0/pykilosort/phy_folder/')
+    datapath = Path(f'E:/resultskilosort\F2003_Orecchiette/phy_folder/')
     fname = 'blocks.pkl'
     with open(datapath / 'blocks.pkl', 'rb') as f:
         blocks = pickle.load(f)

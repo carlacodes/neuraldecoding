@@ -87,12 +87,12 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
 
         try:
             raster_target = get_word_aligned_raster(blocks, cluster_id, word=1, pitchshift=pitchshift,
-                                                    correctresp=True,
-                                                    df_filter=target_filter)
+                                                    correctresp=False,
+                                                    df_filter=[])
             raster_target = raster_target[raster_target['talker'] == int(talker)]
-            if len(raster_target) == 0:
-                print('no relevant spikes for this talker')
-                continue
+            # if len(raster_target) == 0:
+            #     print('no relevant spikes for this talker')
+            #     continue
         except:
             print('No relevant target firing')
             cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
@@ -101,8 +101,8 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
         probe_filter = ['No Level Cue']  # , 'Non Correction Trials']
         try:
             raster_probe = get_word_aligned_raster(blocks, cluster_id, word=probeword, pitchshift=pitchshift,
-                                                   correctresp=True,
-                                                   df_filter=probe_filter)
+                                                   correctresp=False,
+                                                   df_filter=[])
             raster_probe = raster_probe[raster_probe['talker'] == talker]
             raster_probe['trial_num'] = raster_probe['trial_num'] + np.max(raster_target['trial_num'])
             if len(raster_probe) == 0:
@@ -145,9 +145,9 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
 
         stim0 = np.full(len(raster_targ_reshaped), 0)  # 0 = target word
         stim1 = np.full(len(raster_probe_reshaped), 1)  # 1 = probe word
-        if (len(stim0) + len(stim1)) < 5:
-            print('less than 5 trials')
-            continue
+        # if (len(stim0) + len(stim1)) < 5:
+        #     print('less than 5 trials')
+        #     continue
         stim_lstm = np.concatenate((stim0, stim1))
 
         raster = np.concatenate((raster_target, raster_probe))
