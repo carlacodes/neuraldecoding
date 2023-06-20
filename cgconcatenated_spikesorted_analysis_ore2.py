@@ -276,14 +276,11 @@ def run_single(session_path):
 def main():
     data_path = Path('/media/jules/jules_SSD/data/neural_data/Neuropixels/spikesorted/')
     ferret = 'F2003_Orecchiette'
-    # ferret = 'F2103_Fettucini'
-    dp = Path('E:\ms4output\F2003_Orecchiette/18032023_ore_s2/recording_0\pykilosort\phy_folder')
     warpData = Path('E:\Electrophysiological_Data\F2003_Orecchiette\S2/')
-    npData = Path('E:\Electrophysiological_Data\F2003_Orecchiette\S2/')
     saveDir = Path('D:/Data/spkfigs/ore/')
 
-    neural_data = Path('E:\Electrophysiological_Data\F2003_Orecchiette\S2/')
-    dp = Path('E:\ms4output\F2003_Orecchiette/18032023_ore_s2/recording_0\pykilosort\phy_folder')
+    neural_data = Path('E:\Electrophysiological_Data\F2003_Orecchiette\s2cgmod/')
+    dp = Path('E:/resultskilosort\F2003_Orecchiette\phy_folder/')
     datatype = 'neuropixels'
 
 
