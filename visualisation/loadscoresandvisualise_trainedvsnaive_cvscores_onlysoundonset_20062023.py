@@ -755,6 +755,12 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
                dictoutput_nala['mu_list']['pitchshift']['male_talker'], marker='P', facecolors='none',
                edgecolors='darkturquoise', alpha=0.5, label='F1812 MU, M')
 
+    ax.plot(dictoutput_ore['su_list']['nonpitchshift']['female_talker'],
+            dictoutput_ore['su_list']['pitchshift']['female_talker'], 'o', color='teal', alpha=0.5, label='F2003')
+
+    ax.plot(dictoutput_ore['mu_list']['nonpitchshift']['female_talker'],
+            dictoutput_ore['mu_list']['pitchshift']['female_talker'], 'P', color='teal', alpha=0.5)
+
     #x.set_ylim([0, 1])
     #ax.plot([0, 1], [0, 1], transform=ax.transAxes, color='black', linestyle='--')
     x = np.linspace(0.4, 1, 101)
@@ -826,7 +832,6 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
     y = ax.lines[-1].get_ydata()  # Get the y data of the distribution
     maxidtrained_idx = np.argmax(y)
     x_coord_trained = x[maxidtrained_idx]
-    plt.show()
 
 
     ax2 = sns.distplot(relativescorenaivefrac, bins = 20, label='naive', ax=ax, color='darkcyan')
