@@ -282,7 +282,7 @@ def runboostedregressiontreeforlstmscore(df_use):
 def main():
     probewordlist = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
 
-    dict_output_ore = scatterplot_and_visualise(probewordlist, saveDir = 'E:\decoding_scores\F2003_Orecchiette\lstm_kfold_20062023_ores2', ferretname='orecchiette', singleunitlist=np.arange(1, 200, 1),\
+    dictoutput_ore = scatterplot_and_visualise(probewordlist, saveDir = 'E:\decoding_scores\F2003_Orecchiette\lstm_kfold_20062023_ores2', ferretname='orecchiette', singleunitlist=np.arange(1, 200, 1),\
                                                  multiunitlist=np.arange(1, 384, 1), noiselist=[])
 
     dictoutput_cruella2 = scatterplot_and_visualise(probewordlist,
@@ -332,6 +332,7 @@ def main():
 
     mergednaive = cool_dict_merge([dictoutput_crumble, dictoutput_eclair])
     mergednaive = cool_dict_merge([mergednaive, dictoutput_nala])
+    mergednaive = cool_dict_merge([mergednaive, dictoutput_ore])
 
     mergedtrained = cool_dict_merge([dictoutput_cruella, dictoutput_zola])
     mergedtrained = cool_dict_merge([mergedtrained, dictoutput_cruella2])
@@ -461,12 +462,12 @@ def main():
     pdoutput_eclair = pd.DataFrame.from_dict(dictoutput_eclair)
     pdoutput_crumble = pd.DataFrame.from_dict(dictoutput_crumble)
 
-    generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput_zola, dictoutput_crumble, dictoutput_eclair, dictoutput_cruella, dictoutput_nala, dictoutput_cruella2)
+    generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput_zola, dictoutput_crumble, dictoutput_eclair, dictoutput_cruella, dictoutput_nala, dictoutput_cruella2, dictoutput_ore)
 
     return mergedtrained, mergednaive, mergednaiveanimaldict, pdoutput_eclair, pdoutput_crumble
 
 
-def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput_zola, dictoutput_crumble, dictoutput_eclair, dictoutput_cruella, dictoutput_nala, dictoutput_cruella2):
+def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput_zola, dictoutput_crumble, dictoutput_eclair, dictoutput_cruella, dictoutput_nala, dictoutput_cruella2, dictoutput_ore):
 
     from pathlib import Path
     filepath = Path('D:/dfformixedmodels/mergedtrained.csv')
@@ -635,7 +636,7 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
     #     dictoutput_cruella['su_list']['pitchshift']['female_talker'] = dictoutput_cruella['su_list']['pitchshift']['female_talker'][:len(dictoutput_cruella['su_list']['nonpitchshift']['female_talker'])]
     # elif len(dictoutput_cruella['su_list']['nonpitchshift']['female_talker']) > len(dictoutput_cruella['su_list']['pitchshift']['female_talker']):
     #     dictoutput_cruella['su_list']['nonpitchshift']['female_talker'] = dictoutput_cruella['su_list']['nonpitchshift']['female_talker'][:len(dictoutput_cruella['su_list']['pitchshift']['female_talker'])]
-    dictlist = [dictoutput_cruella, dictoutput_zola, dictoutput_nala, dictoutput_crumble, dictoutput_eclair]
+    dictlist = [dictoutput_cruella, dictoutput_zola, dictoutput_nala, dictoutput_crumble, dictoutput_eclair, dictoutput_ore]
     for dictoutput in dictlist:
         for key in dictoutput.keys():
             for key3 in dictoutput[key]['pitchshift'].keys():
@@ -661,7 +662,7 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
                 bigconcatenatetrained_nonps = np.concatenate(
                     (bigconcatenatetrained_nonps, dictouput[key]['nonpitchshift'][key3]))
 
-    dictlist = [dictoutput_nala, dictoutput_crumble, dictoutput_eclair]
+    dictlist = [dictoutput_nala, dictoutput_crumble, dictoutput_eclair, dictoutput_ore]
 
     bigconcatenatenaive_ps = np.empty(0)
     bigconcatenatenaive_nonps = np.empty(0)
@@ -778,7 +779,9 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
 
     plt.legend( fontsize=12, ncol=2)
     fig.tight_layout()
-    plt.savefig('D:/scattermuaandsuregplot_mod_25032023.png', dpi=1000)
+    plt.savefig('D:/scattermuaandsuregplot_mod_21062023.png', dpi=1000)
+    plt.savefig('D:/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000)
+
 
     plt.show()
 
@@ -814,7 +817,7 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
     plt.xlabel('Control - roved F0 \n LSTM decoder scores', fontsize = 20)
     plt.ylabel('Density', fontsize = 20)
     #ax.legend()
-    plt.savefig('D:/diffF0distribution_11122022.png', dpi=1000)
+    plt.savefig('D:/diffF0distribution_20062023.png', dpi=1000)
     plt.show()
 
     fig, ax = plt.subplots(1, figsize=(8, 8))
@@ -855,7 +858,7 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
     #ax.legend(fontsize = 18)
 
 
-    plt.savefig('D:/diffF0distribution_frac_25032023wlegend.png', dpi=1000)
+    plt.savefig('D:/diffF0distribution_frac_20062023wlegend.png', dpi=1000)
     plt.show()
 
 
@@ -874,7 +877,7 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
     manwhitscorecontrolf0 = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatenaive_nonps, alternative = 'greater')
 
     #ax.legend()
-    plt.savefig('D:/controlF0distribution25032023.png', dpi=1000)
+    plt.savefig('D:/controlF0distribution20062023.png', dpi=1000)
 
     plt.show()
 
@@ -892,7 +895,7 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
     manwhitscorerovedf0 = mannwhitneyu(bigconcatenatetrained_ps, bigconcatenatenaive_ps, alternative = 'greater')
 
     ax.legend(fontsize=18)
-    plt.savefig('D:/rovedF0distribution_25032023.png', dpi=1000)
+    plt.savefig('D:/rovedF0distribution_20062023.png', dpi=1000)
 
     plt.show()
 
@@ -904,7 +907,7 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
     plt.title('Roved and Control F0 Distributions for the Trained Animals', fontsize = 18)
     plt.xlabel(' LSTM decoder scores', fontsize = 20)
 
-    plt.savefig('D:/rovedF0vscontrolF0traineddistribution_25032023.png', dpi=1000)
+    plt.savefig('D:/rovedF0vscontrolF0traineddistribution_20062023.png', dpi=1000)
 
     plt.show()
 
@@ -916,7 +919,7 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
     plt.xlabel(' LSTM decoder scores', fontsize = 20)
     plt.title('Roved and Control F0 Distributions for the Naive Animals', fontsize = 18)
 
-    plt.savefig('D:/rovedF0vscontrolF0naivedistribution_25032023.png', dpi=1000)
+    plt.savefig('D:/rovedF0vscontrolF0naivedistribution_20062023.png', dpi=1000)
     plt.show()
     manwhitscorecontrolf0vsrovedtrained = scipy.stats.kstest(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, alternative = 'two-sided')
 

@@ -90,9 +90,9 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
                                                     correctresp=False,
                                                     df_filter=[])
             raster_target = raster_target[raster_target['talker'] == int(talker)]
-            # if len(raster_target) == 0:
-            #     print('no relevant spikes for this talker')
-            #     continue
+            if len(raster_target) == 0:
+                print('no relevant spikes for this talker')
+                continue
         except:
             print('No relevant target firing')
             cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
@@ -177,7 +177,7 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
         totalbalaclist = []
 
 
-        for i in range(0, 10):
+        for i in range(0, 3):
             print('iteration', i)
             accuracy_list = []
             bal_ac_list = []
