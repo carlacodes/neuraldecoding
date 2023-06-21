@@ -282,7 +282,7 @@ def runboostedregressiontreeforlstmscore(df_use):
 def main():
     probewordlist = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
 
-    dictoutput_ore = scatterplot_and_visualise(probewordlist, saveDir = 'E:\decoding_scores\F2003_Orecchiette\lstm_kfold_20062023_ores2', ferretname='orecchiette', singleunitlist=np.arange(1, 200, 1),\
+    dictoutput_ore = scatterplot_and_visualise(probewordlist, saveDir = 'E:\decoding_scores\F2003_Orecchiette\lstm_kfold_20062023_ores2', ferretname='orecchiette', singleunitlist=[1,19, 21, 219, 227],\
                                                  multiunitlist=np.arange(1, 384, 1), noiselist=[])
 
     dictoutput_cruella2 = scatterplot_and_visualise(probewordlist,
