@@ -352,7 +352,7 @@ def main():
     mergednaive = cool_dict_merge([mergednaive, dictoutput_ore])
 
     mergedtrained = cool_dict_merge([dictoutput_cruella, dictoutput_zola])
-    mergedtrained = cool_dict_merge([mergedtrained, dictoutput_cruella2])
+    # mergedtrained = cool_dict_merge([mergedtrained, dictoutput_cruella2])
 
     mergedtrained['su_list'] = cool_dict_merge([mergedtrained['su_list'][0], mergedtrained['su_list'][1]])
     mergedtrained['su_list']['pitchshift'] = cool_dict_merge(
@@ -492,7 +492,7 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
 
     fig, ax = plt.subplots(1, figsize=(5, 8))
     emptydict = {}
-    dictlist = [dictoutput_cruella,dictoutput_cruella2, dictoutput_zola, dictoutput_nala, dictoutput_crumble, dictoutput_eclair]
+    dictlist = [dictoutput_cruella, dictoutput_zola, dictoutput_nala, dictoutput_crumble, dictoutput_eclair]
     count = 0
     for dictoutput in dictlist:
 
@@ -550,15 +550,18 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
     y_zola_su = dictoutput_zola['su_list']['nonpitchshift']['female_talker']
     y_zola_mu = dictoutput_zola['mu_list']['nonpitchshift']['female_talker']
 
-    y_cruella_su = np.append(dictoutput_cruella['su_list']['nonpitchshift']['female_talker'], dictoutput_cruella2['su_list']['nonpitchshift']['female_talker'])
-    y_cruella_mu = np.append(dictoutput_cruella['mu_list']['nonpitchshift']['female_talker'], dictoutput_cruella2['mu_list']['nonpitchshift']['female_talker'])
+    # y_cruella_su = np.append(dictoutput_cruella['su_list']['nonpitchshift']['female_talker'], dictoutput_cruella2['su_list']['nonpitchshift']['female_talker'])
+    y_cruella_su = dictoutput_cruella['su_list']['nonpitchshift']['female_talker']
+    # y_cruella_mu = np.append(dictoutput_cruella['mu_list']['nonpitchshift']['female_talker'], dictoutput_cruella2['mu_list']['nonpitchshift']['female_talker'])
+    y_cruella_mu = dictoutput_cruella['mu_list']['nonpitchshift']['female_talker']
 
     y2_zola_su_male = dictoutput_zola['su_list']['nonpitchshift']['male_talker']
-    y2_cruella_su_male = np.append(dictoutput_cruella['su_list']['nonpitchshift']['male_talker'], dictoutput_cruella2['su_list']['nonpitchshift']['male_talker'])
+    # y2_cruella_su_male = np.append(dictoutput_cruella['su_list']['nonpitchshift']['male_talker'], dictoutput_cruella2['su_list']['nonpitchshift']['male_talker'])
+    y2_cruella_su_male = dictoutput_cruella['su_list']['nonpitchshift']['male_talker']
 
     y2_zola_mu_male = dictoutput_zola['mu_list']['nonpitchshift']['male_talker']
-    y2_cruella_mu_male = np.append(dictoutput_cruella['mu_list']['nonpitchshift']['male_talker'], dictoutput_cruella2['mu_list']['nonpitchshift']['male_talker'])
-
+    # y2_cruella_mu_male = np.append(dictoutput_cruella['mu_list']['nonpitchshift']['male_talker'], dictoutput_cruella2['mu_list']['nonpitchshift']['male_talker'])
+    y2_cruella_mu_male = dictoutput_cruella['mu_list']['nonpitchshift']['male_talker']
     # Add some random "jitter" to the x-axis
     x_su = np.random.normal(1, 0.04, size=len(y_zola_su))
     x2_su = np.random.normal(1, 0.04, size=len(y_cruella_su))
@@ -668,7 +671,8 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
                         dictoutput[key]['nonpitchshift'][key3][
                         :len(dictoutput[key]['pitchshift'][key3])]
 
-    dictlist = [dictoutput_cruella, dictoutput_zola, dictoutput_cruella2]
+    dictlist = [dictoutput_cruella, dictoutput_zola]
+    #dictoutput_cruella2
     bigconcatenatetrained_ps = np.empty(0)
     bigconcatenatetrained_nonps = np.empty(0)
     for dictouput in dictlist:
@@ -694,8 +698,8 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
 
     ax.plot(dictoutput_cruella['su_list']['nonpitchshift']['female_talker'],
             dictoutput_cruella['su_list']['pitchshift']['female_talker'], 'o', color='purple', alpha=0.5, label = 'F1815')
-    ax.plot(dictoutput_cruella2['su_list']['nonpitchshift']['female_talker'],
-            dictoutput_cruella2['su_list']['pitchshift']['female_talker'], 'o', color='purple', alpha=0.5)
+    # ax.plot(dictoutput_cruella2['su_list']['nonpitchshift']['female_talker'],
+    #         dictoutput_cruella2['su_list']['pitchshift']['female_talker'], 'o', color='purple', alpha=0.5)
 
     ax.plot(dictoutput_zola['su_list']['nonpitchshift']['female_talker'],
             dictoutput_zola['su_list']['pitchshift']['female_talker'], 'o', color='magenta', alpha=0.5,label = 'F1702')
@@ -707,9 +711,9 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
     ax.scatter(dictoutput_cruella['su_list']['nonpitchshift']['male_talker'],
                dictoutput_cruella['su_list']['pitchshift']['male_talker'], marker='o', facecolors='none',
                edgecolors='purple', alpha=0.5)
-    ax.scatter(dictoutput_cruella2['su_list']['nonpitchshift']['male_talker'],
-               dictoutput_cruella2['su_list']['pitchshift']['male_talker'], marker='o', facecolors='none',
-               edgecolors='purple', alpha=0.5)
+    # ax.scatter(dictoutput_cruella2['su_list']['nonpitchshift']['male_talker'],
+    #            dictoutput_cruella2['su_list']['pitchshift']['male_talker'], marker='o', facecolors='none',
+    #            edgecolors='purple', alpha=0.5)
 
     ax.scatter(dictoutput_zola['su_list']['nonpitchshift']['male_talker'],
                dictoutput_zola['su_list']['pitchshift']['male_talker'], marker='o', facecolors='none',
@@ -719,9 +723,9 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
                dictoutput_cruella['mu_list']['pitchshift']['male_talker'], marker='P', facecolors='none',
                edgecolors='purple', alpha=0.5)
 
-    ax.scatter(dictoutput_cruella2['mu_list']['nonpitchshift']['male_talker'],
-               dictoutput_cruella2['mu_list']['pitchshift']['male_talker'], marker='P', facecolors='none',
-               edgecolors='purple', alpha=0.5)
+    # ax.scatter(dictoutput_cruella2['mu_list']['nonpitchshift']['male_talker'],
+    #            dictoutput_cruella2['mu_list']['pitchshift']['male_talker'], marker='P', facecolors='none',
+    #            edgecolors='purple', alpha=0.5)
 
     ax.scatter(dictoutput_zola['mu_list']['nonpitchshift']['male_talker'],
                dictoutput_zola['mu_list']['pitchshift']['male_talker'], marker='P', facecolors='none',
