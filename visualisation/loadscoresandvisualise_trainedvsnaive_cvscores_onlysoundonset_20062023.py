@@ -756,10 +756,10 @@ def generate_plots(mergedtrained, mergednaive, mergednaiveanimaldict, dictoutput
                edgecolors='darkturquoise', alpha=0.5, label='F1812 MU, M')
 
     ax.plot(dictoutput_ore['su_list']['nonpitchshift']['female_talker'],
-            dictoutput_ore['su_list']['pitchshift']['female_talker'], 'o', color='teal', alpha=0.5, label='F2003')
+            dictoutput_ore['su_list']['pitchshift']['female_talker'], 'o', color='steelblue', alpha=0.5, label='F2003')
 
     ax.plot(dictoutput_ore['mu_list']['nonpitchshift']['female_talker'],
-            dictoutput_ore['mu_list']['pitchshift']['female_talker'], 'P', color='teal', alpha=0.5)
+            dictoutput_ore['mu_list']['pitchshift']['female_talker'], 'P', color='steelblue', alpha=0.5)
 
     #x.set_ylim([0, 1])
     #ax.plot([0, 1], [0, 1], transform=ax.transAxes, color='black', linestyle='--')
