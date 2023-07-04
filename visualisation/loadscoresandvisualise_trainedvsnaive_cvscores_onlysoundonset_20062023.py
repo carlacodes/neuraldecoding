@@ -92,6 +92,23 @@ def scatterplot_and_visualise(probewordlist,
                     for i, clus in enumerate(scores[f'talker{talker}'][comp][cond]['cluster_id']):
 
                         print(i, clus)
+                        if ferretname == 'Orecchiette':
+                            #read csv file and get cluster id
+                            print('checking clusters are in AC')
+                            #read numpy from csv
+                            #read pickle file
+
+                            channelpositions = pd.read_pickle(r'D:\spkvisanddecodeproj2/analysisscriptsmodcg/visualisation\channelpositions\F2003_Orecchiette/channelpos.pkl')
+                            #remove rows that are not the cluster id, represented by the first column in the np array out of three columns
+
+                            channelpositions = channelpositions[channelpositions[:, 0] == clus, :]
+                            #get the x and y coordinates
+                            y_pos = channelpositions[:].tolist()[0][2]
+                            y_post = int(y_pos)
+                            if y_pos < 3200:
+                                print('selected cluster below auditory cortex')
+                                pass
+
                         if clus in singleunitlist:
                             print('in single unit list')
                             if cond == 'pitchshift':
@@ -282,7 +299,7 @@ def runboostedregressiontreeforlstmscore(df_use):
 def main():
     probewordlist = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
 
-    dictoutput_ore = scatterplot_and_visualise(probewordlist, saveDir = 'E:\decoding_scores\F2003_Orecchiette\lstm_kfold_20062023_ores2', ferretname='orecchiette', singleunitlist=[1,19, 21, 219, 227],\
+    dictoutput_ore = scatterplot_and_visualise(probewordlist, saveDir = 'E:\decoding_scores\F2003_Orecchiette\lstm_kfold_20062023_ores2', ferretname='Orecchiette', singleunitlist=[1,19, 21, 219, 227],\
                                                  multiunitlist=np.arange(1, 384, 1), noiselist=[])
 
     dictoutput_cruella2 = scatterplot_and_visualise(probewordlist,
