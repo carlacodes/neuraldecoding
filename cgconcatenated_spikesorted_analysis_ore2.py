@@ -83,8 +83,9 @@ class concatenatedNeuralData:
             unit = [st for st in seg.spiketrains if st.annotations['cluster_id'] == cluster_id][0]
 
             # Only keep unit for this session if firing rate > 0.5/s
-            # if statistics.mean_firing_rate(unit) < 0.5:
-            #     continue
+            if statistics.mean_firing_rate(unit) < 0.5:
+                print('Unit', cluster_id, 'has firing rate < 0.5 Hz, skipping')
+                continue
 
             filtered_bhv = seg.df_bhv.copy()
             if len(filter_trials) > 0:
