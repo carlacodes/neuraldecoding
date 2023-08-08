@@ -176,7 +176,11 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
         totalaclist = []
         totalbalaclist = []
         #create a loop that iterates from 1 to n time point and trains the model on n-1 time points
-
+        len(X,1)
+        # filenamelist = ['Blocknellie1', 'block2', 'block3']
+        # for file in filenamelist:
+        #     print(file)
+        #
         for k in range(1, len(X), 1):
             # break X and y into time bins from 1 to k
             print(k)
