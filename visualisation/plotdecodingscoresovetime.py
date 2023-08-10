@@ -41,10 +41,10 @@ def run_scores_and_plot(file_path, pitchshift, output_folder, ferretname,  strin
         cluster_scores =scores[talkerinput]['target_vs_probe']['nopitchshift']['lstm_balancedaccuracylist'][index]
         #get the timepoints
         timepoints = np.arange(0, len(cluster_scores)/100, 0.01)
-        if index < int(len(scores['talker1']['target_vs_probe']['nopitchshift']['cluster_id'])/2):
+        if index < int(len(scores[talkerinput]['target_vs_probe']['nopitchshift']['cluster_id'])/2):
             ax = axs[1,index]
         else:
-            ax = axs[0,index-int(len(scores['talker1']['target_vs_probe']['nopitchshift']['cluster_id'])/2)]
+            ax = axs[0,index-int(len(scores[talkerinput]['target_vs_probe']['nopitchshift']['cluster_id'])/2)]
 
         ax.plot(timepoints, cluster_scores, c = color_list[totalcount])
         ax.set(xlabel='time since target word (s)', ylabel='balanced accuracy',
