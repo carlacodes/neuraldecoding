@@ -17,13 +17,15 @@ def run_scores_and_plot(file_path, pitchshift, output_folder, ferretname,  strin
         index = index + 1
         cluster_scores =scores['talker1']['target_vs_probe']['nopitchshift']['lstm_balancedaccuracylist'][index]
         #get the timepoints
-        timepoints = np.arange(0, len(cluster_scores), 1)
+        timepoints = np.arange(0, len(cluster_scores)/100, 0.01)
 
         fig, ax = plt.subplots()
         ax.plot(timepoints, cluster_scores)
-        ax.set(xlabel='timepoints', ylabel='balanced accuracy',
-                title='balanced accuracy over time')
+        ax.set(xlabel='time since target word (s)', ylabel='balanced accuracy',
+                title='balanced accuracy over time for cluster ' + str(cluster) + ' \n for ' + ferretname + ' ' + pitchshift + ' ' + talker)
         ax.grid()
+        ax.set_ylim([0, 1])
+
         fig.savefig(output_folder + '/' + 'cluster' + str(cluster) + '.png')
         plt.show()
 
