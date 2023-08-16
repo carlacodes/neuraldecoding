@@ -78,18 +78,18 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
 
         target_filter = ['Target trials', 'No Level Cue']  # , 'Non Correction Trials']
 
-        try:
-            raster_target = get_word_aligned_raster(blocks, cluster_id, word=1, pitchshift=pitchshift,
-                                                    correctresp=False,
-                                                    df_filter=target_filter)
-            raster_target = raster_target[raster_target['talker'] == int(talker)]
-            if len(raster_target) == 0:
-                print('no relevant spikes for this talker')
-                continue
-        except:
-            print('No relevant target firing')
-            cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
+        # try:
+        raster_target = get_word_aligned_raster(blocks, cluster_id, word=1, pitchshift=pitchshift,
+                                                correctresp=False,
+                                                df_filter=target_filter)
+        raster_target = raster_target[raster_target['talker'] == int(talker)]
+        if len(raster_target) == 0:
+            print('no relevant spikes for this talker')
             continue
+        # except:
+        #     print('No relevant target firing')
+        #     cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
+        #     continue
 
         probe_filter = ['No Level Cue']  # , 'Non Correction Trials']
         try:

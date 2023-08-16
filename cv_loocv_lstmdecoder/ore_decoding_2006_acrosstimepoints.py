@@ -140,12 +140,18 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
                              range=(window[0], window[1]))[0]
             count += 1
 
+        # if len(raster_targ_reshaped) < 5 or len(raster_probe_reshaped) < 5:
+        #resample if raster_probe_reshaped half of raster_targ_reshaped in length
+        if len(raster_targ_reshaped) >= len(raster_probe_reshaped)*2:
+            raster_targ_reshaped = raster_targ_reshaped[np.random.choice(len(raster_targ_reshaped), len(raster_probe_reshaped), replace=False), :]
         stim0 = np.full(len(raster_target), 0)  # 0 = target word
         stim1 = np.full(len(raster_probe), 1)  # 1 = probe word
         stim = np.concatenate((stim0, stim1))
 
         stim0 = np.full(len(raster_targ_reshaped), 0)  # 0 = target word
         stim1 = np.full(len(raster_probe_reshaped), 1)  # 1 = probe word
+        #resample if stim1 half of stim0 in length
+
         # if (len(stim0) + len(stim1)) < 5:
         #     print('less than 5 trials')
         #     continue

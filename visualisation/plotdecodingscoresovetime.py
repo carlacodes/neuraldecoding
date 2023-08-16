@@ -38,13 +38,13 @@ def run_scores_and_plot(file_path, pitchshift, output_folder, ferretname,  strin
     for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
         #get the scores
         index = index + 1
-        cluster_scores =scores[talkerinput]['target_vs_probe']['nopitchshift']['lstm_balancedaccuracylist'][index]
+        cluster_scores =scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index]
         #get the timepoints
         timepoints = np.arange(0, len(cluster_scores)/100, 0.01)
-        if index < int(len(scores[talkerinput]['target_vs_probe']['nopitchshift']['cluster_id'])/2):
+        if index < int(len(scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id'])/2):
             ax = axs[1,index]
         else:
-            ax = axs[0,index-int(len(scores[talkerinput]['target_vs_probe']['nopitchshift']['cluster_id'])/2)]
+            ax = axs[0,index-int(len(scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id'])/2)]
 
         ax.plot(timepoints, cluster_scores, c = color_list[totalcount])
         ax.set(xlabel='time since target word (s)', ylabel='balanced accuracy',
@@ -52,7 +52,7 @@ def run_scores_and_plot(file_path, pitchshift, output_folder, ferretname,  strin
         ax.set_ylim([0, 1])
         ax.grid()
     plt.suptitle('LSTM balanced accuracy for ' + ferretname + ' ' + pitchshifttext + ' ' + talker+ ' target vs. ' + word_equivalent, fontsize = 30)
-    fig.savefig(output_folder + '/' + 'multipanel' + stringprobewordindex +'talker_'+talker+ '.png', bbox_inches='tight')
+    fig.savefig(output_folder + '/' + 'multipanel' +pitchshift+ stringprobewordindex +'talker_'+talker+ '.png', bbox_inches='tight')
 
 
     return scores
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     file_path = 'E:\\lstm_kfold_01082023_oreovertimes2'
     output_folder = 'E:\\lstm_kfold_01082023_oreovertimes2'
     ferretname = 'orecchiette'
-    pitchshift = 'nopitchshift'
+    pitchshift = 'pitchshift'
     stringprobewordlist = [5,2]
     # probewordlist = [ (5, 6),(2, 2), (42, 49), (32, 38), (20, 22)]
     totalcount = 0
