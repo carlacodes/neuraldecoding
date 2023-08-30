@@ -83,6 +83,12 @@ def generatewordspiketrains(blocks, talker=1, probewords=[20, 22], pitchshift=Tr
     raster_reshaped_array_final = raster_reshaped_array_final[:, :,:, 0]
     #reshape so the first dimension is the number of trials
     raster_reshaped_array_final2 = np.reshape(raster_reshaped_array_final, (np.size(raster_reshaped_array_final, 1), np.size(raster_reshaped_array_final, 2), np.size(raster_reshaped_array_final, 0)))
+    #calculate the spike rates from the count by smoothed by convolution with a Gaussian kernel
+    from scipy.ndimage import gaussian_filter1d
+    raster_reshaped_array_final_smoothed = gaussian_filter1d(raster_reshaped_array_final2, sigma=2, axis=1)
+
+
+    raster_reshaped_array_final_rate = raster_reshaped_array_final2/binsize
 
 
 
