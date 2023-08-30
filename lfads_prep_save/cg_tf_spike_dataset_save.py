@@ -53,6 +53,8 @@ def generatewordspiketrains(blocks, talker=1, probewords=[20, 22], pitchshift=Tr
         bins = np.arange(window[0], window[1], binsize)
 
         unique_trials_probe=np.unique(raster_probe['trial_num'])
+        #subsampl
+
         raster_probe_reshaped = np.empty([len(unique_trials_probe), len(bins) - 1])
 
         count = 0
@@ -61,6 +63,10 @@ def generatewordspiketrains(blocks, talker=1, probewords=[20, 22], pitchshift=Tr
             count+=1
 
 
+
+        if len(raster_probe_reshaped) != 350:
+            #resample with replacement to get 350 trials
+            raster_probe_reshaped = raster_probe_reshaped[np.random.choice(len(raster_probe_reshaped), 350, replace=True), :]
 
         raster_lstm = raster_probe_reshaped
 
@@ -73,8 +79,15 @@ def generatewordspiketrains(blocks, talker=1, probewords=[20, 22], pitchshift=Tr
 
 
     raster_reshaped_array_final= np.stack(raster_reshaped_array)
+    #remove the last dimension of size 1
+    raster_reshaped_array_final = raster_reshaped_array_final[:, :,:, 0]
+    #reshape so the first dimension is the number of trials
+    raster_reshaped_array_final2 = np.reshape(raster_reshaped_array_final, (np.size(raster_reshaped_array_final, 1), np.size(raster_reshaped_array_final, 2), np.size(raster_reshaped_array_final, 0)))
+
+
+
     with h5py.File(f'D:/tf_h5files/F1702_Zola/raster_reshaped_{str(talker)}_{str(probeword)}_pitchshift_{pitchshift}.h5', 'w') as hf:
-        hf.create_dataset("spike_data", data=raster_reshaped_array_final)
+        hf.create_dataset("spike_data", data=raster_reshaped_array_final2)
             # hf.create_dataset("stim_data", data=stim_reshaped)
 
 

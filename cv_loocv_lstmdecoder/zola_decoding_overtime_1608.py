@@ -10,8 +10,6 @@ from sklearn.utils import resample
 import astropy
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
-from matplotlib.ticker import MaxNLocator
-import seaborn as sns
 from datetime import datetime
 from astropy.stats import bootstrap
 import sklearn
@@ -21,8 +19,7 @@ from instruments.helpers.euclidean_classification_minimal_function import classi
 # Import standard packages
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy import io
-from scipy import stats
+
 import pickle
 
 # If you would prefer to load the '.h5' example file rather than the '.pickle' example file. You need the deepdish package
