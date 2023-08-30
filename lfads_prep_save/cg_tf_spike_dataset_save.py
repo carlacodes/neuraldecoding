@@ -69,60 +69,32 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
     cluster_id_droplist = np.empty([])
     for cluster_id in tqdm(clust_ids):
 
-        target_filter = ['Target trials', 'No Level Cue']  # , 'Non Correction Trials']
-
-        try:
-            raster_target = get_word_aligned_raster(blocks, cluster_id, word=1, pitchshift=pitchshift,
-                                                                correctresponse=True,
-                                                                df_filter=target_filter)
-            raster_target = raster_target[raster_target['talker'] == int(talker)]
-            if len(raster_target) == 0:
-                print('no relevant spikes for this talker')
-                continue
-        except:
-            print('No relevant target firing')
-            cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
-            continue
 
         probe_filter = ['No Level Cue']  # , 'Non Correction Trials']
         try:
             raster_probe = get_word_aligned_raster(blocks, cluster_id, word=probeword, pitchshift=pitchshift,
-                                                   correctresponse=True,
+                                                   correctresp=True,
                                                    df_filter=probe_filter)
             raster_probe = raster_probe[raster_probe['talker'] == talker]
-            raster_probe['trial_num'] = raster_probe['trial_num'] + np.max(raster_target['trial_num'])
             if len(raster_probe) == 0:
                 print('no relevant spikes for this talker')
                 continue
         except:
             print('No relevant probe firing')
             cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
-
             continue
         # sample with replacement from target trials and probe trials to boostrap scores and so distributions are equal
-        lengthofraster = np.sum(len(raster_target['spike_time']) + len(raster_probe['spike_time']))
         raster_targ_reshaped = np.empty([])
-        raster_probe_reshaped = np.empty([])
         bins = np.arange(window[0], window[1], binsize)
 
-        lengthoftargraster = len(raster_target['spike_time'])
-        lengthofproberaster = len(raster_probe['spike_time'])
-
-
-        unique_trials_targ=np.unique(raster_target['trial_num'])
         unique_trials_probe=np.unique(raster_probe['trial_num'])
-        raster_targ_reshaped = np.empty([len(unique_trials_targ), len(bins) - 1])
         raster_probe_reshaped = np.empty([len(unique_trials_probe), len(bins) - 1])
-        count=0
-        for trial in (unique_trials_targ):
-            raster_targ_reshaped[count, :] = np.histogram(raster_target['spike_time'][raster_target['trial_num'] == trial], bins=bins, range=(window[0], window[1]))[0]
-            count+=1
+
         count = 0
         for trial in (unique_trials_probe):
             raster_probe_reshaped[count, :] = np.histogram(raster_probe['spike_time'][raster_probe['trial_num'] == trial], bins=bins, range=(window[0], window[1]))[0]
             count+=1
 
-        stim0 = np.full(len(raster_target), 0)  # 0 = target word
         stim1 = np.full(len(raster_probe), 1)  # 1 = probe word
         stim = np.concatenate((stim0, stim1))
 
@@ -133,21 +105,17 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
             continue
         stim_lstm = np.concatenate((stim0, stim1))
 
-        raster = np.concatenate((raster_target, raster_probe))
-        raster_lstm = np.concatenate((raster_targ_reshaped, raster_probe_reshaped))
+        raster_lstm = raster_probe_reshaped
 
-        score, d, bootScore, bootClass, cm = classify_sweeps(raster, stim, binsize=binsize, window=window, genFig=False)
-        # fit LSTM model to the same data
-        #
-        newraster = raster.tolist()
         raster_reshaped = np.reshape(raster_lstm, (np.size(raster_lstm, 0), np.size(raster_lstm, 1), 1)).astype(
             'float32')
         stim_reshaped = np.reshape(stim_lstm, (len(stim_lstm), 1)).astype('float32')
+
         #save as h5 files
-        with h5py.File(f'raster_reshaped_{talker}_{probeword[0]}_{pitchshift}.h5', 'w') as hf:
+        print('saving h5 files')
+        with h5py.File(f'D:/tf_h5files/F1702_Zola/raster_reshaped_{str(talker)}_{str(probeword)}_pitchshift_{pitchshift}.h5', 'w') as hf:
             hf.create_dataset("spike_data", data=raster_reshaped)
-            hf.create_dataset("stim_data", data=stim_reshaped)
-        hf.close()
+            # hf.create_dataset("stim_data", data=stim_reshaped)
 
 
     return scores
@@ -311,13 +279,6 @@ def save_pdf_classification_lstm(scores, saveDir, title, probeword):
                     talkestring = 'Male'
                 # plt.title('LSTM classification scores for extracted units,'+ talkestring+' talker')
                 ax.legend()
-                #
-                # ax.scatter(x - width / 2 - 0.01, yerrmax[conditions[0]], c='black', marker='_', s=50)
-                # ax.scatter(x - width / 2 - 0.01, yerrmin[conditions[0]], c='black', marker='_', s=50)
-                # ax.scatter(x + width / 2 + 0.01, yerrmax[conditions[1]], c='black', marker='_', s=50)
-                # ax.scatter(x + width / 2 + 0.01, yerrmin[conditions[1]], c='black', marker='_', s=50)
-                # ax.scatter(range(len(scores)), yerrmax, c='black', marker='_', s=10)
-                # ax.scatter(range(len(scores)), yerrmin, c='black', marker='_', s=10)
 
                 n_trials = {}
                 trial_string = ''
@@ -420,7 +381,7 @@ def run_classification(dir):
         blocks = pickle.load(f)
 
     scores = {}
-    probewords_list= [(5,6), (2,2),(20,22), (42,49), (32, 38)]
+    probewords_list= [(1,1), (5,6), (2,2),(20,22), (42,49), (32, 38)]
     now = datetime.now()
     dt_string = now.strftime("%d%m%Y_%H_%M_%S")
 
@@ -440,14 +401,6 @@ def run_classification(dir):
             print(f'talker {talker}')
 
             scores[f'talker{talker}'] = {}
-            # scores[f'talker{talker}']['left'] = {}
-
-            # scores[f'talker{talker}']['left']['noise'] = probe_early_vs_late(blocks, talker=talker, noise = True, df_filter=['No Level Cue', 'Sound Left'], window=window, binsize=binsize)
-            # scores[f'talker{talker}']['left']['silence'] = probe_early_vs_late(blocks, talker=talker, noise = False, df_filter=['No Level Cue', 'Sound Left'], window=window, binsize=binsize)
-
-            # scores[f'talker{talker}']['right'] = {}
-            # scores[f'talker{talker}']['right']['noise'] = probe_early_vs_late(blocks, talker=talker, noise = True, df_filter=['No Level Cue', 'Sound Right'], window=window, binsize=binsize)
-            # scores[f'talker{talker}']['right']['silence'] = probe_early_vs_late(blocks, talker=talker, noise = False, df_filter=['No Level Cue', 'Sound Right'], window=window, binsize=binsize)
 
             scores[f'talker{talker}']['target_vs_probe'] = {}
 
@@ -459,10 +412,10 @@ def run_classification(dir):
                                                                                          pitchshift=True)
 
 
-            np.save(saveDir / f'scores_{dir}_{probeword[0]}_zola_probe_pitchshift_vs_not_by_talker_bs.npy', scores)
-
-        fname = 'scores_' + dir + f'_probe_earlylate_left_right_win_bs_{binsize}'
-        save_pdf_classification_lstm(scores, saveDir, fname, probeword)
+        #     np.save(saveDir / f'scores_{dir}_{probeword[0]}_zola_probe_pitchshift_vs_not_by_talker_bs.npy', scores)
+        #
+        # fname = 'scores_' + dir + f'_probe_earlylate_left_right_win_bs_{binsize}'
+        # save_pdf_classification_lstm(scores, saveDir, fname, probeword)
 
     # title = f'eucl_classification_{dir}_26082022'
     # with PdfPages(saveDir / f'{title}.pdf') as pdf:
