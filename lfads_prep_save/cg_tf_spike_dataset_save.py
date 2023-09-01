@@ -16,7 +16,7 @@ def generatewordspiketrains(blocks, talker=1, probewords=[20, 22], pitchshift=Tr
         probeword = probewords[0]
     else:
         probeword = probewords[1]
-    binsize = 0.05
+    binsize = 0.01
 
     clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
                  st.annotations['group'] != 'noise']
@@ -93,18 +93,18 @@ def generatewordspiketrains(blocks, talker=1, probewords=[20, 22], pitchshift=Tr
 
     #split into train and test
     #from 0 to 80% of trials are train, 20% are test, using train test split
-    X_train, X_test, y_train, y_test = train_test_split(raster_reshaped_array_final2, raster_reshaped_array_final_rate, test_size=0.2, random_state=42, shuffle = True)
+    X_train, X_test = train_test_split(raster_reshaped_array_final2, test_size=0.2, random_state=42, shuffle = True)
 
 
 
 
 
 #'conversion_factor', 'train_data', 'train_inds', 'train_truth', 'valid_data', 'valid_inds', 'valid_truth'
-    with h5py.File(f'D:/tf_h5files/F1702_Zola/raster_reshaped_{str(talker)}_{str(probeword)}_pitchshift_{pitchshift}.h5', 'w') as hf:
+    with h5py.File(f'D:/tf_h5files/F1702_Zola/raster_reshaped_{str(talker)}_{str(probeword)}_{pitchshift}_pitchshift.h5', 'w') as hf:
         hf.create_dataset("train_data", data=X_train)
         hf.create_dataset("valid_data", data=X_test)
-        hf.create_dataset("train_truth", data=y_train)
-        hf.create_dataset("valid_truth", data=y_test)
+        # hf.create_dataset("train_truth", data=y_train)
+        # hf.create_dataset("valid_truth", data=y_test)
         hf.create_dataset("conversion_factor", data=binsize)
         hf.create_dataset("train_inds", data=np.arange(0, len(X_train)))
         hf.create_dataset("valid_inds", data=np.arange(0, len(X_test)))
