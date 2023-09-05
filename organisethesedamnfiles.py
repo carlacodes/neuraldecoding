@@ -71,6 +71,38 @@ def organise_files_into_directories(path, dates):
 
 
 
+def get_list_of_recblocks(path):
+    #get all the files in the path directory
+    recblocks = []
+    for i in os.listdir(path):
+        #check if the file is a .mat file
+        if i.endswith('.mat'):
+            #load the file
+            try:
+                data = mat73.loadmat(path + '/' + i)
+                date = datetime.fromordinal(int(date)) + timedelta(days=date % 1) - timedelta(days=366)
+                date = datetime.date(date)
+            except:
+                #extract the date from the file name
+                date = i.split('_')
+                #get the block number
+                block = date[-1].split('.')[0]
+                #get the recording number, which is the string of numbers after block
+                rec = block.split('Block')
+                rec = rec[1]
+                #convert to an integer, remove the - sign
+                rec = rec.split('-')
+                #combine the two numbers
+                rec = rec[0] + rec[1]
+                #convert to an integer
+                rec = int(rec)
+                #append to a big list
+                recblocks.append(rec)
+    #sort the list
+    recblocks.sort()
+    print('done')
+
+
 
 
 
@@ -102,7 +134,11 @@ if __name__ == '__main__':
         "15/04/2016"
     ]
 
-    date_objects = [datetime.strptime(date_string, "%d/%m/%Y") for date_string in date_strings]
-    #remove the time from the date objects
-    date_objects = [datetime.date(date_object) for date_object in date_objects]
-    organise_files_into_directories(path, date_objects)
+    # date_objects = [datetime.strptime(date_string, "%d/%m/%Y") for date_string in date_strings]
+    # #remove the time from the date objects
+    # date_objects = [datetime.date(date_object) for date_object in date_objects]
+    # #organise the date_objects in ascencind order
+    # date_objects.sort()
+    #
+    # organise_files_into_directories(path, date_objects)
+    get_list_of_recblocks('D:\Data\F1306_Firefly/2014-10-22')
