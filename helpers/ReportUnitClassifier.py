@@ -21,8 +21,6 @@ class ReportUnitClassifier:
         '''
         # Read the report.csv file
         report = pd.read_csv(self.path / 'quality metrics.csv')
-
-        # Get the level above and read the phy directory
         path_parent = self.path.parent
 
         # Read cluster info tsv file
@@ -48,7 +46,7 @@ class ReportUnitClassifier:
     def plot_results(report):
         ''' Plot the results of the classification
         :param report: report with unit_type column
-        :return:
+        :return:none
         '''
 
         plt.figure(figsize=(10, 6))
