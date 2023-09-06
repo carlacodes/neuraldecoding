@@ -101,13 +101,16 @@ def generatewordspiketrains(blocks, talker=1, probewords=[20, 22], pitchshift=Tr
 
 #'conversion_factor', 'train_data', 'train_inds', 'train_truth', 'valid_data', 'valid_inds', 'valid_truth'
     with h5py.File(f'D:/tf_h5files/F1702_Zola/raster_reshaped_{str(talker)}_{str(probeword)}_{pitchshift}_pitchshift.h5', 'w') as hf:
-        hf.create_dataset("train_data", data=X_train)
-        hf.create_dataset("valid_data", data=X_test)
+        hf.create_dataset("train_encod_data", data=X_train)
+        hf.create_dataset("train_recon_data", data=X_test)
+
+        hf.create_dataset("valid_encod_data", data=X_train)
+        hf.create_dataset("valid_recon_data", data=X_test)
         # hf.create_dataset("train_truth", data=y_train)
         # hf.create_dataset("valid_truth", data=y_test)
-        hf.create_dataset("conversion_factor", data=binsize)
-        hf.create_dataset("train_inds", data=np.arange(0, len(X_train)))
-        hf.create_dataset("valid_inds", data=np.arange(0, len(X_test)))
+        # hf.create_dataset("conversion_factor", data=binsize)
+        # hf.create_dataset("train_inds", data=np.arange(0, len(X_train)))
+        # hf.create_dataset("valid_inds", data=np.arange(0, len(X_test)))
 
 
 
