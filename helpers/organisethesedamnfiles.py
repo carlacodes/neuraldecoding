@@ -9,10 +9,10 @@ import scipy.io
 
 
 def organise_files_into_directories(path, dates):
- '''    Organise the files in the path directory into subdirectories based on their dates
-    :param path: the path to the directory containing the files
-    :param dates: a list of dates, in datetime.date format, between which the files should be organised
-    :return: None'''
+    '''    Organise the files in the path directory into subdirectories based on their dates
+        :param path: the path to the directory containing the files
+        :param dates: a list of dates, in datetime.date format, between which the files should be organised
+        :return: None '''
 
     #read the matlab files and extract their dates
 
@@ -77,6 +77,10 @@ def organise_files_into_directories(path, dates):
 
 
 def get_list_of_recblocks(path):
+    '''    Get a list of the recording blocks in the path directory in ascending order
+        :param path: the path to the directory containing the files
+        :return: a list of recording blocks in ascending order
+        '''
     #get all the files in the path directory
     recblocks = []
     for i in os.listdir(path):
@@ -106,6 +110,7 @@ def get_list_of_recblocks(path):
     #sort the list
     recblocks.sort()
     print('done')
+    return recblocks
 
 
 
