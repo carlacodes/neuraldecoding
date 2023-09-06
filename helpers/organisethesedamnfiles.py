@@ -9,6 +9,11 @@ import scipy.io
 
 
 def organise_files_into_directories(path, dates):
+ '''    Organise the files in the path directory into subdirectories based on their dates
+    :param path: the path to the directory containing the files
+    :param dates: a list of dates, in datetime.date format, between which the files should be organised
+    :return: None'''
+
     #read the matlab files and extract their dates
 
     #get all the files in the path directory
