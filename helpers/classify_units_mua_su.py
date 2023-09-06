@@ -3,22 +3,15 @@ import pandas as pd
 import numpy as np
 import os
 from pathlib import Path
-import matplotlib.pyplot as plt
-import seaborn as sns
-from scipy.stats import norm
-from scipy.stats import ttest_ind
-from scipy.stats import ttest_rel
-from scipy.stats import ttest_1samp
-from scipy.stats import mannwhitneyu
-from scipy.stats import wilcoxon
-from scipy.stats import kruskal
+
+
 
 def classify_report(path):
-    #read a report.csv file from a directory
-    #extract the l ratio
-    #classify each unit as mua or su based on it
-    #save the results in a new csv file
-    #read the csv file and plot the results
+    '''   a function that is going to automatically read a report.csv file, extract the l ratio and then classify each unit as mua or su based on it
+    then save the results in a new csv file
+    :param path: the path to the directory containing the report.csv file
+    :return: report with the updated csv file that sorts the units based on the l_ratio '''
+
     data_conversion = {
         'tdt': list(range(1, 33)),
         'warp': [0, 4, 1, 5, 2, 6, 3, 7, 12, 8, 13, 9, 14, 10, 15, 11, 16, 20, 17, 21, 18, 22, 19, 23, 28, 24, 29, 25,
