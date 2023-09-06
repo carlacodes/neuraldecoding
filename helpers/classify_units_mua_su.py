@@ -25,11 +25,6 @@ def classify_report(path):
     #read cluster info tsv file
     cluster_info = pd.read_csv(path_parent / 'phy' / 'cluster_info.tsv', delimiter='\t')
 
-    # unit_list = pd.read_csv(path_parent /'phy'/ 'unit list.csv', delimiter='\t')
-    #extract the l ratio
-    l_ratio = report['l_ratio']
-    #classify each unit as mua or su based on it
-    #create a new column in the report dataframe
     report['unit_type'] = np.nan
 
     report.loc[report['l_ratio'] > 4 , 'unit_type'] = 'mua'
