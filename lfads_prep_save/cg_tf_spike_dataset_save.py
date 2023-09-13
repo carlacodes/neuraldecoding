@@ -93,7 +93,7 @@ def generatewordspiketrains(blocks, talker=1, probewords=[20, 22], pitchshift=Tr
 
     #split into train and test
     #from 0 to 80% of trials are train, 20% are test, using train test split
-    X_train, X_test = train_test_split(raster_reshaped_array_final2, test_size=0.2, random_state=42, shuffle = True)
+    X_train, X_test = train_test_split(raster_reshaped_array_final2, test_size=0.5, random_state=42, shuffle = True)
 
 
 
@@ -109,8 +109,15 @@ def generatewordspiketrains(blocks, talker=1, probewords=[20, 22], pitchshift=Tr
         # hf.create_dataset("train_truth", data=y_train)
         # hf.create_dataset("valid_truth", data=y_test)
         # hf.create_dataset("conversion_factor", data=binsize)
-        # hf.create_dataset("train_inds", data=np.arange(0, len(X_train)))
-        # hf.create_dataset("valid_inds", data=np.arange(0, len(X_test)))
+
+        hf.create_dataset("train_cond_idx", data=np.arange(0, len(X_train)))
+
+
+        hf.create_dataset("valid_cond_idx", data=np.arange(0, len(X_test)))
+        #make a mask of all true values
+
+        hf.create_dataset("train_cond_mask", data=np.ones(len(X_train))*[True])
+        hf.create_dataset("valid_cond_mask", data=np.ones(len(X_test))*[True])
 
 
 
