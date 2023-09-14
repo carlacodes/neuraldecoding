@@ -51,7 +51,6 @@ class concatenatedWarpData:
             with open(phy_folder / 'blocks.pkl', 'rb') as f:
                 self.blocks = pickle.load(f)
         else:
-            print('running phy concat rec io')
             self.reader = PhyConcatRecIO(dirname=phy_folder, currWarpDataPath=self.warpData)
             self.blocks = self.reader.read()
 
@@ -93,6 +92,8 @@ class concatenatedWarpData:
             seg_aligned_spikes = align_times(unit.times.magnitude, ev_times, window)
             if len(aligned_spikes) == 0:
                 aligned_spikes = seg_aligned_spikes
+            elif len(seg_aligned_spikes) == 0:
+                continue
             else:
                 seg_aligned_spikes[:, 0] = seg_aligned_spikes[:, 0] + aligned_spikes[-1, 0]
                 aligned_spikes = np.concatenate((aligned_spikes, seg_aligned_spikes))
@@ -141,6 +142,9 @@ class concatenatedWarpData:
         with PdfPages(saveDir / f'{title}.pdf') as pdf:
             print(f'Saving summary figures as pdf for {self.dp}')
             for clus in tqdm(cluster_ids):
+                # cluster 8 absolutely useless/contaminated for crumble
+                if clus == 8:
+                    continue
                 fig = self._unit_summary_figure(clus, events_args)
                 pdf.savefig(fig)
                 plt.close(fig)
@@ -234,14 +238,14 @@ class concatenatedWarpData:
 def main():
     filter_trials = {'No Level Cue'}
 
-    dp = Path('E:\ms4output2\F1902_Eclair\BB4BB5_eclair_01092023\BB4BB5_eclair_01092023_BB4BB5_eclair_01092023_BB_4\mountainsort4\phy')
-    warpData = Path('D:/Electrophysiological_Data/F1902_Eclair/')
-    saveDir = Path('D:/Data/spkfigs/Eclair/')
+    dp = Path('E:\ms4output2\F1604_Squinty\BB2BB3_squinty_MYRIAD2_05092023\BB2BB3_squinty_MYRIAD2_05092023_BB2BB3_squinty_MYRIAD2_05092023_BB_2\mountainsort4\phy/')
+    warpData = Path('D:\Electrophysiological_Data\F1604_Squinty\myriad2/')
+    saveDir = Path('D:/Data/spkfigs/squinty/')
     saveDir.mkdir(parents=False, exist_ok=True)
 
     dataset = concatenatedWarpData(dp, warpData=warpData)
     dataset.load()
-    dataset.create_summary_pdf(saveDir, title='summary_Eclair_passive')
+    dataset.create_summary_pdf(saveDir, title='Squinty+active')
 
     print(dataset)
 
