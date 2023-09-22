@@ -83,6 +83,8 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
         raster_target = get_word_aligned_raster_squinty(blocks, cluster_id, word=1, pitchshift=pitchshift,
                                                 correctresp=True,
                                                 df_filter=[])
+        raster_target = raster_target.reshape(raster_target.shape[0], )
+
         # raster_target = raster_target[raster_target['talker'] == int(talker)]
         if len(raster_target) == 0:
             print('no relevant spikes for this talker')
@@ -98,6 +100,8 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
                                                    correctresp=True,
                                                    df_filter=[])
             # raster_probe = raster_probe[raster_probe['talker'] == talker]
+            #remove second dimension of raster_probe
+            raster_probe = raster_probe.reshape(raster_probe.shape[0],)
             raster_probe['trial_num'] = raster_probe['trial_num'] + np.max(raster_target['trial_num'])
             if len(raster_probe) == 0:
                 print('no relevant spikes for this talker')
