@@ -128,27 +128,39 @@ def get_list_of_recblocks(path):
 
 
 if __name__ == '__main__':
-    path = 'D:\Data\F1306_Firefly'
+    path = 'D:\Data\F1606_Windolene\level74/'
+    # date_strings = [
+    #     "02/10/2014",
+    #     "05/10/2014",
+    #     "10/10/2023",
+    #     "15/10/2014",
+    #     "22/10/2014",
+    #     "23/01/2015",
+    #     "11/05/2015",
+    #     "17/08/2015",
+    #     "13/10/2015",
+    #     "07/02/2016",
+    #     "09/03/2016",
+    #     "15/04/2016"
+    # ]
+
     date_strings = [
-        "02/10/2014",
-        "05/10/2014",
-        "10/10/2023",
-        "15/10/2014",
-        "22/10/2014",
-        "23/01/2015",
-        "11/05/2015",
-        "17/08/2015",
-        "13/10/2015",
-        "07/02/2016",
-        "09/03/2016",
-        "15/04/2016"
+        "31/05/2020",
+        "8/3/2020",
+        "7/4/2019",
+        "16/02/2020",
+        "23/03/2020",
+        "5/1/2019",
+        "18/03/2019",
+        "14/08/2018",
+        "19/06/2020"
     ]
 
-    # date_objects = [datetime.strptime(date_string, "%d/%m/%Y") for date_string in date_strings]
-    # #remove the time from the date objects
-    # date_objects = [datetime.date(date_object) for date_object in date_objects]
-    # #organise the date_objects in ascencind order
-    # date_objects.sort()
+    date_objects = [datetime.strptime(date_string, "%d/%m/%Y") for date_string in date_strings]
+    #remove the time from the date objects
+    date_objects = [datetime.date(date_object) for date_object in date_objects]
+    #organise the date_objects in ascencind order
+    date_objects.sort()
     #
-    # organise_files_into_directories(path, date_objects)
-    get_list_of_recblocks('D:\Data\F1306_Firefly/2014-10-22')
+    organise_files_into_directories(path, date_objects)
+    # get_list_of_recblocks('D:\Data\F1306_Firefly/2014-10-22')
