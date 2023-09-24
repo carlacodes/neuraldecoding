@@ -306,7 +306,7 @@ def main():
     probewordlist_squinty = [(2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
                              (14, 14)]
 
-    dictoutput_squinty = scatterplot_and_visualise(probewordlist_squinty,saveDir = 'E:/results_16092023\F1604_Squinty\myriad4/bb2', ferretname='Squinty', singleunitlist=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], multiunitlist=np.arange(1,32, 1), noiselist = [])
+    dictoutput_squinty = scatterplot_and_visualise(probewordlist_squinty,saveDir = 'E:/results_16092023\F1604_Squinty\myriad1/bb2', ferretname='Squinty', singleunitlist=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], multiunitlist=np.arange(1,32, 1), noiselist = [])
 
     dictoutput_ore = scatterplot_and_visualise(probewordlist, saveDir = 'E:\decoding_scores\F2003_Orecchiette\lstm_kfold_20062023_ores2', ferretname='Orecchiette', singleunitlist=[1,19, 21, 219, 227],\
                                                  multiunitlist=np.arange(1, 384, 1), noiselist=[])

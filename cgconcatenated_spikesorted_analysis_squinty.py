@@ -238,8 +238,8 @@ class concatenatedWarpData:
 def main():
     filter_trials = {'No Level Cue'}
 
-    dp = Path('E:\ms4output2\F1604_Squinty\BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold\BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold_BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold_BB_2\mountainsort4\phy/')
-    warpData = Path('D:\Electrophysiological_Data\F1604_Squinty\myriad3/')
+    dp = Path('E:\ms4output2\F1604_Squinty\BB2BB3_squinty_MYRIAD1_23092023\BB2BB3_squinty_MYRIAD1_23092023_BB2BB3_squinty_MYRIAD1_23092023_BB_2\mountainsort4\phy/')
+    warpData = Path('D:\Electrophysiological_Data\F1604_Squinty\myriad1/')
     saveDir = Path('D:/Data/spkfigs/squinty/')
     saveDir.mkdir(parents=False, exist_ok=True)
 
