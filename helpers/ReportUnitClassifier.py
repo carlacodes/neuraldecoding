@@ -58,7 +58,8 @@ class ReportUnitClassifier:
 
 
 if __name__ == '__main__':
-    path = Path('E:/report/')
+    #thank you to my past self for writing this script
+    path = Path('E:\ms4output2\F1604_Squinty\BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold\BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold_BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold_BB_3\mountainsort4/report/')
     classifier = ReportUnitClassifier(path)
     report_data = classifier.classify_report()
     classifier.plot_results(report_data)

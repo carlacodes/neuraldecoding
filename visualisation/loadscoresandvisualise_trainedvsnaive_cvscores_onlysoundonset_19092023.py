@@ -76,7 +76,7 @@ def scatterplot_and_visualise(probewordlist,
         probewordindex = probeword[0]
         print(probewordindex)
         stringprobewordindex = str(probewordindex)
-        if ferretname == 'Squinty':
+        if ferretname == 'Squinty' or ferretname == 'Windolene':
             #scores_squinty_2022_2_squinty_probe_bs
             scores = np.load(
                 saveDir + '/' + r'scores_' + ferretname + '_2022_' + stringprobewordindex + '_' + ferretname + '_probe_bs.npy',
@@ -305,7 +305,7 @@ def main():
     probewordlist = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
     probewordlist_squinty = [(2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
                              (14, 14)]
-
+    dictoutput_windolene = scatterplot_and_visualise(probewordlist_squinty, saveDir= 'E:/results_16092023\F1606_Windolene/bb5/', ferretname='Windolene', singleunitlist=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], multiunitlist=np.arange(1,64, 1), noiselist = [])
     dictoutput_squinty = scatterplot_and_visualise(probewordlist_squinty,saveDir = 'E:/results_16092023\F1604_Squinty\myriad1/bb2', ferretname='Squinty', singleunitlist=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], multiunitlist=np.arange(1,32, 1), noiselist = [])
 
     dictoutput_ore = scatterplot_and_visualise(probewordlist, saveDir = 'E:\decoding_scores\F2003_Orecchiette\lstm_kfold_20062023_ores2', ferretname='Orecchiette', singleunitlist=[1,19, 21, 219, 227],\
