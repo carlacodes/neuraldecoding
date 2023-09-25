@@ -25,11 +25,14 @@ class ReportUnitClassifier:
 
         # Read cluster info tsv file
         cluster_info = pd.read_csv(path_parent / 'phy' / 'cluster_info.tsv', delimiter='\t')
-
+        #if any l_ratio or d_prime is nan, set to 0
+        report['l_ratio'] = report['l_ratio'].fillna(0)
+        report['d_prime'] = report['d_prime'].fillna(0)
 
         report['unit_type'] = np.nan
-        report.loc[report['l_ratio'] > 4, 'unit_type'] = 'mua'
-        report.loc[report['l_ratio'] <= 4, 'unit_type'] = 'su'
+        report.loc[(report['l_ratio'] > 4) | (report['d_prime'] > 4), 'unit_type'] = 'mua'
+        report.loc[(report['l_ratio'] <= 4) & (report['d_prime'] <= 4), 'unit_type'] = 'su'
+        report.loc[(report['l_ratio'] >= 7) | (report['d_prime'] > 4.5), 'unit_type'] = 'trash'
 
         # Give the warp number to the channel
         report['channel_id'] = cluster_info['cluster_id'].map(lambda x: cluster_info['ch'][x])
@@ -50,7 +53,8 @@ class ReportUnitClassifier:
         '''
 
         plt.figure(figsize=(10, 6))
-        plt.scatter(report['tdt'], report['warp'], c=report['unit_type'].map({'su': 'blue', 'mua': 'red'}))
+        plt.scatter(report['tdt'], report['warp'], c=report['unit_type'].map({'su': 'blue', 'mua': 'red', 'trash': 'black'}),
+                    alpha=0.5)
         plt.xlabel('TDT')
         plt.ylabel('WARP')
         plt.title('Unit Classification')
