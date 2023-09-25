@@ -1,15 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-import csv
-import sys
-import mergedeep
+import os
 import seaborn as sns
 import scipy.stats as stats
 import shap
 import lightgbm as lgb
 from sklearn.inspection import permutation_importance
 import scipy
+from helpers.GeneratePlotsConcise import *
 from scipy.stats import mannwhitneyu
 
 from sklearn.model_selection import train_test_split
@@ -293,8 +292,10 @@ def load_classified_report(path):
     :param path: path to the classified report
     :return: classified report
     '''
-    report = pd.read_csv(path/'quality_metrics_classified.csv')
-    #get the list of multi units and single units
+    #join the path to the report
+    report_path = os.path.join(path, 'mountainsort4', 'report', 'quality_metrics_classified.csv')
+    #combine the paths
+    report = pd.read_csv(report_path)    #get the list of multi units and single units
     #the column is called unit_type
     multiunitlist = []
     singleunitlist = []
@@ -303,20 +304,31 @@ def load_classified_report(path):
     #get the list of multi units and single units
     for i in range(0, len(report['unit_type'])):
         if report['unit_type'][i] == 'mua':
-            multiunitlist.append(report['cluster_id'][i])
+            multiunitlist.append(i+1)
         elif report['unit_type'][i] == 'su':
-            singleunitlist.append(report['cluster_id'][i])
+            singleunitlist.append(i+1)
         elif report['unit_type'][i] == 'trash':
-            noiselist.append(report['cluster_id'][i])
+            noiselist.append(i+1)
 
 
-    return report
+    return report, singleunitlist, multiunitlist, noiselist
 def main():
     probewordlist = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
     probewordlist_squinty = [(2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
                              (14, 14)]
     # dictoutput_windolene = scatterplot_and_visualise(probewordlist_squinty, saveDir= 'E:/results_16092023\F1606_Windolene/bb5/', ferretname='Windolene', singleunitlist=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], multiunitlist=np.arange(1,64, 1), noiselist = [])
-    dictoutput_squinty = scatterplot_and_visualise(probewordlist_squinty,saveDir = 'E:/results_16092023\F1604_Squinty\myriad1/bb2', ferretname='Squinty', singleunitlist=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], multiunitlist=np.arange(1,32, 1), noiselist = [])
+    streams = ['BB_2', 'BB_3']
+    report_squinty = {}
+    singleunitlist_squinty = {}
+    multiunitlist_squinty = {}
+    noiselist_squinty = {}
+
+    for side in streams:
+        report_squinty[side], singleunitlist_squinty[side], multiunitlist_squinty[side], noiselist_squinty[side] = load_classified_report(f'E:\ms4output2\F1604_Squinty\BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold\BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold_BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold_{side}/')
+
+
+    dictoutput_squinty_bb2 = scatterplot_and_visualise(probewordlist_squinty,saveDir = 'E:/results_16092023/F1604_Squinty/myriad1/bb2/', ferretname='Squinty', singleunitlist=singleunitlist_squinty['BB_2'], multiunitlist=multiunitlist_squinty['BB_2'], noiselist = noiselist_squinty['BB_2'])
+    dictoutput_squinty_bb3 = scatterplot_and_visualise(probewordlist_squinty,saveDir = 'E:/results_16092023\F1604_Squinty\myriad1/bb3', ferretname='Squinty', singleunitlist=singleunitlist_squinty['BB_3'], multiunitlist=multiunitlist_squinty['BB_3'], noiselist = noiselist_squinty['BB_3'])
 
 
     # dictoutput_eclair =
@@ -325,20 +337,27 @@ def main():
     # dictoutput_nala =
     dictoutput_ore = scatterplot_and_visualise(probewordlist, saveDir = 'E:\decoding_scores\F2003_Orecchiette\lstm_kfold_20062023_ores2', ferretname='Orecchiette', singleunitlist=[1,19, 21, 219, 227],\
                                                  multiunitlist=np.arange(1, 384, 1), noiselist=[])
-    generate_plots(mdictoutput_zola, dictoutput_crumble, dictoutput_eclair, dictoutput_cruella, dictoutput_nala, dictoutput_cruella2, dictoutput_ore)
+    dictlist = [dictoutput_squinty_bb2, dictoutput_squinty_bb3, dictoutput_ore]
+    dictlist_trained = [dictoutput_squinty_bb2, dictoutput_squinty_bb3]
+    dictlist_naive = [dictoutput_ore]
+    labels = ['squinty', 'squinty', 'ore']
+    colors = ['purple', 'magenta', 'darkturquoise', 'olivedrab', 'steelblue', 'darkcyan']
+
+    generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors)
 
     return
 
 
-def generate_plots(dictoutput_zola, dictoutput_crumble, dictoutput_eclair, dictoutput_cruella, dictoutput_nala, dictoutput_cruella2, dictoutput_ore):
+def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
 
     from pathlib import Path
-    filepath = Path('D:/dfformixedmodels/mergedtrained.csv')
-    filepath.parent.mkdir(parents=True, exist_ok=True)
+
+    labels = ['cruella', 'zola', 'nala', 'crumble', 'eclair', 'ore']
+    colors = ['purple', 'magenta', 'darkturquoise', 'olivedrab', 'steelblue', 'darkcyan']
+
 
     fig, ax = plt.subplots(1, figsize=(5, 8))
     emptydict = {}
-    dictlist = [dictoutput_cruella, dictoutput_zola, dictoutput_nala, dictoutput_crumble, dictoutput_eclair]
     count = 0
     for dictoutput in dictlist:
 
@@ -363,106 +382,17 @@ def generate_plots(dictoutput_zola, dictoutput_crumble, dictoutput_eclair, dicto
                         if sutype == 'su_list':
                             emptydict['su'] = emptydict.get('su', []) + [1]
                         else:
-                            emptydict['su'] =  emptydict.get('su', []) + [0]
+                            emptydict['su'] = emptydict.get('su', []) + [0]
         count += 1
     for keys in emptydict.keys():
         emptydict[keys] = np.asarray(emptydict[keys])
 
-    mergedtrainedandnaive=pd.DataFrame.from_dict(emptydict)
-    runboostedregressiontreeforlstmscore(mergedtrainedandnaive)
 
-    y_zola_su = dictoutput_zola['su_list']['nonpitchshift']['female_talker']
-    y_zola_mu = dictoutput_zola['mu_list']['nonpitchshift']['female_talker']
 
-    # y_cruella_su = np.append(dictoutput_cruella['su_list']['nonpitchshift']['female_talker'], dictoutput_cruella2['su_list']['nonpitchshift']['female_talker'])
-    y_cruella_su = dictoutput_cruella['su_list']['nonpitchshift']['female_talker']
-    # y_cruella_mu = np.append(dictoutput_cruella['mu_list']['nonpitchshift']['female_talker'], dictoutput_cruella2['mu_list']['nonpitchshift']['female_talker'])
-    y_cruella_mu = dictoutput_cruella['mu_list']['nonpitchshift']['female_talker']
-
-    y2_zola_su_male = dictoutput_zola['su_list']['nonpitchshift']['male_talker']
-    # y2_cruella_su_male = np.append(dictoutput_cruella['su_list']['nonpitchshift']['male_talker'], dictoutput_cruella2['su_list']['nonpitchshift']['male_talker'])
-    y2_cruella_su_male = dictoutput_cruella['su_list']['nonpitchshift']['male_talker']
-
-    y2_zola_mu_male = dictoutput_zola['mu_list']['nonpitchshift']['male_talker']
-    # y2_cruella_mu_male = np.append(dictoutput_cruella['mu_list']['nonpitchshift']['male_talker'], dictoutput_cruella2['mu_list']['nonpitchshift']['male_talker'])
-    y2_cruella_mu_male = dictoutput_cruella['mu_list']['nonpitchshift']['male_talker']
-    # Add some random "jitter" to the x-axis
-    x_su = np.random.normal(1, 0.04, size=len(y_zola_su))
-    x2_su = np.random.normal(1, 0.04, size=len(y_cruella_su))
-
-    x_mu = np.random.normal(1, 0.04, size=len(y_zola_mu))
-    x2_mu = np.random.normal(1, 0.04, size=len(y_cruella_mu))
-
-    x_su_male = np.random.normal(3, 0.04, size=len(y2_zola_su_male))
-    x2_su_male = np.random.normal(3, 0.04, size=len(y2_cruella_su_male))
-
-    x_mu_male = np.random.normal(3, 0.04, size=len(y2_zola_mu_male))
-    x2_mu_male = np.random.normal(3, 0.04, size=len(y2_cruella_mu_male))
-
-    ax.plot(x_su, y_zola_su, ".", color='hotpink', alpha=0.5, )
-    ax.plot(x2_su, y_cruella_su, ".", color='olivedrab', alpha=0.5, )
-
-    ax.plot(x_mu, y_zola_mu, "2", color='hotpink', alpha=0.5)
-    ax.plot(x2_mu, y_cruella_mu, "2", color='olivedrab', alpha=0.5)
-
-    ax.plot(x_su_male, y2_zola_su_male, ".", color='hotpink', alpha=0.5, label='F1702 - SU')
-    ax.plot(x2_su_male, y2_cruella_su_male, ".", color='olivedrab', alpha=0.5, label='F1815 - SU')
-
-    ax.plot(x_mu_male, y2_zola_mu_male, "2", color='hotpink', alpha=0.5, label='F1702 - MUA')
-    ax.plot(x2_mu_male, y2_cruella_mu_male, "2", color='olivedrab', alpha=0.5, label='F1815 - MUA')
-
-    # x = np.random.normal(2, 0.04, size=len(y2_crum))
-    # x2 = np.random.normal(2, 0.04, size=len(y2_eclair))
-
-    if count == 0:
-        ax2 = ax.twiny()
-        # Offset the twin axis below the host
-        ax2.xaxis.set_ticks_position("bottom")
-        ax2.xaxis.set_label_position("bottom")
-
-        # Offset the twin axis below the host
-        ax2.spines["bottom"].set_position(("axes", -0.15))
-
-        # Turn on the frame for the twin axis, but then hide all
-        # but the bottom spine
-        ax2.set_frame_on(True)
-        ax2.patch.set_visible(False)
-
-        # as @ali14 pointed out, for python3, use this
-        # for sp in ax2.spines.values():
-        # and for python2, use this
-        for sp in ax2.spines.values():
-            sp.set_visible(False)
-        ax2.spines["bottom"].set_visible(True)
-
-        ax.set_xticklabels(['F0 Control', 'F0 Roved', 'F0 Control', 'F0 Roved'], fontsize=12)
-        ax2.set_xlabel("talker", fontsize=12)
-        ax2.set_xticks([0.2, 0.8])
-        ax2.set_xticklabels(["female", "male"], fontsize=12)
-
-    #            ax[count].set_xticklabels(['female', 'male'])
-    else:
-        ax.tick_params(
-            axis='x',  # changes apply to the x-axis
-            which='both',  # both major and minor ticks are affected
-            bottom=False,  # ticks along the bottom edge are off
-            top=False,  # ticks along the top edge are off
-            labelbottom=False)
-
-    # ax[count].plot(x, y2_crum, ".", color='mediumturquoise', alpha=0.2, )
-    # ax[count].plot(x2, y2_eclair, ".", color='darkorange', alpha=0.2)
-    ax.set_ylim([0, 1])
-    if count == 0:
-        ax.legend(prop={'size': 12})
-    count += 1
-    fig.tight_layout()
-    plt.ylim(0, 1)
 
     fig, ax = plt.subplots(1, figsize=(9,9), dpi=300)
-    count = 0
-    emptydict = {}
 
-    dictlist = [dictoutput_cruella, dictoutput_zola, dictoutput_nala, dictoutput_crumble, dictoutput_eclair, dictoutput_ore]
+
     for dictoutput in dictlist:
         for key in dictoutput.keys():
             for key3 in dictoutput[key]['pitchshift'].keys():
@@ -477,11 +407,9 @@ def generate_plots(dictoutput_zola, dictoutput_crumble, dictoutput_eclair, dicto
                         dictoutput[key]['nonpitchshift'][key3][
                         :len(dictoutput[key]['pitchshift'][key3])]
 
-    dictlist = [dictoutput_cruella, dictoutput_zola]
-    #dictoutput_cruella2
     bigconcatenatetrained_ps = np.empty(0)
     bigconcatenatetrained_nonps = np.empty(0)
-    for dictouput in dictlist:
+    for dictouput in dictlist_trained:
         for key in dictouput.keys():
             for key3 in dictouput[key]['pitchshift'].keys():
                 bigconcatenatetrained_ps = np.concatenate(
@@ -489,7 +417,6 @@ def generate_plots(dictoutput_zola, dictoutput_crumble, dictoutput_eclair, dicto
                 bigconcatenatetrained_nonps = np.concatenate(
                     (bigconcatenatetrained_nonps, dictouput[key]['nonpitchshift'][key3]))
 
-    dictlist = [dictoutput_nala, dictoutput_crumble, dictoutput_eclair, dictoutput_ore]
 
     bigconcatenatenaive_ps = np.empty(0)
     bigconcatenatenaive_nonps = np.empty(0)
@@ -502,82 +429,19 @@ def generate_plots(dictoutput_zola, dictoutput_crumble, dictoutput_eclair, dicto
                 bigconcatenatenaive_nonps = np.concatenate(
                     (bigconcatenatenaive_nonps, dictouput[key]['nonpitchshift'][key3]))
 
-    ax.plot(dictoutput_cruella['su_list']['nonpitchshift']['female_talker'],
-            dictoutput_cruella['su_list']['pitchshift']['female_talker'], 'o', color='purple', alpha=0.5, label = 'F1815')
 
-    ax.plot(dictoutput_zola['su_list']['nonpitchshift']['female_talker'],
-            dictoutput_zola['su_list']['pitchshift']['female_talker'], 'o', color='magenta', alpha=0.5,label = 'F1702')
-    ax.plot(dictoutput_cruella['mu_list']['nonpitchshift']['female_talker'],
-            dictoutput_cruella['mu_list']['pitchshift']['female_talker'], 'P', color='purple', alpha=0.5)
-    ax.plot(dictoutput_zola['mu_list']['nonpitchshift']['female_talker'],
-            dictoutput_zola['mu_list']['pitchshift']['female_talker'], 'P', color='magenta', alpha=0.5)
+    # Define labels and colors for scatter plots
 
-    ax.scatter(dictoutput_cruella['su_list']['nonpitchshift']['male_talker'],
-               dictoutput_cruella['su_list']['pitchshift']['male_talker'], marker='o', facecolors='none',
-               edgecolors='purple', alpha=0.5)
+    #plot scatter data in a loop
+    for i, (data_dict, label, color) in enumerate(zip(dictlist, labels, colors)):
 
-    ax.scatter(dictoutput_zola['su_list']['nonpitchshift']['male_talker'],
-               dictoutput_zola['su_list']['pitchshift']['male_talker'], marker='o', facecolors='none',
-               edgecolors='magenta', alpha=0.5)
-
-    ax.scatter(dictoutput_cruella['mu_list']['nonpitchshift']['male_talker'],
-               dictoutput_cruella['mu_list']['pitchshift']['male_talker'], marker='P', facecolors='none',
-               edgecolors='purple', alpha=0.5)
-
-    ax.scatter(dictoutput_zola['mu_list']['nonpitchshift']['male_talker'],
-               dictoutput_zola['mu_list']['pitchshift']['male_talker'], marker='P', facecolors='none',
-               edgecolors='magenta', alpha=0.5)
+        #all inter trial roving stuff is female talker
+        ax.scatter(data_dict['mu_list']['nonpitchshift']['female_talker'],data_dict['mu_list']['pitchshift']['female_talker'], marker='P',
+                   facecolors =color, edgecolors = color, alpha=0.5)
+        ax.scatter(data_dict['su_list']['nonpitchshift']['female_talker'],data_dict['su_list']['pitchshift']['female_talker'], marker='P', color=color, alpha=0.5)
 
 
 
-    ax.scatter(dictoutput_eclair['su_list']['nonpitchshift']['female_talker'],
-               dictoutput_eclair['su_list']['pitchshift']['female_talker'], marker='o', color='steelblue', alpha=0.5)
-
-    ax.scatter(dictoutput_eclair['mu_list']['nonpitchshift']['female_talker'],
-               dictoutput_eclair['mu_list']['pitchshift']['female_talker'], marker='P', color='steelblue', alpha=0.5, label = 'F1902')
-
-    ax.scatter(dictoutput_nala['mu_list']['nonpitchshift']['female_talker'],
-               dictoutput_nala['mu_list']['pitchshift']['female_talker'], marker='P', facecolors='none',
-               edgecolors='darkturquoise', alpha=0.5)
-
-    ax.scatter(dictoutput_eclair['su_list']['nonpitchshift']['male_talker'],
-               dictoutput_eclair['su_list']['pitchshift']['male_talker'], marker='o', facecolors='none',
-               edgecolors='steelblue', alpha=0.5)
-
-    ax.scatter(dictoutput_crumble['su_list']['nonpitchshift']['male_talker'],
-               dictoutput_crumble['su_list']['pitchshift']['male_talker'], marker='o', facecolors='darkcyan',
-               edgecolors='darkcyan', alpha=0.5)
-
-    ax.scatter(dictoutput_crumble['mu_list']['nonpitchshift']['male_talker'],
-               dictoutput_crumble['mu_list']['pitchshift']['male_talker'], marker='P', facecolors='none',
-               edgecolors='darkcyan', alpha=0.5)
-
-    ax.scatter(dictoutput_crumble['su_list']['nonpitchshift']['female_talker'],
-               dictoutput_crumble['su_list']['pitchshift']['female_talker'], marker='o', facecolors='darkcyan',
-               edgecolors='darkcyan', alpha=0.5, label = 'F1901')
-
-    ax.scatter(dictoutput_crumble['mu_list']['nonpitchshift']['female_talker'],
-               dictoutput_crumble['mu_list']['pitchshift']['female_talker'], marker='P', color='darkcyan', alpha=0.5)
-
-    ax.scatter(dictoutput_nala['su_list']['nonpitchshift']['male_talker'],
-               dictoutput_nala['su_list']['pitchshift']['male_talker'], marker='o', facecolors='darkturquoise',
-               edgecolors='darkturquoise', alpha=0.5, )
-
-    ax.scatter(dictoutput_eclair['mu_list']['nonpitchshift']['male_talker'],
-               dictoutput_eclair['mu_list']['pitchshift']['male_talker'], marker='P', facecolors='none',
-               edgecolors='steelblue', alpha=0.5)
-
-    ax.plot(dictoutput_nala['su_list']['nonpitchshift']['female_talker'],
-            dictoutput_nala['su_list']['pitchshift']['female_talker'], 'o', color='darkturquoise', alpha=0.5, label='F1812 SU, F')
-    ax.scatter(dictoutput_nala['mu_list']['nonpitchshift']['male_talker'],
-               dictoutput_nala['mu_list']['pitchshift']['male_talker'], marker='P', facecolors='none',
-               edgecolors='darkturquoise', alpha=0.5, label='F1812 MU, M')
-
-    ax.plot(dictoutput_ore['su_list']['nonpitchshift']['female_talker'],
-            dictoutput_ore['su_list']['pitchshift']['female_talker'], 'o', color='steelblue', alpha=0.5, label='F2003')
-
-    ax.plot(dictoutput_ore['mu_list']['nonpitchshift']['female_talker'],
-            dictoutput_ore['mu_list']['pitchshift']['female_talker'], 'P', color='steelblue', alpha=0.5)
 
 
     x = np.linspace(0.4, 1, 101)
@@ -780,90 +644,6 @@ def generate_plots(dictoutput_zola, dictoutput_crumble, dictoutput_eclair, dicto
     # plotting both mu sound driven and single unit units
     # for sutype in mergednaiveanimaldict.keys():
 
-    # plotting both mu sound driven and single unit units, ZOLA
-    fig, ax = plt.subplots(2, figsize=(5, 8))
-    count = 0
-
-    for pitchshiftornot in dictoutput_zola[sutype].keys():
-        ax[count].boxplot([dictoutput_zola['su_list'][pitchshiftornot]['female_talker'],
-                           dictoutput_zola['mu_list'][pitchshiftornot]['female_talker'],
-                           dictoutput_zola['su_list'][pitchshiftornot]['male_talker'],
-                           dictoutput_zola['mu_list'][pitchshiftornot]['male_talker']])
-        ax[count].legend()
-        ax[count].set_ylabel('LSTM decoding score (%)')
-        #        ax[count].set_yticklabels([0, 20, 40, 60, 80, 100])
-
-        if sutype == 'su_list':
-            stringtitle = 'single'
-        else:
-            stringtitle = 'multi'
-        if pitchshiftornot == 'pitchshift':
-            stringtitlepitch = 'F0-roved'
-        else:
-            stringtitlepitch = 'control F0'
-        ax[count].set_title('Trained LSTM scores for' + ' single and multi-units,\n ' + stringtitlepitch + ' trials')
-        y_su_female = dictoutput_zola['su_list'][pitchshiftornot]['female_talker']
-        y_su_male = dictoutput_zola['mu_list'][pitchshiftornot]['female_talker']
-
-        y_mu_female = dictoutput_zola['su_list'][pitchshiftornot]['male_talker']
-        y_mu_male = dictoutput_zola['mu_list'][pitchshiftornot]['male_talker']
-
-        # Add some random "jitter" to the x-axis
-        x_su_female = np.random.normal(1, 0.04, size=len(y_su_female))
-        x2_mu_female = np.random.normal(2, 0.04, size=len(y_mu_female))
-
-        x_su_male = np.random.normal(3, 0.04, size=len(y_su_male))
-        x2_mu_male = np.random.normal(4, 0.04, size=len(y_mu_male))
-
-        ax[count].plot(x_su_female, y_su_female, ".", color='purple', alpha=0.2, )
-        ax[count].plot(x2_mu_female, y_mu_female, ".", color='green', alpha=0.2, )
-
-        ax[count].plot(x_su_male, y_su_male, ".", color='purple', alpha=0.2)
-        ax[count].plot(x2_mu_male, y_mu_male, ".", color='green', alpha=0.2)
-
-        if count == 1:
-            ax2 = ax[count].twiny()
-            # Offset the twin axis below the host
-            ax2.xaxis.set_ticks_position("bottom")
-            ax2.xaxis.set_label_position("bottom")
-
-            # Offset the twin axis below the host
-            ax2.spines["bottom"].set_position(("axes", -0.15))
-
-            # Turn on the frame for the twin axis, but then hide all
-            # but the bottom spine
-            ax2.set_frame_on(True)
-            ax2.patch.set_visible(False)
-
-            # as @ali14 pointed out, for python3, use this
-            # for sp in ax2.spines.values():
-            # and for python2, use this
-            for sp in ax2.spines.values():
-                sp.set_visible(False)
-            ax2.spines["bottom"].set_visible(True)
-
-            ax[count].set_xticklabels(['SU', 'MUA', 'SU', 'MUA'], fontsize=12)
-            ax2.set_xlabel("talker", fontsize=12)
-            ax2.set_xticks([0.2, 0.8])
-            ax2.set_xticklabels(["female", "male"], fontsize=12)
-
-        #            ax[count].set_xticklabels(['female', 'male'])
-        else:
-            ax[count].tick_params(
-                axis='x',  # changes apply to the x-axis
-                which='both',  # both major and minor ticks are affected
-                bottom=False,  # ticks along the bottom edge are off
-                top=False,  # ticks along the top edge are off
-                labelbottom=False)
-
-        ax[count].set_ylim([0, 1])
-        if count == 1:
-            ax[count].legend(prop={'size': 12})
-        count += 1
-    fig.tight_layout()
-    plt.ylim(0, 1)
-
-    plt.show()
 
 
 if __name__ == '__main__':
