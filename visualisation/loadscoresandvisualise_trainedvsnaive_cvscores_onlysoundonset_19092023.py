@@ -287,18 +287,44 @@ def runboostedregressiontreeforlstmscore(df_use):
     labels = [item.get_text() for item in ax.get_yticklabels()]
     print(labels)
 
+
+def load_classified_report(path):
+    ''' Load the classified report
+    :param path: path to the classified report
+    :return: classified report
+    '''
+    report = pd.read_csv(path/'quality_metrics_classified.csv')
+    #get the list of multi units and single units
+    #the column is called unit_type
+    multiunitlist = []
+    singleunitlist = []
+    noiselist = []
+
+    #get the list of multi units and single units
+    for i in range(0, len(report['unit_type'])):
+        if report['unit_type'][i] == 'mua':
+            multiunitlist.append(report['cluster_id'][i])
+        elif report['unit_type'][i] == 'su':
+            singleunitlist.append(report['cluster_id'][i])
+        elif report['unit_type'][i] == 'trash':
+            noiselist.append(report['cluster_id'][i])
+
+
+    return report
 def main():
     probewordlist = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
     probewordlist_squinty = [(2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
                              (14, 14)]
-    dictoutput_windolene = scatterplot_and_visualise(probewordlist_squinty, saveDir= 'E:/results_16092023\F1606_Windolene/bb5/', ferretname='Windolene', singleunitlist=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], multiunitlist=np.arange(1,64, 1), noiselist = [])
+    # dictoutput_windolene = scatterplot_and_visualise(probewordlist_squinty, saveDir= 'E:/results_16092023\F1606_Windolene/bb5/', ferretname='Windolene', singleunitlist=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], multiunitlist=np.arange(1,64, 1), noiselist = [])
     dictoutput_squinty = scatterplot_and_visualise(probewordlist_squinty,saveDir = 'E:/results_16092023\F1604_Squinty\myriad1/bb2', ferretname='Squinty', singleunitlist=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], multiunitlist=np.arange(1,32, 1), noiselist = [])
 
+
+    # dictoutput_eclair =
+    # dictoutput_crumble =
+    #
+    # dictoutput_nala =
     dictoutput_ore = scatterplot_and_visualise(probewordlist, saveDir = 'E:\decoding_scores\F2003_Orecchiette\lstm_kfold_20062023_ores2', ferretname='Orecchiette', singleunitlist=[1,19, 21, 219, 227],\
                                                  multiunitlist=np.arange(1, 384, 1), noiselist=[])
-
-
-
     generate_plots(mdictoutput_zola, dictoutput_crumble, dictoutput_eclair, dictoutput_cruella, dictoutput_nala, dictoutput_cruella2, dictoutput_ore)
 
     return
