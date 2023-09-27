@@ -236,9 +236,9 @@ class concatenatedWarpData:
 def main():
     filter_trials = {'No Level Cue'}
 
-    dp = Path('E:\ms4output2\F1606_Windolene\BB2BB3_windolene_2020_05_31_noisereduc_2\BB2BB3_windolene_2020_05_31_noisereduc_2_BB2BB3_windolene_2020_05_31_noisereduc_2_BB_5\mountainsort4\phy/')
-    warpData = Path('D:\Electrophysiological_Data\F1606_Windowlene/')
-    saveDir = Path('D:\Data\F1606_Windolene/')
+    dp = Path('E:\ms4output2\F1702_Zola\BB2BB3_zola_intertrialroving_26092023\BB2BB3_zola_intertrialroving_26092023_BB2BB3_zola_intertrialroving_26092023_BB_3\mountainsort4\phy/')
+    warpData = Path('D:\Electrophysiological_Data\F1702_Zola_Nellie\Zola2021\intertrialroving/')
+    saveDir = Path('D:\Data\F1702_Zola/')
     saveDir.mkdir(parents=False, exist_ok=True)
 
     dataset = concatenatedWarpData(dp, warpData=warpData)
