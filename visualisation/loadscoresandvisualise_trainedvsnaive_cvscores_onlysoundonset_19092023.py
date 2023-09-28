@@ -6,6 +6,7 @@ import seaborn as sns
 import scipy.stats as stats
 import shap
 import lightgbm as lgb
+from pathlib import Path
 from sklearn.inspection import permutation_importance
 import scipy
 from helpers.GeneratePlotsConcise import *
@@ -323,9 +324,42 @@ def main():
     multiunitlist_squinty = {}
     noiselist_squinty = {}
 
+
     for side in streams:
         report_squinty[side], singleunitlist_squinty[side], multiunitlist_squinty[side], noiselist_squinty[side] = load_classified_report(f'E:\ms4output2\F1604_Squinty\BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold\BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold_BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold_{side}/')
 
+    animal_list = ['F1306_Firefly', 'F1604_Squinty', 'F1606_Windolene','F1702_Zola', 'F1815_Cruella', 'F1901_Crumble', 'F1902_Eclair']
+    #load the report for each animal in animal-list
+    report = {}
+    singleunitlist = {}
+    multiunitlist = {}
+    noiselist = {}
+    path_list = {}
+    for animal in animal_list:
+        path = Path('E:\ms4output2/' + animal + '/')
+        path_list[animal] = [path for path in path.glob('**/quality metrics.csv')]
+        #get the parent directory of each path
+        path_list[animal] = [path.parent for path in path_list[animal]]
+
+    for animal in animal_list:
+        for path in path_list[animal]:
+            #get the number of streams per animal by counting the number of directories in each path
+            num_streams = len([name for name in os.listdir(path) if os.path.isdir(os.path.join(path, name))])
+            #if there is more than one stream, then we need to specify which stream we want to load the report for
+
+
+            #get the stream name, the last three characters of two directories up from the report
+
+
+            stream_name = path.parent.absolute()
+            stream_name = stream_name.parent.absolute()
+            stream_name = str(stream_name)[-4:]
+            #load the report for that stream
+            try:
+                report[animal][stream_name], singleunitlist[animal][stream_name], multiunitlist[animal][stream_name], noiselist[animal][stream_name] = load_classified_report(f'{path}')
+            except:
+                print('no report for this stream')
+                pass
 
     dictoutput_squinty_bb2 = scatterplot_and_visualise(probewordlist_squinty,saveDir = 'E:/results_16092023/F1604_Squinty/myriad1/bb2/', ferretname='Squinty', singleunitlist=singleunitlist_squinty['BB_2'], multiunitlist=multiunitlist_squinty['BB_2'], noiselist = noiselist_squinty['BB_2'])
     dictoutput_squinty_bb3 = scatterplot_and_visualise(probewordlist_squinty,saveDir = 'E:/results_16092023\F1604_Squinty\myriad1/bb3', ferretname='Squinty', singleunitlist=singleunitlist_squinty['BB_3'], multiunitlist=multiunitlist_squinty['BB_3'], noiselist = noiselist_squinty['BB_3'])
