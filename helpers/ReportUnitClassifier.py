@@ -24,7 +24,11 @@ class ReportUnitClassifier:
         path_parent = self.path.parent
 
         # Read cluster info tsv file
-        cluster_info = pd.read_csv(path_parent / 'phy' / 'cluster_info.tsv', delimiter='\t')
+        try:
+            cluster_info = pd.read_csv(path_parent / 'phy' / 'cluster_info.tsv', delimiter='\t')
+        except:
+            print('No cluster_info.tsv file found. Please run phy first.')
+            return
         #if any l_ratio or d_prime is nan, set to 0
         report['l_ratio'] = report['l_ratio'].fillna(0)
         report['d_prime'] = report['d_prime'].fillna(0)
@@ -63,7 +67,25 @@ class ReportUnitClassifier:
 
 if __name__ == '__main__':
     #thank you to my past self for writing this script
-    path = Path('E:\ms4output2\F1604_Squinty\BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold\BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold_BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold_BB_3\mountainsort4/report/')
+    # path = Path('E:\ms4output2\F1604_Squinty\BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold\BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold_BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold_BB_3\mountainsort4/report/')
+    animal_list = ['F1306_Firefly', 'F1604_Squinty', 'F1606_Windolene','F1702_Zola', 'F1815_Cruella', 'F1901_Crumble', 'F1902_Eclair']
+    path_list = {}
+    for animal in animal_list:
+        path = Path('E:\ms4output2/' + animal + '/')
+        path_list[animal] = [path for path in path.glob('**/quality metrics.csv')]
+        #get the parent directory of each path
+        path_list[animal] = [path.parent for path in path_list[animal]]
+
+    for animal in animal_list:
+        for path in path_list[animal]:
+            classifier = ReportUnitClassifier(path)
+            report_data = classifier.classify_report()
+            if report_data is not None:
+                classifier.plot_results(report_data)
+    # #make list of paths to all report.csv files
+    # path_list_squinty = [path for path in path.glob('**/quality metrics.csv')]
+    # #get the parent directory of each path
+    # path_list_squinty = [path.parent for path in path_list_squinty]
     classifier = ReportUnitClassifier(path)
     report_data = classifier.classify_report()
     classifier.plot_results(report_data)

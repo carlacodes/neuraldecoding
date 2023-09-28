@@ -28,16 +28,59 @@ def organise_files_into_directories(path, dates):
             except:
                 #extract the date from the file name
                 date = i.split('_')[0:3]
+                #if the date is in the format 2014-10-22, convert it to 20141022
+
                 #remove all characters after level
                 #if month or day is only one digit, add a 0 to the front
-                if len(date[0]) == 1:
-                    date[0] = '0' + date[0]
-                if len(date[1]) == 1:
-                    date[1] = '0' + date[1]
+                try:
+                    if len(date[0]) == 1:
+                        date[0] = '0' + date[0]
+                    if len(date[1]) == 1:
+                        date[1] = '0' + date[1]
+                    date = date[0] + date[1] + date[2][0:4]
 
-                date = date[0] + date[1] + date[2][0:4]
+                except:
+                    date = i.split('-')[0:3]
+                    if len(date[0]) == 1:
+                        date[0] = '0' + date[0]
+                    if date[1] == 'Jan':
+                        date[1] = '01'
+                    elif date[1] == 'Feb':
+                        date[1] = '02'
+                    elif date[1] == 'Mar':
+                        date[1] = '03'
+
+                    elif date[1] == 'Apr':
+                        date[1] == '04'
+                    elif date[1] == 'May':
+                        date[1] = '05'
+                    elif date[1] == 'Jun':
+                        date[1] = '06'
+                    elif date[1] == 'Jul':
+                        date[1] = '07'
+                    elif date[1] == 'Aug':
+                        date[1] = '08'
+                    elif date[1] == 'Sep':
+                        date[1] = '09'
+                    elif date[1] == 'Oct':
+                        date[1] = '10'
+                    elif date[1] == 'Nov':
+                        date[1] = '11'
+                    elif date[1] == 'Dec':
+                        date[1] = '12'
+                    if len(date[1]) == 1:
+                        #check if the month is written as a string not number
+
+                        date[1] = '0' + date[1]
+                    date = date[0] + date[1] + date[2][0:4]
+
+
                 #convert the date to a datetime object
-                date = datetime.strptime(date, '%d%m%Y')
+                try:
+                    date = datetime.strptime(date, '%d%m%Y')
+                except:
+                    print('cannot organise file ' + i)
+                    continue
                 #remove the time
                 date = datetime.date(date)
 
@@ -128,7 +171,7 @@ def get_list_of_recblocks(path):
 
 
 if __name__ == '__main__':
-    path = 'D:\Data\F1606_Windolene\level74/'
+    path = 'D:\Data/F1405_Ivy/'
     # date_strings = [
     #     "02/10/2014",
     #     "05/10/2014",
@@ -156,7 +199,15 @@ if __name__ == '__main__':
         "19/06/2020"
     ]
 
-    date_objects = [datetime.strptime(date_string, "%d/%m/%Y") for date_string in date_strings]
+    date_strings_ivy =[
+    "01/06/2015",
+    "10/06/2015",
+    "22/06/2015",
+    "28/09/2015",
+    "29/10/2015",
+    "15/02/2016"]
+
+    date_objects = [datetime.strptime(date_string, "%d/%m/%Y") for date_string in date_strings_ivy]
     #remove the time from the date objects
     date_objects = [datetime.date(date_object) for date_object in date_objects]
     #organise the date_objects in ascencind order
