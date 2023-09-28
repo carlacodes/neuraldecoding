@@ -11,7 +11,6 @@ from sklearn.inspection import permutation_importance
 import scipy
 from helpers.GeneratePlotsConcise import *
 from scipy.stats import mannwhitneyu
-
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
@@ -76,15 +75,15 @@ def scatterplot_and_visualise(probewordlist,
         probewordindex = probeword[0]
         print(probewordindex)
         stringprobewordindex = str(probewordindex)
-        if ferretname == 'Squinty' or ferretname == 'Windolene':
+        # if ferretname == 'Squinty' or ferretname == 'Windolene':
             #scores_squinty_2022_2_squinty_probe_bs
-            scores = np.load(
-                saveDir + '/' + r'scores_' + ferretname + '_2022_' + stringprobewordindex + '_' + ferretname + '_probe_bs.npy',
-                allow_pickle=True)[()]
-        else:
-            scores = np.load(
-                saveDir + '/' + r'scores_' + ferretname + '_2022_' + stringprobewordindex + '_' + ferretname + '_probe_pitchshift_vs_not_by_talker_bs.npy',
-                allow_pickle=True)[()]
+        scores = np.load(
+            saveDir  + r'scores_' + ferretname + '_2022_' + stringprobewordindex + '_' + ferretname + '_probe_bs.npy',
+            allow_pickle=True)[()]
+        # else:
+        #     scores = np.load(
+        #         saveDir  + r'scores_' + ferretname + '_2022_' + stringprobewordindex + '_' + ferretname + '_probe_pitchshift_vs_not_by_talker_bs.npy',
+        #         allow_pickle=True)[()]
 
 
 
@@ -294,8 +293,9 @@ def load_classified_report(path):
     :return: classified report
     '''
     #join the path to the report
-    report_path = os.path.join(path, 'mountainsort4', 'report', 'quality_metrics_classified.csv')
+    report_path = os.path.join(path, 'quality_metrics_classified.csv')
     #combine the paths
+
     report = pd.read_csv(report_path)    #get the list of multi units and single units
     #the column is called unit_type
     multiunitlist = []
@@ -315,20 +315,22 @@ def load_classified_report(path):
     return report, singleunitlist, multiunitlist, noiselist
 def main():
     probewordlist = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
-    probewordlist_squinty = [(2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
+    probewordlist_l74 = [(2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
                              (14, 14)]
     # dictoutput_windolene = scatterplot_and_visualise(probewordlist_squinty, saveDir= 'E:/results_16092023\F1606_Windolene/bb5/', ferretname='Windolene', singleunitlist=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], multiunitlist=np.arange(1,64, 1), noiselist = [])
-    streams = ['BB_2', 'BB_3']
+    streams = ['BB_2', 'BB_3', 'BB_4', 'BB_5']
+    # streams = ['BB_4']
     report_squinty = {}
     singleunitlist_squinty = {}
     multiunitlist_squinty = {}
     noiselist_squinty = {}
 
+    #
+    # for side in streams:
+    #     report_squinty[side], singleunitlist_squinty[side], multiunitlist_squinty[side], noiselist_squinty[side] = load_classified_report(f'E:\ms4output2\F1604_Squinty\BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold\BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold_BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold_{side}/')
 
-    for side in streams:
-        report_squinty[side], singleunitlist_squinty[side], multiunitlist_squinty[side], noiselist_squinty[side] = load_classified_report(f'E:\ms4output2\F1604_Squinty\BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold\BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold_BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold_{side}/')
-
-    animal_list = ['F1306_Firefly', 'F1604_Squinty', 'F1606_Windolene','F1702_Zola', 'F1815_Cruella', 'F1901_Crumble', 'F1902_Eclair']
+    animal_list = [  'F1606_Windolene','F1702_Zola', 'F1815_Cruella', 'F1901_Crumble']
+    # animal_list = ['F1606_Windolene']
     #load the report for each animal in animal-list
     report = {}
     singleunitlist = {}
@@ -342,42 +344,86 @@ def main():
         path_list[animal] = [path.parent for path in path_list[animal]]
 
     for animal in animal_list:
+        report[animal] = {}
+        singleunitlist[animal] = {}
+        multiunitlist[animal] = {}
+        noiselist[animal] = {}
+
         for path in path_list[animal]:
-            #get the number of streams per animal by counting the number of directories in each path
-            num_streams = len([name for name in os.listdir(path) if os.path.isdir(os.path.join(path, name))])
-            #if there is more than one stream, then we need to specify which stream we want to load the report for
-
-
-            #get the stream name, the last three characters of two directories up from the report
 
 
             stream_name = path.parent.absolute()
             stream_name = stream_name.parent.absolute()
             stream_name = str(stream_name)[-4:]
+            #check if stream name exists
+            # if stream_name in report[animal].keys():
+            #     stream_name = path.parent.absolute()
+            #     stream_name = stream_name.parent.absolute()
+            #     #find myriad number
+            #     stream_name = str(stream_name)[-6:]
             #load the report for that stream
             try:
-                report[animal][stream_name], singleunitlist[animal][stream_name], multiunitlist[animal][stream_name], noiselist[animal][stream_name] = load_classified_report(f'{path}')
+              report[animal][stream_name], singleunitlist[animal][stream_name], multiunitlist[animal][stream_name], noiselist[animal][stream_name] = load_classified_report(f'{path}')
             except:
                 print('no report for this stream')
                 pass
+    # now create a dictionary of dictionaries, where the first key is the animal name, and the second key is the stream name
+    #the value is are the decoding scores for each cluster
 
-    dictoutput_squinty_bb2 = scatterplot_and_visualise(probewordlist_squinty,saveDir = 'E:/results_16092023/F1604_Squinty/myriad1/bb2/', ferretname='Squinty', singleunitlist=singleunitlist_squinty['BB_2'], multiunitlist=multiunitlist_squinty['BB_2'], noiselist = noiselist_squinty['BB_2'])
-    dictoutput_squinty_bb3 = scatterplot_and_visualise(probewordlist_squinty,saveDir = 'E:/results_16092023\F1604_Squinty\myriad1/bb3', ferretname='Squinty', singleunitlist=singleunitlist_squinty['BB_3'], multiunitlist=multiunitlist_squinty['BB_3'], noiselist = noiselist_squinty['BB_3'])
 
+    dictoutput = {}
+    dictoutput_trained = []
+    dictoutput_naive = []
+    dictoutput_all = []
+    for animal in animal_list:
+        dictoutput[animal] = {}
+        for stream in report[animal]:
+            dictoutput[animal][stream] = {}
+            #if stream contains BB_2
+            if 'BB_2' in stream:
+                streamtext = 'bb2'
+            elif 'BB_3' in stream:
 
-    # dictoutput_eclair =
-    # dictoutput_crumble =
-    #
-    # dictoutput_nala =
-    dictoutput_ore = scatterplot_and_visualise(probewordlist, saveDir = 'E:\decoding_scores\F2003_Orecchiette\lstm_kfold_20062023_ores2', ferretname='Orecchiette', singleunitlist=[1,19, 21, 219, 227],\
-                                                 multiunitlist=np.arange(1, 384, 1), noiselist=[])
-    dictlist = [dictoutput_squinty_bb2, dictoutput_squinty_bb3, dictoutput_ore]
-    dictlist_trained = [dictoutput_squinty_bb2, dictoutput_squinty_bb3]
-    dictlist_naive = [dictoutput_ore]
+                streamtext = 'bb3'
+            elif 'BB_4' in stream:
+                streamtext = 'bb4'
+            elif 'BB_5' in stream:
+                streamtext = 'bb5'
+            #remove F number character from animal name
+            animal_text = animal.split('_')[1]
+            #make lowercase
+            # animal_text = animal_text.lower()
+            # try:
+            if animal == 'F1604_Squinty':
+                dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
+                                                                saveDir=f'D:/interrovingdecoding/results_16092023/{animal}/myriad3/{streamtext}/',
+                                                                ferretname=animal_text,
+                                                                singleunitlist=singleunitlist[animal][stream],
+                                                                multiunitlist=multiunitlist[animal][stream],
+                                                                noiselist=noiselist[animal][stream])
+            elif animal == 'F1606_Windolene':
+                dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
+                                                                saveDir=f'D:/interrovingdecoding/results_16092023/{animal}/{streamtext}/',
+                                                                ferretname=animal_text,
+                                                                singleunitlist=singleunitlist[animal][stream],
+                                                                multiunitlist=multiunitlist[animal][stream],
+                                                                noiselist=noiselist[animal][stream])
+            else:
+
+                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'D:/interrovingdecoding/results_16092023/{animal}/{streamtext}/', ferretname=animal_text, singleunitlist=singleunitlist[animal][stream], multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream])
+
+                dictoutput_all.append(dictoutput_instance)
+            if animal == 'F1604_Squinty' or animal == 'F1606_Windolene' or animal == 'F1702_Zola' or animal == 'F1815_Cruella':
+                print('trained animal'+ animal)
+                dictoutput_trained.append(dictoutput_instance)
+            else:
+                print('naive animal:'+ animal)
+                dictoutput_naive.append(dictoutput_instance)
+
     labels = ['squinty', 'squinty', 'ore']
     colors = ['purple', 'magenta', 'darkturquoise', 'olivedrab', 'steelblue', 'darkcyan']
 
-    generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors)
+    generate_plots(dictoutput_all, dictoutput_trained, dictoutput_naive, labels, colors)
 
     return
 
@@ -456,9 +502,9 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     bigconcatenatenaive_nonps = np.empty(0)
     for dictouput in dictlist:
         for key in dictouput.keys():
-            print(key, 'key')
+            # print(key, 'key')
             for key3 in dictouput[key]['pitchshift'].keys():
-                print(key3, 'key3')
+                # print(key3, 'key3')
                 bigconcatenatenaive_ps = np.concatenate((bigconcatenatenaive_ps, dictouput[key]['pitchshift'][key3]))
                 bigconcatenatenaive_nonps = np.concatenate(
                     (bigconcatenatenaive_nonps, dictouput[key]['nonpitchshift'][key3]))
