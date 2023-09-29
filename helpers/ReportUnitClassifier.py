@@ -28,15 +28,16 @@ class ReportUnitClassifier:
             cluster_info = pd.read_csv(path_parent / 'phy' / 'cluster_info.tsv', delimiter='\t')
         except:
             print('No cluster_info.tsv file found. Please run phy first.')
+            print('affected animal:', path_parent)
             return
         #if any l_ratio or d_prime is nan, set to 0
         report['l_ratio'] = report['l_ratio'].fillna(0)
         report['d_prime'] = report['d_prime'].fillna(0)
 
         report['unit_type'] = np.nan
-        report.loc[(report['l_ratio'] > 4) | (report['d_prime'] > 4), 'unit_type'] = 'mua'
-        report.loc[(report['l_ratio'] <= 4) & (report['d_prime'] <= 4), 'unit_type'] = 'su'
-        report.loc[(report['l_ratio'] >= 5) | (report['d_prime'] > 4.5), 'unit_type'] = 'trash'
+        report.loc[(report['l_ratio'] > 2.2) | (report['d_prime'] > 2.2), 'unit_type'] = 'mua'
+        report.loc[(report['l_ratio'] <= 2.2) & (report['d_prime'] <= 2.2), 'unit_type'] = 'su'
+        report.loc[(report['l_ratio'] >= 3.5) | (report['d_prime'] > 3.5), 'unit_type'] = 'trash'
 
         # Give the warp number to the channel
         report['channel_id'] = cluster_info['cluster_id'].map(lambda x: cluster_info['ch'][x])
@@ -69,6 +70,8 @@ if __name__ == '__main__':
     #thank you to my past self for writing this script
     # path = Path('E:\ms4output2\F1604_Squinty\BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold\BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold_BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold_BB_3\mountainsort4/report/')
     animal_list = ['F1306_Firefly', 'F1604_Squinty', 'F1606_Windolene','F1702_Zola', 'F1815_Cruella', 'F1901_Crumble', 'F1902_Eclair']
+
+    # animal_list = ['F1606_Windolene']
     path_list = {}
     for animal in animal_list:
         path = Path('E:\ms4output2/' + animal + '/')
@@ -86,6 +89,6 @@ if __name__ == '__main__':
     # path_list_squinty = [path for path in path.glob('**/quality metrics.csv')]
     # #get the parent directory of each path
     # path_list_squinty = [path.parent for path in path_list_squinty]
-    classifier = ReportUnitClassifier(path)
-    report_data = classifier.classify_report()
-    classifier.plot_results(report_data)
+    # classifier = ReportUnitClassifier(path)
+    # report_data = classifier.classify_report()
+    # classifier.plot_results(report_data)
