@@ -330,6 +330,7 @@ def main():
     #     report_squinty[side], singleunitlist_squinty[side], multiunitlist_squinty[side], noiselist_squinty[side] = load_classified_report(f'E:\ms4output2\F1604_Squinty\BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold\BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold_BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold_{side}/')
 
     animal_list = [  'F1606_Windolene','F1702_Zola', 'F1815_Cruella', 'F1901_Crumble']
+    animal_list = ['F1815_Cruella', 'F1901_Crumble']
     # animal_list = ['F1606_Windolene']
     #load the report for each animal in animal-list
     report = {}
@@ -429,11 +430,8 @@ def main():
 
 
 def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
-
-    from pathlib import Path
-
-    labels = ['cruella', 'zola', 'nala', 'crumble', 'eclair', 'ore']
-    colors = ['purple', 'magenta', 'darkturquoise', 'olivedrab', 'steelblue', 'darkcyan']
+    # labels = ['cruella', 'zola', 'nala', 'crumble', 'eclair', 'ore']
+    # colors = ['purple', 'magenta', 'darkturquoise', 'olivedrab', 'steelblue', 'darkcyan']
 
 
     fig, ax = plt.subplots(1, figsize=(5, 8))
@@ -500,7 +498,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
 
     bigconcatenatenaive_ps = np.empty(0)
     bigconcatenatenaive_nonps = np.empty(0)
-    for dictouput in dictlist:
+
+    for dictouput in dictlist_naive:
         for key in dictouput.keys():
             # print(key, 'key')
             for key3 in dictouput[key]['pitchshift'].keys():
@@ -511,7 +510,6 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
 
 
     # Define labels and colors for scatter plots
-
     #plot scatter data in a loop
     for i, (data_dict, label, color) in enumerate(zip(dictlist, labels, colors)):
 
@@ -526,6 +524,19 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
 
     x = np.linspace(0.4, 1, 101)
     ax.plot(x, x, color='black', linestyle = '--')  # identity line
+
+    if bigconcatenatenaive_nonps.size > bigconcatenatenaive_ps.size:
+
+
+        len(bigconcatenatenaive_ps)
+        bigconcatenatenaive_nonps = bigconcatenatenaive_nonps[:bigconcatenatenaive_ps.size]
+    elif bigconcatenatenaive_nonps.size < bigconcatenatenaive_ps.size:
+        bigconcatenatenaive_ps = bigconcatenatenaive_ps[:bigconcatenatenaive_nonps.size]
+
+    if bigconcatenatetrained_nonps.size > bigconcatenatetrained_ps.size:
+        bigconcatenatetrained_nonps = bigconcatenatetrained_nonps[:bigconcatenatetrained_ps.size]
+    elif bigconcatenatetrained_nonps.size < bigconcatenatetrained_ps.size:
+        bigconcatenatetrained_ps = bigconcatenatetrained_ps[:bigconcatenatetrained_nonps.size]
 
 
     slope, intercept, r_value, pv, se = stats.linregress(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)

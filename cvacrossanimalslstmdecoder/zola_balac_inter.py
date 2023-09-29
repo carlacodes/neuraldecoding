@@ -83,10 +83,8 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
             raster_target = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=1, pitchshift=pitchshift,
                                                             correctresp=True,
                                                             df_filter=[])
-            raster_target = raster_target[raster_target['talker'] == int(talker)]
-            if len(raster_target) == 0:
-                print('no relevant spikes for this talker')
-                continue
+            raster_target = raster_target.reshape(raster_target.shape[0], )
+
         except Exception as error:
             print('No relevant target firing')
             print(error)
@@ -98,11 +96,13 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
             raster_probe = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=probeword, pitchshift=pitchshift,
                                                            correctresp=True,
                                                            df_filter=[])
-            raster_probe = raster_probe[raster_probe['talker'] == talker]
+            # raster_probe = raster_probe[raster_probe['talker'] == talker]
+            raster_probe = raster_probe.reshape(raster_probe.shape[0], )
+
             raster_probe['trial_num'] = raster_probe['trial_num'] + np.max(raster_target['trial_num'])
-            if len(raster_probe) == 0:
-                print('no relevant spikes for this talker')
-                continue
+            # if len(raster_probe) == 0:
+            #     print('no relevant spikes for this talker')
+            #     continue
         except:
             print('No relevant probe firing')
             cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
@@ -185,8 +185,6 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
 
             for train, test in kfold.split(X_bin, y_bin):
                 model_lstm = LSTMClassification(units=400, dropout=0.25, num_epochs=10)
-                test_ybin = y_bin[test]
-                train_ybin = y_bin[train]
                 model_lstm.fit(X_bin[train], y_bin[train])
 
                 y_pred = model_lstm.model(X_bin[test], training=False)
@@ -460,16 +458,18 @@ def run_classification(dir, datapath, ferretid):
     # probewords_list = [(32, 38)]
 
     now = datetime.now()
+    dt_string = now.strftime("%d%m%Y_%H_%M_%S")
 
+    dt_string = now.strftime("%d%m%Y_%H_%M_%S")
 
     tarDir = Path(
-       f'E:/bb4intertestcruella/')
+        f'E:/bb3intertestzola/')
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
     for probeword in probewords_list:
         print('now starting')
         print(probeword)
-        for talker in [1,2]:
+        for talker in [1, 2]:
             if talker == 1:
                 window = [0, 0.6]
             else:
@@ -480,10 +480,10 @@ def run_classification(dir, datapath, ferretid):
 
             scores[f'talker{talker}']['target_vs_probe'] = {}
 
-            # scores[f'talker{talker}']['target_vs_probe']['nopitchshift'] = target_vs_probe(blocks, talker=talker,
-            #                                                                                probewords=probeword,
-            #                                                                                pitchshift=False,
-            #                                                                                window=window)
+            scores[f'talker{talker}']['target_vs_probe']['nopitchshift'] = target_vs_probe(blocks, talker=talker,
+                                                                                           probewords=probeword,
+                                                                                           pitchshift=False,
+                                                                                           window=window)
             scores[f'talker{talker}']['target_vs_probe']['pitchshift'] = target_vs_probe(blocks, talker=talker,
                                                                                          probewords=probeword,
                                                                                          pitchshift=True, window=window)
@@ -496,11 +496,11 @@ def run_classification(dir, datapath, ferretid):
 
 def main():
     directories = [
-        'cruella_2022']  # , 'Trifle_July_2022']/home/zceccgr/Scratch/zceccgr/ms4output/F1702_Zola/spkenvresults04102022allrowsbut4th
+        'zola_2022']  # , 'Trifle_July_2022']/home/zceccgr/Scratch/zceccgr/ms4output/F1702_Zola/spkenvresults04102022allrowsbut4th
 
     datapath = Path(
-        f'E:\ms4output2\F1815_Cruella\BB4BB5_cruella_26092023\BB4BB5_cruella_26092023_BB4BB5_cruella_26092023_BB_4\mountainsort4\phy/')
-    ferretid = 'cruella'
+        f'E:/ms4output2/F1702_Zola/BB2BB3_zola_intertrialroving_26092023/BB2BB3_zola_intertrialroving_26092023_BB2BB3_zola_intertrialroving_26092023_BB_3/mountainsort4/phy/')
+    ferretid = 'zola'
 
     for dir in directories:
         run_classification(dir, datapath, ferretid)
