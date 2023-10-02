@@ -51,7 +51,7 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
     # /mountainsort4/phy') fname = 'blocks.pkl' with open(datapath / 'blocks.pkl', 'rb') as f: blocks = pickle.load(f)
     now = datetime.now()
 
-    tarDir = Path(f'E:\decoding_over_time_l74\F1604_Squinty\myriad3/bb2//figs/')
+    tarDir = Path(f'E:\decoding_over_time_l74\F1604_Squinty\myriad3/bb2//figs2/')
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
 
@@ -149,9 +149,9 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
         print(spiketrains)
 
-        fig,ax = plt.subplots(2, figsize=(20, 10))
+        fig,ax = plt.subplots(2, figsize=(10, 5))
         #ax.scatter(raster_target['spike_time'], np.ones_like(raster_target['spike_time']))
-        rasterplot(spiketrains, c='black', histogram_bins=100, s=3, axes=ax)
+        rasterplot(spiketrains, c='black', histogram_bins=100, axes=ax, s=3 )
 
         ax[0].set_ylabel('trial')
         ax[0].set_xlabel('Time relative to word presentation (s)')
@@ -159,7 +159,7 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
         plt.setp(ax, xlim=custom_xlim)
 
-        plt.suptitle('Target firings for squinty,  clus id '+ str(cluster_id)+'pitchshift = '+str(pitchshift)+'talker'+str(talker), fontsize = 20)
+        plt.suptitle('Target firings for squinty,  clus id '+ str(cluster_id)+' pitchshift = '+str(pitchshift)+', talker '+str(talker), fontsize = 12)
         plt.savefig(
             str(saveDir) + '/targ_clusterid' + str(cluster_id) + ' probeword ' + str(probeword) + ' pitch ' + str(
                 pitchshift) + 'talker' + str(talker) + '.png')
@@ -175,7 +175,7 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
 
             #ax.scatter(raster_target['spike_time'], np.ones_like(raster_target['spike_time']))
-            fig2,ax = plt.subplots(2, figsize=(20, 10))
+            fig2,ax = plt.subplots(2, figsize=(10, 5))
 
             rasterplot(spiketrains, c='blue', histogram_bins=100, s=3, axes=ax)
 
@@ -184,7 +184,7 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
             custom_xlim = (-0.1, 0.6)
 
             plt.setp(ax, xlim=custom_xlim)
-            plt.suptitle('Distractor firings for squinty,  clus id '+ str(cluster_id)+' , pitchshift = '+str(pitchshift)+ 'probeword '+str(probeword)+'talker'+str(talker), fontsize = 20)
+            plt.suptitle('Distractor firings for squinty,  clus id '+ str(cluster_id)+' , pitchshift = '+str(pitchshift)+ ' probeword '+str(probeword)+' talker '+str(talker), fontsize = 12)
 
 
 

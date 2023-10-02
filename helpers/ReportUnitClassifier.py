@@ -37,7 +37,7 @@ class ReportUnitClassifier:
         report['unit_type'] = np.nan
         report.loc[(report['l_ratio'] > 2.2) | (report['d_prime'] > 2.2), 'unit_type'] = 'mua'
         report.loc[(report['l_ratio'] <= 2.2) & (report['d_prime'] <= 2.2), 'unit_type'] = 'su'
-        report.loc[(report['l_ratio'] >= 3.5) | (report['d_prime'] > 3.5), 'unit_type'] = 'trash'
+        report.loc[(report['l_ratio'] >= 7) | (report['d_prime'] > 7), 'unit_type'] = 'trash'
 
         # Give the warp number to the channel
         report['channel_id'] = cluster_info['cluster_id'].map(lambda x: cluster_info['ch'][x])

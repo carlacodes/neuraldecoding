@@ -40,6 +40,7 @@ def apply_filter(df, filter):
 class concatenatedWarpData:
     dp: str
     warpData: str = warpDataPath
+    side: str = 'left'
 
     def load(self):
         print("Loading data from:", self.dp)
@@ -238,14 +239,14 @@ class concatenatedWarpData:
 def main():
     filter_trials = {'No Level Cue'}
 
-    dp = Path('E:\ms4output2\F1604_Squinty\BB2BB3_squinty_MYRIAD1_23092023\BB2BB3_squinty_MYRIAD1_23092023_BB2BB3_squinty_MYRIAD1_23092023_BB_2\mountainsort4\phy/')
+    dp = Path('E:\ms4output2\F1604_Squinty\BB2BB3_squinty_MYRIAD1_23092023\BB2BB3_squinty_MYRIAD1_23092023_BB2BB3_squinty_MYRIAD1_23092023_BB_3\mountainsort4\phy/')
     warpData = Path('D:\Electrophysiological_Data\F1604_Squinty\myriad1/')
     saveDir = Path('D:/Data/spkfigs/squinty/')
     saveDir.mkdir(parents=False, exist_ok=True)
 
-    dataset = concatenatedWarpData(dp, warpData=warpData)
+    dataset = concatenatedWarpData(dp, warpData=warpData, side = 'right')
     dataset.load()
-    dataset.create_summary_pdf(saveDir, title='Squinty+active')
+    # dataset.create_summary_pdf(saveDir, title='Squinty+active')
 
     print(dataset)
 

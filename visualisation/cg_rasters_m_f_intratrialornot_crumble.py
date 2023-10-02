@@ -1,6 +1,7 @@
 import pickle
 from pathlib import Path
 import tensorflow as tf
+import neo
 import numpy as np
 # from sklearn.metrics import confusion_matrix
 # import matplotlib.pyplot as plt
@@ -22,7 +23,7 @@ from datetime import datetime
 from astropy.stats import bootstrap
 import sklearn
 from instruments.helpers.util import simple_xy_axes, set_font_axes
-from instruments.helpers.neural_analysis_helpers import get_word_aligned_raster
+from instruments.helpers.neural_analysis_helpers import get_word_aligned_raster_zola_cruella
 from instruments.helpers.euclidean_classification_minimal_function import classify_sweeps
 # Import standard packages
 import numpy as np
@@ -48,6 +49,13 @@ from Neural_Decoding.decoders import LSTMDecoder, LSTMClassification
 def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshift=True):
     # datapath = Path('/Users/juleslebert/home/phd/fens_data/warp_data/Trifle_June_2022/Trifle_week_16_05_22
     # /mountainsort4/phy') fname = 'blocks.pkl' with open(datapath / 'blocks.pkl', 'rb') as f: blocks = pickle.load(f)
+    now = datetime.now()
+
+    tarDir = Path(f'E:\decoding_over_time_l74\F1901_Crumble/bb3/figs/')
+    saveDir = tarDir
+    saveDir.mkdir(exist_ok=True, parents=True)
+
+
     if talker == 1:
         probeword = probewords[0]
     else:
@@ -55,32 +63,29 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
     binsize = 0.01
     window = [0, 0.6]
 
-    epochs = ['Early', 'Late']
-    epoch_threshold = 1.5
     clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
                  st.annotations['group'] != 'noise']
+    # clust_ids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,14, 15]
 
-    scores = {'cluster_id': [],
-              'score': [],
-              'cm': [],
-              'bootScore': [],
-              'lstm_score': [],
-              'lstm_avg': [],
-              'lstm_balanced': [],
-              'lstm_balanced_avg': [], }
     cluster_id_droplist = np.empty([])
-    for cluster_id in tqdm(clust_ids):
+    for cluster_id in clust_ids:
+        print('now starting cluster')
+        print(cluster_id)
 
         target_filter = ['Target trials', 'No Level Cue']  # , 'Non Correction Trials']
 
         try:
-            raster_target = get_word_aligned_raster(blocks, cluster_id, word=1, pitchshift=pitchshift,
+            # CHANGE BELOW TO crumble RASTER FUNCTION:
+            raster_target = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=1, pitchshift=pitchshift,
                                                     correctresp=False,
                                                     df_filter=target_filter)
-            raster_target = raster_target[raster_target['talker'] == int(talker)]
-            if len(raster_target) == 0:
-                print('no relevant spikes for this talker')
-                continue
+            raster_target = raster_target.reshape(raster_target.shape[0], )
+
+
+            # # raster_target = raster_target[raster_target['talker'] == int(talker)]
+            # if len(raster_target) == 0:
+            #     print('no relevant spikes for this talker')
+            #     continue
         except:
             print('No relevant target firing')
             cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
@@ -88,27 +93,24 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
         probe_filter = ['No Level Cue']  # , 'Non Correction Trials']
         try:
-            raster_probe = get_word_aligned_raster(blocks, cluster_id, word=probeword, pitchshift=pitchshift,
+            raster_probe = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=probeword, pitchshift=pitchshift,
                                                    correctresp=False,
                                                    df_filter=probe_filter)
-            raster_probe = raster_probe[raster_probe['talker'] == talker]
+            raster_probe = raster_probe.reshape(raster_probe.shape[0], )
+
             raster_probe['trial_num'] = raster_probe['trial_num'] + np.max(raster_target['trial_num'])
-            if len(raster_probe) == 0:
-                print('no relevant spikes for this talker')
-                continue
+            # if len(raster_probe) == 0:
+            #     print('no relevant spikes for this talker')
+            #     continue
         except:
             print('No relevant probe firing')
             cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
 
             continue
         # sample with replacement from target trials and probe trials to boostrap scores and so distributions are equal
-        lengthofraster = np.sum(len(raster_target['spike_time']) + len(raster_probe['spike_time']))
-        raster_targ_reshaped = np.empty([])
-        raster_probe_reshaped = np.empty([])
+
         bins = np.arange(window[0], window[1], binsize)
 
-        lengthoftargraster = len(raster_target['spike_time'])
-        lengthofproberaster = len(raster_probe['spike_time'])
 
         unique_trials_targ = np.unique(raster_target['trial_num'])
         unique_trials_probe = np.unique(raster_probe['trial_num'])
@@ -127,34 +129,17 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
                          range=(window[0], window[1]))[0]
             count += 1
 
-        stim0 = np.full(len(raster_target), 0)  # 0 = target word
-        stim1 = np.full(len(raster_probe), 1)  # 1 = probe word
-        stim = np.concatenate((stim0, stim1))
-
-        stim0 = np.full(len(raster_targ_reshaped), 0)  # 0 = target word
-        stim1 = np.full(len(raster_probe_reshaped), 1)  # 1 = probe word
-        if len(stim0) < 10 or len(stim1) < 10:
-            print('less than 10 trials')
-            continue
-        stim_lstm = np.concatenate((stim0, stim1))
-
-        raster = np.concatenate((raster_target, raster_probe))
-        raster_lstm = np.concatenate((raster_targ_reshaped, raster_probe_reshaped))
-
-        score, d, bootScore, bootClass, cm = classify_sweeps(raster, stim, binsize=binsize, window=window, genFig=False)
-        # fit LSTM model to the same data
+        # stim0 = np.full(len(raster_target), 0)  # 0 = target word
+        # stim1 = np.full(len(raster_probe), 1)  # 1 = probe word
+        # stim = np.concatenate((stim0, stim1))
         #
-        newraster = raster.tolist()
-        raster_reshaped = np.reshape(raster_lstm, (np.size(raster_lstm, 0), np.size(raster_lstm, 1), 1)).astype(
-            'float32')
-        stim_reshaped = np.reshape(stim_lstm, (len(stim_lstm), 1)).astype('float32')
+        # stim0 = np.full(len(raster_targ_reshaped), 0)  # 0 = target word
+        # stim1 = np.full(len(raster_probe_reshaped), 1)  # 1 = probe word
+        #
+        #
 
-        import neo
 
-        # Create a 2D numpy array of spike times
-        spike_times = raster_target['spike_time']
 
-        # Create a list of SpikeTrain objects
 
         spiketrains = []
         for trial_id in unique_trials_targ:
@@ -164,10 +149,9 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
         print(spiketrains)
 
-        num_trials = np.shape(raster_targ_reshaped)[0]
-        fig,ax = plt.subplots(2, figsize=(20, 10))
+        fig,ax = plt.subplots(2, figsize=(10, 5))
         #ax.scatter(raster_target['spike_time'], np.ones_like(raster_target['spike_time']))
-        rasterplot(spiketrains, c='black', histogram_bins=100, s=3, axes=ax)
+        rasterplot(spiketrains, c='black', histogram_bins=100, axes=ax, s= 3)
 
         ax[0].set_ylabel('trial')
         ax[0].set_xlabel('Time relative to word presentation (s)')
@@ -175,83 +159,67 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
         plt.setp(ax, xlim=custom_xlim)
 
-        plt.suptitle('Target firings for Crumble,  clus id '+ str(cluster_id)+'pitchshift = '+str(pitchshift)+'talker'+str(talker), fontsize = 20)
-        plt.savefig('D:/Data/rasterplotsfromdecoding/mandf/crumbletarg_clusterid'+str(cluster_id)+' probeword '+str(probeword)+' pitch '+str(pitchshift)+' talker '+str(talker)+'.png')
+        plt.suptitle('Target firings for crumble,  clus id '+ str(cluster_id)+'pitchshift = '+str(pitchshift)+'talker'+str(talker), fontsize = 20)
+        plt.savefig(
+            str(saveDir) + '/targ_clusterid' + str(cluster_id) + ' probeword ' + str(probeword) + ' pitch ' + str(
+                pitchshift) + 'talker' + str(talker) + '.png')
         #plt.show()
 
-        spiketrains = []
-        for trial_id in unique_trials_probe:
-            selected_trials = raster_probe[raster_probe['trial_num'] == trial_id]
-            spiketrain = neo.SpikeTrain(selected_trials['spike_time'], units='s', t_start=min(selected_trials['spike_time']), t_stop=max(selected_trials['spike_time']))
-            spiketrains.append(spiketrain)
+
+        try:
+            spiketrains = []
+            for trial_id in unique_trials_probe:
+                selected_trials = raster_probe[raster_probe['trial_num'] == trial_id]
+                spiketrain = neo.SpikeTrain(selected_trials['spike_time'], units='s', t_start=min(selected_trials['spike_time']), t_stop=max(selected_trials['spike_time']))
+                spiketrains.append(spiketrain)
 
 
-        #ax.scatter(raster_target['spike_time'], np.ones_like(raster_target['spike_time']))
-        fig2,ax = plt.subplots(2, figsize=(20, 10))
+            #ax.scatter(raster_target['spike_time'], np.ones_like(raster_target['spike_time']))
+            fig2,ax = plt.subplots(2, figsize=(10, 5))
 
-        rasterplot(spiketrains, c='blue', histogram_bins=100, s=3, axes=ax)
+            rasterplot(spiketrains, c='blue', histogram_bins=100, s=3, axes=ax)
 
-        ax[0].set_ylabel('trial')
-        ax[0].set_xlabel('Time relative to word presentation (s)')
-        custom_xlim = (-0.1, 0.6)
+            ax[0].set_ylabel('trial')
+            ax[0].set_xlabel('Time relative to word presentation (s)')
+            custom_xlim = (-0.1, 0.6)
 
-        plt.setp(ax, xlim=custom_xlim)
-        plt.suptitle('Distractor firings for Crumble,  clus id '+ str(cluster_id)+' , pitchshift = '+str(pitchshift)+ 'probeword '+str(probeword)+'talker'+str(talker), fontsize = 20)
+            plt.setp(ax, xlim=custom_xlim)
+            plt.suptitle('Distractor firings for crumble,  clus id '+ str(cluster_id)+' , pitchshift = '+str(pitchshift)+ 'probeword '+str(probeword)+'talker'+str(talker), fontsize = 20)
 
 
 
-        plt.savefig('D:/Data/rasterplotsfromdecoding/mandf/crumbledist_clusterid'+  str(cluster_id)+'probe'+str(probeword)+' , pitch '+str(pitchshift)+str(talker)+'.png')
-        #plt.show()
+            plt.savefig(
+                str(saveDir) + '/dist_clusterid' + str(cluster_id) + ' probeword ' + str(probeword) + ' pitch ' + str(
+                    pitchshift) + 'talker' + str(talker) + '.png')
+        except:
+            print('no distractor firing')
+            continue
     return
 
 
 
 def run_classification(dir):
-    datapath = Path(f'D:\ms4output\F1901_Crumble\wpsoutput17112022bb2bb3\phy')
-    fname = 'blocks.pkl'
+    datapath = Path(f'E:\ms4output2\F1901_Crumble\BB4BB5_crumble_01102023\BB4BB5_crumble_01102023_BB4BB5_crumble_01102023_BB_4\mountainsort4\phy/')
     with open(datapath / 'blocks.pkl', 'rb') as f:
         blocks = pickle.load(f)
     scores = {}
     probewords_list = [(2, 2), (20, 22), (5, 6), (42, 49), (32, 38)]
-    now = datetime.now()
-    dt_string = now.strftime("%d%m%Y_%H_%M_%S")
 
-    tarDir = Path(f'/Users/cgriffiths/resultsms4/lstmclass_CVDATA_05122022')
-    saveDir = tarDir / dt_string
-    saveDir.mkdir(exist_ok=True, parents=True)
+
     for probeword in probewords_list:
         print('now starting')
         print(probeword)
-        for talker in [1, 2]:
-            binsize = 0.01
-            if talker == 1:
-                window = [0, 0.6]
-            else:
-                window = [0, 0.5]
-            # window=[0,0.87]
-            print(f'talker {talker}')
+        for talker in [1]:
 
-            scores[f'talker{talker}'] = {}
-            # scores[f'talker{talker}']['left'] = {}
-
-            # scores[f'talker{talker}']['left']['noise'] = probe_early_vs_late(blocks, talker=talker, noise = True, df_filter=['No Level Cue', 'Sound Left'], window=window, binsize=binsize)
-            # scores[f'talker{talker}']['left']['silence'] = probe_early_vs_late(blocks, talker=talker, noise = False, df_filter=['No Level Cue', 'Sound Left'], window=window, binsize=binsize)
-
-            # scores[f'talker{talker}']['right'] = {}
-            # scores[f'talker{talker}']['right']['noise'] = probe_early_vs_late(blocks, talker=talker, noise = True, df_filter=['No Level Cue', 'Sound Right'], window=window, binsize=binsize)
-            # scores[f'talker{talker}']['right']['silence'] = probe_early_vs_late(blocks, talker=talker, noise = False, df_filter=['No Level Cue', 'Sound Right'], window=window, binsize=binsize)
-
-            scores[f'talker{talker}']['target_vs_probe'] = {}
-
+            # target_vs_probe_with_raster(blocks, talker=talker,probewords=probeword,pitchshift=False)
             target_vs_probe_with_raster(blocks, talker=talker,probewords=probeword,pitchshift=False)
-            target_vs_probe_with_raster(blocks, talker=talker,probewords=probeword,pitchshift=True)
 
 
 
 
 def main():
 
-    directories = ['crumble_2022']  # , 'Trifle_July_2022']
+    directories = ['zola_2022']  # , 'Trifle_July_2022']
     for dir in directories:
         run_classification(dir)
 

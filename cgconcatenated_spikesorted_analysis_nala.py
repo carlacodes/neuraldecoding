@@ -238,7 +238,7 @@ class concatenatedWarpData:
 def main():
     filter_trials = {'No Level Cue'}
 
-    dp = Path('D:/ms4output/F1812_Nala/wpsoutput26112022bb2bb3/phy/')
+    dp = Path('E:\ms4output2\F1812_Nala/nala_01102023/nala_01102023_nala_01102023_BB_5\mountainsort4\phy/')
     warpData = Path('E:/Electrophysiological_Data/F1812_Nala/')
     saveDir = Path('D:/Data/spkfigs/Nala/')
     saveDir.mkdir(parents=False, exist_ok=True)

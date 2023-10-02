@@ -329,8 +329,12 @@ def main():
     # for side in streams:
     #     report_squinty[side], singleunitlist_squinty[side], multiunitlist_squinty[side], noiselist_squinty[side] = load_classified_report(f'E:\ms4output2\F1604_Squinty\BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold\BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold_BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold_{side}/')
 
-    animal_list = [  'F1606_Windolene','F1702_Zola', 'F1815_Cruella', 'F1901_Crumble']
-    animal_list = ['F1815_Cruella', 'F1901_Crumble']
+    animal_list = [  'F1606_Windolene','F1702_Zola','F1604_Squinty', 'F1815_Cruella', 'F1902_Eclair', 'F1901_Crumble']
+    animal_list = [ 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola', 'F1902_Eclair']
+    # animal_list = [ 'F1901_Crumble']
+
+    # animal_list = ['F1902_Eclair', 'F1901_Crumble']
+
     # animal_list = ['F1606_Windolene']
     #load the report for each animal in animal-list
     report = {}

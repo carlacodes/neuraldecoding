@@ -236,14 +236,14 @@ class concatenatedWarpData:
 def main():
     filter_trials = {'No Level Cue'}
 
-    dp = Path('E:\ms4output2\F1901_Crumble\BB2BB3_crumble_29092023_2\BB2BB3_crumble_29092023_2_BB2BB3_crumble_29092023_2_BB_2\mountainsort4\phy/')
+    dp = Path('E:\ms4output2\F1901_Crumble\BB4BB5_crumble_01102023\BB4BB5_crumble_01102023_BB4BB5_crumble_01102023_BB_5\mountainsort4\phy/')
     warpData = Path('E:/Electrophysiological_Data/F1901_Crumble/')
     saveDir = Path('D:/Data/spkfigs/Crumble/')
     saveDir.mkdir(parents=False, exist_ok=True)
 
     dataset = concatenatedWarpData(dp, warpData=warpData)
     dataset.load()
-    dataset.create_summary_pdf(saveDir, title='summary_Crumble_passive')
+    # dataset.create_summary_pdf(saveDir, title='summary_Crumble_passive')
 
     print(dataset)
 
