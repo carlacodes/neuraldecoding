@@ -27,7 +27,6 @@ from instruments.helpers.neural_analysis_helpers import get_soundonset_alignedra
 from instruments.helpers.euclidean_classification_minimal_function import classify_sweeps
 # Import standard packages
 import numpy as np
-import matplotlib.pyplot as plt
 from scipy import io
 from scipy import stats
 import pickle
@@ -100,31 +99,31 @@ def sound_onset_raster(blocks, stream ='BB_3'):
             spiketrains.append(spiketrain)
 
         print(spiketrains)
-        try:
-            #print the distribution of times
-            fig, ax = plt.figure()
-            plt.hist(raster_target['spike_time'], bins=100, ax = ax)
-            plt.suptitle(f'distribution firings for cruella,  clus id '+ str(cluster_id) +'stream:'+ f'{stream}', fontsize = 12)
+        # try:
+        #print the distribution of times
+        # fig, ax = plt.figure()
+        # plt.hist(raster_target['spike_time'], bins=100, ax = ax)
+        # plt.suptitle(f'distribution firings for cruella,  clus id '+ str(cluster_id) +'stream:'+ f'{stream}', fontsize = 12)
+        #
+        # plt.show()
 
-            plt.show()
+        fig,ax = plt.subplots(2, figsize=(10, 5))
+        #ax.scatter(raster_target['spike_time'], np.ones_like(raster_target['spike_time']))
+        rasterplot(spiketrains, c='black', histogram_bins=100, axes=ax, s=0.5 )
 
-            fig,ax = plt.subplots(2, figsize=(10, 5))
-            #ax.scatter(raster_target['spike_time'], np.ones_like(raster_target['spike_time']))
-            rasterplot(spiketrains, c='black', histogram_bins=100, axes=ax, s=0.5 )
+        ax[0].set_ylabel('trial')
+        ax[0].set_xlabel('Time relative to word presentation (s)')
+        custom_xlim = (-0.1, 0.6)
 
-            ax[0].set_ylabel('trial')
-            ax[0].set_xlabel('Time relative to word presentation (s)')
-            custom_xlim = (-0.1, 0.6)
+        plt.setp(ax, xlim=custom_xlim)
 
-            plt.setp(ax, xlim=custom_xlim)
-
-            plt.suptitle(f'Sound onset firings for cruella,  clus id '+ str(cluster_id) +'stream:'+ f'{stream}', fontsize = 12)
-            plt.savefig(
-                str(saveDir) + f'/soundonset_clusterid_{stream}_' + str(cluster_id)+ '.png')
-            #plt.show()
-        except:
-            print('no spikes')
-            continue
+        plt.suptitle(f'Sound onset firings for cruella,  clus id '+ str(cluster_id) +'stream:'+ f'{stream}', fontsize = 12)
+        plt.savefig(
+            str(saveDir) + f'/soundonset_clusterid_{stream}_' + str(cluster_id)+ '.png')
+        #plt.show()
+        # except:
+        #     print('no spikes')
+        #     continue
 
 
 
