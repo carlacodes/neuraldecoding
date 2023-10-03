@@ -23,7 +23,7 @@ from datetime import datetime
 from astropy.stats import bootstrap
 import sklearn
 from instruments.helpers.util import simple_xy_axes, set_font_axes
-from instruments.helpers.neural_analysis_helpers import get_soundonset_alignedraster
+from instruments.helpers.neural_analysis_helpers import get_soundonset_alignedraster, split_cluster_base_on_segment
 from instruments.helpers.euclidean_classification_minimal_function import classify_sweeps
 # Import standard packages
 import numpy as np
@@ -46,7 +46,7 @@ from Neural_Decoding.metrics import get_rho
 from Neural_Decoding.decoders import LSTMDecoder, LSTMClassification
 
 
-def sound_onset_raster(blocks, talker=1, probewords=[20, 22], pitchshift=True, stream ='BB_3'):
+def sound_onset_raster(blocks, stream ='BB_3'):
 
     tarDir = Path(f'E:/rastersms4spikesortinginter/F1815_Cruella/figsonset/')
     saveDir = tarDir
@@ -66,7 +66,15 @@ def sound_onset_raster(blocks, talker=1, probewords=[20, 22], pitchshift=True, s
         filter = ['No Level Cue']  # , 'Non Correction Trials']
 
         # try:
-        raster_target = get_soundonset_alignedraster(blocks, cluster_id, df_filter=filter, fra = False)
+        new_blocks = split_cluster_base_on_segment(blocks, cluster_id)
+        raster_target = get_soundonset_alignedraster(new_blocks, cluster_id, df_filter=filter)
+
+        # plt.hist(raster_target, bins=100)
+        #for each time in the raster target (second in the tuple, plot a dot at the time and the trial number)
+        # for time in raster_target:
+        #     plt.scatter(time[1], time[0], s=0.5)
+        #plot the distribution of times, the second tuple in the list
+
         raster_target = raster_target.reshape(raster_target.shape[0], )
         # except:
         #     print('No relevant target firing')
@@ -93,6 +101,13 @@ def sound_onset_raster(blocks, talker=1, probewords=[20, 22], pitchshift=True, s
 
         print(spiketrains)
         try:
+            #print the distribution of times
+            fig, ax = plt.figure()
+            plt.hist(raster_target['spike_time'], bins=100, ax = ax)
+            plt.suptitle(f'distribution firings for cruella,  clus id '+ str(cluster_id) +'stream:'+ f'{stream}', fontsize = 12)
+
+            plt.show()
+
             fig,ax = plt.subplots(2, figsize=(10, 5))
             #ax.scatter(raster_target['spike_time'], np.ones_like(raster_target['spike_time']))
             rasterplot(spiketrains, c='black', histogram_bins=100, axes=ax, s=0.5 )
@@ -118,7 +133,7 @@ def sound_onset_raster(blocks, talker=1, probewords=[20, 22], pitchshift=True, s
 
 
 def generate_rasters(dir):
-    datapath = Path(f'E:\ms4output2\F1815_Cruella\BB4BB5_cruella_26092023\BB4BB5_cruella_26092023_BB4BB5_cruella_26092023_BB_5\mountainsort4\phy/')
+    datapath = Path(f'E:\ms4output2\F1815_Cruella\BB4BB5_cruella_26092023\BB4BB5_cruella_26092023_BB4BB5_cruella_26092023_BB_4\mountainsort4\phy/')
     stream = str(datapath).split('\\')[-3]
     stream = stream[-4:]
     print(stream)
@@ -134,7 +149,7 @@ def generate_rasters(dir):
         for talker in [1]:
 
             # target_vs_probe_with_raster(blocks, talker=talker,probewords=probeword,pitchshift=False)
-            sound_onset_raster(blocks, talker=talker, probewords=probeword, pitchshift=False, stream = stream)
+            sound_onset_raster(blocks,stream = stream)
 
 
 
