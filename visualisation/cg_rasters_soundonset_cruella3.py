@@ -56,6 +56,11 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
     clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
                  st.annotations['group'] != 'noise']
 
+    for st in blocks[0].segments[0].spiketrains:
+        print(f"Cluster ID: {st.annotations['cluster_id']}, Group: {st.annotations['group']}")
+
+    clust_ids = [2]
+
     cluster_id_droplist = np.empty([])
     for cluster_id in clust_ids:
         print('now starting cluster')
@@ -130,11 +135,11 @@ def generate_rasters(dir):
         print('now starting')
         print(probeword)
         for talker in [1]:
-            # new_blocks = run_cleaning_of_rasters(blocks, datapath)
+            new_blocks = run_cleaning_of_rasters(blocks, datapath)
 
 
             # target_vs_probe_with_raster(blocks, talker=talker,probewords=probeword,pitchshift=False)
-            target_vs_probe_with_raster(blocks, talker=talker,probewords=probeword,pitchshift=False, stream = stream)
+            target_vs_probe_with_raster(new_blocks, talker=talker,probewords=probeword,pitchshift=False, stream = stream)
 
 
 
