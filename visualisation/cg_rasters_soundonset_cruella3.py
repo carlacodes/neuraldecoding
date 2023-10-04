@@ -46,7 +46,7 @@ def run_cleaning_of_rasters(blocks, datapath):
     return new_blocks
 def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshift=True, stream = 'BB_3'):
 
-    tarDir = Path(f'E:/rastersms4spikesortinginter/F1815_Cruella/figsonset2/')
+    tarDir = Path(f'E:/rastersms4spikesortinginter/F1815_Cruella/figsonset2/{stream}/')
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
 
@@ -59,7 +59,7 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
     for st in blocks[0].segments[0].spiketrains:
         print(f"Cluster ID: {st.annotations['cluster_id']}, Group: {st.annotations['group']}")
 
-    clust_ids = [2]
+    # clust_ids = [2]
 
     cluster_id_droplist = np.empty([])
     for cluster_id in clust_ids:
