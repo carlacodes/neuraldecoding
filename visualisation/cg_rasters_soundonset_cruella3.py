@@ -23,7 +23,7 @@ from datetime import datetime
 from astropy.stats import bootstrap
 import sklearn
 from instruments.helpers.util import simple_xy_axes, set_font_axes
-from instruments.helpers.neural_analysis_helpers import get_soundonset_alignedraster
+from instruments.helpers.neural_analysis_helpers import get_soundonset_alignedraster, split_cluster_base_on_segment
 from instruments.helpers.euclidean_classification_minimal_function import classify_sweeps
 # Import standard packages
 import numpy as np
@@ -32,23 +32,21 @@ from scipy import io
 from scipy import stats
 import pickle
 
-# If you would prefer to load the '.h5' example file rather than the '.pickle' example file. You need the deepdish package
-# import deepdish as dd
-
-# Import function to get the covariate matrix that includes spike history from previous bins
-from Neural_Decoding.preprocessing_funcs import get_spikes_with_history
-import Neural_Decoding
-# Import metrics
-from Neural_Decoding.metrics import get_R2
-from Neural_Decoding.metrics import get_rho
-
-# Import decoder functions
-from Neural_Decoding.decoders import LSTMDecoder, LSTMClassification
 
 
+
+
+def run_cleaning_of_rasters(blocks, datapath):
+    clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
+                 st.annotations['group'] != 'noise']
+    for cluster_id in clust_ids:
+        new_blocks = split_cluster_base_on_segment(blocks, cluster_id, num_clusters=3)
+    with open(datapath / 'new_blocks.pkl', 'wb') as f:
+        pickle.dump(new_blocks, f)
+    return new_blocks
 def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshift=True, stream = 'BB_3'):
 
-    tarDir = Path(f'E:/rastersms4spikesortinginter/F1702_Zola/figsonset2/')
+    tarDir = Path(f'E:/rastersms4spikesortinginter/F1815_Cruella/figsonset2/')
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
 
@@ -118,7 +116,7 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
 
 def generate_rasters(dir):
-    datapath = Path(f'E:\ms4output2\F1702_Zola\BB2BB3_zola_intertrialroving_26092023\BB2BB3_zola_intertrialroving_26092023_BB2BB3_zola_intertrialroving_26092023_BB_3\mountainsort4\phy/')
+    datapath = Path(f'E:\ms4output2\F1815_Cruella\BB4BB5_cruella_26092023\BB4BB5_cruella_26092023_BB4BB5_cruella_26092023_BB_5\mountainsort4\phy/')
     stream = str(datapath).split('\\')[-3]
     stream = stream[-4:]
     print(stream)
@@ -132,6 +130,8 @@ def generate_rasters(dir):
         print('now starting')
         print(probeword)
         for talker in [1]:
+            # new_blocks = run_cleaning_of_rasters(blocks, datapath)
+
 
             # target_vs_probe_with_raster(blocks, talker=talker,probewords=probeword,pitchshift=False)
             target_vs_probe_with_raster(blocks, talker=talker,probewords=probeword,pitchshift=False, stream = stream)

@@ -23,7 +23,7 @@ from datetime import datetime
 from astropy.stats import bootstrap
 import sklearn
 from instruments.helpers.util import simple_xy_axes, set_font_axes
-from instruments.helpers.neural_analysis_helpers import get_soundonset_alignedraster
+from instruments.helpers.neural_analysis_helpers import get_soundonset_alignedraster, split_cluster_base_on_segment
 from instruments.helpers.euclidean_classification_minimal_function import classify_sweeps
 # Import standard packages
 import numpy as np
@@ -51,7 +51,7 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
     # /mountainsort4/phy') fname = 'blocks.pkl' with open(datapath / 'blocks.pkl', 'rb') as f: blocks = pickle.load(f)
     now = datetime.now()
 
-    tarDir = Path(f'E:\decoding_over_time_l74\F1604_Squinty\myriad3/b33//figsonset/')
+    tarDir = Path(f'E:\decoding_over_time_l74\F1604_Squinty\myriad3/b332//figsonset/')
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
 
@@ -69,6 +69,10 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
     cluster_id_droplist = np.empty([])
     for cluster_id in clust_ids:
+        new_blocks = split_cluster_base_on_segment(blocks, cluster_id)
+
+
+    for cluster_id in clust_ids:
         print('now starting cluster')
         print(cluster_id)
 
@@ -76,7 +80,7 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
         try:
             # CHANGE BELOW TO SQUINTY RASTER FUNCTION:
-            raster_target = get_soundonset_alignedraster(blocks, cluster_id, fra = False)
+            raster_target = get_soundonset_alignedraster(blocks, cluster_id)
             raster_target = raster_target.reshape(raster_target.shape[0], )
 
 

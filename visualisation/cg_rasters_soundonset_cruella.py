@@ -58,15 +58,34 @@ def sound_onset_raster(blocks, stream ='BB_3'):
                  st.annotations['group'] != 'noise']
 
     cluster_id_droplist = np.empty([])
+    # for cluster_id in clust_ids:
+    #     print('now starting cluster')
+    #     print(cluster_id)
+    #
+    #     filter = ['No Level Cue']  # , 'Non Correction Trials']
+    #
+    #     # try:
+    #     new_blocks = split_cluster_base_on_segment(blocks, cluster_id)
+
+    # #print the cluster ids in new_blocks and blocks
+    # for block in blocks:
+    #     for segment in block.segments:
+    #         for st in segment.spiketrains:
+    #             print(st.annotations['cluster_id'])
+    # for block in new_blocks:
+    #     for segment in block.segments:
+    #         for st in segment.spiketrains:
+    #             print(st.annotations['cluster_id'])
+
     for cluster_id in clust_ids:
         print('now starting cluster')
         print(cluster_id)
 
         filter = ['No Level Cue']  # , 'Non Correction Trials']
 
-        # try:
-        new_blocks = split_cluster_base_on_segment(blocks, cluster_id)
-        raster_target = get_soundonset_alignedraster(new_blocks, cluster_id, df_filter=filter)
+        try:
+            # new_blocks = split_cluster_base_on_segment(blocks, cluster_id)
+            raster_target = get_soundonset_alignedraster(blocks, cluster_id, df_filter=filter)
 
         # plt.hist(raster_target, bins=100)
         #for each time in the raster target (second in the tuple, plot a dot at the time and the trial number)
@@ -74,11 +93,11 @@ def sound_onset_raster(blocks, stream ='BB_3'):
         #     plt.scatter(time[1], time[0], s=0.5)
         #plot the distribution of times, the second tuple in the list
 
-        raster_target = raster_target.reshape(raster_target.shape[0], )
-        # except:
-        #     print('No relevant target firing')
-        #     cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
-        #     continue
+            raster_target = raster_target.reshape(raster_target.shape[0], )
+        except:
+            print('No relevant target firing')
+            cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
+            continue
 
         bins = np.arange(window[0], window[1], binsize)
 
@@ -99,7 +118,7 @@ def sound_onset_raster(blocks, stream ='BB_3'):
             spiketrains.append(spiketrain)
 
         print(spiketrains)
-        # try:
+        try:
         #print the distribution of times
         # fig, ax = plt.figure()
         # plt.hist(raster_target['spike_time'], bins=100, ax = ax)
@@ -107,23 +126,23 @@ def sound_onset_raster(blocks, stream ='BB_3'):
         #
         # plt.show()
 
-        fig,ax = plt.subplots(2, figsize=(10, 5))
-        #ax.scatter(raster_target['spike_time'], np.ones_like(raster_target['spike_time']))
-        rasterplot(spiketrains, c='black', histogram_bins=100, axes=ax, s=0.5 )
+            fig,ax = plt.subplots(2, figsize=(10, 5))
+            #ax.scatter(raster_target['spike_time'], np.ones_like(raster_target['spike_time']))
+            rasterplot(spiketrains, c='black', histogram_bins=100, axes=ax, s=0.5 )
 
-        ax[0].set_ylabel('trial')
-        ax[0].set_xlabel('Time relative to word presentation (s)')
-        custom_xlim = (-0.1, 0.6)
+            ax[0].set_ylabel('trial')
+            ax[0].set_xlabel('Time relative to word presentation (s)')
+            custom_xlim = (-0.1, 0.6)
 
-        plt.setp(ax, xlim=custom_xlim)
+            plt.setp(ax, xlim=custom_xlim)
 
-        plt.suptitle(f'Sound onset firings for cruella,  clus id '+ str(cluster_id) +'stream:'+ f'{stream}', fontsize = 12)
-        plt.savefig(
-            str(saveDir) + f'/soundonset_clusterid_{stream}_' + str(cluster_id)+ '.png')
-        #plt.show()
-        # except:
-        #     print('no spikes')
-        #     continue
+            plt.suptitle(f'Sound onset firings for cruella,  clus id '+ str(cluster_id) +'stream:'+ f'{stream}', fontsize = 12)
+            plt.savefig(
+                str(saveDir) + f'/soundonset_clusterid_{stream}_' + str(cluster_id)+ '.png')
+            plt.show()
+        except:
+            print('no spikes')
+            continue
 
 
 
