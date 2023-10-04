@@ -117,7 +117,7 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
 
 def generate_rasters(dir):
-    datapath = Path(f'E:\ms4output2\F1702_Zola\BB2BB3_zola_intertrialroving_26092023\BB2BB3_zola_intertrialroving_26092023_BB2BB3_zola_intertrialroving_26092023_BB_3\mountainsort4\phy/')
+    datapath = Path(f'E:\ms4output2\F1702_Zola\BB2BB3_zola_intertrialroving_26092023\BB2BB3_zola_intertrialroving_26092023_BB2BB3_zola_intertrialroving_26092023_BB_2\mountainsort4\phy/')
     stream = str(datapath).split('\\')[-3]
     stream = stream[-4:]
     print(stream)
