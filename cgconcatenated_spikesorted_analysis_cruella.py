@@ -59,6 +59,8 @@ class concatenatedWarpData:
                     seg.df_bhv = load_bhv_data(seg.annotations['bhv_file'])
                 else:
                     seg.df_bhv = None
+            for seg in self.blocks[0].segments:
+                print (seg.annotations['bhv_file'])
 
             with open(phy_folder / 'blocks.pkl', 'wb') as f:
                 print('save pickle blocks file in:', phy_folder / 'blocks.pkl')
@@ -76,8 +78,8 @@ class concatenatedWarpData:
             unit = [st for st in seg.spiketrains if st.annotations['cluster_id'] == cluster_id][0]
 
             # Only keep unit for this session if firing rate > 1/s
-            if statistics.mean_firing_rate(unit) < 1 or seg.df_bhv is None:
-                continue
+            # if statistics.mean_firing_rate(unit) < 1 or seg.df_bhv is None:
+            #     continue
 
             filtered_bhv = seg.df_bhv.copy()
 
@@ -238,7 +240,7 @@ class concatenatedWarpData:
 def main():
     filter_trials = {'No Level Cue'}
 
-    dp = Path('E:\ms4output2\F1815_Cruella\BB2BB3_cruella_26092023\BB2BB3_cruella_26092023_BB2BB3_cruella_26092023_BB_5\mountainsort4\phy/')
+    dp = Path('E:\ms4output2\F1815_Cruella\BB4BB5_cruella_26092023\BB4BB5_cruella_26092023_BB4BB5_cruella_26092023_BB_5\mountainsort4\phy/')
     warpData = Path('E:/Electrophysiological_Data/F1815_Cruella/')
     saveDir = Path('D:/Data/spkfigs/cruella/')
     saveDir.mkdir(parents=False, exist_ok=True)
