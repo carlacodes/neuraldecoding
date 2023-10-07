@@ -23,7 +23,7 @@ from datetime import datetime
 from astropy.stats import bootstrap
 import sklearn
 from instruments.helpers.util import simple_xy_axes, set_font_axes
-from instruments.helpers.neural_analysis_helpers import get_soundonset_alignedraster
+from instruments.helpers.neural_analysis_helpers import get_soundonset_alignedraster, get_word_aligned_raster_zola_cruella2
 from instruments.helpers.euclidean_classification_minimal_function import classify_sweeps
 # Import standard packages
 import numpy as np
@@ -48,7 +48,7 @@ from Neural_Decoding.decoders import LSTMDecoder, LSTMClassification
 
 def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshift=True, stream = 'BB_3'):
 
-    tarDir = Path(f'E:/rastersms4spikesortinginter/F1901_Crumble/figsonset2/')
+    tarDir = Path(f'E:/rastersms4spikesortinginter/F1901_Crumble/figsonset2/bb3onsettest_target/')
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
 
@@ -58,58 +58,28 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
     clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
                  st.annotations['group'] != 'noise']
 
-    cluster_id_droplist = np.empty([])
-    for cluster_id in clust_ids:
-        print('now starting cluster')
-        print(cluster_id)
+    for s, seg in enumerate(blocks[0].segments):
+        unit = [st for st in seg.spiketrains if st.annotations['cluster_id'] == 0][0]
+        unit_2 = [st for st in seg.spiketrains if st.annotations['cluster_id'] == 0.2][0]
+        # compare the two
+        # get the rasters
+        times = unit.times
+        times_2 = unit_2.times
+        if np.array_equal(times, times_2):
+            print('The spike trains have the same spike times')
+        else:
+            print('The spike trains have different spike times')
 
-        filter = ['No Level Cue']  # , 'Non Correction Trials']
+    # cluster_id_droplist = np.empty([])
+    # # clust_ids = clust_ids[18:]
+    # for cluster_id in clust_ids:
+    #     print('now starting cluster')
+    #     print(cluster_id)
+
+        target_filter = ['No Level Cue']  # , 'Non Correction Trials']
 
         # try:
-        raster_target = get_soundonset_alignedraster(blocks, cluster_id, df_filter=filter)
-        raster_target = raster_target.reshape(raster_target.shape[0], )
-        # except:
-        #     print('No relevant target firing')
-        #     cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
-        #     continue
 
-        bins = np.arange(window[0], window[1], binsize)
-
-
-        unique_trials_targ = np.unique(raster_target['trial_num'])
-        raster_targ_reshaped = np.empty([len(unique_trials_targ), len(bins) - 1])
-        count = 0
-        for trial in (unique_trials_targ):
-            raster_targ_reshaped[count, :] = \
-            np.histogram(raster_target['spike_time'][raster_target['trial_num'] == trial], bins=bins,
-                         range=(window[0], window[1]))[0]
-            count += 1
-
-        spiketrains = []
-        for trial_id in unique_trials_targ:
-            selected_trials = raster_target[raster_target['trial_num'] == trial_id]
-            spiketrain = neo.SpikeTrain(selected_trials['spike_time'], units='s', t_start=min(selected_trials['spike_time']), t_stop=max(selected_trials['spike_time']))
-            spiketrains.append(spiketrain)
-
-        print(spiketrains)
-        try:
-            fig,ax = plt.subplots(2, figsize=(10, 5))
-            #ax.scatter(raster_target['spike_time'], np.ones_like(raster_target['spike_time']))
-            rasterplot(spiketrains, c='black', histogram_bins=100, axes=ax, s=0.5 )
-
-            ax[0].set_ylabel('trial')
-            ax[0].set_xlabel('Time relative to word presentation (s)')
-            custom_xlim = (-0.1, 0.6)
-
-            plt.setp(ax, xlim=custom_xlim)
-
-            plt.suptitle(f'Sound onset firings for crumble,  clus id '+ str(cluster_id) +'stream:'+ f'{stream}', fontsize = 12)
-            plt.savefig(
-                str(saveDir) + f'/soundonset_clusterid_{stream}_' + str(cluster_id)+ '.png')
-            #plt.show()
-        except:
-            print('no spikes')
-            continue
 
 
 
@@ -118,7 +88,7 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
 
 def generate_rasters(dir):
-    datapath = Path(f'E:\ms4output2\F1901_Crumble\BB2BB3_crumble_29092023_2\BB2BB3_crumble_29092023_2_BB2BB3_crumble_29092023_2_BB_2\mountainsort4\phy/')
+    datapath = Path(f'E:\ms4output2\F1901_Crumble\BB2BB3_crumble_29092023_2\BB2BB3_crumble_29092023_BB2BB3_crumble_29092023_BB_3\mountainsort4\phy/')
     stream = str(datapath).split('\\')[-3]
     stream = stream[-4:]
     print(stream)

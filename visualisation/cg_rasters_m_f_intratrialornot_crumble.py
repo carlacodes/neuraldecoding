@@ -23,7 +23,7 @@ from datetime import datetime
 from astropy.stats import bootstrap
 import sklearn
 from instruments.helpers.util import simple_xy_axes, set_font_axes
-from instruments.helpers.neural_analysis_helpers import get_word_aligned_raster_zola_cruella
+from instruments.helpers.neural_analysis_helpers import get_word_aligned_raster_zola_cruella2
 from instruments.helpers.euclidean_classification_minimal_function import classify_sweeps
 # Import standard packages
 import numpy as np
@@ -68,34 +68,28 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
     # clust_ids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,14, 15]
 
     cluster_id_droplist = np.empty([])
+    cluster_id_test1 = []  # List to store spike trains for cluster 16
+    cluster_id_test2 = []
     for cluster_id in clust_ids:
         print('now starting cluster')
         print(cluster_id)
 
         target_filter = ['Target trials', 'No Level Cue']  # , 'Non Correction Trials']
 
-        try:
-            raster_target = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=1, pitchshift=pitchshift,
-                                                    correctresp=False,
-                                                    df_filter=target_filter)
-            raster_target = raster_target.reshape(raster_target.shape[0], )
+        # try:
+        raster_target, unfiltered_raster_target = get_word_aligned_raster_zola_cruella2(blocks, cluster_id, word=1, pitchshift=pitchshift,
+                                                correctresp=False,
+                                                df_filter=target_filter)
+        raster_target = raster_target.reshape(raster_target.shape[0], )
 
-
-
-
-
-            # # raster_target = raster_target[raster_target['talker'] == int(talker)]
-            # if len(raster_target) == 0:
-            #     print('no relevant spikes for this talker')
-            #     continue
-        except:
-            print('No relevant target firing')
-            cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
-            continue
+        # except:
+        #     print('No relevant target firing')
+        #     cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
+        #     continue
 
         probe_filter = ['No Level Cue']  # , 'Non Correction Trials']
         try:
-            raster_probe = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=probeword, pitchshift=pitchshift,
+            raster_probe = get_word_aligned_raster_zola_cruella2(blocks, cluster_id, word=probeword, pitchshift=pitchshift,
                                                    correctresp=False,
                                                    df_filter=probe_filter)
             raster_probe = raster_probe.reshape(raster_probe.shape[0], )
@@ -139,9 +133,9 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
         print(spiketrains)
 
         if cluster_id == 16:
-            cluster_id_test1 = spiketrains
+            cluster_id_test1 = unfiltered_raster_target.copy()
         if cluster_id == 16.2:
-            cluster_id_test2 = spiketrains
+            cluster_id_test2 = unfiltered_raster_target.copy()
 
         fig,ax = plt.subplots(2, figsize=(10, 5))
         #ax.scatter(raster_target['spike_time'], np.ones_like(raster_target['spike_time']))
@@ -185,15 +179,25 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
             print('no distractor firing')
             continue
 
-    #compare cluster 1 and 1.1
-    fig,ax = plt.subplots(2, figsize=(10, 5))
-    #ax.scatter(raster_target['spike_time'], np.ones_like(raster_target['spike_time']))
-    rasterplot(cluster_id_test1, c='black', histogram_bins=100, axes=ax, s= 3)
-    rasterplot(cluster_id_test2, c='green', histogram_bins=100, axes=ax, s= 3)
-    plt.show()
+    # #compare cluster 1 and 1.1
+    # fig,ax = plt.subplots(2, figsize=(10, 5))
+    # #ax.scatter(raster_target['spike_time'], np.ones_like(raster_target['spike_time']))
+    # rasterplot(cluster_id_test1, c='black', histogram_bins=100, axes=ax, s= 3)
+    # rasterplot(cluster_id_test2, c='green', histogram_bins=100, axes=ax, s= 3)
+    # plt.show()
 
-    if cluster_id_test1 == cluster_id_test2:
-        print('same')
+
+
+    if all (np.array_equal(st1, st2) for st1, st2 in zip(cluster_id_test1, cluster_id_test2)):
+        print('The spike trains are the same')
+
+    for i in range(0, len(cluster_id_test1)):
+        if np.array_equal(cluster_id_test1[i], cluster_id_test2[i]):
+            print('The spike trains are the same')
+        else:
+            print('The spike trains are not the same')
+
+
 
     return
 
@@ -203,7 +207,6 @@ def run_classification(dir):
     datapath = Path(f'E:\ms4output2\F1901_Crumble\BB2BB3_crumble_29092023_2\BB2BB3_crumble_29092023_BB2BB3_crumble_29092023_BB_3\mountainsort4\phy/')
     with open(datapath / 'new_blocks.pkl', 'rb') as f:
         blocks = pickle.load(f)
-    scores = {}
     probewords_list = [(2, 2), (20, 22), (5, 6), (42, 49), (32, 38)]
 
 
