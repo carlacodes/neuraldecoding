@@ -51,7 +51,7 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
     # /mountainsort4/phy') fname = 'blocks.pkl' with open(datapath / 'blocks.pkl', 'rb') as f: blocks = pickle.load(f)
     now = datetime.now()
 
-    tarDir = Path(f'E:\decoding_over_time_l74\F1901_Crumble/bb3/figs/')
+    tarDir = Path(f'E:/rastersms4spikesortinginter/F1901_Crumble/figsonset2/distandtarg/bb3/')
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
 
@@ -75,11 +75,13 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
         target_filter = ['Target trials', 'No Level Cue']  # , 'Non Correction Trials']
 
         try:
-            # CHANGE BELOW TO crumble RASTER FUNCTION:
             raster_target = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=1, pitchshift=pitchshift,
                                                     correctresp=False,
                                                     df_filter=target_filter)
             raster_target = raster_target.reshape(raster_target.shape[0], )
+
+
+
 
 
             # # raster_target = raster_target[raster_target['talker'] == int(talker)]
@@ -97,17 +99,13 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
                                                    correctresp=False,
                                                    df_filter=probe_filter)
             raster_probe = raster_probe.reshape(raster_probe.shape[0], )
-
             raster_probe['trial_num'] = raster_probe['trial_num'] + np.max(raster_target['trial_num'])
-            # if len(raster_probe) == 0:
-            #     print('no relevant spikes for this talker')
-            #     continue
+
         except:
             print('No relevant probe firing')
             cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
 
             continue
-        # sample with replacement from target trials and probe trials to boostrap scores and so distributions are equal
 
         bins = np.arange(window[0], window[1], binsize)
 
@@ -129,15 +127,6 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
                          range=(window[0], window[1]))[0]
             count += 1
 
-        # stim0 = np.full(len(raster_target), 0)  # 0 = target word
-        # stim1 = np.full(len(raster_probe), 1)  # 1 = probe word
-        # stim = np.concatenate((stim0, stim1))
-        #
-        # stim0 = np.full(len(raster_targ_reshaped), 0)  # 0 = target word
-        # stim1 = np.full(len(raster_probe_reshaped), 1)  # 1 = probe word
-        #
-        #
-
 
 
 
@@ -148,6 +137,11 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
             spiketrains.append(spiketrain)
 
         print(spiketrains)
+
+        if cluster_id == 16:
+            cluster_id_test1 = spiketrains
+        if cluster_id == 16.2:
+            cluster_id_test2 = spiketrains
 
         fig,ax = plt.subplots(2, figsize=(10, 5))
         #ax.scatter(raster_target['spike_time'], np.ones_like(raster_target['spike_time']))
@@ -163,8 +157,6 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
         plt.savefig(
             str(saveDir) + '/targ_clusterid' + str(cluster_id) + ' probeword ' + str(probeword) + ' pitch ' + str(
                 pitchshift) + 'talker' + str(talker) + '.png')
-        #plt.show()
-
 
         try:
             spiketrains = []
@@ -186,21 +178,30 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
             plt.setp(ax, xlim=custom_xlim)
             plt.suptitle('Distractor firings for crumble,  clus id '+ str(cluster_id)+' , pitchshift = '+str(pitchshift)+ 'probeword '+str(probeword)+'talker'+str(talker), fontsize = 20)
 
-
-
             plt.savefig(
                 str(saveDir) + '/dist_clusterid' + str(cluster_id) + ' probeword ' + str(probeword) + ' pitch ' + str(
                     pitchshift) + 'talker' + str(talker) + '.png')
         except:
             print('no distractor firing')
             continue
+
+    #compare cluster 1 and 1.1
+    fig,ax = plt.subplots(2, figsize=(10, 5))
+    #ax.scatter(raster_target['spike_time'], np.ones_like(raster_target['spike_time']))
+    rasterplot(cluster_id_test1, c='black', histogram_bins=100, axes=ax, s= 3)
+    rasterplot(cluster_id_test2, c='green', histogram_bins=100, axes=ax, s= 3)
+    plt.show()
+
+    if cluster_id_test1 == cluster_id_test2:
+        print('same')
+
     return
 
 
 
 def run_classification(dir):
-    datapath = Path(f'E:\ms4output2\F1901_Crumble\BB4BB5_crumble_01102023\BB4BB5_crumble_01102023_BB4BB5_crumble_01102023_BB_4\mountainsort4\phy/')
-    with open(datapath / 'blocks.pkl', 'rb') as f:
+    datapath = Path(f'E:\ms4output2\F1901_Crumble\BB2BB3_crumble_29092023_2\BB2BB3_crumble_29092023_BB2BB3_crumble_29092023_BB_3\mountainsort4\phy/')
+    with open(datapath / 'new_blocks.pkl', 'rb') as f:
         blocks = pickle.load(f)
     scores = {}
     probewords_list = [(2, 2), (20, 22), (5, 6), (42, 49), (32, 38)]

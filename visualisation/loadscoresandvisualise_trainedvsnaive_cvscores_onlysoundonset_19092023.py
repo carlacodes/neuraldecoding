@@ -7,16 +7,12 @@ import scipy.stats as stats
 import shap
 import lightgbm as lgb
 from pathlib import Path
-from sklearn.inspection import permutation_importance
 import scipy
 from helpers.GeneratePlotsConcise import *
 from scipy.stats import mannwhitneyu
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
-from sklearn.metrics import log_loss
-from sklearn.metrics import balanced_accuracy_score
-from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import mean_squared_error
 
 scoremat = np.load(
@@ -52,7 +48,7 @@ def scatterplot_and_visualise(probewordlist,
                               saveDir='D:/Users/cgriffiths/resultsms4/lstm_output_frommyriad_15012023/lstm_kfold_14012023_crumble',
                               ferretname='Crumble',
                               singleunitlist=singlunitlistsoundonset_crumble,
-                              multiunitlist=multiunitlist_soundonset_crumble, noiselist=[]):
+                              multiunitlist=multiunitlist_soundonset_crumble, noiselist=[], stream = 'BB_2'):
     singleunitlist = [x - 1 for x in singleunitlist]
     multiunitlist = [x - 1 for x in multiunitlist]
     noiselist = [x - 1 for x in noiselist]
@@ -80,10 +76,119 @@ def scatterplot_and_visualise(probewordlist,
         scores = np.load(
             saveDir  + r'scores_' + ferretname + '_2022_' + stringprobewordindex + '_' + ferretname + '_probe_bs.npy',
             allow_pickle=True)[()]
+
+        #print all the cluster ids for the scores
+        print(f'cluster ids for animal:{ferretname}, and stream:{saveDir}')
+        print(scores['talker1']['target_vs_probe']['pitchshift']['cluster_id'])
+        print(scores['talker1']['target_vs_probe']['nopitchshift']['cluster_id'])
+
         # else:
         #     scores = np.load(
         #         saveDir  + r'scores_' + ferretname + '_2022_' + stringprobewordindex + '_' + ferretname + '_probe_pitchshift_vs_not_by_talker_bs.npy',
         #         allow_pickle=True)[()]
+
+
+        for talker in [1]:
+            comparisons = [comp for comp in scores[f'talker{talker}']]
+
+            for comp in comparisons:
+                for cond in ['pitchshift', 'nopitchshift']:
+                    for i, clus in enumerate(scores[f'talker{talker}'][comp][cond]['cluster_id']):
+                        if isinstance(clus, float):
+
+                            if ferretname == 'F1815_Cruella':
+                                if stream == 'BB_2':
+                                    if clus == 2.3 or clus == 3.3 or clus == 4.3 or clus == 5.3 or clus==8.3 or clus ==9.2 or clus == 10.3 or clus == 13.1 or clus ==12.3 or clus == 14.3 or clus ==14.1 or clus == 15.3 or clus == 15.1:
+                                        noiselist.append(clus)
+                                    else:
+                                        clus_instance = int(round(clus))
+                                        if clus_instance in singleunitlist:
+                                            singleunitlist.remove(clus_instance)
+                                            noiselist.append(clus_instance)
+                                            singleunitlist.append(clus)
+                                        elif clus_instance in multiunitlist:
+                                            multiunitlist.remove(clus_instance)
+                                            noiselist.append(clus_instance)
+                                            multiunitlist.append(clus)
+                                        else:
+                                            multiunitlist.append(clus)
+                                elif stream == 'BB_4':
+                                    if clus == 4.1 or clus == 11.2 or clus == 14.1 or clus == 15.3:
+                                        noiselist.append(clus)
+                                    else:
+                                        clus_instance = int(round(clus))
+                                        if clus_instance in singleunitlist:
+                                            singleunitlist.remove(clus_instance)
+                                            noiselist.append(clus_instance)
+                                            singleunitlist.append(clus)
+                                        elif clus_instance in multiunitlist:
+                                            multiunitlist.remove(clus_instance)
+                                            noiselist.append(clus_instance)
+                                            multiunitlist.append(clus)
+                                        else:
+                                            multiunitlist.append(clus)
+                            if ferretname == 'F1901_Crumble':
+                                if stream == 'BB_2':
+                                    if clus == 4.1 or clus == 4.2 or clus == 7.2 or clus == 7.1 or clus == 8.2 or clus == 12.2 or clus ==14.2 or clus == 15.1:
+                                        noiselist.append(clus)
+                                    else:
+                                        clus_instance = int(round(clus))
+                                        if clus_instance in singleunitlist:
+                                            singleunitlist.remove(clus_instance)
+                                            noiselist.append(clus_instance)
+                                            singleunitlist.append(clus)
+                                        elif clus_instance in multiunitlist:
+                                            multiunitlist.remove(clus_instance)
+                                            noiselist.append(clus_instance)
+                                            multiunitlist.append(clus)
+                                        else:
+                                            multiunitlist.append(clus)
+                                elif stream == 'BB_3':
+                                    if clus == 7.2 or clus == 16.2:
+                                        noiselist.append(clus)
+                                    else:
+                                        clus_instance = int(round(clus))
+                                        if clus_instance in singleunitlist:
+                                            singleunitlist.remove(clus_instance)
+                                            noiselist.append(clus_instance)
+                                            singleunitlist.append(clus)
+                                        elif clus_instance in multiunitlist:
+                                            multiunitlist.remove(clus_instance)
+                                            noiselist.append(clus_instance)
+                                            multiunitlist.append(clus)
+                                        else:
+                                            multiunitlist.append(clus)
+                                else:
+                                    clus_instance = int(round(clus))
+                                    if clus_instance in singleunitlist:
+                                        singleunitlist.remove(clus_instance)
+                                        noiselist.append(clus_instance)
+                                        singleunitlist.append(clus)
+                                    elif clus_instance in multiunitlist:
+                                        multiunitlist.remove(clus_instance)
+                                        noiselist.append(clus_instance)
+                                        multiunitlist.append(clus)
+                                    else:
+                                        multiunitlist.append(clus)
+
+
+
+                            else:
+                                clus_instance = int(round(clus))
+                                if clus_instance in singleunitlist:
+                                    singleunitlist.remove(clus_instance)
+                                    noiselist.append(clus_instance)
+                                    singleunitlist.append(clus)
+                                elif clus_instance in multiunitlist:
+                                    multiunitlist.remove(clus_instance)
+                                    noiselist.append(clus_instance)
+                                    multiunitlist.append(clus)
+                                else:
+                                    multiunitlist.append(clus)
+
+
+
+
 
 
 
@@ -96,6 +201,7 @@ def scatterplot_and_visualise(probewordlist,
                     for i, clus in enumerate(scores[f'talker{talker}'][comp][cond]['cluster_id']):
 
                         print(i, clus)
+
                         if ferretname == 'Orecchiette':
                             #read csv file and get cluster id
                             print('checking clusters are in AC')
@@ -318,8 +424,7 @@ def main():
     probewordlist_l74 = [(2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
                              (14, 14)]
     # dictoutput_windolene = scatterplot_and_visualise(probewordlist_squinty, saveDir= 'E:/results_16092023\F1606_Windolene/bb5/', ferretname='Windolene', singleunitlist=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], multiunitlist=np.arange(1,64, 1), noiselist = [])
-    streams = ['BB_2', 'BB_3', 'BB_4', 'BB_5']
-    # streams = ['BB_4']
+
     report_squinty = {}
     singleunitlist_squinty = {}
     multiunitlist_squinty = {}
@@ -329,13 +434,15 @@ def main():
     # for side in streams:
     #     report_squinty[side], singleunitlist_squinty[side], multiunitlist_squinty[side], noiselist_squinty[side] = load_classified_report(f'E:\ms4output2\F1604_Squinty\BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold\BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold_BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold_{side}/')
 
-    animal_list = [  'F1606_Windolene','F1702_Zola','F1604_Squinty', 'F1815_Cruella', 'F1902_Eclair', 'F1901_Crumble']
-    animal_list = [ 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola', 'F1902_Eclair']
-    # animal_list = [ 'F1901_Crumble']
+    # animal_list = [  'F1606_Windolene','F1702_Zola','F1604_Squinty', 'F1815_Cruella', 'F1902_Eclair', 'F1901_Crumble']
+    animal_list = [ 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala', 'F1901_Crumble']
+    # animal_list = [  'F1815_Cruella', 'F1901_Crumble',]
+    # animal_list = [ 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1901_Crumble', 'F1812_Nala']
 
-    # animal_list = ['F1902_Eclair', 'F1901_Crumble']
+    #windolene's scores pulling the mean down need to check for noise
+    #crumble's scores ridiculloously high, need to check for noise, probably need to check nala as well
 
-    # animal_list = ['F1606_Windolene']
+
     #load the report for each animal in animal-list
     report = {}
     singleunitlist = {}
@@ -370,7 +477,7 @@ def main():
             try:
               report[animal][stream_name], singleunitlist[animal][stream_name], multiunitlist[animal][stream_name], noiselist[animal][stream_name] = load_classified_report(f'{path}')
             except:
-                print('no report for this stream')
+                print('no report for this stream:' + str(path))
                 pass
     # now create a dictionary of dictionaries, where the first key is the animal name, and the second key is the stream name
     #the value is are the decoding scores for each cluster
@@ -405,18 +512,23 @@ def main():
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
-                                                                noiselist=noiselist[animal][stream])
+                                                                noiselist=noiselist[animal][stream], stream = stream)
             elif animal == 'F1606_Windolene':
                 dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
                                                                 saveDir=f'D:/interrovingdecoding/results_16092023/{animal}/{streamtext}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
-                                                                noiselist=noiselist[animal][stream])
+                                                                noiselist=noiselist[animal][stream], stream = stream)
             else:
-
-                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'D:/interrovingdecoding/results_16092023/{animal}/{streamtext}/', ferretname=animal_text, singleunitlist=singleunitlist[animal][stream], multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream])
-
+                try:
+                    dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'D:/interrovingdecoding/results_16092023/{animal}/{streamtext}/',
+                                                                    ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
+                                                                    multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream)
+                except:
+                    #print the exception
+                    print(f'no scores for this stream:{stream}, and {animal}')
+                    pass
                 dictoutput_all.append(dictoutput_instance)
             if animal == 'F1604_Squinty' or animal == 'F1606_Windolene' or animal == 'F1702_Zola' or animal == 'F1815_Cruella':
                 print('trained animal'+ animal)
