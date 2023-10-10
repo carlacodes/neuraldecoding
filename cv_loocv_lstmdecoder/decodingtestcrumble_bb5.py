@@ -10,16 +10,19 @@ from sklearn.utils import resample
 import astropy
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
+from matplotlib.ticker import MaxNLocator
+import seaborn as sns
 from datetime import datetime
 from astropy.stats import bootstrap
 import sklearn
 from instruments.helpers.util import simple_xy_axes, set_font_axes
-from instruments.helpers.neural_analysis_helpers import get_word_aligned_raster
+from instruments.helpers.neural_analysis_helpers import get_word_aligned_raster_zola_cruella
 from instruments.helpers.euclidean_classification_minimal_function import classify_sweeps
 # Import standard packages
 import numpy as np
 import matplotlib.pyplot as plt
-
+from scipy import io
+from scipy import stats
 import pickle
 
 # If you would prefer to load the '.h5' example file rather than the '.pickle' example file. You need the deepdish package
@@ -36,18 +39,19 @@ from Neural_Decoding.metrics import get_rho
 from Neural_Decoding.decoders import LSTMDecoder, LSTMClassification
 
 
-def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
+def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, window=[0, 0.5]):
     if talker == 1:
         probeword = probewords[0]
     else:
         probeword = probewords[1]
     binsize = 0.01
-    window = [0, 0.6]
+    # window = [0, 0.6]
 
     epochs = ['Early', 'Late']
     epoch_threshold = 1.5
     clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
                  st.annotations['group'] != 'noise']
+    clust_ids = clust_ids[1:]
 
     scores = {'cluster_id': [],
               'score': [],
@@ -73,38 +77,45 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
 
     cluster_id_droplist = np.empty([])
     for cluster_id in tqdm(clust_ids):
+        print('cluster_id:')
+        print(cluster_id)
 
         target_filter = ['Target trials', 'No Level Cue']  # , 'Non Correction Trials']
 
-        try:
-            raster_target = get_word_aligned_raster(blocks, cluster_id, word=1, pitchshift=pitchshift,
-                                                    correctresp=True,
-                                                    df_filter=[])
-            raster_target = raster_target[raster_target['talker'] == int(talker)]
-            if len(raster_target) == 0:
-                print('no relevant spikes for this talker')
-                continue
-        except Exception as error:
-            print('No relevant target firing')
-            print(error)
-            cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
+        # try:
+        raster_target, raster_targ_compare = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=1,
+                                                                                  pitchshift=pitchshift,
+                                                                                  correctresp=False,
+                                                                                  df_filter=[])
+        raster_target = raster_target.reshape(raster_target.shape[0], )
+        if len(raster_target) == 0:
+            print('no relevant spikes for this target word:' + str(probeword) + ' and cluster: ' + str(cluster_id))
             continue
+
+        # except Exception as error:
+        #     print('No relevant target firing')
+        #     print(error)
+        #     cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
+        #     continue
 
         probe_filter = ['No Level Cue']  # , 'Non Correction Trials']
-        try:
-            raster_probe = get_word_aligned_raster(blocks, cluster_id, word=probeword, pitchshift=pitchshift,
-                                                   correctresp=True,
-                                                   df_filter=[])
-            raster_probe = raster_probe[raster_probe['talker'] == talker]
-            raster_probe['trial_num'] = raster_probe['trial_num'] + np.max(raster_target['trial_num'])
-            if len(raster_probe) == 0:
-                print('no relevant spikes for this talker')
-                continue
-        except:
-            print('No relevant probe firing')
-            cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
+        # try:
+        raster_probe, raster_probe_compare = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=probeword,
+                                                                                  pitchshift=pitchshift,
+                                                                                  correctresp=False,
+                                                                                  df_filter=[])
+        # raster_probe = raster_probe[raster_probe['talker'] == talker]
+        raster_probe = raster_probe.reshape(raster_probe.shape[0], )
 
+        raster_probe['trial_num'] = raster_probe['trial_num'] + np.max(raster_target['trial_num'])
+        if len(raster_probe) == 0:
+            print('no relevant spikes for this probe word:' + str(probeword) + ' and cluster: ' + str(cluster_id))
             continue
+        # except:
+        #     print('No relevant probe firing')
+        #     cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
+
+        #     continue
         # sample with replacement from target trials and probe trials to boostrap scores and so distributions are equal
         lengthofraster = np.sum(len(raster_target['spike_time']) + len(raster_probe['spike_time']))
         raster_targ_reshaped = np.empty([])
@@ -133,23 +144,28 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
 
         if len(raster_targ_reshaped) >= len(raster_probe_reshaped) * 2:
             print('raster of distractor at least a 1/2 of target raster')
-            #upsample the probe raster
-            raster_probe_reshaped = raster_probe_reshaped[np.random.choice(len(raster_probe_reshaped), len(raster_targ_reshaped), replace=False), :]
+            # upsample the probe raster
+            raster_probe_reshaped = raster_probe_reshaped[
+                                    np.random.choice(len(raster_probe_reshaped), len(raster_targ_reshaped),
+                                                     replace=True), :]
         elif len(raster_probe_reshaped) >= len(raster_targ_reshaped) * 2:
             print('raster of target at least a 1/2 of probe raster')
             # upsample the target raster
-            raster_targ_reshaped = raster_targ_reshaped[np.random.choice(len(raster_targ_reshaped), len(raster_probe_reshaped), replace=False), :]
+            raster_targ_reshaped = raster_targ_reshaped[
+                                   np.random.choice(len(raster_targ_reshaped), len(raster_probe_reshaped),
+                                                    replace=True), :]
 
-
+        print('now length of raster_probe is:')
+        print(len(raster_probe_reshaped))
         stim0 = np.full(len(raster_target), 0)  # 0 = target word
         stim1 = np.full(len(raster_probe), 1)  # 1 = probe word
         stim = np.concatenate((stim0, stim1))
 
         stim0 = np.full(len(raster_targ_reshaped), 0)  # 0 = target word
         stim1 = np.full(len(raster_probe_reshaped), 1)  # 1 = probe word
-        # if (len(stim0) + len(stim1)) < 5:
-        #     print('less than 5 trials')
-        #     continue
+        if (len(stim0)) < 3 or (len(stim1)) < 3:
+            print('less than 3 trials for the target or distractor, skipping')
+            continue
 
         stim_lstm = np.concatenate((stim0, stim1))
 
@@ -172,37 +188,34 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
         totalaclist = []
         totalbalaclist = []
         # create a loop that iterates from 1 to n time point and trains the model on n-1 time points
-        for k in range(1, X.shape[1], 1):
-            # break X and y into time bins from 1 to k
-            print('at bin number', k)
-            X_bin = X[:, 0:k].copy()
-            y_bin = y[:, 0:k].copy()
-            outsideloopacclist = []
-            outsideloopbalacclist = []
-            for i in range(0, 1):
-                accuracy_list = []
-                bal_ac_list = []
-                kfold = StratifiedKFold(n_splits=3, shuffle=True)
-                print('iteration', i)
+        # break X and y into time bins from 1 to k
+        X_bin = X[:, :].copy()
+        y_bin = y[:, :].copy()
+        outsideloopacclist = []
+        outsideloopbalacclist = []
+        for i in range(0, 1):
+            accuracy_list = []
+            bal_ac_list = []
+            kfold = StratifiedKFold(n_splits=3, shuffle=True)
+            print('iteration', i)
 
-                for train, test in kfold.split(X_bin, y_bin):
-                    model_lstm = LSTMClassification(units=400, dropout=0.25, num_epochs=10)
-                    model_lstm.fit(X_bin[train], y_bin[train])
+            for train, test in kfold.split(X_bin, y_bin):
+                model_lstm = LSTMClassification(units=400, dropout=0.25, num_epochs=10)
+                model_lstm.fit(X_bin[train], y_bin[train])
 
-                    # y_pred = model_lstm.predict(X_bin[test])
-                    y_pred = model_lstm.model(X_bin[test], training=False)
-                    y_pred = np.argmax(y_pred, axis=1)
+                y_pred = model_lstm.model(X_bin[test], training=False)
+                y_pred = np.argmax(y_pred, axis=1)
 
-                    accuracy = sklearn.metrics.accuracy_score(y_bin[test].flatten(), y_pred.flatten())
-                    balancedacscore = sklearn.metrics.balanced_accuracy_score(y_bin[test].flatten(), y_pred.flatten())
-                    bal_ac_list.append(balancedacscore)
-                    accuracy_list.append(accuracy)
+                accuracy = sklearn.metrics.accuracy_score(y_bin[test].flatten(), y_pred.flatten())
+                balancedacscore = sklearn.metrics.balanced_accuracy_score(y_bin[test].flatten(), y_pred.flatten())
+                bal_ac_list.append(balancedacscore)
+                accuracy_list.append(accuracy)
 
-                outsideloopacclist.append(np.mean(accuracy_list))
-                outsideloopbalacclist.append(np.mean(bal_ac_list))
+            outsideloopacclist.append(np.mean(accuracy_list))
+            outsideloopbalacclist.append(np.mean(bal_ac_list))
 
-            totalaclist.append(np.mean(outsideloopacclist))
-            totalbalaclist.append(np.mean(outsideloopbalacclist))
+        totalaclist.append(np.mean(outsideloopacclist))
+        totalbalaclist.append(np.mean(outsideloopbalacclist))
 
         # Update the scores dictionary
         scores['cluster_id'].append(cluster_id)  # Assuming cluster_id is defined somewhere
@@ -213,7 +226,6 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
         scores['lstm_accuracylist'].append(totalaclist)
         scores['lstm_avg'].append(np.mean(totalaclist))
         scores['lstm_balancedaccuracylist'].append(totalbalaclist)
-        scores['time_bin'] = k
         scores['cm'].append(len(unique_trials_targ) + len(
             unique_trials_probe))  # Assuming unique_trials_targ and unique_trials_probe are defined somewhere
 
@@ -232,7 +244,7 @@ def probe_early_vs_late(blocks, talker=1, noise=True, df_filter=['No Level Cue']
               'cm': [], }
     for cluster_id in tqdm(clust_ids):
         # df_filter = ['No Level Cue'] #, 'Non Correction Trials']
-        raster = get_word_aligned_raster(blocks, cluster_id, noise=noise, df_filter=df_filter)
+        raster = get_word_aligned_raster_zola_cruella(blocks, cluster_id, noise=noise, df_filter=df_filter)
         raster = raster[raster['talker'] == talker]
 
         stim = np.zeros(len(raster), dtype=np.int64)
@@ -452,13 +464,14 @@ def save_pdf_classification_lstm_bothtalker(scores, saveDir, title):
 
 
 def run_classification(dir, datapath, ferretid):
-    fname = 'blocks.pkl'
-    with open(datapath / 'blocks.pkl', 'rb') as f:
+    fname = 'new_blocks.pkl'
+    with open(datapath / 'new_blocks.pkl', 'rb') as f:
         blocks = pickle.load(f)
 
     scores = {}
-    probewords_list = [(2, 2), (20, 22), (5, 6), (42, 49), (32, 38)]
-    # probewords_list = [(20, 22), (5, 6), (42, 49), (32, 38)]
+    probewords_list = [(5, 6), (42, 49), (32, 38), (2, 2), (20, 22), ]
+    # probewords_list = [(2, 2)]
+    # probewords_list = [(32, 38)]
 
     now = datetime.now()
     dt_string = now.strftime("%d%m%Y_%H_%M_%S")
@@ -466,14 +479,13 @@ def run_classification(dir, datapath, ferretid):
     dt_string = now.strftime("%d%m%Y_%H_%M_%S")
 
     tarDir = Path(
-        f'D:/Data/decoding_over_time_results/F1702_Zola/')
+        f'/zceccgr/lstmdecodingproject/leavepoutcrossvalidationlstmdecoder/results_16092023/F1901_Crumble/bb5inter/')
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
     for probeword in probewords_list:
         print('now starting')
         print(probeword)
-        for talker in [2]:
-            binsize = 0.01
+        for talker in [1]:
             if talker == 1:
                 window = [0, 0.6]
             else:
@@ -486,23 +498,25 @@ def run_classification(dir, datapath, ferretid):
 
             scores[f'talker{talker}']['target_vs_probe']['nopitchshift'] = target_vs_probe(blocks, talker=talker,
                                                                                            probewords=probeword,
-                                                                                           pitchshift=False)
+                                                                                           pitchshift=False,
+                                                                                           window=window)
             scores[f'talker{talker}']['target_vs_probe']['pitchshift'] = target_vs_probe(blocks, talker=talker,
                                                                                          probewords=probeword,
-                                                                                         pitchshift=True)
+                                                                                         pitchshift=True, window=window)
 
-            np.save(saveDir / f'scores_{dir}_{probeword[0]}_{ferretid}_probe_allpitches_onlymaletalker_bs.npy',
+            np.save(saveDir / f'scores_{dir}_{probeword[0]}_{ferretid}_probe_bs.npy',
                     scores)
 
-        fname = 'scores_' + dir + f'_probe_earlylate_left_right_win_bs_{binsize}'
+        # fname = 'scores_' + dir + f'_probe_earlylate_left_right_win_bs_{binsize}'
 
 
 def main():
     directories = [
-        'orecchiette_2022']  # , 'Trifle_July_2022']/home/zceccgr/Scratch/zceccgr/ms4output/F1702_Zola/spkenvresults04102022allrowsbut4th
+        'crumble_2022']  # , 'Trifle_July_2022']/home/zceccgr/Scratch/zceccgr/ms4output/F1702_Zola/spkenvresults04102022allrowsbut4th
 
-    datapath = Path(f'D:\F1702_Zola\spkenvresults04102022allrowsbut4th')
-    ferretid = 'zola'
+    datapath = Path(
+        f'E:/ms4output2/F1901_Crumble/BB4BB5_crumble_01102023/BB4BB5_crumble_01102023_BB4BB5_crumble_01102023_BB_5/mountainsort4/phy/')
+    ferretid = 'crumble'
 
     for dir in directories:
         run_classification(dir, datapath, ferretid)

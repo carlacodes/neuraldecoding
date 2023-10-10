@@ -43,7 +43,9 @@ def run_cleaning_of_rasters(blocks, datapath):
     for cluster_id in clust_ids:
         new_blocks = split_cluster_base_on_segment_zola(blocks, cluster_id, num_clusters=2)
     #check if each unit is the same
-
+    for i in range(0, len(blocks[0].segments)):
+        clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[i].spiketrains]
+        print(f"Debug - Cluster IDs: {clust_ids} for iteration {i}")
     with open(datapath / 'new_blocks.pkl', 'wb') as f:
         pickle.dump(new_blocks, f)
     return new_blocks
@@ -69,7 +71,7 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
     cluster_id_droplist = np.empty([])
 
-    for cluster_id in [16, 262]:
+    for cluster_id in [16, 216]:
         print('now starting cluster')
         print(cluster_id)
 
