@@ -140,19 +140,28 @@ def get_list_of_recblocks(path):
                 #get the block number
                 block = date[-1].split('.')[0]
                 #get the recording number, which is the string of numbers after block
-                rec = block.split('Block')
-                rec = rec[1]
-                #convert to an integer, remove the - sign
-                rec = rec.split('-')
-                #combine the two numbers
-                rec = rec[0] + rec[1]
-                #convert to an integer
-                rec = int(rec)
+                try:
+                    rec = block.split('Block')
+                    rec = rec[1]
+                    #convert to an integer, remove the - sign
+                    rec = rec.split('-')
+                    #combine the two numbers
+                    rec = rec[0] + rec[1]
+                    #convert to an integer
+                    rec = int(rec)
+                except:
+                    data = scipy.io.loadmat(path + '/' + i)
+                    data = data['data']
+                    #extract recblock
+                    rec = data['recBlock'][0][0][0]
+                    rec = str(rec)
+
                 #append to a big list
                 recblocks.append(rec)
     #sort the list
     recblocks.sort()
     print('done')
+    print(recblocks)
     return recblocks
 
 
@@ -248,5 +257,5 @@ if __name__ == '__main__':
     #organise the date_objects in ascencind order
     date_objects.sort()
     #
-    organise_files_into_directories(path, date_objects)
-    get_list_of_recblocks('D:\Data\F1306_Firefly/2014-10-22')
+    # organise_files_into_directories(path, date_objects)
+    recblocks = get_list_of_recblocks('D:\Data\F1815_Cruella/2023-08-23')
