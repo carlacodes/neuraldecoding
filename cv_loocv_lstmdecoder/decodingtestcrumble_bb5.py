@@ -64,7 +64,9 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
               'history:': [],
               'lstm_avg': [],
               'history': [],
-              'time_bin': [], }
+              'time_bin': [],
+              'perm_ac': [],
+              'perm_bal_ac': []}
 
     # scores['cluster_id'].append(cluster_id)
     # scores['score'].append(score)
@@ -191,28 +193,65 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
         # break X and y into time bins from 1 to k
         X_bin = X[:, :].copy()
         y_bin = y[:, :].copy()
+        #shuffle X_bin 100 times as a way of doing a permutation test
+        X_bin_shuffled = X_bin.copy()
+        row_mapping = []
+
+        # Shuffle the rows over 100 times
+        for i in range(100):
+            row_indices = np.arange(X_bin.shape[0])
+            np.random.shuffle(row_indices)
+            X_bin_shuffled = X_bin_shuffled[row_indices]
+
+        # #figure out where each row went
+        # for i in range(X_bin.shape[0]):
+        #     row_to_find = X_bin[i]
+        #     for j in range(X_bin.shape[0]):
+        #         if np.array_equal(row_to_find, X_bin_shuffled[j]):
+        #             row_mapping.append(j)
+        #             break
+#
+
         outsideloopacclist = []
+        perm_outsideloopacclist = []
         outsideloopbalacclist = []
+        perm_outsideloopbalacclist = []
         for i in range(0, 1):
             accuracy_list = []
             bal_ac_list = []
+            perm_accuracy_list = []
+            perm_bal_ac_list = []
             kfold = StratifiedKFold(n_splits=3, shuffle=True)
             print('iteration', i)
 
             for train, test in kfold.split(X_bin, y_bin):
                 model_lstm = LSTMClassification(units=400, dropout=0.25, num_epochs=10)
+                model_lstm_permutationtest = LSTMClassification(units=400, dropout=0.25, num_epochs=10)
+
                 model_lstm.fit(X_bin[train], y_bin[train])
+                model_lstm_permutationtest.fit(X_bin_shuffled[train], y_bin[train])
 
                 y_pred = model_lstm.model(X_bin[test], training=False)
                 y_pred = np.argmax(y_pred, axis=1)
 
+                y_pred_permutationtest = model_lstm_permutationtest.model(X_bin_shuffled[test], training=False)
+                y_pred_permutationtest = np.argmax(y_pred_permutationtest, axis=1)
+
+
                 accuracy = sklearn.metrics.accuracy_score(y_bin[test].flatten(), y_pred.flatten())
+                perm_accuracy = sklearn.metrics.accuracy_score(y_bin[test].flatten(), y_pred_permutationtest.flatten())
                 balancedacscore = sklearn.metrics.balanced_accuracy_score(y_bin[test].flatten(), y_pred.flatten())
+                perm_balancedacscore = sklearn.metrics.balanced_accuracy_score(y_bin[test].flatten(), y_pred_permutationtest.flatten())
+
                 bal_ac_list.append(balancedacscore)
+                perm_bal_ac_list.append(perm_balancedacscore)
                 accuracy_list.append(accuracy)
+                perm_accuracy_list.append(perm_accuracy)
 
             outsideloopacclist.append(np.mean(accuracy_list))
+            perm_outsideloopacclist.append(np.mean(perm_accuracy_list))
             outsideloopbalacclist.append(np.mean(bal_ac_list))
+            perm_outsideloopbalacclist.append(np.mean(perm_bal_ac_list))
 
         totalaclist.append(np.mean(outsideloopacclist))
         totalbalaclist.append(np.mean(outsideloopbalacclist))
@@ -226,6 +265,8 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
         scores['lstm_accuracylist'].append(totalaclist)
         scores['lstm_avg'].append(np.mean(totalaclist))
         scores['lstm_balancedaccuracylist'].append(totalbalaclist)
+        scores['perm_bal_ac'].append(np.mean(perm_outsideloopbalacclist))
+        scores['perm_ac'].append(np.mean(perm_outsideloopacclist))
         scores['cm'].append(len(unique_trials_targ) + len(
             unique_trials_probe))  # Assuming unique_trials_targ and unique_trials_probe are defined somewhere
 

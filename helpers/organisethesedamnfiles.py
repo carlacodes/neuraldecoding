@@ -150,11 +150,15 @@ def get_list_of_recblocks(path):
                     #convert to an integer
                     rec = int(rec)
                 except:
-                    data = scipy.io.loadmat(path + '/' + i)
-                    data = data['data']
-                    #extract recblock
-                    rec = data['recBlock'][0][0][0]
-                    rec = str(rec)
+                    try:
+                        data = scipy.io.loadmat(path + '/' + i)
+                        data = data['data']
+                        #extract recblock
+                        rec = data['recBlock'][0][0][0]
+                        rec = str(rec)
+                    except:
+                        print('corrupted file ' + i)
+                        continue
 
                 #append to a big list
                 recblocks.append(rec)
@@ -180,7 +184,6 @@ def get_list_of_recblocks(path):
 
 
 if __name__ == '__main__':
-    path = 'D:\Data/F1815_Cruella/'
     # date_strings = [
     #     "02/10/2014",
     #     "05/10/2014",
@@ -250,6 +253,17 @@ if __name__ == '__main__':
                              "17/12/2021",
                              "16/12/2021"]
 
+    date_strings_zola =["27/08/2021",
+                        "19/08/2021",
+                        "21/04/2021",
+                        "15/07/2019",
+                        "19/08/2019",
+                        "23/02/2020",
+                        "19/07/2020",
+                        "23/11/2020"
+                        ]
+
+    path = 'D:\Data/F1815_Cruella/'
 
     date_objects = [datetime.strptime(date_string, "%d/%m/%Y") for date_string in date_strings_cruella]
     #remove the time from the date objects
@@ -258,4 +272,4 @@ if __name__ == '__main__':
     date_objects.sort()
     #
     # organise_files_into_directories(path, date_objects)
-    recblocks = get_list_of_recblocks('D:\Data\F1815_Cruella/2023-08-23')
+    recblocks = get_list_of_recblocks('D:\Data\F1702_Zola/2021-08-27/')
