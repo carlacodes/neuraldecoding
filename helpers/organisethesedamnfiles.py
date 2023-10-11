@@ -109,11 +109,11 @@ def organise_files_into_directories(path, dates):
                 os.rename(path + '/' + i, path + '/' + str(dates[0]) + '/' + i)
             elif date > dates[-1]:
                 #if it isn't, check if the directory exists
-                if not os.path.exists(path + '/' + str(dates[1])):
+                if not os.path.exists(path + '/' + str(dates[-1])):
                     #if it doesn't, create it
-                    os.mkdir(path + '/' + str(dates[1]))
+                    os.mkdir(path + '/' + str(dates[-1]))
                 #move the file to the appropriate directory
-                os.rename(path + '/' + i, path + '/' + str(dates[1]) + '/' + i)
+                os.rename(path + '/' + i, path + '/' + str(dates[-1]) + '/' + i)
 
 
 
@@ -171,7 +171,7 @@ def get_list_of_recblocks(path):
 
 
 if __name__ == '__main__':
-    path = 'D:\Data/F1405_Ivy/'
+    path = 'D:\Data/F1815_Cruella/'
     # date_strings = [
     #     "02/10/2014",
     #     "05/10/2014",
@@ -207,11 +207,46 @@ if __name__ == '__main__':
     "29/10/2015",
     "15/02/2016"]
 
-    date_objects = [datetime.strptime(date_string, "%d/%m/%Y") for date_string in date_strings_ivy]
+
+    date_strings_cruella = [ "23/08/2023",
+                             "28/04/2023",
+                             "25/01/2023",
+                             "16/11/2022",
+                             "16/09/2022",
+                             "05/07/2022",
+                             "01/03/2022",
+                             "24/02/2022",
+                             "17/02/2022",
+                             "09/02/2022",
+                             "04/02/2022",
+                             "01/02/2022",
+                             "25/01/2022",
+                             "14/01/2022",
+                             "07/01/2022",
+                             "21/12/2021",
+                             "21/08/2023",
+                             "24/04/2023",
+                             "23/01/2023",
+                             "15/11/2022",
+                             "15/09/2022",
+                             "30/06/2022",
+                             "25/02/2022",
+                             "22/02/2022",
+                             "14/02/2022",
+                             "07/02/2022",
+                             "02/02/2022",
+                             "28/01/2022",
+                             "21/01/2022",
+                             "19/12/2021",
+                             "17/12/2021",
+                             "16/12/2021"]
+
+
+    date_objects = [datetime.strptime(date_string, "%d/%m/%Y") for date_string in date_strings_cruella]
     #remove the time from the date objects
     date_objects = [datetime.date(date_object) for date_object in date_objects]
     #organise the date_objects in ascencind order
     date_objects.sort()
     #
     organise_files_into_directories(path, date_objects)
-    # get_list_of_recblocks('D:\Data\F1306_Firefly/2014-10-22')
+    get_list_of_recblocks('D:\Data\F1306_Firefly/2014-10-22')
