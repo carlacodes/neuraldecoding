@@ -272,4 +272,4 @@ if __name__ == '__main__':
     date_objects.sort()
     #
     # organise_files_into_directories(path, date_objects)
-    recblocks = get_list_of_recblocks('D:\Data\F1702_Zola/2021-08-27/')
+    recblocks = get_list_of_recblocks('D:\Data\F1815_Cruella/2022-03-01/')

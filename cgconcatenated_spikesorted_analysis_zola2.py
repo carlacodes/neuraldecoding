@@ -239,21 +239,24 @@ class concatenatedWarpData:
 
 def main():
 
-    datapath_big = Path(f'D:\ms4output_16102023\F1815_Cruella/')
-    warpData = Path('E:/Electrophysiological_Data/F1815_Cruella/')
+    datapath_big = Path(f'D:\ms4output_16102023\F1702_Zola/')
+    warpData = Path('E:\Electrophysiological_Data\F1702_Zola_Nellie/27_08_2021/')
 
     datapaths = [x for x in datapath_big.glob('**/mountainsort4/phy//') if x.is_dir()]
     for datapath in datapaths:
 
         dp = datapath
-        saveDir = Path('D:/Data/spkfigs/cruella/')
+        saveDir = Path('D:/Data/spkfigs/zola/')
         saveDir.mkdir(parents=False, exist_ok=True)
+        try:
+            dataset = concatenatedWarpData(dp, warpData=warpData)
+            dataset.load()
+            print(dataset)
 
-        dataset = concatenatedWarpData(dp, warpData=warpData)
-        dataset.load()
+        except:
+            print('error in path:', dp)
         # dataset.create_summary_pdf(saveDir, title='summary_cruella_passive')
 
-        print(dataset)
 
 
 if __name__ == '__main__':
