@@ -239,16 +239,30 @@ class concatenatedWarpData:
 def main():
     filter_trials = {'No Level Cue'}
 
-    dp = Path('E:\ms4output2\F1604_Squinty\BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold\BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold_BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold_BB_3\mountainsort4\phy/')
-    warpData = Path('D:\Electrophysiological_Data\F1604_Squinty\myriad3/')
+    datapath_big = Path(f'D:\ms4output_16102023\F1604_Squinty/')
     saveDir = Path('D:/Data/spkfigs/squinty/')
-    saveDir.mkdir(parents=False, exist_ok=True)
 
-    dataset = concatenatedWarpData(dp, warpData=warpData, side = 'right')
-    dataset.load()
-    # dataset.create_summary_pdf(saveDir, title='Squinty+active')
+    datapaths = [x for x in datapath_big.glob('**/mountainsort4/phy//') if x.is_dir()]
+    for datapath in datapaths:
+        #find the myriad folder
+        if 'MYRIAD' in str(datapath):
+            myriad = datapath.parts[-4]
+            myriad = myriad.split('_')[2]
+        print(myriad)
+        #make myriad lowercase
+        myriad = myriad.lower()
+        dp = datapath
+        warpData = Path(f'D:\Electrophysiological_Data\F1604_Squinty\{myriad}/')
 
-    print(dataset)
+        saveDir.mkdir(parents=False, exist_ok=True)
+        # try:
+        dataset = concatenatedWarpData(dp, warpData=warpData)
+        dataset.load()
+        print(dataset)
+        #
+        # except:
+        #     print('error in path:', dp)
+        # dataset.create_summary_pdf(saveDir, title='summary_cruella_passive')
 
 
 if __name__ == '__main__':
