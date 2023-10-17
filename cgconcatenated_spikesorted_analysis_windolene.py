@@ -236,16 +236,24 @@ class concatenatedWarpData:
 def main():
     filter_trials = {'No Level Cue'}
 
-    dp = Path('E:\ms4output2\F1606_Windolene/011023_windolene_2020_05_31_noisereduc_2/011023_windolene_2020_05_31_noisereduc_2_011023_windolene_2020_05_31_noisereduc_2_BB_4\mountainsort4\phy/')
+    datapath_big = Path(f'D:\ms4output_16102023\F1606_Windolene/')
     warpData = Path('D:\Electrophysiological_Data\F1606_Windowlene/')
-    saveDir = Path('D:\Data\F1606_Windolene/')
-    saveDir.mkdir(parents=False, exist_ok=True)
 
-    dataset = concatenatedWarpData(dp, warpData=warpData)
-    dataset.load()
-    # dataset.create_summary_pdf(saveDir, title='summary_windo_passive')
+    datapaths = [x for x in datapath_big.glob('**/mountainsort4/phy//') if x.is_dir()]
+    for datapath in datapaths:
 
-    print(dataset)
+        dp = datapath
+        saveDir = Path('D:/Data/spkfigs/zola/')
+        saveDir.mkdir(parents=False, exist_ok=True)
+        # try:
+        dataset = concatenatedWarpData(dp, warpData=warpData)
+        dataset.load()
+        print(dataset)
+        #
+        # except:
+        #     print('error in path:', dp)
+        # dataset.create_summary_pdf(saveDir, title='summary_cruella_passive')
+
 
 
 if __name__ == '__main__':

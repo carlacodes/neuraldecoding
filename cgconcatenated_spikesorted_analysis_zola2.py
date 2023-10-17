@@ -248,13 +248,13 @@ def main():
         dp = datapath
         saveDir = Path('D:/Data/spkfigs/zola/')
         saveDir.mkdir(parents=False, exist_ok=True)
-        try:
-            dataset = concatenatedWarpData(dp, warpData=warpData)
-            dataset.load()
-            print(dataset)
-
-        except:
-            print('error in path:', dp)
+        # try:
+        dataset = concatenatedWarpData(dp, warpData=warpData)
+        dataset.load()
+        print(dataset)
+        #
+        # except:
+        #     print('error in path:', dp)
         # dataset.create_summary_pdf(saveDir, title='summary_cruella_passive')
 
 
