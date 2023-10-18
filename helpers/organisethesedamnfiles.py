@@ -140,25 +140,25 @@ def get_list_of_recblocks(path):
                 #get the block number
                 block = date[-1].split('.')[0]
                 #get the recording number, which is the string of numbers after block
+                # try:
+                #     rec = block.split('Block')
+                #     rec = rec[1]
+                #     #convert to an integer, remove the - sign
+                #     rec = rec.split('-')
+                #     #combine the two numbers
+                #     rec = rec[0] + rec[1]
+                #     #convert to an integer
+                #     rec = int(rec)
+                # except:
                 try:
-                    rec = block.split('Block')
-                    rec = rec[1]
-                    #convert to an integer, remove the - sign
-                    rec = rec.split('-')
-                    #combine the two numbers
-                    rec = rec[0] + rec[1]
-                    #convert to an integer
-                    rec = int(rec)
+                    data = scipy.io.loadmat(path + '/' + i)
+                    data = data['data']
+                    #extract recblock
+                    rec = data['recBlock'][0][0][0]
+                    rec = str(rec)
                 except:
-                    try:
-                        data = scipy.io.loadmat(path + '/' + i)
-                        data = data['data']
-                        #extract recblock
-                        rec = data['recBlock'][0][0][0]
-                        rec = str(rec)
-                    except:
-                        print('corrupted file ' + i)
-                        continue
+                    print('corrupted file ' + i)
+                    continue
 
                 #append to a big list
                 recblocks.append(rec)
@@ -265,11 +265,11 @@ if __name__ == '__main__':
 
     path = 'D:\Data/F1815_Cruella/'
 
-    date_objects = [datetime.strptime(date_string, "%d/%m/%Y") for date_string in date_strings_cruella]
-    #remove the time from the date objects
-    date_objects = [datetime.date(date_object) for date_object in date_objects]
-    #organise the date_objects in ascencind order
-    date_objects.sort()
+    # date_objects = [datetime.strptime(date_string, "%d/%m/%Y") for date_string in date_strings_cruella]
+    # #remove the time from the date objects
+    # date_objects = [datetime.date(date_object) for date_object in date_objects]
+    # #organise the date_objects in ascencind order
+    # date_objects.sort()
     #
     # organise_files_into_directories(path, date_objects)
-    recblocks = get_list_of_recblocks('D:\Data\F1815_Cruella/2022-03-01/')
+    recblocks = get_list_of_recblocks('D:\Data\F1815_Cruella/2023-01-25')

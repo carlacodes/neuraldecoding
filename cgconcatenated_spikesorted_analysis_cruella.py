@@ -240,12 +240,18 @@ class concatenatedWarpData:
 def main():
 
     datapath_big = Path(f'D:\ms4output_16102023\F1815_Cruella/')
-    warpData = Path('E:/Electrophysiological_Data/F1815_Cruella/')
 
     datapaths = [x for x in datapath_big.glob('**/mountainsort4/phy//') if x.is_dir()]
     for datapath in datapaths:
 
         dp = datapath
+        #get recname
+        rec_name = str(datapath).split('\\')[-4]
+        if '2023' in rec_name:
+            warpData = Path('E:/Electrophysiological_Data/F1815_Cruella/aftermarch2023/')
+        else:
+            warpData = Path('E:/Electrophysiological_Data/F1815_Cruella/')
+
         saveDir = Path('D:/Data/spkfigs/cruella/')
         saveDir.mkdir(parents=False, exist_ok=True)
 

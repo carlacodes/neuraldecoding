@@ -504,6 +504,7 @@ def main():
     datapath = Path(
         f'E:/ms4output2/F1901_Crumble/BB4BB5_crumble_01092023/BB4BB5_crumble_01092023_BB4BB5_crumble_01092023_BB_4/mountainsort4/phy/')
     ferretid = 'crumble'
+    recname = str(datapath).split('\\')[-4]
 
     for dir in directories:
         run_classification(dir, datapath, ferretid)
