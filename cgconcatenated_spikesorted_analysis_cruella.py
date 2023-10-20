@@ -243,7 +243,6 @@ def main():
 
     datapaths = [x for x in datapath_big.glob('**/mountainsort4/phy//') if x.is_dir()]
     for datapath in datapaths:
-
         dp = datapath
         #get recname
         rec_name = str(datapath).split('\\')[-4]

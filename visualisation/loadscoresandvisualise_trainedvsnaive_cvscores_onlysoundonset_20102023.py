@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import os
+import re
 import seaborn as sns
 import scipy.stats as stats
 import shap
@@ -14,6 +15,21 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import mean_squared_error
+
+def find_repeating_substring(text):
+    text_length = len(text)
+    max_length = text_length // 2  # Maximum possible length of repeating substring
+
+    for length in range(1, max_length + 1):
+        for i in range(text_length - 2 * length + 1):
+            substring = text[i:i + length]
+            rest_of_text = text[i + length:]
+
+            if substring in rest_of_text:
+                return substring
+
+    return None
+
 
 scoremat = np.load(
     'D:/Users/cgriffiths/resultsms4/lstmclass_18112022/18112022_10_58_57/scores_Eclair_2022_2_eclair_probe_pitchshift_vs_not_by_talker_bs.npy',
@@ -71,8 +87,7 @@ def scatterplot_and_visualise(probewordlist,
         probewordindex = probeword[0]
         print(probewordindex)
         stringprobewordindex = str(probewordindex)
-        # if ferretname == 'Squinty' or ferretname == 'Windolene':
-            #scores_squinty_2022_2_squinty_probe_bs
+
         scores = np.load(
             saveDir  + r'scores_' + ferretname + '_2022_' + stringprobewordindex + '_' + ferretname + '_probe_bs.npy',
             allow_pickle=True)[()]
@@ -82,10 +97,6 @@ def scatterplot_and_visualise(probewordlist,
         print(scores['talker1']['target_vs_probe']['pitchshift']['cluster_id'])
         print(scores['talker1']['target_vs_probe']['nopitchshift']['cluster_id'])
 
-        # else:
-        #     scores = np.load(
-        #         saveDir  + r'scores_' + ferretname + '_2022_' + stringprobewordindex + '_' + ferretname + '_probe_pitchshift_vs_not_by_talker_bs.npy',
-        #         allow_pickle=True)[()]
 
 
         for talker in [1]:
@@ -423,25 +434,9 @@ def main():
     probewordlist = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
     probewordlist_l74 = [(2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
                              (14, 14)]
-    # dictoutput_windolene = scatterplot_and_visualise(probewordlist_squinty, saveDir= 'E:/results_16092023\F1606_Windolene/bb5/', ferretname='Windolene', singleunitlist=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], multiunitlist=np.arange(1,64, 1), noiselist = [])
-
-    report_squinty = {}
-    singleunitlist_squinty = {}
-    multiunitlist_squinty = {}
-    noiselist_squinty = {}
-
-    #
-    # for side in streams:
-    #     report_squinty[side], singleunitlist_squinty[side], multiunitlist_squinty[side], noiselist_squinty[side] = load_classified_report(f'E:\ms4output2\F1604_Squinty\BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold\BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold_BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold_{side}/')
-
-    # animal_list = [  'F1606_Windolene','F1702_Zola','F1604_Squinty', 'F1815_Cruella', 'F1902_Eclair', 'F1901_Crumble']
     animal_list = [ 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala', 'F1901_Crumble']
     # animal_list = [  'F1815_Cruella', 'F1901_Crumble',]
     # animal_list = [ 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1901_Crumble', 'F1812_Nala']
-
-    #windolene's scores pulling the mean down need to check for noise
-    #crumble's scores ridiculloously high, need to check for noise, probably need to check nala as well
-
 
     #load the report for each animal in animal-list
     report = {}
@@ -449,9 +444,9 @@ def main():
     multiunitlist = {}
     noiselist = {}
     path_list = {}
-    #needs to be modified to include the recname
+
     for animal in animal_list:
-        path = Path('E:\ms4output2/' + animal + '/')
+        path = Path('D:\ms4output_16102023/' + animal + '/')
         path_list[animal] = [path for path in path.glob('**/quality metrics.csv')]
         #get the parent directory of each path
         path_list[animal] = [path.parent for path in path_list[animal]]
@@ -465,7 +460,10 @@ def main():
         for path in path_list[animal]:
             stream_name = path.parent.absolute()
             stream_name = stream_name.parent.absolute()
-            stream_name = str(stream_name)[-4:]
+            stream_name = str(stream_name).split('\\')[-1]
+            #maybe just modify this to include the recname
+            # stream_name = str(stream_name)[-4:]
+
             #check if stream name exists
             # if stream_name in report[animal].keys():
             #     stream_name = path.parent.absolute()
@@ -494,7 +492,6 @@ def main():
             if 'BB_2' in stream:
                 streamtext = 'bb2'
             elif 'BB_3' in stream:
-
                 streamtext = 'bb3'
             elif 'BB_4' in stream:
                 streamtext = 'bb4'
@@ -502,31 +499,57 @@ def main():
                 streamtext = 'bb5'
             #remove F number character from animal name
             animal_text = animal.split('_')[1]
-            #make lowercase
-            # animal_text = animal_text.lower()
-            # try:
 
-            #need to incorporate the recname into the path,
-            #for each animal needs to loop thorugh each directory and find the report
+            max_length = len(stream) // 2
 
+            for length in range(1, max_length + 1):
+                for i in range(len(stream) - length):
+                    substring = stream[i:i + length]
+                    if stream.count(substring) > 1:
+                        repeating_substring = substring
+                        break
+
+            print(repeating_substring)
+            rec_name_unique = repeating_substring[0:-1]
+            # rec_name_unique = stream.split('_')[0:3]
 
             if animal == 'F1604_Squinty':
-                dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
-                                                                saveDir=f'D:/interrovingdecoding/results_16092023/{animal}/myriad3/{streamtext}/',
-                                                                ferretname=animal_text,
-                                                                singleunitlist=singleunitlist[animal][stream],
-                                                                multiunitlist=multiunitlist[animal][stream],
-                                                                noiselist=noiselist[animal][stream], stream = stream)
+                if 'MYRIAD1' in rec_name_unique:
+                    rec_name = 'myriad1'
+                elif 'MYRIAD2' in rec_name_unique:
+                    rec_name = 'myriad2'
+                elif 'MYRIAD3' in rec_name_unique:
+                    rec_name = 'myriad3'
+                elif 'MYRIAD4' in rec_name_unique:
+                    rec_name = 'myriad4'
+
+                try:
+                    dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
+                                                                    saveDir=f'D:/interrovingdecoding/results_16092023/{animal}/{rec_name}/{streamtext}/',
+                                                                    ferretname=animal_text,
+                                                                    singleunitlist=singleunitlist[animal][stream],
+                                                                    multiunitlist=multiunitlist[animal][stream],
+                                                                    noiselist=noiselist[animal][stream], stream = stream)
+                except:
+                    #print the exception
+                    print(f'no scores for this stream:{stream}, and {animal}')
+                    pass
             elif animal == 'F1606_Windolene':
-                dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
-                                                                saveDir=f'D:/interrovingdecoding/results_16092023/{animal}/{streamtext}/',
-                                                                ferretname=animal_text,
-                                                                singleunitlist=singleunitlist[animal][stream],
-                                                                multiunitlist=multiunitlist[animal][stream],
-                                                                noiselist=noiselist[animal][stream], stream = stream)
+
+                try:
+                    dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
+                                                                    saveDir=f'D:/interrovingdecoding/results_16092023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                    ferretname=animal_text,
+                                                                    singleunitlist=singleunitlist[animal][stream],
+                                                                    multiunitlist=multiunitlist[animal][stream],
+                                                                    noiselist=noiselist[animal][stream], stream = stream)
+                except:
+                    #print the exception
+                    print(f'no scores for this stream:{stream}, and {animal}')
+                    pass
             else:
                 try:
-                    dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'D:/interrovingdecoding/results_16092023/{animal}/{streamtext}/',
+                    dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'D:/interrovingdecoding/results_16092023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                     ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                     multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream)
                 except:
