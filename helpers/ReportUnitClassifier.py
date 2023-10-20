@@ -70,12 +70,14 @@ if __name__ == '__main__':
     #thank you to my past self for writing this script
     # path = Path('E:\ms4output2\F1604_Squinty\BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold\BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold_BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold_BB_3\mountainsort4/report/')
     animal_list = ['F1306_Firefly', 'F1604_Squinty', 'F1606_Windolene','F1702_Zola', 'F1815_Cruella', 'F1901_Crumble', 'F1902_Eclair']
-    animal_list = ['F1604_Squinty', 'F1606_Windolene', 'F1812_Nala', 'F1901_Crumble']
+    # animal_list = ['F1604_Squinty', 'F1606_Windolene', 'F1812_Nala', 'F1901_Crumble']
 
     # animal_list = ['F1606_Windolene']
     path_list = {}
     for animal in animal_list:
-        path = Path('E:\ms4output2/' + animal + '/')
+        # path = Path('E:\ms4output2/' + animal + '/')
+        path = Path('D:\ms4output_16102023/' + animal + '/')
+
         path_list[animal] = [path for path in path.glob('**/quality metrics.csv')]
         #get the parent directory of each path
         path_list[animal] = [path.parent for path in path_list[animal]]

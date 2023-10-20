@@ -449,12 +449,13 @@ def main():
     multiunitlist = {}
     noiselist = {}
     path_list = {}
+    #needs to be modified to include the recname
     for animal in animal_list:
         path = Path('E:\ms4output2/' + animal + '/')
         path_list[animal] = [path for path in path.glob('**/quality metrics.csv')]
         #get the parent directory of each path
         path_list[animal] = [path.parent for path in path_list[animal]]
-
+    #report, singleunitlist, and multiunitlist and noiselist need to be modified to include the recname
     for animal in animal_list:
         report[animal] = {}
         singleunitlist[animal] = {}
@@ -462,8 +463,6 @@ def main():
         noiselist[animal] = {}
 
         for path in path_list[animal]:
-
-
             stream_name = path.parent.absolute()
             stream_name = stream_name.parent.absolute()
             stream_name = str(stream_name)[-4:]
@@ -506,6 +505,11 @@ def main():
             #make lowercase
             # animal_text = animal_text.lower()
             # try:
+
+            #need to incorporate the recname into the path,
+            #for each animal needs to loop thorugh each directory and find the report
+
+
             if animal == 'F1604_Squinty':
                 dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
                                                                 saveDir=f'D:/interrovingdecoding/results_16092023/{animal}/myriad3/{streamtext}/',
