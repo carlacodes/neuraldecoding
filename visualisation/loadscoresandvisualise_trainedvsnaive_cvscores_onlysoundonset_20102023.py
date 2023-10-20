@@ -434,7 +434,7 @@ def main():
     probewordlist = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
     probewordlist_l74 = [(2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
                              (14, 14)]
-    animal_list = [ 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala', 'F1901_Crumble']
+    animal_list = [ 'F1901_Crumble', 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala']
     # animal_list = [  'F1815_Cruella', 'F1901_Crumble',]
     # animal_list = [ 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1901_Crumble', 'F1812_Nala']
 
@@ -525,11 +525,12 @@ def main():
 
                 try:
                     dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
-                                                                    saveDir=f'D:/interrovingdecoding/results_16092023/{animal}/{rec_name}/{streamtext}/',
+                                                                    saveDir=f'F:/results_16092023/{animal}/{rec_name}/{streamtext}/',
                                                                     ferretname=animal_text,
                                                                     singleunitlist=singleunitlist[animal][stream],
                                                                     multiunitlist=multiunitlist[animal][stream],
                                                                     noiselist=noiselist[animal][stream], stream = stream)
+                    dictoutput_all.append(dictoutput_instance)
                 except:
                     #print the exception
                     print(f'no scores for this stream:{stream}, and {animal}')
@@ -538,31 +539,36 @@ def main():
 
                 try:
                     dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
-                                                                    saveDir=f'D:/interrovingdecoding/results_16092023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                    saveDir=f'F:/results_16092023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                     ferretname=animal_text,
                                                                     singleunitlist=singleunitlist[animal][stream],
                                                                     multiunitlist=multiunitlist[animal][stream],
                                                                     noiselist=noiselist[animal][stream], stream = stream)
+                    dictoutput_all.append(dictoutput_instance)
                 except:
                     #print the exception
                     print(f'no scores for this stream:{stream}, and {animal}')
                     pass
             else:
                 try:
-                    dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'D:/interrovingdecoding/results_16092023/{animal}/{rec_name_unique}/{streamtext}/',
+                    dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_16092023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                     ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                     multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream)
+                    dictoutput_all.append(dictoutput_instance)
                 except:
                     #print the exception
                     print(f'no scores for this stream:{stream}, and {animal}')
                     pass
-                dictoutput_all.append(dictoutput_instance)
-            if animal == 'F1604_Squinty' or animal == 'F1606_Windolene' or animal == 'F1702_Zola' or animal == 'F1815_Cruella':
-                print('trained animal'+ animal)
-                dictoutput_trained.append(dictoutput_instance)
-            else:
-                print('naive animal:'+ animal)
-                dictoutput_naive.append(dictoutput_instance)
+            try:
+                if animal == 'F1604_Squinty' or animal == 'F1606_Windolene' or animal == 'F1702_Zola' or animal == 'F1815_Cruella':
+                    print('trained animal'+ animal)
+                    dictoutput_trained.append(dictoutput_instance)
+                else:
+                    print('naive animal:'+ animal)
+                    dictoutput_naive.append(dictoutput_instance)
+            except:
+                print('no scores for this stream')
+                pass
 
     labels = ['squinty', 'squinty', 'ore']
     colors = ['purple', 'magenta', 'darkturquoise', 'olivedrab', 'steelblue', 'darkcyan']
