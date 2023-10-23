@@ -98,110 +98,33 @@ def scatterplot_and_visualise(probewordlist,
         print(scores['talker1']['target_vs_probe']['nopitchshift']['cluster_id'])
 
 
-
-        for talker in [1]:
-            comparisons = [comp for comp in scores[f'talker{talker}']]
-
-            for comp in comparisons:
-                for cond in ['pitchshift', 'nopitchshift']:
-                    for i, clus in enumerate(scores[f'talker{talker}'][comp][cond]['cluster_id']):
-                        if isinstance(clus, float):
-
-                            if ferretname == 'F1815_Cruella':
-                                if stream == 'BB_2':
-                                    if clus == 2.3 or clus == 3.3 or clus == 4.3 or clus == 5.3 or clus==8.3 or clus ==9.2 or clus == 10.3 or clus == 13.1 or clus ==12.3 or clus == 14.3 or clus ==14.1 or clus == 15.3 or clus == 15.1:
-                                        noiselist.append(clus)
-                                    else:
-                                        clus_instance = int(round(clus))
-                                        if clus_instance in singleunitlist:
-                                            singleunitlist.remove(clus_instance)
-                                            noiselist.append(clus_instance)
-                                            singleunitlist.append(clus)
-                                        elif clus_instance in multiunitlist:
-                                            multiunitlist.remove(clus_instance)
-                                            noiselist.append(clus_instance)
-                                            multiunitlist.append(clus)
-                                        else:
-                                            multiunitlist.append(clus)
-                                elif stream == 'BB_4':
-                                    if clus == 4.1 or clus == 11.2 or clus == 14.1 or clus == 15.3:
-                                        noiselist.append(clus)
-                                    else:
-                                        clus_instance = int(round(clus))
-                                        if clus_instance in singleunitlist:
-                                            singleunitlist.remove(clus_instance)
-                                            noiselist.append(clus_instance)
-                                            singleunitlist.append(clus)
-                                        elif clus_instance in multiunitlist:
-                                            multiunitlist.remove(clus_instance)
-                                            noiselist.append(clus_instance)
-                                            multiunitlist.append(clus)
-                                        else:
-                                            multiunitlist.append(clus)
-                            if ferretname == 'F1901_Crumble':
-                                if stream == 'BB_2':
-                                    if clus == 4.1 or clus == 4.2 or clus == 7.2 or clus == 7.1 or clus == 8.2 or clus == 12.2 or clus ==14.2 or clus == 15.1:
-                                        noiselist.append(clus)
-                                    else:
-                                        clus_instance = int(round(clus))
-                                        if clus_instance in singleunitlist:
-                                            singleunitlist.remove(clus_instance)
-                                            noiselist.append(clus_instance)
-                                            singleunitlist.append(clus)
-                                        elif clus_instance in multiunitlist:
-                                            multiunitlist.remove(clus_instance)
-                                            noiselist.append(clus_instance)
-                                            multiunitlist.append(clus)
-                                        else:
-                                            multiunitlist.append(clus)
-                                elif stream == 'BB_3':
-                                    if clus == 7.2 or clus == 16.2:
-                                        noiselist.append(clus)
-                                    else:
-                                        clus_instance = int(round(clus))
-                                        if clus_instance in singleunitlist:
-                                            singleunitlist.remove(clus_instance)
-                                            noiselist.append(clus_instance)
-                                            singleunitlist.append(clus)
-                                        elif clus_instance in multiunitlist:
-                                            multiunitlist.remove(clus_instance)
-                                            noiselist.append(clus_instance)
-                                            multiunitlist.append(clus)
-                                        else:
-                                            multiunitlist.append(clus)
-                                else:
-                                    clus_instance = int(round(clus))
-                                    if clus_instance in singleunitlist:
-                                        singleunitlist.remove(clus_instance)
-                                        noiselist.append(clus_instance)
-                                        singleunitlist.append(clus)
-                                    elif clus_instance in multiunitlist:
-                                        multiunitlist.remove(clus_instance)
-                                        noiselist.append(clus_instance)
-                                        multiunitlist.append(clus)
-                                    else:
-                                        multiunitlist.append(clus)
-
-
-
-                            else:
-                                clus_instance = int(round(clus))
-                                if clus_instance in singleunitlist:
-                                    singleunitlist.remove(clus_instance)
-                                    noiselist.append(clus_instance)
-                                    singleunitlist.append(clus)
-                                elif clus_instance in multiunitlist:
-                                    multiunitlist.remove(clus_instance)
-                                    noiselist.append(clus_instance)
-                                    multiunitlist.append(clus)
-                                else:
-                                    multiunitlist.append(clus)
-
-
-
-
-
-
+        #
+        # for talker in [1]:
+        #     comparisons = [comp for comp in scores[f'talker{talker}']]
+        #
+        #     for comp in comparisons:
+        #         for cond in ['pitchshift', 'nopitchshift']:
+        #             for i, clus in enumerate(scores[f'talker{talker}'][comp][cond]['cluster_id']):
+        #                 #check if clus is greater than 100
+        #                 if 200> clus >= 100:
+        #                     clus_instance = int(round(clus - 100))
+        #                 elif 300 > clus >= 200:
+        #                     clus_instance = int(round(clus - 200))
+        #                 elif 400 > clus >= 300:
+        #                     clus_instance = int(round(clus - 300))
+        #                 else:
+        #                     clus_instance = clus
+        #
+        #                 # if clus_instance in singleunitlist:
+        #                 #     singleunitlist.remove(clus_instance)
+        #                 #     noiselist.append(clus_instance)
+        #                 #     singleunitlist.append(clus)
+        #                 # elif clus_instance in multiunitlist:
+        #                 #     multiunitlist.remove(clus_instance)
+        #                 #     noiselist.append(clus_instance)
+        #                 #     multiunitlist.append(clus)
+        #                 # else:
+        #                 #     multiunitlist.append(clus)
 
 
         for talker in [1]:
@@ -212,6 +135,14 @@ def scatterplot_and_visualise(probewordlist,
                     for i, clus in enumerate(scores[f'talker{talker}'][comp][cond]['cluster_id']):
 
                         print(i, clus)
+                        if 200> clus >= 100:
+                            clus_instance = int(round(clus - 100))
+                        elif 300 > clus >= 200:
+                            clus_instance = int(round(clus - 200))
+                        elif 400 > clus >= 300:
+                            clus_instance = int(round(clus - 300))
+                        else:
+                            clus_instance = clus
 
                         if ferretname == 'Orecchiette':
                             #read csv file and get cluster id
@@ -230,69 +161,81 @@ def scatterplot_and_visualise(probewordlist,
                                 print('selected cluster below auditory cortex')
                                 pass
 
-                        if clus in singleunitlist:
+                        if clus_instance in singleunitlist:
                             print('in single unit list')
                             if cond == 'pitchshift':
                                 if talker == 1:
-                                    su_pitchshiftlist_female = np.append(su_pitchshiftlist_female,
-                                                                         scores[f'talker{talker}'][comp][cond][
-                                                                             'lstm_avg'][i])
+                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > 0.01+scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+                                        su_pitchshiftlist_female = np.append(su_pitchshiftlist_female,
+                                                                             scores[f'talker{talker}'][comp][cond][
+                                                                                 'lstm_balanced_avg'][i])
                                 elif talker == 2:
-                                    su_pitchshiftlist_male = np.append(su_pitchshiftlist_male,
-                                                                       scores[f'talker{talker}'][comp][cond][
-                                                                           'lstm_avg'][i])
+                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > 0.01+scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+
+                                        su_pitchshiftlist_male = np.append(su_pitchshiftlist_male,
+                                                                           scores[f'talker{talker}'][comp][cond][
+                                                                               'lstm_balanced_avg'][i])
                                 # print(pitchshiftlist.size)
                             elif cond == 'nopitchshift':
                                 if talker == 1:
+                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > 0.01+scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
-                                    su_nonpitchshiftlist_female = np.append(su_nonpitchshiftlist_female,
-                                                                            scores[f'talker{talker}'][comp][cond][
-                                                                                'lstm_avg'][i])
+                                        su_nonpitchshiftlist_female = np.append(su_nonpitchshiftlist_female,
+                                                                                scores[f'talker{talker}'][comp][cond][
+                                                                                    'lstm_balanced_avg'][i])
                                 elif talker == 2:
+                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > 0.01+scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
-                                    su_nonpitchshiftlist_male = np.append(su_nonpitchshiftlist_male,
-                                                                          scores[f'talker{talker}'][comp][cond][
-                                                                              'lstm_avg'][i])
+                                        su_nonpitchshiftlist_male = np.append(su_nonpitchshiftlist_male,
+                                                                              scores[f'talker{talker}'][comp][cond][
+                                                                                  'lstm_balanced_avg'][i])
 
-                        elif clus in multiunitlist:
+                        elif clus_instance in multiunitlist:
                             if cond == 'pitchshift':
                                 if talker == 1:
-                                    mu_pitchshiftlist_female = np.append(mu_pitchshiftlist_female,
-                                                                         scores[f'talker{talker}'][comp][cond][
-                                                                             'lstm_avg'][
-                                                                             i])
+                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > 0.01+scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+
+                                        mu_pitchshiftlist_female = np.append(mu_pitchshiftlist_female,
+                                                                             scores[f'talker{talker}'][comp][cond][
+                                                                                 'lstm_balanced_avg'][
+                                                                                 i])
 
                                 elif talker == 2:
-                                    mu_pitchshiftlist_male = np.append(mu_pitchshiftlist_male,
-                                                                       scores[f'talker{talker}'][comp][cond][
-                                                                           'lstm_avg'][
-                                                                           i])
-                                    cluster_list_male_mu = np.append(cluster_list_male_mu, clus)
+                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > 0.01+scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+
+                                        mu_pitchshiftlist_male = np.append(mu_pitchshiftlist_male,
+                                                                           scores[f'talker{talker}'][comp][cond][
+                                                                               'lstm_balanced_avg'][
+                                                                               i])
+                                        cluster_list_male_mu = np.append(cluster_list_male_mu, clus)
 
 
                             if cond == 'nopitchshift':
                                 if talker == 1:
-                                    mu_nonpitchshiftlist_female = np.append(mu_nonpitchshiftlist_female,
-                                                                            scores[f'talker{talker}'][comp][cond][
-                                                                                'lstm_avg'][i])
+                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > 0.01+scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+
+                                        mu_nonpitchshiftlist_female = np.append(mu_nonpitchshiftlist_female,
+                                                                                scores[f'talker{talker}'][comp][cond][
+                                                                                    'lstm_balanced_avg'][i])
 
                                 elif talker == 2:
-                                    mu_nonpitchshiftlist_male = np.append(mu_nonpitchshiftlist_male,
-                                                                          scores[f'talker{talker}'][comp][cond][
-                                                                              'lstm_avg'][i])
-                                    cluster_list_male_mu_nops= np.append(cluster_list_male_mu_nops, clus)
+                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > 0.01+scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+
+                                        mu_nonpitchshiftlist_male = np.append(mu_nonpitchshiftlist_male,
+                                                                              scores[f'talker{talker}'][comp][cond][
+                                                                                  'lstm_balanced_avg'][i])
+                                        cluster_list_male_mu_nops= np.append(cluster_list_male_mu_nops, clus)
 
 
-                        elif clus in noiselist:
+                        elif clus_instance in noiselist:
                             pass
 
-                        # pitchshiftlist = np.append(pitchshiftlist, scores[f'talker{talker}'][comp]['pitchshift']['lstm_avg'][i])
-                        # nonpitchshiftlist = np.append(nonpitchshiftlist, scores[f'talker{talker}'][comp]['nopitchshift']['lstm_avg'][i])
+                        # pitchshiftlist = np.append(pitchshiftlist, scores[f'talker{talker}'][comp]['pitchshift']['lstm_balanced_avg'][i])
+                        # nonpitchshiftlist = np.append(nonpitchshiftlist, scores[f'talker{talker}'][comp]['nopitchshift']['lstm_balanced_avg'][i])
 
                         # plt.title(f'cluster {clus}')
                         # plt.show()
 
-    keys = {"su_list", "mu_list"}
     dictofsortedscores = {'su_list': {'pitchshift': {'female_talker': {},
                                                      'male_talker': {}},
                                       'nonpitchshift': {'female_talker': {},
@@ -471,11 +414,11 @@ def main():
             #     #find myriad number
             #     stream_name = str(stream_name)[-6:]
             #load the report for that stream
-            try:
-              report[animal][stream_name], singleunitlist[animal][stream_name], multiunitlist[animal][stream_name], noiselist[animal][stream_name] = load_classified_report(f'{path}')
-            except:
-                print('no report for this stream:' + str(path))
-                pass
+            # try:
+            report[animal][stream_name], singleunitlist[animal][stream_name], multiunitlist[animal][stream_name], noiselist[animal][stream_name] = load_classified_report(f'{path}')
+            # except:
+            #     print('no report for this stream:' + str(path))
+            #     pass
     # now create a dictionary of dictionaries, where the first key is the animal name, and the second key is the stream name
     #the value is are the decoding scores for each cluster
 
@@ -514,27 +457,18 @@ def main():
             # rec_name_unique = stream.split('_')[0:3]
 
             if animal == 'F1604_Squinty':
-                if 'MYRIAD1' in rec_name_unique:
-                    rec_name = 'myriad1'
-                elif 'MYRIAD2' in rec_name_unique:
-                    rec_name = 'myriad2'
-                elif 'MYRIAD3' in rec_name_unique:
-                    rec_name = 'myriad3'
-                elif 'MYRIAD4' in rec_name_unique:
-                    rec_name = 'myriad4'
 
-                try:
-                    dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
-                                                                    saveDir=f'F:/results_16092023/{animal}/{rec_name}/{streamtext}/',
-                                                                    ferretname=animal_text,
-                                                                    singleunitlist=singleunitlist[animal][stream],
-                                                                    multiunitlist=multiunitlist[animal][stream],
-                                                                    noiselist=noiselist[animal][stream], stream = stream)
-                    dictoutput_all.append(dictoutput_instance)
-                except:
-                    #print the exception
-                    print(f'no scores for this stream:{stream}, and {animal}')
-                    pass
+                dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
+                                                                saveDir=f'F:/results_16092023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                ferretname=animal_text,
+                                                                singleunitlist=singleunitlist[animal][stream],
+                                                                multiunitlist=multiunitlist[animal][stream],
+                                                                noiselist=noiselist[animal][stream], stream = stream)
+                dictoutput_all.append(dictoutput_instance)
+                # except:
+                #     #print the exception
+                #     print(f'no scores for this stream:{stream}, and {animal}')
+                #     pass
             elif animal == 'F1606_Windolene':
 
                 try:
@@ -549,7 +483,7 @@ def main():
                     #print the exception
                     print(f'no scores for this stream:{stream}, and {animal}')
                     pass
-            else:
+            elif animal == 'F1815_Cruella' or animal == 'F1902_Eclair':
                 try:
                     dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_16092023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                     ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
@@ -559,6 +493,16 @@ def main():
                     #print the exception
                     print(f'no scores for this stream:{stream}, and {animal}')
                     pass
+            else:
+                # try:
+                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_16092023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
+                                                                multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream)
+                dictoutput_all.append(dictoutput_instance)
+                # except:
+                #     #print the exception
+                #     print(f'no scores for this stream:{stream}, and {animal}')
+                #     pass
             try:
                 if animal == 'F1604_Squinty' or animal == 'F1606_Windolene' or animal == 'F1702_Zola' or animal == 'F1815_Cruella':
                     print('trained animal'+ animal)
@@ -571,7 +515,10 @@ def main():
                 pass
 
     labels = ['squinty', 'squinty', 'ore']
-    colors = ['purple', 'magenta', 'darkturquoise', 'olivedrab', 'steelblue', 'darkcyan']
+
+    labels = [ 'F1901_Crumble', 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala']
+
+    colors = ['purple', 'magenta', 'darkturquoise', 'olivedrab', 'steelblue', 'darkcyan', 'darkorange']
 
     generate_plots(dictoutput_all, dictoutput_trained, dictoutput_naive, labels, colors)
 
@@ -587,7 +534,6 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     emptydict = {}
     count = 0
     for dictoutput in dictlist:
-
         for sutype in dictoutput.keys():
             for pitchshiftornot in dictoutput[sutype].keys():
                 for talker in dictoutput[sutype][pitchshiftornot].keys():
@@ -615,11 +561,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
         emptydict[keys] = np.asarray(emptydict[keys])
 
 
-
-
     fig, ax = plt.subplots(1, figsize=(9,9), dpi=300)
-
-
     for dictoutput in dictlist:
         for key in dictoutput.keys():
             for key3 in dictoutput[key]['pitchshift'].keys():
@@ -660,23 +602,13 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
 
     # Define labels and colors for scatter plots
     #plot scatter data in a loop
-    for i, (data_dict, label, color) in enumerate(zip(dictlist, labels, colors)):
+    # for i, (data_dict, label, color) in enumerate(zip(dictlist, labels, colors)):
+    #     ax.scatter(data_dict['mu_list']['nonpitchshift']['female_talker'],data_dict['mu_list']['pitchshift']['female_talker'], marker='P',
+    #                facecolors =color, edgecolors = color, alpha=0.5)
+    #     ax.scatter(data_dict['su_list']['nonpitchshift']['female_talker'],data_dict['su_list']['pitchshift']['female_talker'], marker='P', color=color, alpha=0.5)
 
-        #all inter trial roving stuff is female talker
-        ax.scatter(data_dict['mu_list']['nonpitchshift']['female_talker'],data_dict['mu_list']['pitchshift']['female_talker'], marker='P',
-                   facecolors =color, edgecolors = color, alpha=0.5)
-        ax.scatter(data_dict['su_list']['nonpitchshift']['female_talker'],data_dict['su_list']['pitchshift']['female_talker'], marker='P', color=color, alpha=0.5)
-
-
-
-
-
-    x = np.linspace(0.4, 1, 101)
-    ax.plot(x, x, color='black', linestyle = '--')  # identity line
 
     if bigconcatenatenaive_nonps.size > bigconcatenatenaive_ps.size:
-
-
         len(bigconcatenatenaive_ps)
         bigconcatenatenaive_nonps = bigconcatenatenaive_nonps[:bigconcatenatenaive_ps.size]
     elif bigconcatenatenaive_nonps.size < bigconcatenatenaive_ps.size:
@@ -687,6 +619,10 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     elif bigconcatenatetrained_nonps.size < bigconcatenatetrained_ps.size:
         bigconcatenatetrained_ps = bigconcatenatetrained_ps[:bigconcatenatetrained_nonps.size]
 
+    ax.scatter(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, marker='P', color='darkcyan', alpha=0.5, label='naive')
+    ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.5, label='trained')
+    x = np.linspace(0.4, 1, 101)
+    ax.plot(x, x, color='black', linestyle = '--')  # identity line
 
     slope, intercept, r_value, pv, se = stats.linregress(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)
 
