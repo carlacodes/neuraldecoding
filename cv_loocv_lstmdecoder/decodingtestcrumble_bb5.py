@@ -51,7 +51,7 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
     epoch_threshold = 1.5
     clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
                  st.annotations['group'] != 'noise']
-    clust_ids = clust_ids[1:]
+    clust_ids = [316]
 
     scores = {'cluster_id': [],
               'score': [],
@@ -68,14 +68,7 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
               'perm_ac': [],
               'perm_bal_ac': []}
 
-    # scores['cluster_id'].append(cluster_id)
-    # scores['score'].append(score)
-    # scores['lstm_score'].append(np.mean(totalaclist))
-    # scores['lstm_balanced_avg'].append(np.mean(bal_ac_list))
-    # scores['bootScore'].append(bootScore)
-    # scores['lstm_accuracylist'].append(accuracy_list)
-    # scores['lstm_balancedaccuracylist'].append(bal_ac_list)
-    # scores['cm'].append(len(unique_trials_targ) + len(unique_trials_probe))
+
 
     cluster_id_droplist = np.empty([])
     for cluster_id in tqdm(clust_ids):
@@ -144,6 +137,10 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
                              range=(window[0], window[1]))[0]
             count += 1
 
+        if (len(raster_targ_reshaped)) < 15 or (len(raster_probe_reshaped)) < 15:
+            print('less than 9 trials for the target or distractor, skipping')
+            continue
+
         if len(raster_targ_reshaped) >= len(raster_probe_reshaped) * 2:
             print('raster of distractor at least a 1/2 of target raster')
             # upsample the probe raster
@@ -165,9 +162,7 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
 
         stim0 = np.full(len(raster_targ_reshaped), 0)  # 0 = target word
         stim1 = np.full(len(raster_probe_reshaped), 1)  # 1 = probe word
-        if (len(stim0)) < 3 or (len(stim1)) < 3:
-            print('less than 3 trials for the target or distractor, skipping')
-            continue
+
 
         stim_lstm = np.concatenate((stim0, stim1))
 
@@ -520,7 +515,7 @@ def run_classification(dir, datapath, ferretid):
     dt_string = now.strftime("%d%m%Y_%H_%M_%S")
 
     tarDir = Path(
-        f'/zceccgr/lstmdecodingproject/leavepoutcrossvalidationlstmdecoder/results_16092023/F1901_Crumble/bb5inter/')
+        f'/zceccgr/lstmdecodingproject/leavepoutcrossvalidationlstmdecoder/results_16092023/F1901_Crumble/bb3inter/')
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
     for probeword in probewords_list:
@@ -556,7 +551,7 @@ def main():
         'crumble_2022']  # , 'Trifle_July_2022']/home/zceccgr/Scratch/zceccgr/ms4output/F1702_Zola/spkenvresults04102022allrowsbut4th
 
     datapath = Path(
-        f'E:/ms4output2/F1901_Crumble/BB4BB5_crumble_01102023/BB4BB5_crumble_01102023_BB4BB5_crumble_01102023_BB_5/mountainsort4/phy/')
+        f'D:\ms4output_16102023\F1901_Crumble\BB2BB3_crumble_29092023_2\BB2BB3_crumble_29092023_BB2BB3_crumble_29092023_BB_3\mountainsort4\phy/')
     ferretid = 'crumble'
 
     for dir in directories:
