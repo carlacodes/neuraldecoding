@@ -65,9 +65,10 @@ def scatterplot_and_visualise(probewordlist,
                               ferretname='Crumble',
                               singleunitlist=singlunitlistsoundonset_crumble,
                               multiunitlist=multiunitlist_soundonset_crumble, noiselist=[], stream = 'BB_2'):
-    singleunitlist = [x - 1 for x in singleunitlist]
-    multiunitlist = [x - 1 for x in multiunitlist]
-    noiselist = [x - 1 for x in noiselist]
+    # singleunitlist = [x - 1 for x in singleunitlist]
+    # multiunitlist = [x - 1 for x in multiunitlist]
+    # noiselist = [x - 1 for x in noiselist]
+    original_cluster_list = np.empty([0])
 
     su_pitchshiftlist_female = np.empty([0])
     su_pitchshiftlist_male = np.empty([0])
@@ -83,6 +84,10 @@ def scatterplot_and_visualise(probewordlist,
     cluster_list_male_mu_nops = np.empty([0])
     cluster_list_male_mu = np.empty([0])
     for probeword in probewordlist:
+        singleunitlist_copy = singleunitlist.copy()
+        multiunitlist_copy = multiunitlist.copy()
+        noiselist_copy = noiselist.copy()
+
 
         probewordindex = probeword[0]
         print(probewordindex)
@@ -99,32 +104,55 @@ def scatterplot_and_visualise(probewordlist,
 
 
         #
-        # for talker in [1]:
-        #     comparisons = [comp for comp in scores[f'talker{talker}']]
-        #
-        #     for comp in comparisons:
-        #         for cond in ['pitchshift', 'nopitchshift']:
-        #             for i, clus in enumerate(scores[f'talker{talker}'][comp][cond]['cluster_id']):
-        #                 #check if clus is greater than 100
-        #                 if 200> clus >= 100:
-        #                     clus_instance = int(round(clus - 100))
-        #                 elif 300 > clus >= 200:
-        #                     clus_instance = int(round(clus - 200))
-        #                 elif 400 > clus >= 300:
-        #                     clus_instance = int(round(clus - 300))
-        #                 else:
-        #                     clus_instance = clus
-        #
-        #                 # if clus_instance in singleunitlist:
-        #                 #     singleunitlist.remove(clus_instance)
-        #                 #     noiselist.append(clus_instance)
-        #                 #     singleunitlist.append(clus)
-        #                 # elif clus_instance in multiunitlist:
-        #                 #     multiunitlist.remove(clus_instance)
-        #                 #     noiselist.append(clus_instance)
-        #                 #     multiunitlist.append(clus)
-        #                 # else:
-        #                 #     multiunitlist.append(clus)
+        for talker in [1]:
+            comparisons = [comp for comp in scores[f'talker{talker}']]
+
+            for comp in comparisons:
+                for cond in ['pitchshift', 'nopitchshift']:
+                    for i, clus in enumerate(scores[f'talker{talker}'][comp][cond]['cluster_id']):
+                        #check if clus is greater than 100
+                        if 200> clus >= 100:
+                            clus_instance = int(round(clus - 100))
+                            if clus_instance in singleunitlist_copy:
+
+                                singleunitlist_copy.append(clus)
+                                original_cluster_list = np.append(original_cluster_list, clus_instance)
+                            elif clus_instance in multiunitlist_copy:
+
+                                multiunitlist_copy.append(clus)
+                                original_cluster_list = np.append(original_cluster_list, clus_instance)
+                        elif 300 > clus >= 200:
+                            clus_instance = int(round(clus - 200))
+                            if clus_instance in singleunitlist_copy:
+
+                                singleunitlist_copy.append(clus)
+                                original_cluster_list = np.append(original_cluster_list, clus_instance)
+                            elif clus_instance in multiunitlist_copy:
+
+                                multiunitlist_copy.append(clus)
+                                original_cluster_list = np.append(original_cluster_list, clus_instance)
+                        elif 400 > clus >= 300:
+                            clus_instance = int(round(clus - 300))
+                            if clus_instance in singleunitlist_copy:
+
+                                singleunitlist_copy.append(clus)
+                                original_cluster_list = np.append(original_cluster_list, clus_instance)
+                            elif clus_instance in multiunitlist_copy:
+
+                                multiunitlist_copy.append(clus)
+                                original_cluster_list = np.append(original_cluster_list, clus_instance)
+                        else:
+                            clus_instance = clus
+
+
+        #get the unique values from the original cluster list
+        original_cluster_list = np.unique(original_cluster_list)
+        #remove the original cluster list from the single and multi unit lists
+        singleunitlist_copy = [x for x in singleunitlist_copy if x not in original_cluster_list]
+        multiunitlist_copy = [x for x in multiunitlist_copy if x not in original_cluster_list]
+
+
+
 
 
         for talker in [1]:
@@ -135,14 +163,14 @@ def scatterplot_and_visualise(probewordlist,
                     for i, clus in enumerate(scores[f'talker{talker}'][comp][cond]['cluster_id']):
 
                         print(i, clus)
-                        if 200> clus >= 100:
-                            clus_instance = int(round(clus - 100))
-                        elif 300 > clus >= 200:
-                            clus_instance = int(round(clus - 200))
-                        elif 400 > clus >= 300:
-                            clus_instance = int(round(clus - 300))
-                        else:
-                            clus_instance = clus
+                        # if 200> clus >= 100:
+                        #     clus_instance = int(round(clus - 100))
+                        # elif 300 > clus >= 200:
+                        #     clus_instance = int(round(clus - 200))
+                        # elif 400 > clus >= 300:
+                        #     clus_instance = int(round(clus - 300))
+                        # else:
+                        #     clus_instance = clus
 
                         if ferretname == 'Orecchiette':
                             #read csv file and get cluster id
@@ -161,7 +189,7 @@ def scatterplot_and_visualise(probewordlist,
                                 print('selected cluster below auditory cortex')
                                 pass
 
-                        if clus_instance in singleunitlist:
+                        if clus in singleunitlist_copy:
                             print('in single unit list')
                             if cond == 'pitchshift':
                                 if talker == 1:
@@ -190,7 +218,7 @@ def scatterplot_and_visualise(probewordlist,
                                                                               scores[f'talker{talker}'][comp][cond][
                                                                                   'lstm_balanced_avg'][i])
 
-                        elif clus_instance in multiunitlist:
+                        elif clus in multiunitlist_copy:
                             if cond == 'pitchshift':
                                 if talker == 1:
                                     if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > 0.01+scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
@@ -227,7 +255,7 @@ def scatterplot_and_visualise(probewordlist,
                                         cluster_list_male_mu_nops= np.append(cluster_list_male_mu_nops, clus)
 
 
-                        elif clus_instance in noiselist:
+                        elif clus in noiselist:
                             pass
 
                         # pitchshiftlist = np.append(pitchshiftlist, scores[f'talker{talker}'][comp]['pitchshift']['lstm_balanced_avg'][i])
