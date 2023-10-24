@@ -40,6 +40,7 @@ def apply_filter(df, filter):
 class concatenatedWarpData:
     dp: str
     warpData: str = warpDataPath
+    side: str = 'left'
 
     def load(self):
         print("Loading data from:", self.dp)
@@ -51,7 +52,6 @@ class concatenatedWarpData:
             with open(phy_folder / 'blocks.pkl', 'rb') as f:
                 self.blocks = pickle.load(f)
         else:
-            print('running phy concat rec io')
             self.reader = PhyConcatRecIO(dirname=phy_folder, currWarpDataPath=self.warpData)
             self.blocks = self.reader.read()
 
@@ -93,6 +93,8 @@ class concatenatedWarpData:
             seg_aligned_spikes = align_times(unit.times.magnitude, ev_times, window)
             if len(aligned_spikes) == 0:
                 aligned_spikes = seg_aligned_spikes
+            elif len(seg_aligned_spikes) == 0:
+                continue
             else:
                 seg_aligned_spikes[:, 0] = seg_aligned_spikes[:, 0] + aligned_spikes[-1, 0]
                 aligned_spikes = np.concatenate((aligned_spikes, seg_aligned_spikes))
@@ -141,6 +143,9 @@ class concatenatedWarpData:
         with PdfPages(saveDir / f'{title}.pdf') as pdf:
             print(f'Saving summary figures as pdf for {self.dp}')
             for clus in tqdm(cluster_ids):
+                # cluster 8 absolutely useless/contaminated for crumble
+                if clus == 8:
+                    continue
                 fig = self._unit_summary_figure(clus, events_args)
                 pdf.savefig(fig)
                 plt.close(fig)
@@ -234,16 +239,30 @@ class concatenatedWarpData:
 def main():
     filter_trials = {'No Level Cue'}
 
-    dp = Path('E:\ms4output2\F1306_Firefly\BB2BB3_firefly_15092023\BB2BB3_firefly_15092023_BB2BB3_firefly_15092023_BB_2\mountainsort4\phy/')
-    warpData = Path('D:/Electrophysiological_Data/F1306_Firefly/')
-    saveDir = Path('D:/Data/spkfigs/Firefly/')
-    saveDir.mkdir(parents=False, exist_ok=True)
+    datapath_big = Path(f'D:\ms4output_16102023\F1604_Squinty/')
+    saveDir = Path('D:/Data/spkfigs/squinty/')
 
-    dataset = concatenatedWarpData(dp, warpData=warpData)
-    dataset.load()
-    dataset.create_summary_pdf(saveDir, title='summary_Firefly_passive')
+    datapaths = [x for x in datapath_big.glob('**/mountainsort4/phy//') if x.is_dir()]
+    for datapath in datapaths:
+        #find the myriad folder
+        if 'MYRIAD' in str(datapath):
+            myriad = datapath.parts[-4]
+            myriad = myriad.split('_')[2]
+        print(myriad)
+        #make myriad lowercase
+        myriad = myriad.lower()
+        dp = datapath
+        warpData = Path(f'D:\Electrophysiological_Data\F1604_Squinty\{myriad}/')
 
-    print(dataset)
+        saveDir.mkdir(parents=False, exist_ok=True)
+        # try:
+        dataset = concatenatedWarpData(dp, warpData=warpData)
+        dataset.load()
+        print(dataset)
+        #
+        # except:
+        #     print('error in path:', dp)
+        # dataset.create_summary_pdf(saveDir, title='summary_cruella_passive')
 
 
 if __name__ == '__main__':
