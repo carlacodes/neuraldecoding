@@ -239,8 +239,8 @@ class concatenatedWarpData:
 
 def main():
 
-    datapath_big = Path(f'D:\ms4output_16102023\F1306_Firefly/')
-    warpData = Path('F:\Electrophysiological_Data\F1306_Firefly/')
+    datapath_big = Path(f'D:\ms4output_16102023\F1405_Ivy/')
+    warpData = Path('F:\Electrophysiological_Data\F1405_Ivy/')
 
     datapaths = [x for x in datapath_big.glob('**/mountainsort4/phy//') if x.is_dir()]
     for datapath in datapaths:
