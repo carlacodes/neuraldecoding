@@ -15,6 +15,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import mean_squared_error
+import json
 
 def find_repeating_substring(text):
     text_length = len(text)
@@ -31,43 +32,43 @@ def find_repeating_substring(text):
     return None
 
 
-scoremat = np.load(
-    'D:/Users/cgriffiths/resultsms4/lstmclass_18112022/18112022_10_58_57/scores_Eclair_2022_2_eclair_probe_pitchshift_vs_not_by_talker_bs.npy',
-    allow_pickle=True)[()]
-
-oldscoremat = np.load(
-    'D:/Users/juleslebert/home/phd/figures/euclidean_class_082022/eclair/17112022_16_24_15/scores_Eclair_2022_probe_earlylate_left_right_win_bs.npy',
-    allow_pickle=True)[()]
-
-testscorematzola = np.load('D:/Users/cgriffiths/resultsms4/lstmclass_CVDATA_11122022zola/11122022_13_17_29/scores_zola_2022_5_zola_probe_pitchshift_vs_not_by_talker_bs.npy', allow_pickle=True)[()]
-
-singleunitlist_cruella = [16, 34, 25, 12, 2, 27, 21, 24, 17, 18, 13, 11, 22, 20, 26]
-singleunitlist_cruella_soundonset = [13, 16, 17, 21, 22, 26, 27, 28, 34]
-singleunitlist_cruella_2 = [] #unit 25+1 only fires during non pitch shift trials for male talker
-
-multiunitlist_cruella_2 = [21, 40,  44, 29, 43, 31, 22, 5, 4, 18, 10, 13,  30, 6] #, cluster 7+1, and 2+1 doesnt fire for every word, cluster 44+1 doesnt fire during non pitch shift trials
-
-multiunitlist_cruella = [10, 7, 31, 29, 1, 32, 15, 9, 6, 3, 19, 23, 8, 4, 33, 14, 30, 5]
-multiunitlist_cruella_soundonset = [6, 8, 9, 14, 23, 29, 30, 21, 33]
-
-singleunitlist_nala = [17, 29, 5, 19, 27, 20, 4, 28, 1, 26, 21, 37] #37
-multiunitlist_nala = [10, 24, 8, 15, 12, 7, 9, 35, 2, 14, 34, 33, 32, 38, 39, 31, 40, 41, 13] #13
-saveDir = 'D:/Users/cgriffiths/resultsms4/lstmclass_18112022/19112022_12_58_54/'
-singlunitlistsoundonset_crumble = [6, 7, 11, 17, 21, 22, 26]
-multiunitlist_soundonset_crumble = [13, 14, 23, 25, 27, 29]
-
-singleunitlist_cruella_bb4bb5=[16, 6, 21,5, 8, 33, 27]
-multiunitlist_cruella_bb4bb5 =[]
+# scoremat = np.load(
+#     'D:/Users/cgriffiths/resultsms4/lstmclass_18112022/18112022_10_58_57/scores_Eclair_2022_2_eclair_probe_pitchshift_vs_not_by_talker_bs.npy',
+#     allow_pickle=True)[()]
+#
+# oldscoremat = np.load(
+#     'D:/Users/juleslebert/home/phd/figures/euclidean_class_082022/eclair/17112022_16_24_15/scores_Eclair_2022_probe_earlylate_left_right_win_bs.npy',
+#     allow_pickle=True)[()]
+#
+# testscorematzola = np.load('D:/Users/cgriffiths/resultsms4/lstmclass_CVDATA_11122022zola/11122022_13_17_29/scores_zola_2022_5_zola_probe_pitchshift_vs_not_by_talker_bs.npy', allow_pickle=True)[()]
+#
+# singleunitlist_cruella = [16, 34, 25, 12, 2, 27, 21, 24, 17, 18, 13, 11, 22, 20, 26]
+# singleunitlist_cruella_soundonset = [13, 16, 17, 21, 22, 26, 27, 28, 34]
+# singleunitlist_cruella_2 = [] #unit 25+1 only fires during non pitch shift trials for male talker
+#
+# multiunitlist_cruella_2 = [21, 40,  44, 29, 43, 31, 22, 5, 4, 18, 10, 13,  30, 6] #, cluster 7+1, and 2+1 doesnt fire for every word, cluster 44+1 doesnt fire during non pitch shift trials
+#
+# multiunitlist_cruella = [10, 7, 31, 29, 1, 32, 15, 9, 6, 3, 19, 23, 8, 4, 33, 14, 30, 5]
+# multiunitlist_cruella_soundonset = [6, 8, 9, 14, 23, 29, 30, 21, 33]
+#
+# singleunitlist_nala = [17, 29, 5, 19, 27, 20, 4, 28, 1, 26, 21, 37] #37
+# multiunitlist_nala = [10, 24, 8, 15, 12, 7, 9, 35, 2, 14, 34, 33, 32, 38, 39, 31, 40, 41, 13] #13
+# saveDir = 'D:/Users/cgriffiths/resultsms4/lstmclass_18112022/19112022_12_58_54/'
+# singlunitlistsoundonset_crumble = [6, 7, 11, 17, 21, 22, 26]
+# multiunitlist_soundonset_crumble = [13, 14, 23, 25, 27, 29]
+#
+# singleunitlist_cruella_bb4bb5=[16, 6, 21,5, 8, 33, 27]
+# multiunitlist_cruella_bb4bb5 =[]
 
 
 def scatterplot_and_visualise(probewordlist,
                               saveDir='D:/Users/cgriffiths/resultsms4/lstm_output_frommyriad_15012023/lstm_kfold_14012023_crumble',
                               ferretname='Crumble',
-                              singleunitlist=singlunitlistsoundonset_crumble,
-                              multiunitlist=multiunitlist_soundonset_crumble, noiselist=[], stream = 'BB_2'):
-    # singleunitlist = [x - 1 for x in singleunitlist]
-    # multiunitlist = [x - 1 for x in multiunitlist]
-    # noiselist = [x - 1 for x in noiselist]
+                              singleunitlist=[0,1,2],
+                              multiunitlist=[0,1,2,3], noiselist=[], stream = 'BB_2', fullid = 'F1901_Crumble'):
+    singleunitlist = [x - 1 for x in singleunitlist]
+    multiunitlist = [x - 1 for x in multiunitlist]
+    noiselist = [x - 1 for x in noiselist]
     original_cluster_list = np.empty([0])
 
     su_pitchshiftlist_female = np.empty([0])
@@ -88,6 +89,30 @@ def scatterplot_and_visualise(probewordlist,
         multiunitlist_copy = multiunitlist.copy()
         noiselist_copy = noiselist.copy()
 
+        #load the original clusters to split from the json file
+        json_file_path = f'F:\split_cluster_jsons/{fullid}/cluster_split_list.json'
+
+
+        with open(json_file_path, "r") as json_file:
+            loaded_data = json.load(json_file)
+        #get the recname
+        recname = saveDir.split('/')[-3]
+        #get the recname from the json file
+        stream_id = stream[-4:]
+        recname_json =  loaded_data.get(recname)
+        #get the cluster ids from the json file
+        original_to_split_cluster_ids = recname_json.get(stream_id)
+        original_to_split_cluster_ids = original_to_split_cluster_ids.get('cluster_to_split_list')
+        if original_to_split_cluster_ids == 'clust_ids':
+            #get all the unique clusters ids
+            original_to_split_cluster_ids = np.unique(scores['talker1']['target_vs_probe']['pitchshift']['cluster_id']+scores['talker1']['target_vs_probe']['nopitchshift']['cluster_id'])
+            #make sure they are all less than 100
+            original_to_split_cluster_ids = [x for x in original_to_split_cluster_ids if x < 100]
+        elif original_to_split_cluster_ids == None:
+            original_to_split_cluster_ids = np.array([])
+
+
+
 
         probewordindex = probeword[0]
         print(probewordindex)
@@ -102,8 +127,6 @@ def scatterplot_and_visualise(probewordlist,
         print(scores['talker1']['target_vs_probe']['pitchshift']['cluster_id'])
         print(scores['talker1']['target_vs_probe']['nopitchshift']['cluster_id'])
 
-
-        #
         for talker in [1]:
             comparisons = [comp for comp in scores[f'talker{talker}']]
 
@@ -151,6 +174,10 @@ def scatterplot_and_visualise(probewordlist,
         singleunitlist_copy = [x for x in singleunitlist_copy if x not in original_cluster_list]
         multiunitlist_copy = [x for x in multiunitlist_copy if x not in original_cluster_list]
 
+        #check original_to_split_cluster_ids is not in single or multi unit list
+        singleunitlist_copy = [x for x in singleunitlist_copy if x not in original_to_split_cluster_ids]
+        multiunitlist_copy = [x for x in multiunitlist_copy if x not in original_to_split_cluster_ids]
+
 
 
 
@@ -193,12 +220,12 @@ def scatterplot_and_visualise(probewordlist,
                             print('in single unit list')
                             if cond == 'pitchshift':
                                 if talker == 1:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > 0.01+scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
                                         su_pitchshiftlist_female = np.append(su_pitchshiftlist_female,
                                                                              scores[f'talker{talker}'][comp][cond][
                                                                                  'lstm_balanced_avg'][i])
                                 elif talker == 2:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > 0.01+scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
                                         su_pitchshiftlist_male = np.append(su_pitchshiftlist_male,
                                                                            scores[f'talker{talker}'][comp][cond][
@@ -206,13 +233,13 @@ def scatterplot_and_visualise(probewordlist,
                                 # print(pitchshiftlist.size)
                             elif cond == 'nopitchshift':
                                 if talker == 1:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > 0.01+scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
                                         su_nonpitchshiftlist_female = np.append(su_nonpitchshiftlist_female,
                                                                                 scores[f'talker{talker}'][comp][cond][
                                                                                     'lstm_balanced_avg'][i])
                                 elif talker == 2:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > 0.01+scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
                                         su_nonpitchshiftlist_male = np.append(su_nonpitchshiftlist_male,
                                                                               scores[f'talker{talker}'][comp][cond][
@@ -221,7 +248,7 @@ def scatterplot_and_visualise(probewordlist,
                         elif clus in multiunitlist_copy:
                             if cond == 'pitchshift':
                                 if talker == 1:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > 0.01+scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
                                         mu_pitchshiftlist_female = np.append(mu_pitchshiftlist_female,
                                                                              scores[f'talker{talker}'][comp][cond][
@@ -229,7 +256,7 @@ def scatterplot_and_visualise(probewordlist,
                                                                                  i])
 
                                 elif talker == 2:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > 0.01+scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
                                         mu_pitchshiftlist_male = np.append(mu_pitchshiftlist_male,
                                                                            scores[f'talker{talker}'][comp][cond][
@@ -240,14 +267,14 @@ def scatterplot_and_visualise(probewordlist,
 
                             if cond == 'nopitchshift':
                                 if talker == 1:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > 0.01+scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
                                         mu_nonpitchshiftlist_female = np.append(mu_nonpitchshiftlist_female,
                                                                                 scores[f'talker{talker}'][comp][cond][
                                                                                     'lstm_balanced_avg'][i])
 
                                 elif talker == 2:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > 0.01+scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
                                         mu_nonpitchshiftlist_male = np.append(mu_nonpitchshiftlist_male,
                                                                               scores[f'talker{talker}'][comp][cond][
@@ -485,37 +512,37 @@ def main():
             # rec_name_unique = stream.split('_')[0:3]
 
             if animal == 'F1604_Squinty':
-
-                dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
-                                                                saveDir=f'F:/results_16092023/{animal}/{rec_name_unique}/{streamtext}/',
-                                                                ferretname=animal_text,
-                                                                singleunitlist=singleunitlist[animal][stream],
-                                                                multiunitlist=multiunitlist[animal][stream],
-                                                                noiselist=noiselist[animal][stream], stream = stream)
-                dictoutput_all.append(dictoutput_instance)
-                # except:
-                #     #print the exception
-                #     print(f'no scores for this stream:{stream}, and {animal}')
-                #     pass
-            elif animal == 'F1606_Windolene':
-
                 try:
                     dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
-                                                                    saveDir=f'F:/results_16092023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                    saveDir=f'F:/results_24102023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                     ferretname=animal_text,
                                                                     singleunitlist=singleunitlist[animal][stream],
                                                                     multiunitlist=multiunitlist[animal][stream],
-                                                                    noiselist=noiselist[animal][stream], stream = stream)
+                                                                    noiselist=noiselist[animal][stream], stream = stream, fullid = animal)
                     dictoutput_all.append(dictoutput_instance)
                 except:
                     #print the exception
                     print(f'no scores for this stream:{stream}, and {animal}')
                     pass
-            elif animal == 'F1815_Cruella' or animal == 'F1902_Eclair':
+            elif animal == 'F1606_Windolene':
+
                 try:
-                    dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_16092023/{animal}/{rec_name_unique}/{streamtext}/',
+                    dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
+                                                                    saveDir=f'F:/results_24102023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                    ferretname=animal_text,
+                                                                    singleunitlist=singleunitlist[animal][stream],
+                                                                    multiunitlist=multiunitlist[animal][stream],
+                                                                    noiselist=noiselist[animal][stream], stream = stream, fullid = animal)
+                    dictoutput_all.append(dictoutput_instance)
+                except:
+                    #print the exception
+                    print(f'no scores for this stream:{stream}, and {animal}')
+                    pass
+            elif animal == 'F1815_Cruella' or animal == 'F1902_Eclair' or animal =='F1702_Zola':
+                try:
+                    dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_24102023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                     ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
-                                                                    multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream)
+                                                                    multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal)
                     dictoutput_all.append(dictoutput_instance)
                 except:
                     #print the exception
@@ -523,9 +550,9 @@ def main():
                     pass
             else:
                 # try:
-                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_16092023/{animal}/{rec_name_unique}/{streamtext}/',
+                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_24102023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
-                                                                multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream)
+                                                                multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal)
                 dictoutput_all.append(dictoutput_instance)
                 # except:
                 #     #print the exception

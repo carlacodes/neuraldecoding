@@ -281,6 +281,8 @@ def main():
     saveDir = Path('D:/Data/spkfigs/ore/')
 
     neural_data = Path('E:\Electrophysiological_Data\F2003_Orecchiette\s2cgmod/')
+
+    #THIS IS THE 18/06/2023 RESULTS:!
     dp = Path('E:/resultskilosort\F2003_Orecchiette\phy_folder/')
     datatype = 'neuropixels'
 

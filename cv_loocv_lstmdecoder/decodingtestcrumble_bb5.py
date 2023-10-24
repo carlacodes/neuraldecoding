@@ -138,7 +138,7 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
             count += 1
 
         if (len(raster_targ_reshaped)) < 15 or (len(raster_probe_reshaped)) < 15:
-            print('less than 9 trials for the target or distractor, skipping')
+            print('less than 15 trials for the target or distractor, CV would be overinflated, skipping')
             continue
 
         if len(raster_targ_reshaped) >= len(raster_probe_reshaped) * 2:
@@ -551,7 +551,7 @@ def main():
         'crumble_2022']  # , 'Trifle_July_2022']/home/zceccgr/Scratch/zceccgr/ms4output/F1702_Zola/spkenvresults04102022allrowsbut4th
 
     datapath = Path(
-        f'D:\ms4output_16102023\F1901_Crumble\BB2BB3_crumble_29092023_2\BB2BB3_crumble_29092023_BB2BB3_crumble_29092023_BB_3\mountainsort4\phy/')
+        f'E:\ms4output2\F1901_Crumble\BB2BB3_crumble_29092023_2\BB2BB3_crumble_29092023_BB2BB3_crumble_29092023_BB_3\mountainsort4\phy/')
     ferretid = 'crumble'
 
     for dir in directories:
