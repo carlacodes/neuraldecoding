@@ -285,6 +285,10 @@ def main():
     #THIS IS THE 18/06/2023 RESULTS:!
     dp = Path('E:/resultskilosort\F2003_Orecchiette\phy_folder/')
     datatype = 'neuropixels'
+    #load the pkl file
+    with open(dp / 'blocks.pkl', 'rb') as f:
+        blocks = pickle.load(f)
+    block = blocks[0].segments[0]
 
 
     run_concatenated(neural_data, dp, datatype, saveDir)
