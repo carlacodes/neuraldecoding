@@ -275,20 +275,20 @@ def run_single(session_path):
 
 
 def main():
-    data_path = Path('/media/jules/jules_SSD/data/neural_data/Neuropixels/spikesorted/')
-    ferret = 'F2003_Orecchiette'
-    warpData = Path('E:\Electrophysiological_Data\F2003_Orecchiette\S2/')
+    # data_path = Path('/media/jules/jules_SSD/data/neural_data/Neuropixels/spikesorted/')
+    # ferret = 'F2003_Orecchiette'
+    # warpData = Path('E:\Electrophysiological_Data\F2003_Orecchiette\S2/')
     saveDir = Path('D:/Data/spkfigs/ore/')
 
-    neural_data = Path('E:\Electrophysiological_Data\F2003_Orecchiette\s2cgmod/')
+    neural_data = Path('F:\Electrophysiological_Data\F2003_Orecchiette/')
 
     #THIS IS THE 18/06/2023 RESULTS:!
     dp = Path('E:/resultskilosort\F2003_Orecchiette\phy_folder/')
     datatype = 'neuropixels'
     #load the pkl file
-    with open(dp / 'blocks.pkl', 'rb') as f:
-        blocks = pickle.load(f)
-    block = blocks[0].segments[0]
+    # with open(dp / 'blocks.pkl', 'rb') as f:
+    #     blocks = pickle.load(f)
+    # block = blocks[0].segments[0]
 
 
     run_concatenated(neural_data, dp, datatype, saveDir)

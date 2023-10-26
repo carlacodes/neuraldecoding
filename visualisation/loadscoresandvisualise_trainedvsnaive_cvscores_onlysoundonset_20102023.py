@@ -616,7 +616,6 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
         emptydict[keys] = np.asarray(emptydict[keys])
 
 
-    fig, ax = plt.subplots(1, figsize=(9,9), dpi=300)
     for dictoutput in dictlist:
         for key in dictoutput.keys():
             for key3 in dictoutput[key]['pitchshift'].keys():
@@ -673,6 +672,17 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
         bigconcatenatetrained_nonps = bigconcatenatetrained_nonps[:bigconcatenatetrained_ps.size]
     elif bigconcatenatetrained_nonps.size < bigconcatenatetrained_ps.size:
         bigconcatenatetrained_ps = bigconcatenatetrained_ps[:bigconcatenatetrained_nonps.size]
+
+    fig, ax = plt.subplots(1, figsize=(9, 9), dpi=300)
+    ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.8, label='trained', s=0.1)
+
+    plt.title('trained animals, number of points: ' + str(len(bigconcatenatetrained_ps)))
+    plt.show()
+    unique_scores = np.unique(bigconcatenatetrained_ps)
+    len(unique_scores)
+
+
+    fig, ax = plt.subplots(1, figsize=(9,9), dpi=300)
 
     ax.scatter(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, marker='P', color='darkcyan', alpha=0.5, label='naive')
     ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.5, label='trained')
