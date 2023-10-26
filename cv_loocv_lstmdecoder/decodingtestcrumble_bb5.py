@@ -82,10 +82,16 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
                                                                                   pitchshift=pitchshift,
                                                                                   correctresp=False,
                                                                                   df_filter=[])
-        raster_target = raster_target.reshape(raster_target.shape[0], )
+        if talker == 1:
+            #any talker that is not 2, 13 or 8
+            raster_target = raster_target[(raster_target['talker'] == 1) | (raster_target['talker'] == 3) | (raster_target['talker'] == 5)]
+        else:
+            raster_target = raster_target[(raster_target['talker'] == 2) | (raster_target['talker'] == 13) | (raster_target['talker'] == 8)]
         if len(raster_target) == 0:
             print('no relevant spikes for this target word:' + str(probeword) + ' and cluster: ' + str(cluster_id))
             continue
+        raster_target = raster_target.reshape(raster_target.shape[0], )
+
 
         # except Exception as error:
         #     print('No relevant target firing')
