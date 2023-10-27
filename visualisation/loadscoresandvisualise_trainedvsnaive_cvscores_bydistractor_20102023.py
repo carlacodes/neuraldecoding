@@ -386,8 +386,7 @@ def load_classified_report(path):
     return report, singleunitlist, multiunitlist, noiselist
 def main():
     probewordlist = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
-    probewordlist_l74 = [(2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
-                             (14, 14)]
+    probewordlist_l74 = [(6, 6), None, (3,3), None, None]
     animal_list = [ 'F1901_Crumble', 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala']
 
     #load the report for each animal in animal-list
@@ -436,7 +435,9 @@ def main():
     dictoutput_trained = []
     dictoutput_naive = []
     dictoutput_all = []
+    count = 0
     for probeword in probewordlist:
+
 
         for animal in animal_list:
             dictoutput[animal] = {}
@@ -468,7 +469,7 @@ def main():
 
                 if animal == 'F1604_Squinty':
                     try:
-                        dictoutput_instance = scatterplot_and_visualise([probeword],
+                        dictoutput_instance = scatterplot_and_visualise([probewordlist_l74[count]],
                                                                         saveDir=f'F:/results_24102023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                         ferretname=animal_text,
                                                                         singleunitlist=singleunitlist[animal][stream],
@@ -482,7 +483,7 @@ def main():
                 elif animal == 'F1606_Windolene':
 
                     try:
-                        dictoutput_instance = scatterplot_and_visualise([probeword],
+                        dictoutput_instance = scatterplot_and_visualise([probewordlist_l74[count]],
                                                                         saveDir=f'F:/results_24102023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                         ferretname=animal_text,
                                                                         singleunitlist=singleunitlist[animal][stream],
@@ -530,6 +531,7 @@ def main():
         colors = ['purple', 'magenta', 'darkturquoise', 'olivedrab', 'steelblue', 'darkcyan', 'darkorange']
 
         generate_plots(dictoutput_all, dictoutput_trained, dictoutput_naive, labels, colors, probeword = probeword)
+        count += 1
 
     return
 
@@ -638,8 +640,16 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors, p
 
     fig, ax = plt.subplots(1, figsize=(9,9), dpi=300)
 
-    ax.scatter(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, marker='P', color='darkcyan', alpha=0.5, label='naive')
-    ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.5, label='trained')
+    # ax.scatter(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, marker='P', color='darkcyan', alpha=0.5, label='naive')
+
+    ax.hist2d(bigconcatenatenaive_nonps, bigconcatenatenaive_ps,bins = 20, cmap = 'Greens', alpha=0.5, label='naive')
+    # plt.show()
+    # fig, ax = plt.subplots(1, figsize=(9,9), dpi=300)
+
+    ax.hist2d(bigconcatenatetrained_nonps, bigconcatenatetrained_ps,bins = 20, cmap = 'Purples', alpha=0.5, label='trained')
+    plt.show()
+
+    # ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.5, label='trained')
     x = np.linspace(0.4, 1, 101)
     ax.plot(x, x, color='black', linestyle = '--')  # identity line
 
