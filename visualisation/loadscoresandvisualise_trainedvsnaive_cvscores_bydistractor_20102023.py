@@ -4,6 +4,8 @@ import pandas as pd
 import os
 import re
 import seaborn as sns
+from scipy.stats import gaussian_kde
+
 import scipy.stats as stats
 import shap
 import lightgbm as lgb
@@ -634,20 +636,24 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors, p
 
     plt.title('trained animals, number of points: ' + str(len(bigconcatenatetrained_ps)))
     plt.show()
+
+    fig, ax = plt.subplots(figsize=(9, 9), dpi=300)
+
+    # Create a 2D density plot
+    sns.kdeplot(x=bigconcatenatetrained_nonps, y=bigconcatenatetrained_ps, cmap="viridis", fill=True, ax=ax)
+
+    # You can customize the colormap and other parameters as needed
+
+    # Set the title
+    ax.set_title('Trained animals, number of points: ' + str(len(bigconcatenatetrained_ps)))
+
+    # Show the plot
+    plt.show()
     unique_scores = np.unique(bigconcatenatetrained_ps)
     len(unique_scores)
 
+    fig, ax = plt.subplots(1, figsize=(9, 9), dpi=300)
 
-    fig, ax = plt.subplots(1, figsize=(9,9), dpi=300)
-
-    # ax.scatter(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, marker='P', color='darkcyan', alpha=0.5, label='naive')
-
-    ax.hist2d(bigconcatenatenaive_nonps, bigconcatenatenaive_ps,bins = 20, cmap = 'Greens', alpha=0.5, label='naive')
-    # plt.show()
-    # fig, ax = plt.subplots(1, figsize=(9,9), dpi=300)
-
-    ax.hist2d(bigconcatenatetrained_nonps, bigconcatenatetrained_ps,bins = 20, cmap = 'Purples', alpha=0.5, label='trained')
-    plt.show()
 
     # ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.5, label='trained')
     x = np.linspace(0.4, 1, 101)
