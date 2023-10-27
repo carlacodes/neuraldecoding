@@ -122,13 +122,9 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
     else:
         probeword = probewords[1]
     binsize = 0.01
-    # window = [0, 0.6]
 
-    epochs = ['Early', 'Late']
-    epoch_threshold = 1.5
     clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
                  st.annotations['group'] != 'noise']
-    clust_ids = [316]
 
     scores = {'cluster_id': [],
               'cm': [],
@@ -155,13 +151,29 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
     for cluster_id in tqdm(clust_ids):
         print('cluster_id:')
         print(cluster_id)
-
-        target_filter = ['Target trials', 'No Level Cue']  # , 'Non Correction Trials']
-
-        # try:
-        X,y, unique_trials_probe, unique_trials_targ = generate_talker_raster_for_lstm(blocks, cluster_id, window, binsize, talker_choice=1)
-        X_high, y_high, unique_trials_probe_high, unique_trials_targ_high = generate_talker_raster_for_lstm(blocks, cluster_id, window, binsize, talker_choice=3)
-        X_low, y_low, unique_trials_probe_low, unique_trials_targ_low = generate_talker_raster_for_lstm(blocks, cluster_id, window, binsize, talker_choice=5)
+        unique_trials_probe = []
+        unique_trials_targ = []
+        try:
+            if talker == 1:
+                X,y, unique_trials_probe, unique_trials_targ = generate_talker_raster_for_lstm(blocks, cluster_id, window, binsize, probeword = probeword, talker_choice=1)
+                X_high, y_high, unique_trials_probe_high, unique_trials_targ_high = generate_talker_raster_for_lstm(blocks, cluster_id, window, binsize, probeword = probeword, talker_choice=3)
+                X_low, y_low, unique_trials_probe_low, unique_trials_targ_low = generate_talker_raster_for_lstm(blocks, cluster_id, window, binsize, probeword = probeword, talker_choice=5)
+            elif talker == 2:
+                X, y, unique_trials_probe, unique_trials_targ = generate_talker_raster_for_lstm(blocks, cluster_id,
+                                                                                                window, binsize,
+                                                                                                probeword=probeword,
+                                                                                                talker_choice=2)
+                X_high, y_high, unique_trials_probe_high, unique_trials_targ_high = generate_talker_raster_for_lstm(
+                    blocks, cluster_id, window, binsize, probeword=probeword, talker_choice=8)
+                X_low, y_low, unique_trials_probe_low, unique_trials_targ_low = generate_talker_raster_for_lstm(blocks,
+                                                                                                                cluster_id,
+                                                                                                                window,
+                                                                                                                binsize,
+                                                                                                                probeword=probeword,
+                                                                                                              talker_choice=13)
+        except Exception as e:
+            # print('skipping this cluster, Exception:{e}'.format(e=e))
+            continue
 
 
 
@@ -227,10 +239,6 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
                 accuracy_low = sklearn.metrics.accuracy_score(y_low.flatten(), y_pred_low.flatten())
                 balancedacscore_low = sklearn.metrics.balanced_accuracy_score(y_low.flatten(), y_pred_low.flatten())
 
-
-
-
-
                 y_pred_permutationtest = model_lstm_permutationtest.model(X_bin_shuffled[test], training=False)
                 y_pred_permutationtest = np.argmax(y_pred_permutationtest, axis=1)
 
@@ -277,267 +285,30 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
         scores['high_pitch_ac'].append(np.mean(high_pitch_outsideloopacclist))
         scores['low_pitch_bal_ac'].append(np.mean(low_pitch_outsideloopbalacclist))
         scores['low_pitch_ac'].append(np.mean(low_pitch_outsideloopacclist))
-
-        scores['cm'].append(len(unique_trials_targ) + len(
-            unique_trials_probe))  # Assuming unique_trials_targ and unique_trials_probe are defined somewhere
+        scores['cm'].append(len(unique_trials_targ) + len(unique_trials_probe))  # Assuming unique_trials_targ and unique_trials_probe are defined somewhere
 
     return scores
-
-
-def probe_early_vs_late(blocks, talker=1, noise=True, df_filter=['No Level Cue'],
-                        window=[0, 0.8], binsize=0.02):
-    epochs = ['Early', 'Late']
-    epoch_treshold = 1.5
-    clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
-                 st.annotations['group'] != 'noise']
-
-    scores = {'cluster_id': [],
-              'score': [],
-              'cm': [], }
-    for cluster_id in tqdm(clust_ids):
-        # df_filter = ['No Level Cue'] #, 'Non Correction Trials']
-        raster = get_word_aligned_raster_zola_cruella(blocks, cluster_id, noise=noise, df_filter=df_filter)
-        raster = raster[raster['talker'] == talker]
-
-        stim = np.zeros(len(raster), dtype=np.int64)
-        stim[raster['relStart'] > epoch_treshold] = 1
-
-        score, d, bootScore, bootClass, cm = classify_sweeps(raster, stim, binsize=binsize, iterations=100,
-                                                             window=window, genFig=False)
-        X_train, X_test, y_train, y_test = train_test_split(raster, stim, test_size=0.33, )
-        model_lstm = LSTMDecoder(units=400, dropout=0, num_epochs=5)
-
-        # Fit model
-        model_lstm.fit(X_train, y_train)
-
-        # Get predictions
-        y_valid_predicted_lstm = model_lstm.predict(X_test)
-
-        # Get metric of fit
-        R2s_lstm = get_R2(y_test, y_valid_predicted_lstm)
-        print('R2s:', R2s_lstm)
-
-        scores['cluster_id'].append(cluster_id)
-        scores['score'].append(score)
-        scores['cm'].append(cm)
-
-    return scores
-
-
-def save_pdf_classification(scores, saveDir, title):
-    conditions = ['silence']
-    for talker in [1, 2]:
-        # talker = 1
-        # title = f'eucl_classification_{month}_talker{talker}_win_bs_earlylateprobe_leftright_26082022'
-
-        comparisons = [comp for comp in scores[f'talker{talker}']]
-        comp = comparisons[0]
-        i = 0
-        clus = scores[f'talker{talker}'][comp]['silence']['cluster_id'][i]
-
-        with PdfPages(saveDir / f'{title}_talker{talker}.pdf') as pdf:
-            for i, clus in enumerate(tqdm(scores[f'talker{talker}'][comp]['silence']['cluster_id'])):
-                fig, ax = plt.subplots(figsize=(10, 5))
-                y = {}
-                yerrmax = {}
-                yerrmin = {}
-                x = np.arange(len(comparisons))
-                width = 0.35
-                for condition in conditions:
-                    y[condition] = [scores[f'talker{talker}'][comp][condition]['score'][i][0] for comp in comparisons]
-                    yerrmax[condition] = [scores[f'talker{talker}'][comp][condition]['score'][i][1] for comp in
-                                          comparisons]
-                    yerrmin[condition] = [scores[f'talker{talker}'][comp][condition]['score'][i][2] for comp in
-                                          comparisons]
-                rects1 = ax.bar(x - width / 2 - 0.01, y[conditions[0]], width, label=conditions[0],
-                                color='cornflowerblue')
-
-                ax.set_ylabel('Scores')
-                ax.set_xticks(x, comparisons)
-                ax.legend()
-
-                ax.scatter(x - width / 2 - 0.01, yerrmax[conditions[0]], c='black', marker='_', s=50)
-                ax.scatter(x - width / 2 - 0.01, yerrmin[conditions[0]], c='black', marker='_', s=50)
-
-                n_trials = {}
-                trial_string = ''
-                for comp in comparisons:
-                    n_trials[comp] = {}
-                    for cond in conditions:
-                        n_trials[comp][cond] = np.sum(scores[f'talker{talker}'][comp][cond]['cm'][i])
-                        trial_string += f'{comp} {cond}: {n_trials[comp][cond]}\n'
-
-                ax.bar_label(rects1, padding=3)
-                # ax.bar_label(rects2, padding=3)
-                ax.set_ylim([0, 1])
-                simple_xy_axes(ax)
-                set_font_axes(ax, add_size=10)
-                fig.suptitle(f'cluster {clus}, \nn_trials: {trial_string}')
-                fig.tight_layout()
-                pdf.savefig(fig)
-                plt.close(fig)
-
-
-def save_pdf_classification_lstm(scores, saveDir, title, probeword):
-    conditions = ['pitchshift', 'nopitchshift']
-    for talker in [1, 2]:
-
-        comparisons = [comp for comp in scores[f'talker{talker}']]
-        comp = comparisons[0]
-        i = 0
-        # clus = scores[f'talker{talker}'][comp]['pitchshift']['cluster_id'][i]
-        if len(scores['talker1'][comp]['pitchshift']) > len(scores['talker1'][comp]['nopitchshift']):
-            k = 'pitchshift'
-        else:
-            k = 'nopitchshift'
-
-        with PdfPages(saveDir / f'{title}_talker{talker}_probeword{probeword[0]}.pdf') as pdf:
-            for i, clus in enumerate(
-                    tqdm(scores[f'talker{talker}'][comp][k]['cluster_id'])):  # ['pitchshift']['cluster_id'])):
-                fig, ax = plt.subplots(figsize=(10, 5))
-                y = {}
-                yerrmax = {}
-                yerrmin = {}
-                x = np.arange(len(comparisons))
-                x2 = np.arange(len(conditions))
-
-                width = 0.35
-                for condition in conditions:
-                    try:
-                        y[condition] = [scores[f'talker{talker}'][comp][condition]['lstm_avg'][i] for comp in
-                                        comparisons]
-                    except:
-                        print('dimension mismatch')
-                        continue
-
-                try:
-                    rects1 = ax.bar(x - width / 2 - 0.01, y[conditions[0]], width, label=conditions[0],
-                                    color='cornflowerblue')
-                    rects2 = ax.bar(x + width / 2 + 0.01, y[conditions[1]], width, label=conditions[1],
-                                    color='lightcoral')
-                except:
-                    print('both conditions not satisfied')
-                    continue
-                ax.set_ylabel('Scores')
-                ax.set_xticks(x, comparisons)
-                if talker == 1:
-                    talkestring = 'Female'
-                else:
-                    talkestring = 'Male'
-                # plt.title('LSTM classification scores for extracted units,'+ talkestring+' talker')
-                ax.legend()
-                #
-                # ax.scatter(x - width / 2 - 0.01, yerrmax[conditions[0]], c='black', marker='_', s=50)
-                # ax.scatter(x - width / 2 - 0.01, yerrmin[conditions[0]], c='black', marker='_', s=50)
-                # ax.scatter(x + width / 2 + 0.01, yerrmax[conditions[1]], c='black', marker='_', s=50)
-                # ax.scatter(x + width / 2 + 0.01, yerrmin[conditions[1]], c='black', marker='_', s=50)
-                # ax.scatter(range(len(scores)), yerrmax, c='black', marker='_', s=10)
-                # ax.scatter(range(len(scores)), yerrmin, c='black', marker='_', s=10)
-
-                n_trials = {}
-                trial_string = ''
-                for comp in comparisons:
-                    n_trials[comp] = {}
-                    for cond in conditions:
-                        n_trials[comp][cond] = np.sum(scores[f'talker{talker}'][comp][cond]['cm'][i])
-                        trial_string += f'{comp} {cond}: {n_trials[comp][cond]}\n'
-
-                ax.bar_label(rects1, padding=3, fmt='%.2f')
-                ax.bar_label(rects2, padding=3, fmt='%.2f')
-                ax.set_ylim([0, 1])
-                simple_xy_axes(ax)
-                set_font_axes(ax, add_size=10)
-                fig.suptitle(f'cluster {clus}, \nn_trials: {trial_string}')
-                fig.tight_layout()
-                pdf.savefig(fig)
-                plt.close(fig)
-
-
-def save_pdf_classification_lstm_bothtalker(scores, saveDir, title):
-    conditions = ['pitchshift', 'nopitchshift']
-    for talker in [1, 2]:
-        # talker = 1
-        # title = f'eucl_classification_{month}_talker{talker}_win_bs_earlylateprobe_leftright_26082022'
-
-        comparisons = [comp for comp in scores[f'talker{talker}']]
-        comp = comparisons[0]
-        i = 0
-        clus = scores[f'talker{talker}'][comp]['pitchshift']['cluster_id'][i]
-        if len(scores['talker1'][comp]['pitchshift']) > len(scores['talker1'][comp]['nopitchshift']):
-            k = 'pitchshift'
-        else:
-            k = 'nopitchshift'
-
-        with PdfPages(saveDir / f'{title}_talker{talker}.pdf') as pdf:
-            for i, clus in enumerate(
-                    tqdm(scores[f'talker{talker}'][comp][k]['cluster_id'])):  # ['pitchshift']['cluster_id'])):
-                fig, ax = plt.subplots(figsize=(10, 5))
-                y = {}
-                yerrmax = {}
-                yerrmin = {}
-                x = np.arange(len(comparisons))
-                x2 = np.arange(len(conditions))
-
-                width = 0.35
-                for condition in conditions:
-                    try:
-                        y[condition] = [scores[f'talker{talker}'][comp][condition]['lstm_avg'][i] for comp in
-                                        comparisons]
-                    except:
-                        print('dimension mismatch')
-                        continue
-
-                rects1 = ax.bar(x - width / 2 - 0.01, y[conditions[0]], width, label=conditions[0],
-                                color='cornflowerblue')
-                rects2 = ax.bar(x + width / 2 + 0.01, y[conditions[1]], width, label=conditions[1], color='lightcoral')
-
-                ax.set_ylabel('Scores')
-                ax.set_xticks(x, comparisons)
-                plt.title('LSTM classification scores for extracted units')
-                ax.legend()
-
-                n_trials = {}
-                trial_string = ''
-                for comp in comparisons:
-                    n_trials[comp] = {}
-                    for cond in conditions:
-                        n_trials[comp][cond] = np.sum(scores[f'talker{talker}'][comp][cond]['cm'][i])
-                        trial_string += f'{comp} {cond}: {n_trials[comp][cond]}\n'
-
-                ax.bar_label(rects1, padding=3, fmt='%2f')
-                ax.bar_label(rects2, padding=3, fmt='%2f')
-                ax.set_ylim([0, 1])
-                simple_xy_axes(ax)
-                set_font_axes(ax, add_size=10)
-                fig.suptitle(f'cluster {clus}, \nn_trials: {trial_string}')
-                fig.tight_layout()
-                pdf.savefig(fig)
-                plt.close(fig)
-
 
 def run_classification(dir, datapath, ferretid):
-    fname = 'new_blocks.pkl'
     with open(datapath / 'new_blocks.pkl', 'rb') as f:
         blocks = pickle.load(f)
 
     scores = {}
     probewords_list = [(5, 6), (42, 49), (32, 38), (2, 2), (20, 22), ]
-    # probewords_list = [(2, 2)]
-    # probewords_list = [(32, 38)]
+    recname = str(datapath).split('\\')[-4]
+    stream_used = str(datapath).split('\\')[-3]
+    stream_used = stream_used[-4:]
 
-    now = datetime.now()
-    dt_string = now.strftime("%d%m%Y_%H_%M_%S")
 
-    dt_string = now.strftime("%d%m%Y_%H_%M_%S")
 
     tarDir = Path(
-        f'/zceccgr/lstmdecodingproject/leavepoutcrossvalidationlstmdecoder/results_16092023/F1901_Crumble/bb3inter/')
+        f'/zceccgr/lstmdecodingproject/leavepoutcrossvalidationlstmdecoder/results_testonrove_27102023/F1901_Crumble/{recname}/{stream_used}/')
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
     for probeword in probewords_list:
         print('now starting')
         print(probeword)
-        for talker in [1]:
+        for talker in [1,2]:
             if talker == 1:
                 window = [0, 0.6]
             else:
@@ -548,13 +319,13 @@ def run_classification(dir, datapath, ferretid):
 
             scores[f'talker{talker}']['target_vs_probe'] = {}
 
-            scores[f'talker{talker}']['target_vs_probe']['nopitchshift'] = target_vs_probe(blocks, talker=talker,
+            scores[f'talker{talker}']['target_vs_probe']['nopitchshiftvspitchshift'] = target_vs_probe(blocks, talker=talker,
                                                                                            probewords=probeword,
                                                                                            pitchshift=False,
                                                                                            window=window)
-            scores[f'talker{talker}']['target_vs_probe']['pitchshift'] = target_vs_probe(blocks, talker=talker,
-                                                                                         probewords=probeword,
-                                                                                         pitchshift=True, window=window)
+            # scores[f'talker{talker}']['target_vs_probe']['pitchshift'] = target_vs_probe(blocks, talker=talker,
+            #                                                                              probewords=probeword,
+            #                                                                              pitchshift=True, window=window)
 
             np.save(saveDir / f'scores_{dir}_{probeword[0]}_{ferretid}_probe_bs.npy',
                     scores)
