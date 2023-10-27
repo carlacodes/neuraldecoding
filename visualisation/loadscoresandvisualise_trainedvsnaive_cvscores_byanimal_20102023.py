@@ -525,12 +525,15 @@ def main():
             except:
                 print('no scores for this stream')
                 pass
-    labels = ['squinty', 'squinty', 'ore']
 
-    labels = [animal_text]
+        labels = [animal]
+        if animal == 'F1604_Squinty' or animal == 'F1606_Windolene' or animal == 'F1702_Zola' or animal == 'F1815_Cruella':
+            naive = False
+        else:
+            naive = True
 
-    colors = ['purple']
-    generate_plots(dictoutput_all, dictoutput_trained, dictoutput_naive, labels, colors)
+        colors = ['purple']
+        generate_plots(dictoutput_all, dictoutput_trained, dictoutput_naive, colors, animal=animal, naive = naive)
 
 
 
@@ -619,20 +622,19 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, colors, animal='F
     #     ax.scatter(data_dict['su_list']['nonpitchshift']['female_talker'],data_dict['su_list']['pitchshift']['female_talker'], marker='P', color=color, alpha=0.5)
 
 
-    if bigconcatenatenaive_nonps.size > bigconcatenatenaive_ps.size:
-        len(bigconcatenatenaive_ps)
-        bigconcatenatenaive_nonps = bigconcatenatenaive_nonps[:bigconcatenatenaive_ps.size]
-    elif bigconcatenatenaive_nonps.size < bigconcatenatenaive_ps.size:
-        bigconcatenatenaive_ps = bigconcatenatenaive_ps[:bigconcatenatenaive_nonps.size]
-
-    if bigconcatenatetrained_nonps.size > bigconcatenatetrained_ps.size:
-        bigconcatenatetrained_nonps = bigconcatenatetrained_nonps[:bigconcatenatetrained_ps.size]
-    elif bigconcatenatetrained_nonps.size < bigconcatenatetrained_ps.size:
-        bigconcatenatetrained_ps = bigconcatenatetrained_ps[:bigconcatenatetrained_nonps.size]
+    # if bigconcatenatenaive_nonps.size > bigconcatenatenaive_ps.size:
+    #     len(bigconcatenatenaive_ps)
+    #     bigconcatenatenaive_nonps = bigconcatenatenaive_nonps[:bigconcatenatenaive_ps.size]
+    # elif bigconcatenatenaive_nonps.size < bigconcatenatenaive_ps.size:
+    #     bigconcatenatenaive_ps = bigconcatenatenaive_ps[:bigconcatenatenaive_nonps.size]
+    #
+    # if bigconcatenatetrained_nonps.size > bigconcatenatetrained_ps.size:
+    #     bigconcatenatetrained_nonps = bigconcatenatetrained_nonps[:bigconcatenatetrained_ps.size]
+    # elif bigconcatenatetrained_nonps.size < bigconcatenatetrained_ps.size:
+    #     bigconcatenatetrained_ps = bigconcatenatetrained_ps[:bigconcatenatetrained_nonps.size]
 
     fig, ax = plt.subplots(1, figsize=(9, 9), dpi=300)
     ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.8, label='trained', s=0.1)
-
     plt.title('trained animals, number of points: ' + str(len(bigconcatenatetrained_ps)))
     plt.show()
     unique_scores = np.unique(bigconcatenatetrained_ps)
@@ -648,7 +650,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, colors, animal='F
         plt.title('Roved and Control F0 Distributions for the Trained Animals', fontsize = 18)
         plt.xlabel(' LSTM decoder scores', fontsize = 20)
 
-        plt.savefig('D:/rovedF0vscontrolF0traineddistribution_20062023intertrialroving.png', dpi=1000)
+        plt.savefig(f'D:/rovedF0vscontrolF0traineddistribution_20062023intertrialroving_{animal}.png', dpi=1000)
 
         plt.show()
         kstestcontrolf0vsrovedtrained = scipy.stats.kstest(bigconcatenatetrained_nonps, bigconcatenatetrained_ps,
@@ -664,7 +666,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, colors, animal='F
         plt.xlabel(' LSTM decoder scores', fontsize = 20)
         plt.title('Roved and Control F0 Distributions for the Naive Animals', fontsize = 18)
 
-        plt.savefig('D:/rovedF0vscontrolF0naivedistribution_20062023intertrialroving.png', dpi=1000)
+        plt.savefig(f'D:/rovedF0vscontrolF0naivedistribution_20062023intertrialroving_{animal}.png', dpi=1000)
         plt.show()
 
         kstestcontrolf0vsrovednaive = scipy.stats.kstest(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, alternative='two-sided')
