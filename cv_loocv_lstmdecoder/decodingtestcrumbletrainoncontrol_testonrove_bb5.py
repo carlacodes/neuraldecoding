@@ -1,40 +1,11 @@
-import pickle
 from pathlib import Path
-import tensorflow as tf
-import numpy as np
 from sklearn.model_selection import train_test_split, StratifiedKFold, LeavePOut
 from tqdm import tqdm
 from keras import backend as K
-
-from sklearn.utils import resample
-import astropy
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_pdf import PdfPages
-from matplotlib.ticker import MaxNLocator
-import seaborn as sns
-from datetime import datetime
-from astropy.stats import bootstrap
 import sklearn
-from instruments.helpers.util import simple_xy_axes, set_font_axes
 from instruments.helpers.neural_analysis_helpers import get_word_aligned_raster_inter_by_pitch
-from instruments.helpers.euclidean_classification_minimal_function import classify_sweeps
-# Import standard packages
 import numpy as np
-import matplotlib.pyplot as plt
-from scipy import io
-from scipy import stats
 import pickle
-
-# If you would prefer to load the '.h5' example file rather than the '.pickle' example file. You need the deepdish package
-# import deepdish as dd
-
-# Import function to get the covariate matrix that includes spike history from previous bins
-from Neural_Decoding.preprocessing_funcs import get_spikes_with_history
-import Neural_Decoding
-# Import metrics
-from Neural_Decoding.metrics import get_R2
-from Neural_Decoding.metrics import get_rho
-
 # Import decoder functions
 from Neural_Decoding.decoders import LSTMDecoder, LSTMClassification
 
@@ -145,9 +116,6 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
               }
 
 
-
-
-    cluster_id_droplist = np.empty([])
     for cluster_id in tqdm(clust_ids):
         print('cluster_id:')
         print(cluster_id)
@@ -172,11 +140,8 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
                                                                                                                 probeword=probeword,
                                                                                                               talker_choice=13)
         except Exception as e:
-            # print('skipping this cluster, Exception:{e}'.format(e=e))
+            print('skipping this cluster, Exception:{e}'.format(e=e))
             continue
-
-
-
         K.clear_session()
 
         totalaclist = []
@@ -289,9 +254,13 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
 
     return scores
 
-def run_classification(dir, datapath, ferretid):
-    with open(datapath / 'new_blocks.pkl', 'rb') as f:
-        blocks = pickle.load(f)
+def run_classification(datapath, ferretid, ferretid_fancy='F1902_Eclair'):
+    try:
+        with open(datapath / 'new_blocks.pkl', 'rb') as f:
+            blocks = pickle.load(f)
+    except:
+        with open(datapath / 'blocks.pkl', 'rb') as f:
+            blocks = pickle.load(f)
 
     scores = {}
     probewords_list = [(5, 6), (42, 49), (32, 38), (2, 2), (20, 22), ]
@@ -302,11 +271,11 @@ def run_classification(dir, datapath, ferretid):
 
 
     tarDir = Path(
-        f'/zceccgr/lstmdecodingproject/leavepoutcrossvalidationlstmdecoder/results_testonrove_27102023/F1901_Crumble/{recname}/{stream_used}/')
+        f'F:/lstmdecodingproject/leavepoutcrossvalidationlstmdecoder/results_testonrove_27102023/{ferretid_fancy}/{recname}/{stream_used}/')
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
     for probeword in probewords_list:
-        print('now starting')
+        print('now starting to decode the probeword:')
         print(probeword)
         for talker in [1,2]:
             if talker == 1:
@@ -323,26 +292,24 @@ def run_classification(dir, datapath, ferretid):
                                                                                            probewords=probeword,
                                                                                            pitchshift=False,
                                                                                            window=window)
-            # scores[f'talker{talker}']['target_vs_probe']['pitchshift'] = target_vs_probe(blocks, talker=talker,
-            #                                                                              probewords=probeword,
-            #                                                                              pitchshift=True, window=window)
 
-            np.save(saveDir / f'scores_{dir}_{probeword[0]}_{ferretid}_probe_bs.npy',
+
+            np.save(saveDir / f'scores_2022_{ferretid}_{probeword[0]}_{ferretid}_probe_bs.npy',
                     scores)
 
-        # fname = 'scores_' + dir + f'_probe_earlylate_left_right_win_bs_{binsize}'
 
 
 def main():
-    directories = [
-        'crumble_2022']  # , 'Trifle_July_2022']/home/zceccgr/Scratch/zceccgr/ms4output/F1702_Zola/spkenvresults04102022allrowsbut4th
 
-    datapath = Path(
-        f'E:\ms4output2\F1901_Crumble\BB2BB3_crumble_29092023_2\BB2BB3_crumble_29092023_BB2BB3_crumble_29092023_BB_3\mountainsort4\phy/')
-    ferretid = 'crumble'
+    datapath_big = Path(f'D:\ms4output_16102023\F1902_Eclair/')
+    ferret_id_fancy = datapath_big.parts[-1]
+    ferret_id = ferret_id_fancy.split('_')[1]
+    ferret_id = ferret_id.lower()
+    datapaths = [x for x in datapath_big.glob('**/mountainsort4/phy//') if x.is_dir()]
 
-    for dir in directories:
-        run_classification(dir, datapath, ferretid)
+    for datapath in datapaths:
+        print('now starting to look at the datapath'+ str(datapath))
+        run_classification(datapath, ferret_id, ferretid_fancy=ferret_id_fancy)
 
 
 if __name__ == '__main__':

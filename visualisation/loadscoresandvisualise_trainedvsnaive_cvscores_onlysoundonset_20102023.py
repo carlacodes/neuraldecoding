@@ -190,14 +190,6 @@ def scatterplot_and_visualise(probewordlist,
                     for i, clus in enumerate(scores[f'talker{talker}'][comp][cond]['cluster_id']):
 
                         print(i, clus)
-                        # if 200> clus >= 100:
-                        #     clus_instance = int(round(clus - 100))
-                        # elif 300 > clus >= 200:
-                        #     clus_instance = int(round(clus - 200))
-                        # elif 400 > clus >= 300:
-                        #     clus_instance = int(round(clus - 300))
-                        # else:
-                        #     clus_instance = clus
 
                         if ferretname == 'Orecchiette':
                             #read csv file and get cluster id
@@ -285,11 +277,6 @@ def scatterplot_and_visualise(probewordlist,
                         elif clus in noiselist:
                             pass
 
-                        # pitchshiftlist = np.append(pitchshiftlist, scores[f'talker{talker}'][comp]['pitchshift']['lstm_balanced_avg'][i])
-                        # nonpitchshiftlist = np.append(nonpitchshiftlist, scores[f'talker{talker}'][comp]['nopitchshift']['lstm_balanced_avg'][i])
-
-                        # plt.title(f'cluster {clus}')
-                        # plt.show()
 
     dictofsortedscores = {'su_list': {'pitchshift': {'female_talker': {},
                                                      'male_talker': {}},
