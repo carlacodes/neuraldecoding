@@ -141,7 +141,13 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
               'history': [],
               'time_bin': [],
               'perm_ac': [],
-              'perm_bal_ac': []}
+              'perm_bal_ac': [],
+              'high_pitch_ac': [],
+              'high_pitch_bal_ac': [],
+              'low_pitch_ac': [],
+              'low_pitch_bal_ac': [],
+              }
+
 
 
 
@@ -156,6 +162,7 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
         X,y, unique_trials_probe, unique_trials_targ = generate_talker_raster_for_lstm(blocks, cluster_id, window, binsize, talker_choice=1)
         X_high, y_high, unique_trials_probe_high, unique_trials_targ_high = generate_talker_raster_for_lstm(blocks, cluster_id, window, binsize, talker_choice=3)
         X_low, y_low, unique_trials_probe_low, unique_trials_targ_low = generate_talker_raster_for_lstm(blocks, cluster_id, window, binsize, talker_choice=5)
+
 
 
         K.clear_session()
