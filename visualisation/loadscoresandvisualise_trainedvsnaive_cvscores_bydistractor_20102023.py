@@ -641,12 +641,18 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors, p
 
     # Create a 2D density plot
     sns.kdeplot(x=bigconcatenatetrained_nonps, y=bigconcatenatetrained_ps, cmap="viridis", fill=True, ax=ax)
+    ax.set_xlim(0.45, 0.8)
+    ax.set_ylim(0.45, 0.8)
 
     # You can customize the colormap and other parameters as needed
 
     # Set the title
     ax.set_title('Trained animals, number of points: ' + str(len(bigconcatenatetrained_ps)))
+    slope, intercept, r_value, pv, se = stats.linregress(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)
 
+    sns.regplot(x=bigconcatenatetrained_nonps, y=bigconcatenatetrained_ps, scatter=False, color='purple',
+                label=' $y=%3.7s*x+%3.7s$' % (slope, intercept), ax=ax,
+                line_kws={'label': ' $y=%3.7s*x+%3.7s$' % (slope, intercept)})
     # Show the plot
     plt.show()
     unique_scores = np.unique(bigconcatenatetrained_ps)
@@ -659,10 +665,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors, p
     x = np.linspace(0.4, 1, 101)
     ax.plot(x, x, color='black', linestyle = '--')  # identity line
 
-    slope, intercept, r_value, pv, se = stats.linregress(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)
 
-    sns.regplot(x=bigconcatenatetrained_nonps, y=bigconcatenatetrained_ps, scatter=False, color='purple',
-                label=' $y=%3.7s*x+%3.7s$' % (slope, intercept), ax=ax, line_kws={'label': ' $y=%3.7s*x+%3.7s$' % (slope, intercept)})
     slope, intercept, r_value, pv, se = stats.linregress(bigconcatenatenaive_nonps, bigconcatenatenaive_ps)
 
     sns.regplot(x=bigconcatenatenaive_nonps, y=bigconcatenatenaive_ps, scatter=False, color='darkcyan', label=' $y=%3.7s*x+%3.7s$' % (slope, intercept),

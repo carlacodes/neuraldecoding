@@ -69,8 +69,8 @@ class ReportUnitClassifier:
 if __name__ == '__main__':
     #thank you to my past self for writing this script
     # path = Path('E:\ms4output2\F1604_Squinty\BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold\BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold_BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold_BB_3\mountainsort4/report/')
-    animal_list = ['F1306_Firefly', 'F1604_Squinty', 'F1606_Windolene','F1702_Zola', 'F1815_Cruella', 'F1901_Crumble', 'F1902_Eclair']
-    # animal_list = ['F1604_Squinty', 'F1606_Windolene', 'F1812_Nala', 'F1901_Crumble']
+    animal_list = ['F1306_Firefly', 'F1604_Squinty', 'F1606_Windolene','F1702_Zola', 'F1815_Cruella', 'F1901_Crumble', 'F1902_Eclair', 'F2003_Orecchiette']
+    animal_list = ['F2003_Orecchiette']
 
     # animal_list = ['F1606_Windolene']
     path_list = {}
