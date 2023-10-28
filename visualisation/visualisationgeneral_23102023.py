@@ -15,7 +15,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import mean_squared_error
-import json
 
 def find_repeating_substring(text):
     text_length = len(text)
@@ -32,15 +31,43 @@ def find_repeating_substring(text):
     return None
 
 
+scoremat = np.load(
+    'D:/Users/cgriffiths/resultsms4/lstmclass_18112022/18112022_10_58_57/scores_Eclair_2022_2_eclair_probe_pitchshift_vs_not_by_talker_bs.npy',
+    allow_pickle=True)[()]
+
+oldscoremat = np.load(
+    'D:/Users/juleslebert/home/phd/figures/euclidean_class_082022/eclair/17112022_16_24_15/scores_Eclair_2022_probe_earlylate_left_right_win_bs.npy',
+    allow_pickle=True)[()]
+
+testscorematzola = np.load('D:/Users/cgriffiths/resultsms4/lstmclass_CVDATA_11122022zola/11122022_13_17_29/scores_zola_2022_5_zola_probe_pitchshift_vs_not_by_talker_bs.npy', allow_pickle=True)[()]
+
+singleunitlist_cruella = [16, 34, 25, 12, 2, 27, 21, 24, 17, 18, 13, 11, 22, 20, 26]
+singleunitlist_cruella_soundonset = [13, 16, 17, 21, 22, 26, 27, 28, 34]
+singleunitlist_cruella_2 = [] #unit 25+1 only fires during non pitch shift trials for male talker
+
+multiunitlist_cruella_2 = [21, 40,  44, 29, 43, 31, 22, 5, 4, 18, 10, 13,  30, 6] #, cluster 7+1, and 2+1 doesnt fire for every word, cluster 44+1 doesnt fire during non pitch shift trials
+
+multiunitlist_cruella = [10, 7, 31, 29, 1, 32, 15, 9, 6, 3, 19, 23, 8, 4, 33, 14, 30, 5]
+multiunitlist_cruella_soundonset = [6, 8, 9, 14, 23, 29, 30, 21, 33]
+
+singleunitlist_nala = [17, 29, 5, 19, 27, 20, 4, 28, 1, 26, 21, 37] #37
+multiunitlist_nala = [10, 24, 8, 15, 12, 7, 9, 35, 2, 14, 34, 33, 32, 38, 39, 31, 40, 41, 13] #13
+saveDir = 'D:/Users/cgriffiths/resultsms4/lstmclass_18112022/19112022_12_58_54/'
+singlunitlistsoundonset_crumble = [6, 7, 11, 17, 21, 22, 26]
+multiunitlist_soundonset_crumble = [13, 14, 23, 25, 27, 29]
+
+singleunitlist_cruella_bb4bb5=[16, 6, 21,5, 8, 33, 27]
+multiunitlist_cruella_bb4bb5 =[]
+
 
 def scatterplot_and_visualise(probewordlist,
                               saveDir='D:/Users/cgriffiths/resultsms4/lstm_output_frommyriad_15012023/lstm_kfold_14012023_crumble',
                               ferretname='Crumble',
-                              singleunitlist=[0,1,2],
-                              multiunitlist=[0,1,2,3], noiselist=[], stream = 'BB_2', fullid = 'F1901_Crumble'):
-    singleunitlist = [x - 1 for x in singleunitlist]
-    multiunitlist = [x - 1 for x in multiunitlist]
-    noiselist = [x - 1 for x in noiselist]
+                              singleunitlist=singlunitlistsoundonset_crumble,
+                              multiunitlist=multiunitlist_soundonset_crumble, noiselist=[], stream = 'BB_2'):
+    # singleunitlist = [x - 1 for x in singleunitlist]
+    # multiunitlist = [x - 1 for x in multiunitlist]
+    # noiselist = [x - 1 for x in noiselist]
     original_cluster_list = np.empty([0])
 
     su_pitchshiftlist_female = np.empty([0])
@@ -61,30 +88,6 @@ def scatterplot_and_visualise(probewordlist,
         multiunitlist_copy = multiunitlist.copy()
         noiselist_copy = noiselist.copy()
 
-        #load the original clusters to split from the json file
-        json_file_path = f'F:\split_cluster_jsons/{fullid}/cluster_split_list.json'
-
-
-        with open(json_file_path, "r") as json_file:
-            loaded_data = json.load(json_file)
-        #get the recname
-        recname = saveDir.split('/')[-3]
-        #get the recname from the json file
-        stream_id = stream[-4:]
-        recname_json =  loaded_data.get(recname)
-        #get the cluster ids from the json file
-        original_to_split_cluster_ids = recname_json.get(stream_id)
-        original_to_split_cluster_ids = original_to_split_cluster_ids.get('cluster_to_split_list')
-        if original_to_split_cluster_ids == 'clust_ids':
-            #get all the unique clusters ids
-            original_to_split_cluster_ids = np.unique(scores['talker1']['target_vs_probe']['pitchshift']['cluster_id']+scores['talker1']['target_vs_probe']['nopitchshift']['cluster_id'])
-            #make sure they are all less than 100
-            original_to_split_cluster_ids = [x for x in original_to_split_cluster_ids if x < 100]
-        elif original_to_split_cluster_ids == None:
-            original_to_split_cluster_ids = np.array([])
-
-
-
 
         probewordindex = probeword[0]
         print(probewordindex)
@@ -99,6 +102,8 @@ def scatterplot_and_visualise(probewordlist,
         print(scores['talker1']['target_vs_probe']['pitchshift']['cluster_id'])
         print(scores['talker1']['target_vs_probe']['nopitchshift']['cluster_id'])
 
+
+        #
         for talker in [1]:
             comparisons = [comp for comp in scores[f'talker{talker}']]
 
@@ -146,10 +151,6 @@ def scatterplot_and_visualise(probewordlist,
         singleunitlist_copy = [x for x in singleunitlist_copy if x not in original_cluster_list]
         multiunitlist_copy = [x for x in multiunitlist_copy if x not in original_cluster_list]
 
-        #check original_to_split_cluster_ids is not in single or multi unit list
-        singleunitlist_copy = [x for x in singleunitlist_copy if x not in original_to_split_cluster_ids]
-        multiunitlist_copy = [x for x in multiunitlist_copy if x not in original_to_split_cluster_ids]
-
 
 
 
@@ -162,6 +163,14 @@ def scatterplot_and_visualise(probewordlist,
                     for i, clus in enumerate(scores[f'talker{talker}'][comp][cond]['cluster_id']):
 
                         print(i, clus)
+                        # if 200> clus >= 100:
+                        #     clus_instance = int(round(clus - 100))
+                        # elif 300 > clus >= 200:
+                        #     clus_instance = int(round(clus - 200))
+                        # elif 400 > clus >= 300:
+                        #     clus_instance = int(round(clus - 300))
+                        # else:
+                        #     clus_instance = clus
 
                         if ferretname == 'Orecchiette':
                             #read csv file and get cluster id
@@ -184,12 +193,12 @@ def scatterplot_and_visualise(probewordlist,
                             print('in single unit list')
                             if cond == 'pitchshift':
                                 if talker == 1:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > 0.01+scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
                                         su_pitchshiftlist_female = np.append(su_pitchshiftlist_female,
                                                                              scores[f'talker{talker}'][comp][cond][
                                                                                  'lstm_balanced_avg'][i])
                                 elif talker == 2:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > 0.01+scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
                                         su_pitchshiftlist_male = np.append(su_pitchshiftlist_male,
                                                                            scores[f'talker{talker}'][comp][cond][
@@ -197,13 +206,13 @@ def scatterplot_and_visualise(probewordlist,
                                 # print(pitchshiftlist.size)
                             elif cond == 'nopitchshift':
                                 if talker == 1:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > 0.01+scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
                                         su_nonpitchshiftlist_female = np.append(su_nonpitchshiftlist_female,
                                                                                 scores[f'talker{talker}'][comp][cond][
                                                                                     'lstm_balanced_avg'][i])
                                 elif talker == 2:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > 0.01+scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
                                         su_nonpitchshiftlist_male = np.append(su_nonpitchshiftlist_male,
                                                                               scores[f'talker{talker}'][comp][cond][
@@ -212,7 +221,7 @@ def scatterplot_and_visualise(probewordlist,
                         elif clus in multiunitlist_copy:
                             if cond == 'pitchshift':
                                 if talker == 1:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > 0.01+scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
                                         mu_pitchshiftlist_female = np.append(mu_pitchshiftlist_female,
                                                                              scores[f'talker{talker}'][comp][cond][
@@ -220,7 +229,7 @@ def scatterplot_and_visualise(probewordlist,
                                                                                  i])
 
                                 elif talker == 2:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > 0.01+scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
                                         mu_pitchshiftlist_male = np.append(mu_pitchshiftlist_male,
                                                                            scores[f'talker{talker}'][comp][cond][
@@ -231,14 +240,14 @@ def scatterplot_and_visualise(probewordlist,
 
                             if cond == 'nopitchshift':
                                 if talker == 1:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > 0.01+scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
                                         mu_nonpitchshiftlist_female = np.append(mu_nonpitchshiftlist_female,
                                                                                 scores[f'talker{talker}'][comp][cond][
                                                                                     'lstm_balanced_avg'][i])
 
                                 elif talker == 2:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > 0.01+scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
                                         mu_nonpitchshiftlist_male = np.append(mu_nonpitchshiftlist_male,
                                                                               scores[f'talker{talker}'][comp][cond][
@@ -249,6 +258,11 @@ def scatterplot_and_visualise(probewordlist,
                         elif clus in noiselist:
                             pass
 
+                        # pitchshiftlist = np.append(pitchshiftlist, scores[f'talker{talker}'][comp]['pitchshift']['lstm_balanced_avg'][i])
+                        # nonpitchshiftlist = np.append(nonpitchshiftlist, scores[f'talker{talker}'][comp]['nopitchshift']['lstm_balanced_avg'][i])
+
+                        # plt.title(f'cluster {clus}')
+                        # plt.show()
 
     dictofsortedscores = {'su_list': {'pitchshift': {'female_talker': {},
                                                      'male_talker': {}},
@@ -392,6 +406,8 @@ def main():
     probewordlist_l74 = [(2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
                              (14, 14)]
     animal_list = [ 'F1901_Crumble', 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala']
+    # animal_list = [  'F1815_Cruella', 'F1901_Crumble',]
+    # animal_list = [ 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1901_Crumble', 'F1812_Nala']
 
     #load the report for each animal in animal-list
     report = {}
@@ -436,11 +452,10 @@ def main():
 
 
     dictoutput = {}
-
+    dictoutput_trained = []
+    dictoutput_naive = []
+    dictoutput_all = []
     for animal in animal_list:
-        dictoutput_trained = []
-        dictoutput_naive = []
-        dictoutput_all = []
         dictoutput[animal] = {}
         for stream in report[animal]:
             dictoutput[animal][stream] = {}
@@ -470,37 +485,37 @@ def main():
             # rec_name_unique = stream.split('_')[0:3]
 
             if animal == 'F1604_Squinty':
-                try:
-                    dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
-                                                                    saveDir=f'F:/results_28102023/{animal}/{rec_name_unique}/{streamtext}/',
-                                                                    ferretname=animal_text,
-                                                                    singleunitlist=singleunitlist[animal][stream],
-                                                                    multiunitlist=multiunitlist[animal][stream],
-                                                                    noiselist=noiselist[animal][stream], stream = stream, fullid = animal)
-                    dictoutput_all.append(dictoutput_instance)
-                except:
-                    #print the exception
-                    print(f'no scores for this stream:{stream}, and {animal}')
-                    pass
+
+                dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
+                                                                saveDir=f'F:/results_24102023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                ferretname=animal_text,
+                                                                singleunitlist=singleunitlist[animal][stream],
+                                                                multiunitlist=multiunitlist[animal][stream],
+                                                                noiselist=noiselist[animal][stream], stream = stream)
+                dictoutput_all.append(dictoutput_instance)
+                # except:
+                #     #print the exception
+                #     print(f'no scores for this stream:{stream}, and {animal}')
+                #     pass
             elif animal == 'F1606_Windolene':
 
                 try:
                     dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
-                                                                    saveDir=f'F:/results_28102023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                    saveDir=f'F:/results_24102023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                     ferretname=animal_text,
                                                                     singleunitlist=singleunitlist[animal][stream],
                                                                     multiunitlist=multiunitlist[animal][stream],
-                                                                    noiselist=noiselist[animal][stream], stream = stream, fullid = animal)
+                                                                    noiselist=noiselist[animal][stream], stream = stream)
                     dictoutput_all.append(dictoutput_instance)
                 except:
                     #print the exception
                     print(f'no scores for this stream:{stream}, and {animal}')
                     pass
-            elif animal == 'F1815_Cruella' or animal == 'F1902_Eclair' or animal =='F1702_Zola':
+            elif animal == 'F1815_Cruella' or animal == 'F1902_Eclair':
                 try:
-                    dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_28102023/{animal}/{rec_name_unique}/{streamtext}/',
+                    dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_24102023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                     ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
-                                                                    multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal)
+                                                                    multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream)
                     dictoutput_all.append(dictoutput_instance)
                 except:
                     #print the exception
@@ -508,9 +523,9 @@ def main():
                     pass
             else:
                 # try:
-                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_28102023/{animal}/{rec_name_unique}/{streamtext}/',
+                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_24102023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
-                                                                multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal)
+                                                                multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream)
                 dictoutput_all.append(dictoutput_instance)
                 # except:
                 #     #print the exception
@@ -527,23 +542,22 @@ def main():
                 print('no scores for this stream')
                 pass
 
-        labels = [animal]
-        if animal == 'F1604_Squinty' or animal == 'F1606_Windolene' or animal == 'F1702_Zola' or animal == 'F1815_Cruella':
-            naive = False
-        else:
-            naive = True
+    labels = ['squinty', 'squinty', 'ore']
 
-        colors = ['purple']
-        generate_plots(dictoutput_all, dictoutput_trained, dictoutput_naive, colors, animal=animal, naive = naive)
+    labels = [ 'F1901_Crumble', 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala']
 
+    colors = ['purple', 'magenta', 'darkturquoise', 'olivedrab', 'steelblue', 'darkcyan', 'darkorange']
 
-
-
+    generate_plots(dictoutput_all, dictoutput_trained, dictoutput_naive, labels, colors)
 
     return
 
 
-def generate_plots(dictlist, dictlist_trained, dictlist_naive, colors, animal='F1902_Eclair', naive = False):
+def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
+    # labels = ['cruella', 'zola', 'nala', 'crumble', 'eclair', 'ore']
+    # colors = ['purple', 'magenta', 'darkturquoise', 'olivedrab', 'steelblue', 'darkcyan']
+
+
     fig, ax = plt.subplots(1, figsize=(5, 8))
     emptydict = {}
     count = 0
@@ -575,6 +589,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, colors, animal='F
         emptydict[keys] = np.asarray(emptydict[keys])
 
 
+    fig, ax = plt.subplots(1, figsize=(9,9), dpi=300)
     for dictoutput in dictlist:
         for key in dictoutput.keys():
             for key3 in dictoutput[key]['pitchshift'].keys():
@@ -591,28 +606,26 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, colors, animal='F
 
     bigconcatenatetrained_ps = np.empty(0)
     bigconcatenatetrained_nonps = np.empty(0)
+    for dictouput in dictlist_trained:
+        for key in dictouput.keys():
+            for key3 in dictouput[key]['pitchshift'].keys():
+                bigconcatenatetrained_ps = np.concatenate(
+                    (bigconcatenatetrained_ps, dictouput[key]['pitchshift'][key3]))
+                bigconcatenatetrained_nonps = np.concatenate(
+                    (bigconcatenatetrained_nonps, dictouput[key]['nonpitchshift'][key3]))
 
-    if naive == False:
-        for dictouput in dictlist_trained:
-            for key in dictouput.keys():
-                for key3 in dictouput[key]['pitchshift'].keys():
-                    bigconcatenatetrained_ps = np.concatenate(
-                        (bigconcatenatetrained_ps, dictouput[key]['pitchshift'][key3]))
-                    bigconcatenatetrained_nonps = np.concatenate(
-                        (bigconcatenatetrained_nonps, dictouput[key]['nonpitchshift'][key3]))
 
-    else:
-        bigconcatenatenaive_ps = np.empty(0)
-        bigconcatenatenaive_nonps = np.empty(0)
+    bigconcatenatenaive_ps = np.empty(0)
+    bigconcatenatenaive_nonps = np.empty(0)
 
-        for dictouput in dictlist_naive:
-            for key in dictouput.keys():
-                # print(key, 'key')
-                for key3 in dictouput[key]['pitchshift'].keys():
-                    # print(key3, 'key3')
-                    bigconcatenatenaive_ps = np.concatenate((bigconcatenatenaive_ps, dictouput[key]['pitchshift'][key3]))
-                    bigconcatenatenaive_nonps = np.concatenate(
-                        (bigconcatenatenaive_nonps, dictouput[key]['nonpitchshift'][key3]))
+    for dictouput in dictlist_naive:
+        for key in dictouput.keys():
+            # print(key, 'key')
+            for key3 in dictouput[key]['pitchshift'].keys():
+                # print(key3, 'key3')
+                bigconcatenatenaive_ps = np.concatenate((bigconcatenatenaive_ps, dictouput[key]['pitchshift'][key3]))
+                bigconcatenatenaive_nonps = np.concatenate(
+                    (bigconcatenatenaive_nonps, dictouput[key]['nonpitchshift'][key3]))
 
 
     # Define labels and colors for scatter plots
@@ -623,55 +636,217 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, colors, animal='F
     #     ax.scatter(data_dict['su_list']['nonpitchshift']['female_talker'],data_dict['su_list']['pitchshift']['female_talker'], marker='P', color=color, alpha=0.5)
 
 
-    # if bigconcatenatenaive_nonps.size > bigconcatenatenaive_ps.size:
-    #     len(bigconcatenatenaive_ps)
-    #     bigconcatenatenaive_nonps = bigconcatenatenaive_nonps[:bigconcatenatenaive_ps.size]
-    # elif bigconcatenatenaive_nonps.size < bigconcatenatenaive_ps.size:
-    #     bigconcatenatenaive_ps = bigconcatenatenaive_ps[:bigconcatenatenaive_nonps.size]
-    #
-    # if bigconcatenatetrained_nonps.size > bigconcatenatetrained_ps.size:
-    #     bigconcatenatetrained_nonps = bigconcatenatetrained_nonps[:bigconcatenatetrained_ps.size]
-    # elif bigconcatenatetrained_nonps.size < bigconcatenatetrained_ps.size:
-    #     bigconcatenatetrained_ps = bigconcatenatetrained_ps[:bigconcatenatetrained_nonps.size]
+    if bigconcatenatenaive_nonps.size > bigconcatenatenaive_ps.size:
+        len(bigconcatenatenaive_ps)
+        bigconcatenatenaive_nonps = bigconcatenatenaive_nonps[:bigconcatenatenaive_ps.size]
+    elif bigconcatenatenaive_nonps.size < bigconcatenatenaive_ps.size:
+        bigconcatenatenaive_ps = bigconcatenatenaive_ps[:bigconcatenatenaive_nonps.size]
 
-    fig, ax = plt.subplots(1, figsize=(9, 9), dpi=300)
-    ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.8, label='trained', s=0.1)
-    plt.title('trained animals, number of points, animal: ' +animal+ str(len(bigconcatenatetrained_ps)))
-    plt.savefig(f'D:/trainedanimals_20062023intertrialroving_{animal}.png', dpi=1000)
+    if bigconcatenatetrained_nonps.size > bigconcatenatetrained_ps.size:
+        bigconcatenatetrained_nonps = bigconcatenatetrained_nonps[:bigconcatenatetrained_ps.size]
+    elif bigconcatenatetrained_nonps.size < bigconcatenatetrained_ps.size:
+        bigconcatenatetrained_ps = bigconcatenatetrained_ps[:bigconcatenatetrained_nonps.size]
+
+    ax.scatter(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, marker='P', color='darkcyan', alpha=0.5, label='naive')
+    ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.5, label='trained')
+    x = np.linspace(0.4, 1, 101)
+    ax.plot(x, x, color='black', linestyle = '--')  # identity line
+
+    slope, intercept, r_value, pv, se = stats.linregress(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)
+
+    sns.regplot(x=bigconcatenatetrained_nonps, y=bigconcatenatetrained_ps, scatter=False, color='purple',
+                label=' $y=%3.7s*x+%3.7s$' % (slope, intercept), ax=ax, line_kws={'label': ' $y=%3.7s*x+%3.7s$' % (slope, intercept)})
+    slope, intercept, r_value, pv, se = stats.linregress(bigconcatenatenaive_nonps, bigconcatenatenaive_ps)
+
+    sns.regplot(x=bigconcatenatenaive_nonps, y=bigconcatenatenaive_ps, scatter=False, color='darkcyan', label=' $y=%3.7s*x+%3.7s$' % (slope, intercept),
+                ax=ax, line_kws={'label': '$y=%3.7s*x+%3.7s$' % (slope, intercept)})
+
+    ax.set_ylabel('LSTM decoding score, F0 roved', fontsize=18)
+    ax.set_xlabel('LSTM decoding score, F0 control', fontsize=18)
+
+    ax.set_title('LSTM decoder scores for' + ' F0 control vs. roved,\n ' + ' trained and naive animals', fontsize=20)
+
+
+    plt.legend( fontsize=12, ncol=2)
+    fig.tight_layout()
+    plt.savefig('D:/scattermuaandsuregplot_mod_21062023.png', dpi=1000)
+    plt.savefig('D:/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000)
+
+
     plt.show()
-    unique_scores = np.unique(bigconcatenatetrained_ps)
-    len(unique_scores)
+
+    #histogram distribution of the trained and naive animals
+    fig, ax = plt.subplots(1, figsize=(8, 8))
+    #relativescoretrained = abs(bigconcatenatetrained_nonps - bigconcatenatetrained_ps)/ bigconcatenatetrained_ps
+
+    relativescoretrained = [bigconcatenatetrained_nonps - bigconcatenatetrained_ps for bigconcatenatetrained_nonps, bigconcatenatetrained_ps in zip(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)]
+    relativescorenaive = [bigconcatenatenaive_nonps - bigconcatenatenaive_ps for bigconcatenatenaive_nonps, bigconcatenatenaive_ps in zip(bigconcatenatenaive_ps, bigconcatenatenaive_nonps)]
+    relativescoretrainedfrac = [relativescoretrained / (bigconcatenatetrained_nonps + bigconcatenatenaive_nonps) for relativescoretrained, bigconcatenatetrained_nonps, bigconcatenatenaive_nonps in zip(relativescoretrained, bigconcatenatetrained_nonps, bigconcatenatenaive_nonps)]
+    relativescorenaivefrac = [relativescorenaive / (bigconcatenatenaive_nonps + bigconcatenatetrained_nonps) for relativescorenaive, bigconcatenatenaive_nonps, bigconcatenatetrained_nonps in zip(relativescorenaive, bigconcatenatenaive_nonps, bigconcatenatetrained_nonps)]
 
 
-    if naive == False:
-        fig, ax = plt.subplots(1, figsize=(8, 8), dpi = 800)
-        ax.set_xlim([0,1])
-        sns.distplot(bigconcatenatetrained_ps,  label='trained roved',ax=ax, color='purple')
-        sns.distplot(bigconcatenatetrained_nonps,  label='trained control',ax=ax, color='magenta')
-        ax.legend(fontsize=18)
-        plt.title('Roved and Control F0 Distributions for the Trained Animals', fontsize = 18)
-        plt.xlabel(' LSTM decoder scores', fontsize = 20)
 
-        plt.savefig(f'D:/rovedF0vscontrolF0traineddistribution_20062023intertrialroving_{animal}.png', dpi=1000)
+    sns.distplot(relativescoretrained, bins = 20, label='trained',ax=ax, color='purple')
+    sns.distplot(relativescorenaive, bins = 20, label='naive', ax=ax, color='darkcyan')
+    plt.axvline(x=0, color='black')
+    #man whiteney test score
 
-        plt.show()
-        kstestcontrolf0vsrovedtrained = scipy.stats.kstest(bigconcatenatetrained_nonps, bigconcatenatetrained_ps,
-                                                           alternative='two-sided')
 
-    elif naive == True:
+    manwhitscore = mannwhitneyu(relativescoretrained, relativescorenaive, alternative = 'greater')
+    sample1 = np.random.choice(relativescoretrained, size=10000, replace=True)
 
-        fig, ax = plt.subplots(1, figsize=(8, 8), dpi = 800)
-        ax.set_xlim([0,1])
-        sns.distplot(bigconcatenatenaive_ps,  label='naive roved',ax=ax, color='darkcyan')
-        sns.distplot(bigconcatenatenaive_nonps,  label='naive control',ax=ax, color='cyan')
-        ax.legend(fontsize=18)
-        plt.xlabel(' LSTM decoder scores', fontsize = 20)
-        plt.title('Roved and Control F0 Distributions for the Naive Animals', fontsize = 18)
+    # Generate a random sample of size 100 from data2 with replacement
+    sample2 = np.random.choice(relativescorenaive, size=10000, replace=True)
 
-        plt.savefig(f'D:/rovedF0vscontrolF0naivedistribution_20062023intertrialroving_{animal}.png', dpi=1000)
-        plt.show()
+    # Perform a t-test on the samples
+    t_stat, p_value = stats.ttest_ind(sample1, sample2, alternative='greater')
 
-        # kstestcontrolf0vsrovednaive = scipy.stats.kstest(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, alternative='two-sided')
+    # Print the t-statistic and p-value
+    print(t_stat, p_value)
+    plt.title('Control - roved F0 \n LSTM decoder scores between trained and naive animals', fontsize = 18)
+    plt.xlabel('Control - roved F0 \n LSTM decoder scores', fontsize = 20)
+    plt.ylabel('Density', fontsize = 20)
+    #ax.legend()
+    plt.savefig('D:/diffF0distribution_20062023.png', dpi=1000)
+    plt.show()
+
+    fig, ax = plt.subplots(1, figsize=(8, 8))
+    ax = sns.distplot(relativescoretrainedfrac, bins = 20, label='trained',ax=ax, color='purple')
+    x = ax.lines[-1].get_xdata()  # Get the x data of the distribution
+    y = ax.lines[-1].get_ydata()  # Get the y data of the distribution
+    maxidtrained_idx = np.argmax(y)
+    x_coord_trained = x[maxidtrained_idx]
+
+
+    ax2 = sns.distplot(relativescorenaivefrac, bins = 20, label='naive', ax=ax, color='darkcyan')
+
+    x2 = ax2.lines[-1].get_xdata()  # Get the x data of the distribution
+    y2 = ax2.lines[-1].get_ydata()  # Get the y data of the distribution
+    maxidnaive_idx = np.argmax(y2)  # The id of the peak (maximum of y data)
+
+    x_coord_naive = x2[maxidnaive_idx]
+    plt.axvline(x=0, color='black')
+    kstestnaive = scipy.stats.kstest(relativescorenaivefrac,  stats.norm.cdf)
+    leveneteststat = scipy.stats.levene(relativescorenaivefrac, relativescoretrainedfrac)
+    manwhitscorefrac = mannwhitneyu(relativescorenaivefrac, relativescoretrainedfrac, alternative = 'less')
+    #caclulate medians of distribution
+
+    sample1_trained = np.random.choice(relativescoretrainedfrac, size=10000, replace=True)
+
+    # Generate a random sample of size 100 from data2 with replacement
+    sample2_naive = np.random.choice(relativescorenaive, size=10000, replace=True)
+
+    # Perform a t-test on the samples
+    t_statfrac, p_valuefrac = stats.ttest_ind(sample2_naive, sample1_trained, alternative='less')
+
+    # Print the t-statistic and p-value
+    print(t_statfrac, p_valuefrac)
+    plt.title('Control - roved F0 \n LSTM decoder scores between trained and naive animals', fontsize = 18)
+    plt.xlabel('Control - roved F0 \n LSTM decoder scores divided by control F0', fontsize = 20)
+    plt.ylabel('Density', fontsize = 20)
+    #ax.legend(fontsize = 18)
+
+
+    plt.savefig('D:/diffF0distribution_frac_20062023wlegendintertrialroving.png', dpi=1000)
+    plt.show()
+
+
+
+    fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
+    ax.set_xlim([0,1])
+
+    sns.distplot(bigconcatenatetrained_nonps,  label='trained',ax=ax, color='purple')
+    sns.distplot(bigconcatenatenaive_nonps, label='naive', ax=ax, color='darkcyan')
+    #plt.axvline(x=0, color='black')
+    #man whiteney test score
+    plt.title('Control F0 LSTM decoder scores between  \n trained and naive animals', fontsize = 18)
+    plt.xlabel('Control F0 LSTM decoder scores', fontsize = 20)
+
+    plt.ylabel('Density', fontsize = 20)
+    manwhitscorecontrolf0 = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatenaive_nonps, alternative = 'greater')
+
+    #ax.legend()
+    plt.savefig('D:/controlF0distribution20062023intertrialroving.png', dpi=1000)
+
+    plt.show()
+
+    fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
+    ax.set_xlim([0,1])
+    sns.distplot(bigconcatenatetrained_ps,  label='trained',ax=ax, color='purple')
+    sns.distplot(bigconcatenatenaive_ps, label='naive', ax=ax, color='darkcyan')
+    #man whiteney test score
+    #manwhitscore = mannwhitneyu(relativescoretrained, relativescorenaive, alternative = 'greater')
+    plt.title('Roved F0 LSTM decoder scores between  \n trained and naive animals', fontsize = 18)
+    plt.xlabel('Roved F0 LSTM decoder scores', fontsize = 20)
+    plt.ylabel('Density', fontsize = 20)
+    manwhitscorerovedf0 = mannwhitneyu(bigconcatenatetrained_ps, bigconcatenatenaive_ps, alternative = 'greater')
+
+    ax.legend(fontsize=18)
+    plt.savefig('D:/rovedF0distribution_20062023intertrialroving.png', dpi=1000)
+
+    plt.show()
+
+    fig, ax = plt.subplots(1, figsize=(8, 8), dpi = 800)
+    ax.set_xlim([0,1])
+    sns.distplot(bigconcatenatetrained_ps,  label='trained roved',ax=ax, color='purple')
+    sns.distplot(bigconcatenatetrained_nonps,  label='trained control',ax=ax, color='magenta')
+    ax.legend(fontsize=18)
+    plt.title('Roved and Control F0 Distributions for the Trained Animals', fontsize = 18)
+    plt.xlabel(' LSTM decoder scores', fontsize = 20)
+
+    plt.savefig('D:/rovedF0vscontrolF0traineddistribution_20062023intertrialroving.png', dpi=1000)
+
+    plt.show()
+
+    fig, ax = plt.subplots(1, figsize=(8, 8), dpi = 800)
+    ax.set_xlim([0,1])
+    sns.distplot(bigconcatenatenaive_ps,  label='naive roved',ax=ax, color='darkcyan')
+    sns.distplot(bigconcatenatenaive_nonps,  label='naive control',ax=ax, color='cyan')
+    ax.legend(fontsize=18)
+    plt.xlabel(' LSTM decoder scores', fontsize = 20)
+    plt.title('Roved and Control F0 Distributions for the Naive Animals', fontsize = 18)
+
+    plt.savefig('D:/rovedF0vscontrolF0naivedistribution_20062023intertrialroving.png', dpi=1000)
+    plt.show()
+    kstestcontrolf0vsrovedtrained = scipy.stats.kstest(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, alternative = 'two-sided')
+
+    kstestcontrolf0vsrovednaive = scipy.stats.kstest(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, alternative='two-sided')
+
+    naivearray=np.concatenate((np.zeros((len(bigconcatenatetrained_nonps)+len(bigconcatenatetrained_ps),1)), np.ones((len(bigconcatenatenaive_nonps)+len(bigconcatenatenaive_ps),1))))
+    trainedarray=np.concatenate((np.ones((len(bigconcatenatetrained_nonps)+len(bigconcatenatetrained_ps),1)), np.zeros((len(bigconcatenatenaive_nonps)+len(bigconcatenatenaive_ps),1))))
+    controlF0array=np.concatenate((np.ones((len(bigconcatenatetrained_nonps),1)), np.zeros((len(bigconcatenatetrained_ps),1)), np.ones((len(bigconcatenatenaive_nonps),1)), np.zeros((len(bigconcatenatenaive_ps),1))))
+    rovedF0array = np.concatenate((np.zeros((len(bigconcatenatetrained_nonps),1)), np.ones((len(bigconcatenatetrained_ps),1)), np.zeros((len(bigconcatenatenaive_nonps),1)), np.ones((len(bigconcatenatenaive_ps),1))))
+    scores = np.concatenate((bigconcatenatetrained_nonps, bigconcatenatetrained_ps, bigconcatenatenaive_nonps, bigconcatenatenaive_ps))
+
+    dataset = pd.DataFrame({'trained': trainedarray[:,0], 'naive': naivearray[:,0], 'controlF0': controlF0array[:,0], 'rovedF0': rovedF0array[:,0], 'scores': scores})
+
+    import statsmodels.api as sm
+    from statsmodels.formula.api import ols
+    model = ols('scores ~ C(trained) + C(controlF0) ', data=dataset).fit()
+    print(model.summary())
+    table = sm.stats.anova_lm(model, typ=2)
+    print(table)
+    from statsmodels.iolib.summary2 import summary_col
+
+
+
+    res = summary_col([model], regressor_order=model.params.index.tolist())
+
+    df = pd.DataFrame(model.summary().tables[1])
+    res.tables[0].to_csv("D:/trainedrovescores.csv")
+
+    df2= pd.DataFrame(table)
+
+    csvexport2 = df2.to_csv('D:/trainedrovescores2.csv')
+
+    # Save the DataFrame to a CSV file
+    df.to_csv('anova_results.csv', index=False)
+
+    model = ols('scores ~ C(trained) + C(controlF0) ', data=dataset).fit()
+    print(model.summary())
+    table = sm.stats.anova_lm(model, typ=2)
+    # plotting both mu sound driven and single unit units
+    # for sutype in mergednaiveanimaldict.keys():
 
 
 

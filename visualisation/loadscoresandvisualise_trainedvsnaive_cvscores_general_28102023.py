@@ -436,11 +436,10 @@ def main():
 
 
     dictoutput = {}
-
+    dictoutput_trained = []
+    dictoutput_naive = []
+    dictoutput_all = []
     for animal in animal_list:
-        dictoutput_trained = []
-        dictoutput_naive = []
-        dictoutput_all = []
         dictoutput[animal] = {}
         for stream in report[animal]:
             dictoutput[animal][stream] = {}
@@ -527,14 +526,14 @@ def main():
                 print('no scores for this stream')
                 pass
 
-        labels = [animal]
-        if animal == 'F1604_Squinty' or animal == 'F1606_Windolene' or animal == 'F1702_Zola' or animal == 'F1815_Cruella':
-            naive = False
-        else:
-            naive = True
+    # labels = [animal]
+    # if animal == 'F1604_Squinty' or animal == 'F1606_Windolene' or animal == 'F1702_Zola' or animal == 'F1815_Cruella':
+    #     naive = False
+    # else:
+    #     naive = True
 
-        colors = ['purple']
-        generate_plots(dictoutput_all, dictoutput_trained, dictoutput_naive, colors, animal=animal, naive = naive)
+    colors = ['purple']
+    generate_plots(dictoutput_all, dictoutput_trained, dictoutput_naive, colors)
 
 
 
@@ -543,7 +542,7 @@ def main():
     return
 
 
-def generate_plots(dictlist, dictlist_trained, dictlist_naive, colors, animal='F1902_Eclair', naive = False):
+def generate_plots(dictlist, dictlist_trained, dictlist_naive, colors):
     fig, ax = plt.subplots(1, figsize=(5, 8))
     emptydict = {}
     count = 0
@@ -592,27 +591,25 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, colors, animal='F
     bigconcatenatetrained_ps = np.empty(0)
     bigconcatenatetrained_nonps = np.empty(0)
 
-    if naive == False:
-        for dictouput in dictlist_trained:
-            for key in dictouput.keys():
-                for key3 in dictouput[key]['pitchshift'].keys():
-                    bigconcatenatetrained_ps = np.concatenate(
-                        (bigconcatenatetrained_ps, dictouput[key]['pitchshift'][key3]))
-                    bigconcatenatetrained_nonps = np.concatenate(
-                        (bigconcatenatetrained_nonps, dictouput[key]['nonpitchshift'][key3]))
+    for dictouput in dictlist_trained:
+        for key in dictouput.keys():
+            for key3 in dictouput[key]['pitchshift'].keys():
+                bigconcatenatetrained_ps = np.concatenate(
+                    (bigconcatenatetrained_ps, dictouput[key]['pitchshift'][key3]))
+                bigconcatenatetrained_nonps = np.concatenate(
+                    (bigconcatenatetrained_nonps, dictouput[key]['nonpitchshift'][key3]))
 
-    else:
-        bigconcatenatenaive_ps = np.empty(0)
-        bigconcatenatenaive_nonps = np.empty(0)
+    bigconcatenatenaive_ps = np.empty(0)
+    bigconcatenatenaive_nonps = np.empty(0)
 
-        for dictouput in dictlist_naive:
-            for key in dictouput.keys():
-                # print(key, 'key')
-                for key3 in dictouput[key]['pitchshift'].keys():
-                    # print(key3, 'key3')
-                    bigconcatenatenaive_ps = np.concatenate((bigconcatenatenaive_ps, dictouput[key]['pitchshift'][key3]))
-                    bigconcatenatenaive_nonps = np.concatenate(
-                        (bigconcatenatenaive_nonps, dictouput[key]['nonpitchshift'][key3]))
+    for dictouput in dictlist_naive:
+        for key in dictouput.keys():
+            # print(key, 'key')
+            for key3 in dictouput[key]['pitchshift'].keys():
+                # print(key3, 'key3')
+                bigconcatenatenaive_ps = np.concatenate((bigconcatenatenaive_ps, dictouput[key]['pitchshift'][key3]))
+                bigconcatenatenaive_nonps = np.concatenate(
+                    (bigconcatenatenaive_nonps, dictouput[key]['nonpitchshift'][key3]))
 
 
     # Define labels and colors for scatter plots
@@ -636,42 +633,40 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, colors, animal='F
 
     fig, ax = plt.subplots(1, figsize=(9, 9), dpi=300)
     ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.8, label='trained', s=0.1)
-    plt.title('trained animals, number of points, animal: ' +animal+ str(len(bigconcatenatetrained_ps)))
-    plt.savefig(f'D:/trainedanimals_20062023intertrialroving_{animal}.png', dpi=1000)
+    plt.title('trained animals, number of points,:'+ str(len(bigconcatenatetrained_ps)))
+    plt.savefig(f'D:/trainedanimals_2810intertrialroving_.png', dpi=1000)
     plt.show()
     unique_scores = np.unique(bigconcatenatetrained_ps)
     len(unique_scores)
 
 
-    if naive == False:
-        fig, ax = plt.subplots(1, figsize=(8, 8), dpi = 800)
-        ax.set_xlim([0,1])
-        sns.distplot(bigconcatenatetrained_ps,  label='trained roved',ax=ax, color='purple')
-        sns.distplot(bigconcatenatetrained_nonps,  label='trained control',ax=ax, color='magenta')
-        ax.legend(fontsize=18)
-        plt.title('Roved and Control F0 Distributions for the Trained Animals', fontsize = 18)
-        plt.xlabel(' LSTM decoder scores', fontsize = 20)
+    fig, ax = plt.subplots(1, figsize=(8, 8), dpi = 800)
+    ax.set_xlim([0,1])
+    sns.distplot(bigconcatenatetrained_ps,  label='trained roved',ax=ax, color='purple')
+    sns.distplot(bigconcatenatetrained_nonps,  label='trained control',ax=ax, color='magenta')
+    ax.legend(fontsize=18)
+    plt.title('Roved and Control F0 Distributions for the Trained Animals', fontsize = 18)
+    plt.xlabel(' LSTM decoder scores', fontsize = 20)
 
-        plt.savefig(f'D:/rovedF0vscontrolF0traineddistribution_20062023intertrialroving_{animal}.png', dpi=1000)
+    plt.savefig(f'D:/rovedF0vscontrolF0traineddistribution_2810intertrialroving_.png', dpi=1000)
 
-        plt.show()
-        kstestcontrolf0vsrovedtrained = scipy.stats.kstest(bigconcatenatetrained_nonps, bigconcatenatetrained_ps,
-                                                           alternative='two-sided')
+    plt.show()
+    kstestcontrolf0vsrovedtrained = scipy.stats.kstest(bigconcatenatetrained_nonps, bigconcatenatetrained_ps,
+                                                       alternative='two-sided')
 
-    elif naive == True:
 
-        fig, ax = plt.subplots(1, figsize=(8, 8), dpi = 800)
-        ax.set_xlim([0,1])
-        sns.distplot(bigconcatenatenaive_ps,  label='naive roved',ax=ax, color='darkcyan')
-        sns.distplot(bigconcatenatenaive_nonps,  label='naive control',ax=ax, color='cyan')
-        ax.legend(fontsize=18)
-        plt.xlabel(' LSTM decoder scores', fontsize = 20)
-        plt.title('Roved and Control F0 Distributions for the Naive Animals', fontsize = 18)
+    fig, ax = plt.subplots(1, figsize=(8, 8), dpi = 800)
+    ax.set_xlim([0,1])
+    sns.distplot(bigconcatenatenaive_ps,  label='naive roved',ax=ax, color='darkcyan')
+    sns.distplot(bigconcatenatenaive_nonps,  label='naive control',ax=ax, color='cyan')
+    ax.legend(fontsize=18)
+    plt.xlabel(' LSTM decoder scores', fontsize = 20)
+    plt.title('Roved and Control F0 Distributions for the Naive Animals', fontsize = 18)
 
-        plt.savefig(f'D:/rovedF0vscontrolF0naivedistribution_20062023intertrialroving_{animal}.png', dpi=1000)
-        plt.show()
+    plt.savefig(f'D:/rovedF0vscontrolF0naivedistribution_2810intertrialroving_.png', dpi=1000)
+    plt.show()
 
-        # kstestcontrolf0vsrovednaive = scipy.stats.kstest(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, alternative='two-sided')
+    # kstestcontrolf0vsrovednaive = scipy.stats.kstest(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, alternative='two-sided')
 
 
 
