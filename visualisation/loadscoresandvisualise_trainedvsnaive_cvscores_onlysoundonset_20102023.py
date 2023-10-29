@@ -138,9 +138,9 @@ def scatterplot_and_visualise(probewordlist,
             continue
 
         #print all the cluster ids for the scores
-        print(f'cluster ids for animal:{ferretname}, and stream:{saveDir}')
-        print(scores['talker1']['target_vs_probe']['pitchshift']['cluster_id'])
-        print(scores['talker1']['target_vs_probe']['nopitchshift']['cluster_id'])
+        # print(f'cluster ids for animal:{ferretname}, and stream:{saveDir}')
+        # print(scores['talker1']['target_vs_probe']['pitchshift']['cluster_id'])
+        # print(scores['talker1']['target_vs_probe']['nopitchshift']['cluster_id'])
 
         for talker in [1]:
             comparisons = [comp for comp in scores[f'talker{talker}']]
@@ -524,7 +524,7 @@ def main():
             if animal == 'F1604_Squinty':
                 # try:
                 dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
-                                                                saveDir=f'F:/results_28102023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                saveDir=f'F:/results_29102023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -538,7 +538,7 @@ def main():
 
                 # try:
                 dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
-                                                                saveDir=f'F:/results_28102023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                saveDir=f'F:/results_29102023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -550,7 +550,7 @@ def main():
                 #     pass
             elif animal == 'F1815_Cruella' or animal == 'F1902_Eclair' or animal =='F1702_Zola':
                 # try:
-                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_28102023/{animal}/{rec_name_unique}/{streamtext}/',
+                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_29102023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal)
                 dictoutput_all.append(dictoutput_instance)
@@ -561,7 +561,7 @@ def main():
             elif animal == 'F2003_Orecchiette':
                 # try:
                 dictoutput_instance = scatterplot_and_visualise(probewordlist,
-                                                                saveDir=f'F:/results_28102023/{animal}/{rec_name_unique}/',
+                                                                saveDir=f'F:/results_29102023/{animal}/{rec_name_unique}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -574,7 +574,7 @@ def main():
                 #     pass
             else:
                 # try:
-                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_28102023/{animal}/{rec_name_unique}/{streamtext}/',
+                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_29102023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal)
                 dictoutput_all.append(dictoutput_instance)
@@ -730,8 +730,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
 
     plt.legend( fontsize=12, ncol=2)
     fig.tight_layout()
-    plt.savefig('D:/scattermuaandsuregplot_mod_21062023.png', dpi=1000)
-    plt.savefig('D:/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000)
+    plt.savefig('D:/29102023figures/scattermuaandsuregplot_mod_21062023.png', dpi=1000)
+    plt.savefig('D:/29102023figures/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000)
 
 
     plt.show()
@@ -768,7 +768,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     plt.xlabel('Control - roved F0 \n LSTM decoder scores', fontsize = 20)
     plt.ylabel('Density', fontsize = 20)
     #ax.legend()
-    plt.savefig('D:/diffF0distribution_20062023.png', dpi=1000)
+    plt.savefig('D:/29102023figures/diffF0distribution_20062023.png', dpi=1000)
     plt.show()
 
     fig, ax = plt.subplots(1, figsize=(8, 8))
@@ -808,7 +808,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     #ax.legend(fontsize = 18)
 
 
-    plt.savefig('D:/diffF0distribution_frac_20062023wlegendintertrialroving.png', dpi=1000)
+    plt.savefig('D:/29102023figures/diffF0distribution_frac_20062023wlegendintertrialroving.png', dpi=1000)
     plt.show()
 
 
@@ -827,7 +827,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     manwhitscorecontrolf0 = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatenaive_nonps, alternative = 'greater')
 
     #ax.legend()
-    plt.savefig('D:/controlF0distribution20062023intertrialroving.png', dpi=1000)
+    plt.savefig('D:/29102023figures/controlF0distribution20062023intertrialroving.png', dpi=1000)
 
     plt.show()
 
@@ -843,7 +843,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     manwhitscorerovedf0 = mannwhitneyu(bigconcatenatetrained_ps, bigconcatenatenaive_ps, alternative = 'greater')
 
     ax.legend(fontsize=18)
-    plt.savefig('D:/rovedF0distribution_20062023intertrialroving.png', dpi=1000)
+    plt.savefig('D:/29102023figures/rovedF0distribution_20062023intertrialroving.png', dpi=1000)
 
     plt.show()
 
@@ -855,7 +855,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     plt.title('Roved and Control F0 Distributions for the Trained Animals', fontsize = 18)
     plt.xlabel(' LSTM decoder scores', fontsize = 20)
 
-    plt.savefig('D:/rovedF0vscontrolF0traineddistribution_20062023intertrialroving.png', dpi=1000)
+    plt.savefig('D:/29102023figures/rovedF0vscontrolF0traineddistribution_20062023intertrialroving.png', dpi=1000)
 
     plt.show()
 
@@ -867,7 +867,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     plt.xlabel(' LSTM decoder scores', fontsize = 20)
     plt.title('Roved and Control F0 Distributions for the Naive Animals', fontsize = 18)
 
-    plt.savefig('D:/rovedF0vscontrolF0naivedistribution_20062023intertrialroving.png', dpi=1000)
+    plt.savefig('D:/29102023figures/rovedF0vscontrolF0naivedistribution_20062023intertrialroving.png', dpi=1000)
     plt.show()
     kstestcontrolf0vsrovedtrained = scipy.stats.kstest(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, alternative = 'two-sided')
 
@@ -894,11 +894,11 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     res = summary_col([model], regressor_order=model.params.index.tolist())
 
     df = pd.DataFrame(model.summary().tables[1])
-    res.tables[0].to_csv("D:/trainedrovescores.csv")
+    res.tables[0].to_csv("D:/29102023figures/trainedrovescores.csv")
 
     df2= pd.DataFrame(table)
 
-    csvexport2 = df2.to_csv('D:/trainedrovescores2.csv')
+    csvexport2 = df2.to_csv('D:/29102023figures/trainedrovescores2.csv')
 
     # Save the DataFrame to a CSV file
     df.to_csv('anova_results.csv', index=False)

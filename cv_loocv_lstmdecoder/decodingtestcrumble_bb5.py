@@ -143,9 +143,18 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
                              range=(window[0], window[1]))[0]
             count += 1
 
-        if (len(raster_targ_reshaped)) < 15 or (len(raster_probe_reshaped)) < 15:
-            print('less than 15 trials for the target or distractor, CV would be overinflated, skipping')
+
+        if (len(raster_targ_reshaped)) < 5 or (len(raster_probe_reshaped)) < 5:
+            print('less than 5 trials for the target or distractor, CV would be overinflated, skipping')
             continue
+        if len(raster_targ_reshaped) < 15:
+            #upsample to 15 trials
+            raster_targ_reshaped = raster_targ_reshaped[np.random.choice(len(raster_targ_reshaped), 15, replace=True), :]
+        if len(raster_probe_reshaped) < 15:
+            #upsample to 15 trials
+            raster_probe_reshaped = raster_probe_reshaped[np.random.choice(len(raster_probe_reshaped), 15, replace=True), :]
+
+
 
         if len(raster_targ_reshaped) >= len(raster_probe_reshaped) * 2:
             print('raster of distractor at least a 1/2 of target raster')
