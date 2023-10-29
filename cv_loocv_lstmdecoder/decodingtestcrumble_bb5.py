@@ -231,7 +231,7 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
             bal_ac_list = []
             perm_accuracy_list = []
             perm_bal_ac_list = []
-            kfold = StratifiedKFold(n_splits=3, shuffle=True)
+            kfold = StratifiedKFold(n_splits=5, shuffle=True)
             print('iteration', i)
 
             for train, test in kfold.split(X_bin, y_bin):
