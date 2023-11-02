@@ -32,34 +32,6 @@ def find_repeating_substring(text):
     return None
 
 
-# scoremat = np.load(
-#     'D:/Users/cgriffiths/resultsms4/lstmclass_18112022/18112022_10_58_57/scores_Eclair_2022_2_eclair_probe_pitchshift_vs_not_by_talker_bs.npy',
-#     allow_pickle=True)[()]
-#
-# oldscoremat = np.load(
-#     'D:/Users/juleslebert/home/phd/figures/euclidean_class_082022/eclair/17112022_16_24_15/scores_Eclair_2022_probe_earlylate_left_right_win_bs.npy',
-#     allow_pickle=True)[()]
-#
-# testscorematzola = np.load('D:/Users/cgriffiths/resultsms4/lstmclass_CVDATA_11122022zola/11122022_13_17_29/scores_zola_2022_5_zola_probe_pitchshift_vs_not_by_talker_bs.npy', allow_pickle=True)[()]
-#
-# singleunitlist_cruella = [16, 34, 25, 12, 2, 27, 21, 24, 17, 18, 13, 11, 22, 20, 26]
-# singleunitlist_cruella_soundonset = [13, 16, 17, 21, 22, 26, 27, 28, 34]
-# singleunitlist_cruella_2 = [] #unit 25+1 only fires during non pitch shift trials for male talker
-#
-# multiunitlist_cruella_2 = [21, 40,  44, 29, 43, 31, 22, 5, 4, 18, 10, 13,  30, 6] #, cluster 7+1, and 2+1 doesnt fire for every word, cluster 44+1 doesnt fire during non pitch shift trials
-#
-# multiunitlist_cruella = [10, 7, 31, 29, 1, 32, 15, 9, 6, 3, 19, 23, 8, 4, 33, 14, 30, 5]
-# multiunitlist_cruella_soundonset = [6, 8, 9, 14, 23, 29, 30, 21, 33]
-#
-# singleunitlist_nala = [17, 29, 5, 19, 27, 20, 4, 28, 1, 26, 21, 37] #37
-# multiunitlist_nala = [10, 24, 8, 15, 12, 7, 9, 35, 2, 14, 34, 33, 32, 38, 39, 31, 40, 41, 13] #13
-# saveDir = 'D:/Users/cgriffiths/resultsms4/lstmclass_18112022/19112022_12_58_54/'
-# singlunitlistsoundonset_crumble = [6, 7, 11, 17, 21, 22, 26]
-# multiunitlist_soundonset_crumble = [13, 14, 23, 25, 27, 29]
-#
-# singleunitlist_cruella_bb4bb5=[16, 6, 21,5, 8, 33, 27]
-# multiunitlist_cruella_bb4bb5 =[]
-
 
 def scatterplot_and_visualise(probewordlist,
                               saveDir='D:/Users/cgriffiths/resultsms4/lstm_output_frommyriad_15012023/lstm_kfold_14012023_crumble',
@@ -114,9 +86,13 @@ def scatterplot_and_visualise(probewordlist,
                 #get all the unique clusters ids
                 probewordindex = probeword[0]
                 stringprobewordindex = str(probewordindex)
-                scores = np.load(
-                    saveDir + r'scores_' + ferretname + '_2022_' + stringprobewordindex + '_' + ferretname + '_probe_bs.npy',
-                    allow_pickle=True)[()]
+                try:
+                    scores = np.load(
+                        saveDir + r'scores_2022_' + ferretname +'_'+  stringprobewordindex + '_' + ferretname + '_probe_bs.npy',
+                        allow_pickle=True)[()]
+                except:
+                    print('file not found: ' + saveDir + r'scores_2022_' + ferretname + stringprobewordindex + '_' + ferretname + '_probe_bs.npy')
+                    continue
                 original_to_split_cluster_ids = np.unique(scores['talker1']['target_vs_probe']['pitchshift']['cluster_id']+scores['talker1']['target_vs_probe']['nopitchshift']['cluster_id'])
                 #make sure they are all less than 100
                 original_to_split_cluster_ids = [x for x in original_to_split_cluster_ids if x < 100]
@@ -131,25 +107,20 @@ def scatterplot_and_visualise(probewordlist,
         stringprobewordindex = str(probewordindex)
         try:
             scores = np.load(
-                saveDir  + r'scores_' + ferretname + '_2022_' + stringprobewordindex + '_' + ferretname + '_probe_bs.npy',
+                saveDir  + r'scores_2022_' + ferretname  +'_'+ stringprobewordindex + '_' + ferretname + '_probe_bs.npy',
                 allow_pickle=True)[()]
         except:
-            print('file not found: ' + saveDir  + r'scores_' + ferretname + '_2022_' + stringprobewordindex + '_' + ferretname + '_probe_bs.npy')
+            print('file not found: ' + saveDir + r'scores_2022_' + ferretname + '_'+ stringprobewordindex + '_' + ferretname + '_probe_bs.npy')
             continue
-
-        #print all the cluster ids for the scores
-        # print(f'cluster ids for animal:{ferretname}, and stream:{saveDir}')
-        # print(scores['talker1']['target_vs_probe']['pitchshift']['cluster_id'])
-        # print(scores['talker1']['target_vs_probe']['nopitchshift']['cluster_id'])
 
         for talker in [1]:
             comparisons = [comp for comp in scores[f'talker{talker}']]
 
             for comp in comparisons:
-                for cond in ['pitchshift', 'nopitchshift']:
+                for cond in ['nopitchshiftvspitchshift']:
                     for i, clus in enumerate(scores[f'talker{talker}'][comp][cond]['cluster_id']):
                         #check if clus is greater than 100
-                        if 200> clus >= 100:
+                        if 200 > clus >= 100:
                             clus_instance = int(round(clus - 100))
                             if clus_instance in singleunitlist_copy:
 
@@ -194,83 +165,71 @@ def scatterplot_and_visualise(probewordlist,
         multiunitlist_copy = [x for x in multiunitlist_copy if x not in original_to_split_cluster_ids]
 
 
-
-
-
         for talker in [1]:
             comparisons = [comp for comp in scores[f'talker{talker}']]
-
             for comp in comparisons:
-                for cond in ['pitchshift', 'nopitchshift']:
+                for cond in ['nopitchshiftvspitchshift']:
                     for i, clus in enumerate(scores[f'talker{talker}'][comp][cond]['cluster_id']):
-
                         print(i, clus)
-
-
                         if clus in singleunitlist_copy:
                             print('in single unit list')
-                            if cond == 'pitchshift':
-                                if talker == 1:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
-                                        su_pitchshiftlist_female = np.append(su_pitchshiftlist_female,
-                                                                             scores[f'talker{talker}'][comp][cond][
-                                                                                 'lstm_balanced_avg'][i])
+                            if talker == 1:
+                                if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+                                    su_control_list_female = np.append(su_control_list_female,
+                                                                         scores[f'talker{talker}'][comp][cond][
+                                                                             'lstm_balanced_avg'][i])
+                                    su_highf0_list_female = np.append(su_highf0_list_female,
+                                                                         scores[f'talker{talker}'][comp][cond][
+                                                                             'high_pitch_bal_ac'][i])
+                                    su_lowf0_list_female =  np.append(su_lowf0_list_female,
+                                                                         scores[f'talker{talker}'][comp][cond][
+                                                                             'low_pitch_bal_ac'][i])
+
                                 elif talker == 2:
                                     if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
-
-                                        su_pitchshiftlist_male = np.append(su_pitchshiftlist_male,
+                                        su_control_list_male = np.append(su_control_list_male,
                                                                            scores[f'talker{talker}'][comp][cond][
                                                                                'lstm_balanced_avg'][i])
-                                # print(pitchshiftlist.size)
-                            elif cond == 'nopitchshift':
-                                if talker == 1:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+                                        su_highf0_list_male = np.append(su_highf0_list_male,
+                                                                          scores[f'talker{talker}'][comp][cond][
+                                                                              'high_pitch_bal_ac'][i])
+                                        su_lowf0_list_male = np.append(su_lowf0_list_male,
+                                                                         scores[f'talker{talker}'][comp][cond][
+                                                                             'low_pitch_bal_ac'][i])
 
-                                        su_nonpitchshiftlist_female = np.append(su_nonpitchshiftlist_female,
-                                                                                scores[f'talker{talker}'][comp][cond][
-                                                                                    'lstm_balanced_avg'][i])
-                                elif talker == 2:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
-
-                                        su_nonpitchshiftlist_male = np.append(su_nonpitchshiftlist_male,
-                                                                              scores[f'talker{talker}'][comp][cond][
-                                                                                  'lstm_balanced_avg'][i])
 
                         elif clus in multiunitlist_copy:
-                            if cond == 'pitchshift':
-                                if talker == 1:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+                            if talker == 1:
+                                if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+                                    mu_pitchshiftlist_female = np.append(mu_pitchshiftlist_female,
+                                                                         scores[f'talker{talker}'][comp][cond][
+                                                                             'lstm_balanced_avg'][
+                                                                             i])
 
-                                        mu_pitchshiftlist_female = np.append(mu_pitchshiftlist_female,
-                                                                             scores[f'talker{talker}'][comp][cond][
-                                                                                 'lstm_balanced_avg'][
-                                                                                 i])
+                            elif talker == 2:
+                                if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
-                                elif talker == 2:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
-
-                                        mu_pitchshiftlist_male = np.append(mu_pitchshiftlist_male,
-                                                                           scores[f'talker{talker}'][comp][cond][
-                                                                               'lstm_balanced_avg'][
-                                                                               i])
-                                        cluster_list_male_mu = np.append(cluster_list_male_mu, clus)
+                                    mu_pitchshiftlist_male = np.append(mu_pitchshiftlist_male,
+                                                                       scores[f'talker{talker}'][comp][cond][
+                                                                           'lstm_balanced_avg'][
+                                                                           i])
+                                    cluster_list_male_mu = np.append(cluster_list_male_mu, clus)
 
 
-                            if cond == 'nopitchshift':
-                                if talker == 1:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+                            if talker == 1:
+                                if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
-                                        mu_nonpitchshiftlist_female = np.append(mu_nonpitchshiftlist_female,
-                                                                                scores[f'talker{talker}'][comp][cond][
-                                                                                    'lstm_balanced_avg'][i])
+                                    mu_nonpitchshiftlist_female = np.append(mu_nonpitchshiftlist_female,
+                                                                            scores[f'talker{talker}'][comp][cond][
+                                                                                'lstm_balanced_avg'][i])
 
-                                elif talker == 2:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+                            elif talker == 2:
+                                if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
-                                        mu_nonpitchshiftlist_male = np.append(mu_nonpitchshiftlist_male,
-                                                                              scores[f'talker{talker}'][comp][cond][
-                                                                                  'lstm_balanced_avg'][i])
-                                        cluster_list_male_mu_nops= np.append(cluster_list_male_mu_nops, clus)
+                                    mu_nonpitchshiftlist_male = np.append(mu_nonpitchshiftlist_male,
+                                                                          scores[f'talker{talker}'][comp][cond][
+                                                                              'lstm_balanced_avg'][i])
+                                    cluster_list_male_mu_nops= np.append(cluster_list_male_mu_nops, clus)
 
 
                         elif clus in noiselist:
@@ -438,8 +397,7 @@ def main():
     probewordlist_l74 = [(2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
                              (14, 14)]
     animal_list = [ 'F2003_Orecchiette', 'F1901_Crumble', 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala']
-    # animal_list = [  'F1815_Cruella', 'F1901_Crumble',]
-    # animal_list = [ 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1901_Crumble', 'F1812_Nala']
+
 
     #load the report for each animal in animal-list
     report = {}
@@ -499,13 +457,13 @@ def main():
             else:
             #if stream contains BB_2
                 if 'BB_2' in stream:
-                    streamtext = 'bb2'
+                    streamtext = 'BB_2'
                 elif 'BB_3' in stream:
-                    streamtext = 'bb3'
+                    streamtext = 'BB_3'
                 elif 'BB_4' in stream:
-                    streamtext = 'bb4'
+                    streamtext = 'BB_4'
                 elif 'BB_5' in stream:
-                    streamtext = 'bb5'
+                    streamtext = 'BB_5'
                 #remove F number character from animal name
 
                 max_length = len(stream) // 2
@@ -519,26 +477,23 @@ def main():
 
                 print(repeating_substring)
                 rec_name_unique = repeating_substring[0:-1]
-            # rec_name_unique = stream.split('_')[0:3]
+                animal_text = animal_text.lower()
 
             if animal == 'F1604_Squinty':
                 # try:
                 dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
-                                                                saveDir=f'F:/results_31102023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                saveDir=f'F:/results_testonrove_inter_28102023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
                                                                 noiselist=noiselist[animal][stream], stream = stream, fullid = animal)
                 dictoutput_all.append(dictoutput_instance)
-                # except:
-                #     #print the exception
-                #     print(f'no scores for this stream:{stream}, and {animal}')
-                #     pass
+
             elif animal == 'F1606_Windolene':
 
-                # try:
+                # try:F:\results_testonrove_inter_28102023
                 dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
-                                                                saveDir=f'F:/results_31102023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                saveDir=f'F:/results_testonrove_inter_28102023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -550,7 +505,7 @@ def main():
                 #     pass
             elif animal == 'F1815_Cruella' or animal == 'F1902_Eclair' or animal =='F1702_Zola':
                 # try:
-                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_31102023/{animal}/{rec_name_unique}/{streamtext}/',
+                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_testonrove_inter_28102023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal)
                 dictoutput_all.append(dictoutput_instance)
@@ -561,20 +516,17 @@ def main():
             elif animal == 'F2003_Orecchiette':
                 # try:
                 dictoutput_instance = scatterplot_and_visualise(probewordlist,
-                                                                saveDir=f'F:/results_31102023/{animal}/{rec_name_unique}/',
+                                                                saveDir=f'F:/results_testonrove_inter_28102023/{animal}/{rec_name_unique}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
                                                                 noiselist=noiselist[animal][stream], stream=stream,
                                                                 fullid=animal)
                 dictoutput_all.append(dictoutput_instance)
-                # except:
-                #     #print the exception
-                #     print(f'no scores for this stream:{stream}, and {animal}')
-                #     pass
+
             else:
                 # try:
-                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_31102023/{animal}/{rec_name_unique}/{streamtext}/',
+                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_testonrove_inter_28102023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal)
                 dictoutput_all.append(dictoutput_instance)
@@ -729,8 +681,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
 
     plt.legend( fontsize=12, ncol=2)
     fig.tight_layout()
-    plt.savefig('D:/29102023figures/scattermuaandsuregplot_mod_21062023.png', dpi=1000)
-    plt.savefig('D:/29102023figures/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000)
+    ##plt.savefig('D:/29102023figures/scattermuaandsuregplot_mod_21062023.png', dpi=1000)
+    ##plt.savefig('D:/29102023figures/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000)
 
 
     plt.show()
@@ -767,7 +719,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     plt.xlabel('Control - roved F0 \n LSTM decoder scores', fontsize = 20)
     plt.ylabel('Density', fontsize = 20)
     #ax.legend()
-    plt.savefig('D:/29102023figures/diffF0distribution_20062023.png', dpi=1000)
+    #plt.savefig('D:/29102023figures/diffF0distribution_20062023.png', dpi=1000)
     plt.show()
 
     fig, ax = plt.subplots(1, figsize=(8, 8))
@@ -807,7 +759,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     #ax.legend(fontsize = 18)
 
 
-    plt.savefig('D:/29102023figures/diffF0distribution_frac_20062023wlegendintertrialroving.png', dpi=1000)
+    #plt.savefig('D:/29102023figures/diffF0distribution_frac_20062023wlegendintertrialroving.png', dpi=1000)
     plt.show()
 
 
@@ -826,7 +778,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     manwhitscorecontrolf0 = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatenaive_nonps, alternative = 'greater')
 
     #ax.legend()
-    plt.savefig('D:/29102023figures/controlF0distribution20062023intertrialroving.png', dpi=1000)
+    #plt.savefig('D:/29102023figures/controlF0distribution20062023intertrialroving.png', dpi=1000)
 
     plt.show()
 
@@ -842,7 +794,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     manwhitscorerovedf0 = mannwhitneyu(bigconcatenatetrained_ps, bigconcatenatenaive_ps, alternative = 'greater')
 
     ax.legend(fontsize=18)
-    plt.savefig('D:/29102023figures/rovedF0distribution_20062023intertrialroving.png', dpi=1000)
+    #plt.savefig('D:/29102023figures/rovedF0distribution_20062023intertrialroving.png', dpi=1000)
 
     plt.show()
 
@@ -854,7 +806,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     plt.title('Roved and Control F0 Distributions for the Trained Animals', fontsize = 18)
     plt.xlabel(' LSTM decoder scores', fontsize = 20)
 
-    plt.savefig('D:/29102023figures/rovedF0vscontrolF0traineddistribution_20062023intertrialroving.png', dpi=1000)
+    #plt.savefig('D:/29102023figures/rovedF0vscontrolF0traineddistribution_20062023intertrialroving.png', dpi=1000)
 
     plt.show()
 
@@ -866,7 +818,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     plt.xlabel(' LSTM decoder scores', fontsize = 20)
     plt.title('Roved and Control F0 Distributions for the Naive Animals', fontsize = 18)
 
-    plt.savefig('D:/29102023figures/rovedF0vscontrolF0naivedistribution_20062023intertrialroving.png', dpi=1000)
+    #plt.savefig('D:/29102023figures/rovedF0vscontrolF0naivedistribution_20062023intertrialroving.png', dpi=1000)
     plt.show()
     kstestcontrolf0vsrovedtrained = scipy.stats.kstest(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, alternative = 'two-sided')
 

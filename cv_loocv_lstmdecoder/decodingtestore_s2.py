@@ -16,7 +16,7 @@ from datetime import datetime
 from astropy.stats import bootstrap
 import sklearn
 from instruments.helpers.util import simple_xy_axes, set_font_axes
-from instruments.helpers.neural_analysis_helpers import get_word_aligned_raster_zola_cruella
+from instruments.helpers.neural_analysis_helpers import get_word_aligned_raster_ore
 from instruments.helpers.euclidean_classification_minimal_function import classify_sweeps
 # Import standard packages
 import numpy as np
@@ -42,8 +42,10 @@ from Neural_Decoding.decoders import LSTMDecoder, LSTMClassification
 def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, window=[0, 0.5]):
     if talker == 1:
         probeword = probewords[0]
+        talker_text = 'female'
     else:
-        probeword = probewords[1]
+        probeword = probewords[1]  #
+        talker_text = 'male'
     binsize = 0.01
     # window = [0, 0.6]
 
@@ -67,7 +69,14 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
               'perm_ac': [],
               'perm_bal_ac': []}
 
-
+    # scores['cluster_id'].append(cluster_id)
+    # scores['score'].append(score)
+    # scores['lstm_score'].append(np.mean(totalaclist))
+    # scores['lstm_balanced_avg'].append(np.mean(bal_ac_list))
+    # scores['bootScore'].append(bootScore)
+    # scores['lstm_accuracylist'].append(accuracy_list)
+    # scores['lstm_balancedaccuracylist'].append(bal_ac_list)
+    # scores['cm'].append(len(unique_trials_targ) + len(unique_trials_probe))
 
     cluster_id_droplist = np.empty([])
     for cluster_id in tqdm(clust_ids):
@@ -77,20 +86,14 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
         target_filter = ['Target trials', 'No Level Cue']  # , 'Non Correction Trials']
 
         # try:
-        raster_target, raster_targ_compare = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=1,
+        raster_target, raster_targ_compare = get_word_aligned_raster_ore(blocks, cluster_id, word=1,
                                                                                   pitchshift=pitchshift,
                                                                                   correctresp=False,
-                                                                                  df_filter=[])
-        if talker == 1:
-            #any talker that is not 2, 13 or 8
-            raster_target = raster_target[(raster_target['talker'] == 1) | (raster_target['talker'] == 3) | (raster_target['talker'] == 5)]
-        else:
-            raster_target = raster_target[(raster_target['talker'] == 2) | (raster_target['talker'] == 13) | (raster_target['talker'] == 8)]
+                                                                                  df_filter=[], talker=talker_text)
+        raster_target = raster_target.reshape(raster_target.shape[0], )
         if len(raster_target) == 0:
             print('no relevant spikes for this target word:' + str(probeword) + ' and cluster: ' + str(cluster_id))
             continue
-        raster_target = raster_target.reshape(raster_target.shape[0], )
-
 
         # except Exception as error:
         #     print('No relevant target firing')
@@ -100,10 +103,10 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
 
         probe_filter = ['No Level Cue']  # , 'Non Correction Trials']
         # try:
-        raster_probe, raster_probe_compare = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=probeword,
+        raster_probe, raster_probe_compare = get_word_aligned_raster_ore(blocks, cluster_id, word=probeword,
                                                                                   pitchshift=pitchshift,
                                                                                   correctresp=False,
-                                                                                  df_filter=[])
+                                                                                  df_filter=[], talker=talker_text)
         # raster_probe = raster_probe[raster_probe['talker'] == talker]
         raster_probe = raster_probe.reshape(raster_probe.shape[0], )
 
@@ -142,18 +145,17 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
                              range=(window[0], window[1]))[0]
             count += 1
 
-
         if (len(raster_targ_reshaped)) < 5 or (len(raster_probe_reshaped)) < 5:
             print('less than 5 trials for the target or distractor, CV would be overinflated, skipping')
             continue
         if len(raster_targ_reshaped) < 15:
-            #upsample to 15 trials
-            raster_targ_reshaped = raster_targ_reshaped[np.random.choice(len(raster_targ_reshaped), 15, replace=True), :]
+            # upsample to 15 trials
+            raster_targ_reshaped = raster_targ_reshaped[np.random.choice(len(raster_targ_reshaped), 15, replace=True),
+                                   :]
         if len(raster_probe_reshaped) < 15:
-            #upsample to 15 trials
-            raster_probe_reshaped = raster_probe_reshaped[np.random.choice(len(raster_probe_reshaped), 15, replace=True), :]
-
-
+            # upsample to 15 trials
+            raster_probe_reshaped = raster_probe_reshaped[
+                                    np.random.choice(len(raster_probe_reshaped), 15, replace=True), :]
 
         if len(raster_targ_reshaped) >= len(raster_probe_reshaped) * 2:
             print('raster of distractor at least a 1/2 of target raster')
@@ -176,7 +178,9 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
 
         stim0 = np.full(len(raster_targ_reshaped), 0)  # 0 = target word
         stim1 = np.full(len(raster_probe_reshaped), 1)  # 1 = probe word
-
+        if (len(stim0)) < 3 or (len(stim1)) < 3:
+            print('less than 3 trials for the target or distractor, skipping')
+            continue
 
         stim_lstm = np.concatenate((stim0, stim1))
 
@@ -202,7 +206,7 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
         # break X and y into time bins from 1 to k
         X_bin = X[:, :].copy()
         y_bin = y[:, :].copy()
-        #shuffle X_bin 100 times as a way of doing a permutation test
+        # shuffle X_bin 100 times as a way of doing a permutation test
         X_bin_shuffled = X_bin.copy()
         row_mapping = []
 
@@ -219,7 +223,7 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
         #         if np.array_equal(row_to_find, X_bin_shuffled[j]):
         #             row_mapping.append(j)
         #             break
-#
+        #
 
         outsideloopacclist = []
         perm_outsideloopacclist = []
@@ -246,11 +250,11 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
                 y_pred_permutationtest = model_lstm_permutationtest.model(X_bin_shuffled[test], training=False)
                 y_pred_permutationtest = np.argmax(y_pred_permutationtest, axis=1)
 
-
                 accuracy = sklearn.metrics.accuracy_score(y_bin[test].flatten(), y_pred.flatten())
                 perm_accuracy = sklearn.metrics.accuracy_score(y_bin[test].flatten(), y_pred_permutationtest.flatten())
                 balancedacscore = sklearn.metrics.balanced_accuracy_score(y_bin[test].flatten(), y_pred.flatten())
-                perm_balancedacscore = sklearn.metrics.balanced_accuracy_score(y_bin[test].flatten(), y_pred_permutationtest.flatten())
+                perm_balancedacscore = sklearn.metrics.balanced_accuracy_score(y_bin[test].flatten(),
+                                                                               y_pred_permutationtest.flatten())
 
                 bal_ac_list.append(balancedacscore)
                 perm_bal_ac_list.append(perm_balancedacscore)
@@ -294,7 +298,7 @@ def probe_early_vs_late(blocks, talker=1, noise=True, df_filter=['No Level Cue']
               'cm': [], }
     for cluster_id in tqdm(clust_ids):
         # df_filter = ['No Level Cue'] #, 'Non Correction Trials']
-        raster = get_word_aligned_raster_zola_cruella(blocks, cluster_id, noise=noise, df_filter=df_filter)
+        raster = get_word_aligned_raster_ore(blocks, cluster_id, noise=noise, df_filter=df_filter)
         raster = raster[raster['talker'] == talker]
 
         stim = np.zeros(len(raster), dtype=np.int64)
@@ -424,13 +428,6 @@ def save_pdf_classification_lstm(scores, saveDir, title, probeword):
                     talkestring = 'Male'
                 # plt.title('LSTM classification scores for extracted units,'+ talkestring+' talker')
                 ax.legend()
-                #
-                # ax.scatter(x - width / 2 - 0.01, yerrmax[conditions[0]], c='black', marker='_', s=50)
-                # ax.scatter(x - width / 2 - 0.01, yerrmin[conditions[0]], c='black', marker='_', s=50)
-                # ax.scatter(x + width / 2 + 0.01, yerrmax[conditions[1]], c='black', marker='_', s=50)
-                # ax.scatter(x + width / 2 + 0.01, yerrmin[conditions[1]], c='black', marker='_', s=50)
-                # ax.scatter(range(len(scores)), yerrmax, c='black', marker='_', s=10)
-                # ax.scatter(range(len(scores)), yerrmin, c='black', marker='_', s=10)
 
                 n_trials = {}
                 trial_string = ''
@@ -514,28 +511,30 @@ def save_pdf_classification_lstm_bothtalker(scores, saveDir, title):
 
 
 def run_classification(dir, datapath, ferretid):
-    fname = 'new_blocks.pkl'
-    with open(datapath / 'new_blocks.pkl', 'rb') as f:
+    with open(datapath / 'blocks.pkl', 'rb') as f:
         blocks = pickle.load(f)
 
     scores = {}
-    probewords_list = [(5, 6), (42, 49), (32, 38), (2, 2), (20, 22), ]
+    probewords_list = [(2, 2), (20, 22), (5, 6), (42, 49), (32, 38)]
+    # probewords_list = [(5, 6), (42, 49), (32, 38)]
+
+    # probewords_list = [(42, 49), (32, 38)]
+
     # probewords_list = [(2, 2)]
     # probewords_list = [(32, 38)]
 
-    now = datetime.now()
-    dt_string = now.strftime("%d%m%Y_%H_%M_%S")
-
-    dt_string = now.strftime("%d%m%Y_%H_%M_%S")
+    recname = str(datapath).split('\\')[-4]
+    print('recname')
+    print(recname)
 
     tarDir = Path(
-        f'/zceccgr/lstmdecodingproject/leavepoutcrossvalidationlstmdecoder/results_16092023/F1901_Crumble/bb3inter/')
+        f'G:/results_TEST/F2003_Orecchiette/{recname}/')
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
     for probeword in probewords_list:
         print('now starting')
         print(probeword)
-        for talker in [1]:
+        for talker in [1, 2]:
             if talker == 1:
                 window = [0, 0.6]
             else:
@@ -562,11 +561,11 @@ def run_classification(dir, datapath, ferretid):
 
 def main():
     directories = [
-        'crumble_2022']  # , 'Trifle_July_2022']/home/zceccgr/Scratch/zceccgr/ms4output/F1702_Zola/spkenvresults04102022allrowsbut4th
+        'orecchiette_2022']  # , 'Trifle_July_2022']/home/zceccgr/Scratch/zceccgr/ms4output/F1702_Zola/spkenvresults04102022allrowsbut4th
 
     datapath = Path(
-        f'E:\ms4output2\F1901_Crumble\BB2BB3_crumble_29092023_2\BB2BB3_crumble_29092023_BB2BB3_crumble_29092023_BB_3\mountainsort4\phy/')
-    ferretid = 'crumble'
+        f'G:\F2003_Orecchiette/recording_0\pykilosort\phy/')
+    ferretid = 'orecchiette'
 
     for dir in directories:
         run_classification(dir, datapath, ferretid)
