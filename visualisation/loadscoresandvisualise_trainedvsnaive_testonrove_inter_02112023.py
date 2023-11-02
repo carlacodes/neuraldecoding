@@ -43,19 +43,27 @@ def scatterplot_and_visualise(probewordlist,
     noiselist = [x - 1 for x in noiselist]
     original_cluster_list = np.empty([0])
 
-    su_pitchshiftlist_female = np.empty([0])
-    su_pitchshiftlist_male = np.empty([0])
 
-    su_nonpitchshiftlist_female = np.empty([0])
-    su_nonpitchshiftlist_male = np.empty([0])
+    su_highf0_list_male = np.empty([0])
+    mu_highf0_list_male = np.empty([0])
 
-    mu_pitchshiftlist_female = np.empty([0])
-    mu_pitchshiftlist_male = np.empty([0])
+    mu_lowf0_list_male = np.empty([0])
+    su_lowf0_list_male = np.empty([0])
 
-    mu_nonpitchshiftlist_female = np.empty([0])
-    mu_nonpitchshiftlist_male = np.empty([0])
-    cluster_list_male_mu_nops = np.empty([0])
-    cluster_list_male_mu = np.empty([0])
+    mu_lowf0_list_female = np.empty([0])
+    su_lowf0_list_female = np.empty([0])
+    su_highf0_list_female = np.empty([0])
+    mu_highf0_list_female = np.empty([0])
+
+
+    su_control_list_female = np.empty([0])
+    mu_control_list_female = np.empty([0])
+
+    su_control_list_male = np.empty([0])
+    mu_control_list_male = np.empty([0])
+
+
+
     for probeword in probewordlist:
         singleunitlist_copy = singleunitlist.copy()
         multiunitlist_copy = multiunitlist.copy()
@@ -172,7 +180,6 @@ def scatterplot_and_visualise(probewordlist,
                     for i, clus in enumerate(scores[f'talker{talker}'][comp][cond]['cluster_id']):
                         print(i, clus)
                         if clus in singleunitlist_copy:
-                            print('in single unit list')
                             if talker == 1:
                                 if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
                                     su_control_list_female = np.append(su_control_list_female,
@@ -185,75 +192,100 @@ def scatterplot_and_visualise(probewordlist,
                                                                          scores[f'talker{talker}'][comp][cond][
                                                                              'low_pitch_bal_ac'][i])
 
-                                elif talker == 2:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
-                                        su_control_list_male = np.append(su_control_list_male,
-                                                                           scores[f'talker{talker}'][comp][cond][
-                                                                               'lstm_balanced_avg'][i])
-                                        su_highf0_list_male = np.append(su_highf0_list_male,
-                                                                          scores[f'talker{talker}'][comp][cond][
-                                                                              'high_pitch_bal_ac'][i])
-                                        su_lowf0_list_male = np.append(su_lowf0_list_male,
-                                                                         scores[f'talker{talker}'][comp][cond][
-                                                                             'low_pitch_bal_ac'][i])
+                            elif talker == 2:
+                                if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+                                    su_control_list_male = np.append(su_control_list_male,
+                                                                       scores[f'talker{talker}'][comp][cond][
+                                                                           'lstm_balanced_avg'][i])
+                                    su_highf0_list_male = np.append(su_highf0_list_male,
+                                                                      scores[f'talker{talker}'][comp][cond][
+                                                                          'high_pitch_bal_ac'][i])
+                                    su_lowf0_list_male = np.append(su_lowf0_list_male,
+                                                                     scores[f'talker{talker}'][comp][cond][
+                                                                         'low_pitch_bal_ac'][i])
 
 
                         elif clus in multiunitlist_copy:
                             if talker == 1:
                                 if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
-                                    mu_pitchshiftlist_female = np.append(mu_pitchshiftlist_female,
-                                                                         scores[f'talker{talker}'][comp][cond][
-                                                                             'lstm_balanced_avg'][
-                                                                             i])
-
-                            elif talker == 2:
-                                if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
-
-                                    mu_pitchshiftlist_male = np.append(mu_pitchshiftlist_male,
+                                    mu_control_list_female = np.append(mu_control_list_female,
                                                                        scores[f'talker{talker}'][comp][cond][
-                                                                           'lstm_balanced_avg'][
-                                                                           i])
-                                    cluster_list_male_mu = np.append(cluster_list_male_mu, clus)
-
-
-                            if talker == 1:
-                                if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
-
-                                    mu_nonpitchshiftlist_female = np.append(mu_nonpitchshiftlist_female,
-                                                                            scores[f'talker{talker}'][comp][cond][
-                                                                                'lstm_balanced_avg'][i])
+                                                                           'lstm_balanced_avg'][i])
+                                    mu_highf0_list_female = np.append(mu_highf0_list_female,
+                                                                      scores[f'talker{talker}'][comp][cond][
+                                                                          'high_pitch_bal_ac'][i])
+                                    mu_lowf0_list_female = np.append(mu_lowf0_list_female,
+                                                                     scores[f'talker{talker}'][comp][cond][
+                                                                         'low_pitch_bal_ac'][i])
 
                             elif talker == 2:
                                 if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
+                                    mu_control_list_male = np.append(mu_control_list_male,
+                                                                       scores[f'talker{talker}'][comp][cond][
+                                                                           'lstm_balanced_avg'][i])
+                                    mu_highf0_list_male = np.append(mu_highf0_list_male,
+                                                                      scores[f'talker{talker}'][comp][cond][
+                                                                          'high_pitch_bal_ac'][i])
+                                    mu_lowf0_list_male = np.append(mu_lowf0_list_male,
+                                                                     scores[f'talker{talker}'][comp][cond][
+                                                                         'low_pitch_bal_ac'][i])
 
-                                    mu_nonpitchshiftlist_male = np.append(mu_nonpitchshiftlist_male,
-                                                                          scores[f'talker{talker}'][comp][cond][
-                                                                              'lstm_balanced_avg'][i])
-                                    cluster_list_male_mu_nops= np.append(cluster_list_male_mu_nops, clus)
+
+
 
 
                         elif clus in noiselist:
                             pass
 
+    # su_highf0_list_male = np.empty([0])
+    # mu_highf0_list_male = np.empty([0])
+    #
+    # mu_lowf0_list_male = np.empty([0])
+    # su_lowf0_list_male = np.empty([0])
+    #
+    # mu_lowf0_list_female = np.empty([0])
+    # su_lowf0_list_female = np.empty([0])
+    # su_highf0_list_female = np.empty([0])
+    # mu_highf0_list_female = np.empty([0])
+    #
+    # su_control_list_female = np.empty([0])
+    # mu_control_list_female = np.empty([0])
+    #
+    # su_control_list_male = np.empty([0])
+    # mu_control_list_male = np.empty([0])
 
-    dictofsortedscores = {'su_list': {'pitchshift': {'female_talker': {},
+    dictofsortedscores = {'su_list': {'highf0': {'female_talker': {},
                                                      'male_talker': {}},
-                                      'nonpitchshift': {'female_talker': {},
-                                                        'male_talker': {}}},
-                          'mu_list': {'pitchshift': {'female_talker': {},
+                                      'controlf0': {'female_talker': {},
+                                                        'male_talker': {}},
+                                         'lowf0': {'female_talker': {},
+                                                        'male_talker': {}}
+                                      },
+                          'mu_list': {'highf0': {'female_talker': {},
                                                      'male_talker': {}},
-                                      'nonpitchshift': {'female_talker': {},
-                                                        'male_talker': {}}}}
+                                      'controlf0': {'female_talker': {},
+                                                        'male_talker': {}},
+                                         'lowf0': {'female_talker': {},
+                                                        'male_talker': {}}
+                                      },}
 
-    dictofsortedscores['su_list']['pitchshift']['female_talker'] = su_pitchshiftlist_female
-    dictofsortedscores['su_list']['pitchshift']['male_talker'] = su_pitchshiftlist_male
-    dictofsortedscores['su_list']['nonpitchshift']['female_talker'] = su_nonpitchshiftlist_female
-    dictofsortedscores['su_list']['nonpitchshift']['male_talker'] = su_nonpitchshiftlist_male
+    dictofsortedscores['su_list']['highf0']['female_talker'] = su_highf0_list_female
+    dictofsortedscores['su_list']['highf0']['male_talker'] = su_highf0_list_male
+    dictofsortedscores['su_list']['controlf0']['female_talker'] = su_control_list_female
+    dictofsortedscores['su_list']['controlf0']['male_talker'] = su_control_list_male
+    dictofsortedscores['su_list']['lowf0']['female_talker'] = su_lowf0_list_female
+    dictofsortedscores['su_list']['lowf0']['male_talker'] = su_lowf0_list_male
 
-    dictofsortedscores['mu_list']['pitchshift']['female_talker'] = mu_pitchshiftlist_female
-    dictofsortedscores['mu_list']['pitchshift']['male_talker'] = mu_pitchshiftlist_male
-    dictofsortedscores['mu_list']['nonpitchshift']['female_talker'] = mu_nonpitchshiftlist_female
-    dictofsortedscores['mu_list']['nonpitchshift']['male_talker'] = mu_nonpitchshiftlist_male
+    dictofsortedscores['mu_list']['highf0']['female_talker'] = mu_highf0_list_female
+    dictofsortedscores['mu_list']['highf0']['male_talker'] = mu_highf0_list_male
+    dictofsortedscores['mu_list']['controlf0']['female_talker'] = mu_control_list_female
+    dictofsortedscores['mu_list']['controlf0']['male_talker'] = mu_control_list_male
+    dictofsortedscores['mu_list']['lowf0']['female_talker'] = mu_lowf0_list_female
+    dictofsortedscores['mu_list']['lowf0']['male_talker'] = mu_lowf0_list_male
+
+
+
+
 
     return dictofsortedscores
 
