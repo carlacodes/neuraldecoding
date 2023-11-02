@@ -428,7 +428,7 @@ def main():
     probewordlist = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
     probewordlist_l74 = [(2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
                              (14, 14)]
-    animal_list = [ 'F2003_Orecchiette', 'F1901_Crumble', 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala']
+    animal_list = [ 'F1901_Crumble', 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala']
 
 
     #load the report for each animal in animal-list
@@ -623,274 +623,96 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
         emptydict[keys] = np.asarray(emptydict[keys])
 
 
-    for dictoutput in dictlist:
-        for key in dictoutput.keys():
-            for key3 in dictoutput[key]['pitchshift'].keys():
-                if len(dictoutput[key]['nonpitchshift'][key3]) < len(
-                        dictoutput[key]['pitchshift'][key3]):
-                    dictoutput[key]['pitchshift'][key3] = \
-                        dictoutput[key]['pitchshift'][key3][
-                        :len(dictoutput[key]['nonpitchshift'][key3])]
-                elif len(dictoutput[key]['nonpitchshift'][key3]) > len(
-                        dictoutput[key]['pitchshift'][key3]):
-                    dictoutput[key]['nonpitchshift'][key3] = \
-                        dictoutput[key]['nonpitchshift'][key3][
-                        :len(dictoutput[key]['pitchshift'][key3])]
+    # for dictoutput in dictlist:
+    #     for key in dictoutput.keys():
+    #         for key3 in dictoutput[key]['highf0'].keys():
+    #             if len(dictoutput[key]['controlf0'][key3]) < len(
+    #                     dictoutput[key]['pitchshift'][key3]):
+    #                 dictoutput[key]['pitchshift'][key3] = \
+    #                     dictoutput[key]['pitchshift'][key3][
+    #                     :len(dictoutput[key]['nonpitchshift'][key3])]
+    #             elif len(dictoutput[key]['nonpitchshift'][key3]) > len(
+    #                     dictoutput[key]['pitchshift'][key3]):
+    #                 dictoutput[key]['nonpitchshift'][key3] = \
+    #                     dictoutput[key]['nonpitchshift'][key3][
+    #                     :len(dictoutput[key]['pitchshift'][key3])]
 
-    bigconcatenatetrained_ps = np.empty(0)
-    bigconcatenatetrained_nonps = np.empty(0)
+    bigconcatenatetrained_control_f0 = np.empty(0)
+    bigconcatenatetrained_high_f0 = np.empty(0)
+    bigconcatenatetrained_low_f0 = np.empty(0)
+
     for dictouput in dictlist_trained:
         for key in dictouput.keys():
-            for key3 in dictouput[key]['pitchshift'].keys():
-                bigconcatenatetrained_ps = np.concatenate(
-                    (bigconcatenatetrained_ps, dictouput[key]['pitchshift'][key3]))
-                bigconcatenatetrained_nonps = np.concatenate(
-                    (bigconcatenatetrained_nonps, dictouput[key]['nonpitchshift'][key3]))
+            for key3 in dictouput[key]['highf0'].keys():
+                bigconcatenatetrained_control_f0 = np.concatenate(
+                    (bigconcatenatetrained_control_f0, dictouput[key]['controlf0'][key3]))
+                bigconcatenatetrained_high_f0 = np.concatenate(
+                    (bigconcatenatetrained_high_f0, dictouput[key]['highf0'][key3]))
+                bigconcatenatetrained_low_f0 = np.concatenate(
+                    (bigconcatenatetrained_low_f0, dictouput[key]['lowf0'][key3]))
 
-
-    bigconcatenatenaive_ps = np.empty(0)
-    bigconcatenatenaive_nonps = np.empty(0)
+    bigconcatenatenaive_control_f0 = np.empty(0)
+    bigconcatenatenaive_high_f0 = np.empty(0)
+    bigconcatenatenaive_low_f0 = np.empty(0)
 
     for dictouput in dictlist_naive:
         for key in dictouput.keys():
-            # print(key, 'key')
-            for key3 in dictouput[key]['pitchshift'].keys():
-                # print(key3, 'key3')
-                bigconcatenatenaive_ps = np.concatenate((bigconcatenatenaive_ps, dictouput[key]['pitchshift'][key3]))
-                bigconcatenatenaive_nonps = np.concatenate(
-                    (bigconcatenatenaive_nonps, dictouput[key]['nonpitchshift'][key3]))
+            for key3 in dictouput[key]['highf0'].keys():
+                bigconcatenatenaive_control_f0 = np.concatenate(
+                    (bigconcatenatenaive_control_f0, dictouput[key]['controlf0'][key3]))
+                bigconcatenatenaive_high_f0 = np.concatenate(
+                    (bigconcatenatenaive_high_f0, dictouput[key]['highf0'][key3]))
+                bigconcatenatenaive_low_f0 = np.concatenate(
+                    (bigconcatenatenaive_low_f0, dictouput[key]['lowf0'][key3]))
+
+    #do a barplot of the lstm scores for the trained and naive animals
+    #do a barplot of the lstm scores for the trained and naive animals
+    #
+    #make a dataframe outof the bigconcatenatetrained_control_f0
+    #make a dataframe outof the bigconcatenatet
+
+    #plot with error bars
+
+    fig, ax = plt.subplots(1, figsize=(5, 8))
+    #plot with error bars
 
 
-    # Define labels and colors for scatter plots
-    #plot scatter data in a loop
-    # for i, (data_dict, label, color) in enumerate(zip(dictlist, labels, colors)):
-    #     ax.scatter(data_dict['mu_list']['nonpitchshift']['female_talker'],data_dict['mu_list']['pitchshift']['female_talker'], marker='P',
-    #                facecolors =color, edgecolors = color, alpha=0.5)
-    #     ax.scatter(data_dict['su_list']['nonpitchshift']['female_talker'],data_dict['su_list']['pitchshift']['female_talker'], marker='P', color=color, alpha=0.5)
+    ax.bar(0, np.mean(bigconcatenatetrained_high_f0), color = 'red', label = 'high f0')
+    std_dev = np.std(bigconcatenatetrained_high_f0)
+    ax.errorbar(0, np.mean(bigconcatenatetrained_high_f0), yerr = std_dev, color = 'black')
+
+    ax.bar(1, np.mean(bigconcatenatetrained_control_f0), color = 'blue', label = 'control')
+    std_dev = np.std(bigconcatenatetrained_control_f0)
+    ax.errorbar(1, np.mean(bigconcatenatetrained_control_f0), yerr = std_dev, color = 'black')
+
+    ax.bar(2, np.mean(bigconcatenatetrained_low_f0), color = 'green', label = 'low f0')
+    std_dev = np.std(bigconcatenatetrained_low_f0)
+    ax.errorbar(2, np.mean(bigconcatenatetrained_low_f0), yerr = std_dev, color = 'black')
 
 
-    if bigconcatenatenaive_nonps.size > bigconcatenatenaive_ps.size:
-        len(bigconcatenatenaive_ps)
-        bigconcatenatenaive_nonps = bigconcatenatenaive_nonps[:bigconcatenatenaive_ps.size]
-    elif bigconcatenatenaive_nonps.size < bigconcatenatenaive_ps.size:
-        bigconcatenatenaive_ps = bigconcatenatenaive_ps[:bigconcatenatenaive_nonps.size]
+    ax.bar(3, np.mean(bigconcatenatenaive_high_f0), color = 'red')
+    std_dev = np.std(bigconcatenatenaive_high_f0)
+    ax.errorbar(3, np.mean(bigconcatenatenaive_high_f0), yerr = std_dev, color = 'black')
+    ax.bar(4, np.mean(bigconcatenatenaive_control_f0), color = 'blue')
+    std_dev = np.std(bigconcatenatenaive_control_f0)
+    ax.errorbar(4, np.mean(bigconcatenatenaive_control_f0), yerr = std_dev, color = 'black')
+    ax.bar(5, np.mean(bigconcatenatenaive_low_f0), color = 'green')
+    std_dev = np.std(bigconcatenatenaive_low_f0)
+    ax.errorbar(5, np.mean(bigconcatenatenaive_low_f0), yerr = std_dev, color = 'black')
 
-    if bigconcatenatetrained_nonps.size > bigconcatenatetrained_ps.size:
-        bigconcatenatetrained_nonps = bigconcatenatetrained_nonps[:bigconcatenatetrained_ps.size]
-    elif bigconcatenatetrained_nonps.size < bigconcatenatetrained_ps.size:
-        bigconcatenatetrained_ps = bigconcatenatetrained_ps[:bigconcatenatetrained_nonps.size]
-
-    fig, ax = plt.subplots(1, figsize=(9, 9), dpi=300)
-    ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.8, label='trained', s=0.1)
-
-    plt.title('trained animals, number of points: ' + str(len(bigconcatenatetrained_ps)))
-    plt.show()
-    unique_scores = np.unique(bigconcatenatetrained_ps)
-    len(unique_scores)
-
-
-    fig, ax = plt.subplots(1, figsize=(9,9), dpi=300)
-
-    ax.scatter(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, marker='P', color='darkcyan', alpha=0.5, label='naive')
-    ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.5, label='trained')
-    x = np.linspace(0.4, 1, 101)
-    ax.plot(x, x, color='black', linestyle = '--')  # identity line
-
-    slope, intercept, r_value, pv, se = stats.linregress(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)
-
-    sns.regplot(x=bigconcatenatetrained_nonps, y=bigconcatenatetrained_ps, scatter=False, color='purple',
-                label=' $y=%3.7s*x+%3.7s$' % (slope, intercept), ax=ax, line_kws={'label': ' $y=%3.7s*x+%3.7s$' % (slope, intercept)})
-    slope, intercept, r_value, pv, se = stats.linregress(bigconcatenatenaive_nonps, bigconcatenatenaive_ps)
-
-    sns.regplot(x=bigconcatenatenaive_nonps, y=bigconcatenatenaive_ps, scatter=False, color='darkcyan', label=' $y=%3.7s*x+%3.7s$' % (slope, intercept),
-                ax=ax, line_kws={'label': '$y=%3.7s*x+%3.7s$' % (slope, intercept)})
-
-    ax.set_ylabel('LSTM decoding score, F0 roved', fontsize=18)
-    ax.set_xlabel('LSTM decoding score, F0 control', fontsize=18)
-
-    ax.set_title('LSTM decoder scores for' + ' F0 control vs. roved,\n ' + ' trained and naive animals', fontsize=20)
-
-
-    plt.legend( fontsize=12, ncol=2)
-    fig.tight_layout()
-    ##plt.savefig('D:/29102023figures/scattermuaandsuregplot_mod_21062023.png', dpi=1000)
-    ##plt.savefig('D:/29102023figures/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000)
-
-
-    plt.show()
-
-    #histogram distribution of the trained and naive animals
-    fig, ax = plt.subplots(1, figsize=(8, 8))
-    #relativescoretrained = abs(bigconcatenatetrained_nonps - bigconcatenatetrained_ps)/ bigconcatenatetrained_ps
-
-    relativescoretrained = [bigconcatenatetrained_nonps - bigconcatenatetrained_ps for bigconcatenatetrained_nonps, bigconcatenatetrained_ps in zip(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)]
-    relativescorenaive = [bigconcatenatenaive_nonps - bigconcatenatenaive_ps for bigconcatenatenaive_nonps, bigconcatenatenaive_ps in zip(bigconcatenatenaive_ps, bigconcatenatenaive_nonps)]
-    relativescoretrainedfrac = [relativescoretrained / (bigconcatenatetrained_nonps + bigconcatenatenaive_nonps) for relativescoretrained, bigconcatenatetrained_nonps, bigconcatenatenaive_nonps in zip(relativescoretrained, bigconcatenatetrained_nonps, bigconcatenatenaive_nonps)]
-    relativescorenaivefrac = [relativescorenaive / (bigconcatenatenaive_nonps + bigconcatenatetrained_nonps) for relativescorenaive, bigconcatenatenaive_nonps, bigconcatenatetrained_nonps in zip(relativescorenaive, bigconcatenatenaive_nonps, bigconcatenatetrained_nonps)]
-
-
-
-    sns.distplot(relativescoretrained, bins = 20, label='trained',ax=ax, color='purple')
-    sns.distplot(relativescorenaive, bins = 20, label='naive', ax=ax, color='darkcyan')
-    plt.axvline(x=0, color='black')
-    #man whiteney test score
-
-
-    manwhitscore = mannwhitneyu(relativescoretrained, relativescorenaive, alternative = 'greater')
-    sample1 = np.random.choice(relativescoretrained, size=10000, replace=True)
-
-    # Generate a random sample of size 100 from data2 with replacement
-    sample2 = np.random.choice(relativescorenaive, size=10000, replace=True)
-
-    # Perform a t-test on the samples
-    t_stat, p_value = stats.ttest_ind(sample1, sample2, alternative='greater')
-
-    # Print the t-statistic and p-value
-    print(t_stat, p_value)
-    plt.title('Control - roved F0 \n LSTM decoder scores between trained and naive animals', fontsize = 18)
-    plt.xlabel('Control - roved F0 \n LSTM decoder scores', fontsize = 20)
-    plt.ylabel('Density', fontsize = 20)
-    #ax.legend()
-    #plt.savefig('D:/29102023figures/diffF0distribution_20062023.png', dpi=1000)
-    plt.show()
-
-    fig, ax = plt.subplots(1, figsize=(8, 8))
-    ax = sns.distplot(relativescoretrainedfrac, bins = 20, label='trained',ax=ax, color='purple')
-    x = ax.lines[-1].get_xdata()  # Get the x data of the distribution
-    y = ax.lines[-1].get_ydata()  # Get the y data of the distribution
-    maxidtrained_idx = np.argmax(y)
-    x_coord_trained = x[maxidtrained_idx]
-
-
-    ax2 = sns.distplot(relativescorenaivefrac, bins = 20, label='naive', ax=ax, color='darkcyan')
-
-    x2 = ax2.lines[-1].get_xdata()  # Get the x data of the distribution
-    y2 = ax2.lines[-1].get_ydata()  # Get the y data of the distribution
-    maxidnaive_idx = np.argmax(y2)  # The id of the peak (maximum of y data)
-
-    x_coord_naive = x2[maxidnaive_idx]
-    plt.axvline(x=0, color='black')
-    kstestnaive = scipy.stats.kstest(relativescorenaivefrac,  stats.norm.cdf)
-    leveneteststat = scipy.stats.levene(relativescorenaivefrac, relativescoretrainedfrac)
-    manwhitscorefrac = mannwhitneyu(relativescorenaivefrac, relativescoretrainedfrac, alternative = 'less')
-    #caclulate medians of distribution
-
-    sample1_trained = np.random.choice(relativescoretrainedfrac, size=10000, replace=True)
-
-    # Generate a random sample of size 100 from data2 with replacement
-    sample2_naive = np.random.choice(relativescorenaive, size=10000, replace=True)
-
-    # Perform a t-test on the samples
-    t_statfrac, p_valuefrac = stats.ttest_ind(sample2_naive, sample1_trained, alternative='less')
-
-    # Print the t-statistic and p-value
-    print(t_statfrac, p_valuefrac)
-    plt.title('Control - roved F0 \n LSTM decoder scores between trained and naive animals', fontsize = 18)
-    plt.xlabel('Control - roved F0 \n LSTM decoder scores divided by control F0', fontsize = 20)
-    plt.ylabel('Density', fontsize = 20)
-    #ax.legend(fontsize = 18)
-
-
-    #plt.savefig('D:/29102023figures/diffF0distribution_frac_20062023wlegendintertrialroving.png', dpi=1000)
+    ax.set_xticks([0,1,2,3,4,5])
+    ax.set_xticklabels(['control', 'high f0', 'low f0', 'control - naive', 'high f0 - naive', 'low f0 - naive'])
+    ax.set_ylabel('lstm decoding score')
+    ax.set_title('lstm decoding score for trained and naive animals')
+    ax.legend()
     plt.show()
 
 
 
-    fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
-    ax.set_xlim([0,1])
-
-    sns.distplot(bigconcatenatetrained_nonps,  label='trained',ax=ax, color='purple')
-    sns.distplot(bigconcatenatenaive_nonps, label='naive', ax=ax, color='darkcyan')
-    #plt.axvline(x=0, color='black')
-    #man whiteney test score
-    plt.title('Control F0 LSTM decoder scores between  \n trained and naive animals', fontsize = 18)
-    plt.xlabel('Control F0 LSTM decoder scores', fontsize = 20)
-
-    plt.ylabel('Density', fontsize = 20)
-    manwhitscorecontrolf0 = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatenaive_nonps, alternative = 'greater')
-
-    #ax.legend()
-    #plt.savefig('D:/29102023figures/controlF0distribution20062023intertrialroving.png', dpi=1000)
-
-    plt.show()
-
-    fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
-    ax.set_xlim([0,1])
-    sns.distplot(bigconcatenatetrained_ps,  label='trained',ax=ax, color='purple')
-    sns.distplot(bigconcatenatenaive_ps, label='naive', ax=ax, color='darkcyan')
-    #man whiteney test score
-    #manwhitscore = mannwhitneyu(relativescoretrained, relativescorenaive, alternative = 'greater')
-    plt.title('Roved F0 LSTM decoder scores between  \n trained and naive animals', fontsize = 18)
-    plt.xlabel('Roved F0 LSTM decoder scores', fontsize = 20)
-    plt.ylabel('Density', fontsize = 20)
-    manwhitscorerovedf0 = mannwhitneyu(bigconcatenatetrained_ps, bigconcatenatenaive_ps, alternative = 'greater')
-
-    ax.legend(fontsize=18)
-    #plt.savefig('D:/29102023figures/rovedF0distribution_20062023intertrialroving.png', dpi=1000)
-
-    plt.show()
-
-    fig, ax = plt.subplots(1, figsize=(8, 8), dpi = 800)
-    ax.set_xlim([0,1])
-    sns.distplot(bigconcatenatetrained_ps,  label='trained roved',ax=ax, color='purple')
-    sns.distplot(bigconcatenatetrained_nonps,  label='trained control',ax=ax, color='magenta')
-    ax.legend(fontsize=18)
-    plt.title('Roved and Control F0 Distributions for the Trained Animals', fontsize = 18)
-    plt.xlabel(' LSTM decoder scores', fontsize = 20)
-
-    #plt.savefig('D:/29102023figures/rovedF0vscontrolF0traineddistribution_20062023intertrialroving.png', dpi=1000)
-
-    plt.show()
-
-    fig, ax = plt.subplots(1, figsize=(8, 8), dpi = 800)
-    ax.set_xlim([0,1])
-    sns.distplot(bigconcatenatenaive_ps,  label='naive roved',ax=ax, color='darkcyan')
-    sns.distplot(bigconcatenatenaive_nonps,  label='naive control',ax=ax, color='cyan')
-    ax.legend(fontsize=18)
-    plt.xlabel(' LSTM decoder scores', fontsize = 20)
-    plt.title('Roved and Control F0 Distributions for the Naive Animals', fontsize = 18)
-
-    #plt.savefig('D:/29102023figures/rovedF0vscontrolF0naivedistribution_20062023intertrialroving.png', dpi=1000)
-    plt.show()
-    kstestcontrolf0vsrovedtrained = scipy.stats.kstest(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, alternative = 'two-sided')
-
-    kstestcontrolf0vsrovednaive = scipy.stats.kstest(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, alternative='two-sided')
-
-    naivearray=np.concatenate((np.zeros((len(bigconcatenatetrained_nonps)+len(bigconcatenatetrained_ps),1)), np.ones((len(bigconcatenatenaive_nonps)+len(bigconcatenatenaive_ps),1))))
-    trainedarray=np.concatenate((np.ones((len(bigconcatenatetrained_nonps)+len(bigconcatenatetrained_ps),1)), np.zeros((len(bigconcatenatenaive_nonps)+len(bigconcatenatenaive_ps),1))))
-    controlF0array=np.concatenate((np.ones((len(bigconcatenatetrained_nonps),1)), np.zeros((len(bigconcatenatetrained_ps),1)), np.ones((len(bigconcatenatenaive_nonps),1)), np.zeros((len(bigconcatenatenaive_ps),1))))
-    rovedF0array = np.concatenate((np.zeros((len(bigconcatenatetrained_nonps),1)), np.ones((len(bigconcatenatetrained_ps),1)), np.zeros((len(bigconcatenatenaive_nonps),1)), np.ones((len(bigconcatenatenaive_ps),1))))
-    scores = np.concatenate((bigconcatenatetrained_nonps, bigconcatenatetrained_ps, bigconcatenatenaive_nonps, bigconcatenatenaive_ps))
-
-    dataset = pd.DataFrame({'trained': trainedarray[:,0], 'naive': naivearray[:,0], 'controlF0': controlF0array[:,0], 'rovedF0': rovedF0array[:,0], 'scores': scores})
-
-    import statsmodels.api as sm
-    from statsmodels.formula.api import ols
-    model = ols('scores ~ C(trained) + C(controlF0) ', data=dataset).fit()
-    print(model.summary())
-    table = sm.stats.anova_lm(model, typ=2)
-    print(table)
-    from statsmodels.iolib.summary2 import summary_col
-
-
-
-    res = summary_col([model], regressor_order=model.params.index.tolist())
-
-    df = pd.DataFrame(model.summary().tables[1])
-    res.tables[0].to_csv("D:/29102023figures/trainedrovescores.csv")
-
-    df2= pd.DataFrame(table)
-
-    csvexport2 = df2.to_csv('D:/29102023figures/trainedrovescores2.csv')
-
-    # Save the DataFrame to a CSV file
-    df.to_csv('anova_results.csv', index=False)
-
-    model = ols('scores ~ C(trained) + C(controlF0) ', data=dataset).fit()
-    print(model.summary())
-    table = sm.stats.anova_lm(model, typ=2)
-    # plotting both mu sound driven and single unit units
-    # for sutype in mergednaiveanimaldict.keys():
+    # bigconcatenatenaive_ps = np.empty(0)
+    # bigconcatenatenaive_nonps = np.empty(0)
+    #
+    # for dictouput in dictlist_naive:
 
 
 
