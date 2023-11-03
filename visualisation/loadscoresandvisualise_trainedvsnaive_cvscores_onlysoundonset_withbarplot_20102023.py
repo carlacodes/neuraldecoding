@@ -84,6 +84,21 @@ def scatterplot_and_visualise(probewordlist,
     mu_nonpitchshiftlist_male = np.empty([0])
     cluster_list_male_mu_nops = np.empty([0])
     cluster_list_male_mu = np.empty([0])
+
+    mu_nonpitchshiftlist_male_probeword = np.empty([0])
+    mu_nonpitchshiftlist_female_probeword = np.empty([0])
+
+    mu_pitchshiftlist_male_probeword = np.empty([0])
+    mu_pitchshiftlist_female_probeword = np.empty([0])
+
+
+    su_nonpitchshiftlist_male_probeword = np.empty([0])
+    su_nonpitchshiftlist_female_probeword = np.empty([0])
+
+    su_pitchshiftlist_male_probeword = np.empty([0])
+    su_pitchshiftlist_female_probeword = np.empty([0])
+
+
     for probeword in probewordlist:
         singleunitlist_copy = singleunitlist.copy()
         multiunitlist_copy = multiunitlist.copy()
@@ -136,11 +151,6 @@ def scatterplot_and_visualise(probewordlist,
         except:
             print('file not found: ' + saveDir  + r'scores_' + ferretname + '_2022_' + stringprobewordindex + '_' + ferretname + '_probe_bs.npy')
             continue
-
-        #print all the cluster ids for the scores
-        # print(f'cluster ids for animal:{ferretname}, and stream:{saveDir}')
-        # print(scores['talker1']['target_vs_probe']['pitchshift']['cluster_id'])
-        # print(scores['talker1']['target_vs_probe']['nopitchshift']['cluster_id'])
 
         for talker in [1]:
             comparisons = [comp for comp in scores[f'talker{talker}']]
@@ -215,12 +225,15 @@ def scatterplot_and_visualise(probewordlist,
                                         su_pitchshiftlist_female = np.append(su_pitchshiftlist_female,
                                                                              scores[f'talker{talker}'][comp][cond][
                                                                                  'lstm_balanced_avg'][i])
+                                        su_pitchshiftlist_female_probeword = np.append(su_pitchshiftlist_female_probeword, probeword[talker -1 ])
                                 elif talker == 2:
                                     if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
                                         su_pitchshiftlist_male = np.append(su_pitchshiftlist_male,
                                                                            scores[f'talker{talker}'][comp][cond][
                                                                                'lstm_balanced_avg'][i])
+                                        su_pitchshiftlist_male_probeword = np.append(su_pitchshiftlist_male_probeword, probeword[talker -1 ])
+
                                 # print(pitchshiftlist.size)
                             elif cond == 'nopitchshift':
                                 if talker == 1:
@@ -229,12 +242,17 @@ def scatterplot_and_visualise(probewordlist,
                                         su_nonpitchshiftlist_female = np.append(su_nonpitchshiftlist_female,
                                                                                 scores[f'talker{talker}'][comp][cond][
                                                                                     'lstm_balanced_avg'][i])
+                                        su_nonpitchshiftlist_female_probeword = np.append(su_nonpitchshiftlist_female_probeword, probeword[talker -1 ])
+
                                 elif talker == 2:
                                     if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
                                         su_nonpitchshiftlist_male = np.append(su_nonpitchshiftlist_male,
                                                                               scores[f'talker{talker}'][comp][cond][
                                                                                   'lstm_balanced_avg'][i])
+                                        su_nonpitchshiftlist_male_probeword = np.append(su_nonpitchshiftlist_male_probeword, probeword[talker -1 ])
+
+
 
                         elif clus in multiunitlist_copy:
                             if cond == 'pitchshift':
@@ -245,6 +263,8 @@ def scatterplot_and_visualise(probewordlist,
                                                                              scores[f'talker{talker}'][comp][cond][
                                                                                  'lstm_balanced_avg'][
                                                                                  i])
+                                        mu_pitchshiftlist_female_probeword = np.append(mu_pitchshiftlist_female_probeword, probeword[talker -1 ])
+
 
                                 elif talker == 2:
                                     if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
@@ -254,6 +274,8 @@ def scatterplot_and_visualise(probewordlist,
                                                                                'lstm_balanced_avg'][
                                                                                i])
                                         cluster_list_male_mu = np.append(cluster_list_male_mu, clus)
+                                        mu_pitchshiftlist_male_probeword = np.append(mu_pitchshiftlist_male_probeword, probeword[talker -1 ])
+
 
 
                             if cond == 'nopitchshift':
@@ -263,6 +285,8 @@ def scatterplot_and_visualise(probewordlist,
                                         mu_nonpitchshiftlist_female = np.append(mu_nonpitchshiftlist_female,
                                                                                 scores[f'talker{talker}'][comp][cond][
                                                                                     'lstm_balanced_avg'][i])
+                                        mu_nonpitchshiftlist_female_probeword = np.append(mu_nonpitchshiftlist_female_probeword, probeword[talker -1 ])
+
 
                                 elif talker == 2:
                                     if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
@@ -271,6 +295,8 @@ def scatterplot_and_visualise(probewordlist,
                                                                               scores[f'talker{talker}'][comp][cond][
                                                                                   'lstm_balanced_avg'][i])
                                         cluster_list_male_mu_nops= np.append(cluster_list_male_mu_nops, clus)
+                                        mu_nonpitchshiftlist_male_probeword = np.append(mu_nonpitchshiftlist_male_probeword, probeword[talker -1 ])
+
 
 
                         elif clus in noiselist:
@@ -284,7 +310,9 @@ def scatterplot_and_visualise(probewordlist,
                           'mu_list': {'pitchshift': {'female_talker': {},
                                                      'male_talker': {}},
                                       'nonpitchshift': {'female_talker': {},
-                                                        'male_talker': {}}}}
+                                                        'male_talker': {}}},
+
+                          'probeword': probeword}
 
     dictofsortedscores['su_list']['pitchshift']['female_talker'] = su_pitchshiftlist_female
     dictofsortedscores['su_list']['pitchshift']['male_talker'] = su_pitchshiftlist_male

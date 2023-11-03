@@ -701,7 +701,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     ax.errorbar(5, np.mean(bigconcatenatenaive_low_f0), yerr = std_dev, color = 'black')
 
     ax.set_xticks([0,1,2,3,4,5])
-    ax.set_xticklabels(['control', 'high f0', 'low f0', 'control - naive', 'high f0 - naive', 'low f0 - naive'], rotation = 45)
+    ax.set_xticklabels(['high f0', 'control', 'low f0',  'high f0 - naive', 'control - naive','low f0 - naive'], rotation = 45)
     ax.set_ylabel('lstm decoding score')
     ax.set_title('lstm decoding score for trained and naive animals')
     ax.legend()
