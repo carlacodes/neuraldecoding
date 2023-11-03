@@ -733,6 +733,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
                           (14, 14)]
 
     scoredict = {}
+    scoredict_naive={}
     scoredict['(2,2)'] = {}
     scoredict['(2,2)']['female_talker'] = []
     scoredict['(5,6)'] = {}
@@ -749,7 +750,29 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     for probeword_range in probewordlist_text:
         probeword_key = f'({probeword_range[0]},{probeword_range[1]})'
         scoredict[probeword_key] = {}
-        scoredict[probeword_key]['female_talker'] = []
+        scoredict[probeword_key]['female_talker'] = {}
+        scoredict[probeword_key]['female_talker']['nonpitchshift'] = {}
+        scoredict[probeword_key]['female_talker']['pitchshift'] = {}
+
+        scoredict[probeword_key]['female_talker']['nonpitchshift']['su_list'] = []
+        scoredict[probeword_key]['female_talker']['pitchshift']['su_list'] = []
+
+        scoredict[probeword_key]['female_talker']['nonpitchshift']['mu_list'] = []
+        scoredict[probeword_key]['female_talker']['pitchshift']['mu_list'] = []
+
+
+        scoredict_naive[probeword_key] = {}
+        scoredict_naive[probeword_key]['female_talker'] = {}
+        scoredict_naive[probeword_key]['female_talker']['nonpitchshift'] = {}
+        scoredict_naive[probeword_key]['female_talker']['pitchshift'] = {}
+
+        scoredict_naive[probeword_key]['female_talker']['nonpitchshift']['su_list'] = []
+        scoredict_naive[probeword_key]['female_talker']['pitchshift']['su_list'] = []
+
+        scoredict_naive[probeword_key]['female_talker']['nonpitchshift']['mu_list'] = []
+        scoredict_naive[probeword_key]['female_talker']['pitchshift']['mu_list'] = []
+
+
 
 
     # for talker in [1,2]:
@@ -783,7 +806,23 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     #
     #                 scoredict[probewordtext][talker_key].append(dict['su_list'][key][talker_key][count])
     #                 count = count + 1
-
+    probeword_to_text = {
+        2: '(2,2)',
+        5: '(5,6)',
+        42: '(42,49)',
+        32: '(32,38)',
+        20: '(20,22)',
+        15: '(15,15)',
+        4: '(4,4)',
+        16: '(16,16)',
+        7: '(7,7)',
+        8: '(8,8)',
+        9: '(9,9)',
+        10: '(10,10)',
+        11: '(11,11)',
+        12: '(12,12)',
+        14: '(14,14)'
+    }
     for talker in [1]:
         if talker == 1:
             talker_key = 'female_talker'
@@ -795,9 +834,104 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
                     probeword_range = int(probeword)
                     probewordtext = probeword_to_text.get(probeword_range)
                     if probewordtext:
-                        scoredict[probewordtext][talker_key].append(dict['su_list'][key][talker_key][count])
+                        scoredict[probewordtext][talker_key][key]['su_list'].append(dict['su_list'][key][talker_key][count])
                     count = count + 1
+        for key in dict['mu_list_probeword']:
+            probewords = dict['mu_list_probeword'][key][talker_key]
+            count = 0
+            for probeword in probewords:
+                probeword_range = int(probeword)
+                probewordtext = probeword_to_text.get(probeword_range)
+                if probewordtext:
+                    scoredict[probewordtext][talker_key][key]['mu_list'].append(dict['mu_list'][key][talker_key][count])
+                count = count + 1
 
+    #plot each mean across probeword as a bar plot
+    fig, ax = plt.subplots(1, figsize=(10, 10), dpi=300)
+    plot_count = 0
+    for probeword in scoredict.keys():
+        su_list_nops = scoredict[probeword]['female_talker']['nonpitchshift']['su_list']
+        mu_list_nops = scoredict[probeword]['female_talker']['nonpitchshift']['mu_list']
+        #get the mean of the su_list and mu_list
+        total_control = su_list_nops + mu_list_nops
+        mean = np.mean(total_control)
+        std = np.std(total_control)
+
+        #do the same for the pitchshift
+        su_list_ps = scoredict[probeword]['female_talker']['pitchshift']['su_list']
+        mu_list_ps = scoredict[probeword]['female_talker']['pitchshift']['mu_list']
+        total_rove = su_list_ps + mu_list_ps
+        mean_rove = np.mean(total_rove)
+        std_rove = np.std(total_rove)
+        #plot the bar plot
+
+        ax.bar(plot_count, mean, yerr = std, color = 'purple', alpha = 0.5, label = probeword +'control')
+        plot_count += 1
+        ax.bar(plot_count, mean_rove, yerr = std_rove, color = 'pink', alpha = 0.5, label = probeword+'rove')
+
+        plot_count += 1
+    plt.legend()
+    plt.xlabel('probe word')
+    # ax.set_xticks(np.arange(0, 16, 1))
+    ax.set_xticklabels([(2, 2), (5, 6), (42, 49), (32, 38), (20, 22), (15, 15), (42, 49), (4, 4), (16, 16), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
+                          (14, 14)])
+
+    plt.show()
+## do the same for the naive animals
+    for talker in [1]:
+        if talker == 1:
+            talker_key = 'female_talker'
+        for i, dict in enumerate(dictlist_naive):
+            for key in dict['su_list_probeword']:
+                probewords = dict['su_list_probeword'][key][talker_key]
+                count = 0
+                for probeword in probewords:
+                    probeword_range = int(probeword)
+                    probewordtext = probeword_to_text.get(probeword_range)
+                    if probewordtext:
+                        scoredict_naive[probewordtext][talker_key][key]['su_list'].append(dict['su_list'][key][talker_key][count])
+                    count = count + 1
+        for key in dict['mu_list_probeword']:
+            probewords = dict['mu_list_probeword'][key][talker_key]
+            count = 0
+            for probeword in probewords:
+                probeword_range = int(probeword)
+                probewordtext = probeword_to_text.get(probeword_range)
+                if probewordtext:
+                    scoredict_naive[probewordtext][talker_key][key]['mu_list'].append(dict['mu_list'][key][talker_key][count])
+                count = count + 1
+
+    #plot each mean across probeword as a bar plot
+    fig, ax = plt.subplots(1, figsize=(10, 10), dpi=300)
+    plot_count = 0
+    for probeword in scoredict.keys():
+        su_list_nops = scoredict_naive[probeword]['female_talker']['nonpitchshift']['su_list']
+        mu_list_nops = scoredict_naive[probeword]['female_talker']['nonpitchshift']['mu_list']
+        #get the mean of the su_list and mu_list
+        total_control = su_list_nops + mu_list_nops
+        mean = np.mean(total_control)
+        std = np.std(total_control)
+
+        #do the same for the pitchshift
+        su_list_ps = scoredict_naive[probeword]['female_talker']['pitchshift']['su_list']
+        mu_list_ps = scoredict_naive[probeword]['female_talker']['pitchshift']['mu_list']
+        total_rove = su_list_ps + mu_list_ps
+        mean_rove = np.mean(total_rove)
+        std_rove = np.std(total_rove)
+        #plot the bar plot
+
+        ax.bar(plot_count, mean, yerr = std, color = 'cyan', alpha = 0.5, label = probeword +'control')
+        plot_count += 1
+        ax.bar(plot_count, mean_rove, yerr = std_rove, color = 'blue', alpha = 0.5, label = probeword+'rove')
+
+        plot_count += 1
+    plt.legend()
+    plt.xlabel('probe word')
+    # ax.set_xticks(np.arange(0, 16, 1))
+    ax.set_xticklabels([(2, 2), (5, 6), (42, 49), (32, 38), (20, 22), (15, 15), (42, 49), (4, 4), (16, 16), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
+                          (14, 14)])
+
+    plt.show()
 
 
     # Define labels and colors for scatter plots
