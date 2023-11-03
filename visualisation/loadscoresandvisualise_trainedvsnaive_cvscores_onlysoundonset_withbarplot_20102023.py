@@ -312,7 +312,16 @@ def scatterplot_and_visualise(probewordlist,
                                       'nonpitchshift': {'female_talker': {},
                                                         'male_talker': {}}},
 
-                          'probeword': probeword}
+                          'su_list_probeword': {'pitchshift': {'female_talker': {},
+                                                     'male_talker': {}},
+                                      'nonpitchshift': {'female_talker': {},
+                                                        'male_talker': {}}},
+                          'mu_list_probeword': {'pitchshift': {'female_talker': {},
+                                                     'male_talker': {}},
+                                      'nonpitchshift': {'female_talker': {},
+                                                        'male_talker': {}}}
+
+                         }
 
     dictofsortedscores['su_list']['pitchshift']['female_talker'] = su_pitchshiftlist_female
     dictofsortedscores['su_list']['pitchshift']['male_talker'] = su_pitchshiftlist_male
@@ -323,6 +332,19 @@ def scatterplot_and_visualise(probewordlist,
     dictofsortedscores['mu_list']['pitchshift']['male_talker'] = mu_pitchshiftlist_male
     dictofsortedscores['mu_list']['nonpitchshift']['female_talker'] = mu_nonpitchshiftlist_female
     dictofsortedscores['mu_list']['nonpitchshift']['male_talker'] = mu_nonpitchshiftlist_male
+
+    dictofsortedscores['su_list_probeword']['pitchshift']['female_talker'] = su_pitchshiftlist_female_probeword
+    dictofsortedscores['su_list_probeword']['pitchshift']['male_talker']  = su_pitchshiftlist_male_probeword
+    dictofsortedscores['su_list_probeword']['nonpitchshift']['female_talker'] = su_nonpitchshiftlist_female_probeword
+    dictofsortedscores['su_list_probeword']['nonpitchshift']['male_talker'] = su_nonpitchshiftlist_male_probeword
+
+    dictofsortedscores['mu_list_probeword']['pitchshift']['female_talker'] = mu_pitchshiftlist_female_probeword
+    dictofsortedscores['mu_list_probeword']['pitchshift']['male_talker'] = mu_pitchshiftlist_male_probeword
+    dictofsortedscores['mu_list_probeword']['nonpitchshift']['female_talker'] = mu_nonpitchshiftlist_female_probeword
+    dictofsortedscores['mu_list_probeword']['nonpitchshift']['male_talker'] = mu_nonpitchshiftlist_male_probeword
+
+
+
 
     return dictofsortedscores
 
@@ -640,7 +662,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     emptydict = {}
     count = 0
     for dictoutput in dictlist:
-        for sutype in dictoutput.keys():
+        for sutype in ['su_list', 'mu_list']:
             for pitchshiftornot in dictoutput[sutype].keys():
                 for talker in dictoutput[sutype][pitchshiftornot].keys():
                     for item in dictoutput[sutype][pitchshiftornot][talker]:
@@ -668,7 +690,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
 
 
     for dictoutput in dictlist:
-        for key in dictoutput.keys():
+        for key in ['su_list', 'mu_list']:
             for key3 in dictoutput[key]['pitchshift'].keys():
                 if len(dictoutput[key]['nonpitchshift'][key3]) < len(
                         dictoutput[key]['pitchshift'][key3]):
@@ -684,7 +706,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     bigconcatenatetrained_ps = np.empty(0)
     bigconcatenatetrained_nonps = np.empty(0)
     for dictouput in dictlist_trained:
-        for key in dictouput.keys():
+        for key in ['su_list', 'mu_list']:
             for key3 in dictouput[key]['pitchshift'].keys():
                 bigconcatenatetrained_ps = np.concatenate(
                     (bigconcatenatetrained_ps, dictouput[key]['pitchshift'][key3]))
@@ -696,13 +718,68 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     bigconcatenatenaive_nonps = np.empty(0)
 
     for dictouput in dictlist_naive:
-        for key in dictouput.keys():
+        for key in ['su_list', 'mu_list']:
             # print(key, 'key')
             for key3 in dictouput[key]['pitchshift'].keys():
                 # print(key3, 'key3')
                 bigconcatenatenaive_ps = np.concatenate((bigconcatenatenaive_ps, dictouput[key]['pitchshift'][key3]))
                 bigconcatenatenaive_nonps = np.concatenate(
                     (bigconcatenatenaive_nonps, dictouput[key]['nonpitchshift'][key3]))
+
+    #remake dictionary based on probe word
+    emptydict = {}
+    count = 0
+    probewordlist = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
+
+    scoredict = {}
+    scoredict['(2,2)'] = {}
+    scoredict['(2,2)']['female_talker'] = []
+    scoredict['(5,6)'] = {}
+    scoredict['(5,6)']['female_talker'] = []
+
+    scoredict['(42,49)'] = {}
+    scoredict['(42,49)']['female_talker'] = []
+
+    scoredict['(32,38)'] = {}
+    scoredict['(32,38)']['female_talker']  = []
+
+    scoredict['(20,22)'] = {}
+    scoredict['(20,22)']['female_talker'] =[]
+
+
+
+    # for talker in [1,2]:
+    #     for probeword in [1,2,3,4,5]:
+    #         for dict in dictlist_trained:
+    #             for key in dict['su_list_probeword']:
+    #                 probewords = dict['su_list_probeword'][key]
+    #                 count = 0
+    #                 for probeword in probewords:
+    #                     scoredict[int(probeword)] = dict['su_list'][key][count]
+    #                     count += 1
+
+    for talker in [1]:
+        if talker == 1:
+            talker_key = 'female_talker'
+        for dict in dictlist_trained:
+            for key in dict['su_list_probeword']:
+                probewords = dict['su_list_probeword'][key][talker_key]
+                count = 0
+                for probeword in probewords:
+                    if int(probeword) == 2:
+                        probewordtext = '(2,2)'
+                    elif int(probeword) == 5:
+                        probewordtext = '(5,6)'
+                    elif int(probeword) == 42:
+                        probewordtext = '(42,49)'
+                    elif int(probeword) == 32:
+                        probewordtext = '(32,38)'
+                    elif int(probeword) == 20:
+                        probewordtext = '(20,22)'
+
+                    scoredict[probewordtext][talker_key].append(dict['su_list'][key][talker_key][count])
+                    count = count + 1
+
 
 
     # Define labels and colors for scatter plots
@@ -757,8 +834,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
 
     plt.legend( fontsize=12, ncol=2)
     fig.tight_layout()
-    plt.savefig('D:/29102023figures/scattermuaandsuregplot_mod_21062023.png', dpi=1000)
-    plt.savefig('D:/29102023figures/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000)
+    #plt.savfig('D:/29102023figures/scattermuaandsuregplot_mod_21062023.png', dpi=1000)
+    #plt.savfig('D:/29102023figures/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000)
 
 
     plt.show()
@@ -795,7 +872,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     plt.xlabel('Control - roved F0 \n LSTM decoder scores', fontsize = 20)
     plt.ylabel('Density', fontsize = 20)
     #ax.legend()
-    plt.savefig('D:/29102023figures/diffF0distribution_20062023.png', dpi=1000)
+    #plt.savfig('D:/29102023figures/diffF0distribution_20062023.png', dpi=1000)
     plt.show()
 
     #plot sns histogram of the relative score and with the displot function overlaid
@@ -804,7 +881,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     sns.histplot(relativescoretrainedfrac, bins=20, label='trained', color='purple', kde = True)
     sns.histplot(relativescorenaivefrac, bins = 20, label='naive', color='darkcyan', kde = True)
 
-    plt.savefig('D:/29102023figures/diffF0distribution_relfrac_histplotwithkde_20062023.png', dpi=1000)
+    #plt.savfig('D:/29102023figures/diffF0distribution_relfrac_histplotwithkde_20062023.png', dpi=1000)
 
     plt.show()
 
@@ -862,7 +939,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     #ax.legend(fontsize = 18)
 
 
-    plt.savefig('D:/29102023figures/diffF0distribution_frac_20062023wlegendintertrialroving.png', dpi=1000)
+    #plt.savfig('D:/29102023figures/diffF0distribution_frac_20062023wlegendintertrialroving.png', dpi=1000)
     plt.show()
 
 
@@ -881,7 +958,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     manwhitscorecontrolf0 = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatenaive_nonps, alternative = 'greater')
 
     #ax.legend()
-    plt.savefig('D:/29102023figures/controlF0distribution20062023intertrialroving.png', dpi=1000)
+    #plt.savfig('D:/29102023figures/controlF0distribution20062023intertrialroving.png', dpi=1000)
 
     plt.show()
 
@@ -897,7 +974,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     manwhitscorerovedf0 = mannwhitneyu(bigconcatenatetrained_ps, bigconcatenatenaive_ps, alternative = 'greater')
 
     ax.legend(fontsize=18)
-    plt.savefig('D:/29102023figures/rovedF0distribution_20062023intertrialroving.png', dpi=1000)
+    #plt.savfig('D:/29102023figures/rovedF0distribution_20062023intertrialroving.png', dpi=1000)
 
     plt.show()
 
@@ -909,7 +986,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     plt.title('Roved and Control F0 Distributions for the Trained Animals', fontsize = 18)
     plt.xlabel(' LSTM decoder scores', fontsize = 20)
 
-    plt.savefig('D:/29102023figures/rovedF0vscontrolF0traineddistribution_20062023intertrialroving.png', dpi=1000)
+    #plt.savfig('D:/29102023figures/rovedF0vscontrolF0traineddistribution_20062023intertrialroving.png', dpi=1000)
 
     plt.show()
 
@@ -921,7 +998,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     plt.xlabel(' LSTM decoder scores', fontsize = 20)
     plt.title('Roved and Control F0 Distributions for the Naive Animals', fontsize = 18)
 
-    plt.savefig('D:/29102023figures/rovedF0vscontrolF0naivedistribution_20062023intertrialroving.png', dpi=1000)
+    #plt.savfig('D:/29102023figures/rovedF0vscontrolF0naivedistribution_20062023intertrialroving.png', dpi=1000)
     plt.show()
     kstestcontrolf0vsrovedtrained = scipy.stats.kstest(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, alternative = 'two-sided')
 
