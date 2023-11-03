@@ -32,33 +32,6 @@ def find_repeating_substring(text):
     return None
 
 
-# scoremat = np.load(
-#     'D:/Users/cgriffiths/resultsms4/lstmclass_18112022/18112022_10_58_57/scores_Eclair_2022_2_eclair_probe_pitchshift_vs_not_by_talker_bs.npy',
-#     allow_pickle=True)[()]
-#
-# oldscoremat = np.load(
-#     'D:/Users/juleslebert/home/phd/figures/euclidean_class_082022/eclair/17112022_16_24_15/scores_Eclair_2022_probe_earlylate_left_right_win_bs.npy',
-#     allow_pickle=True)[()]
-#
-# testscorematzola = np.load('D:/Users/cgriffiths/resultsms4/lstmclass_CVDATA_11122022zola/11122022_13_17_29/scores_zola_2022_5_zola_probe_pitchshift_vs_not_by_talker_bs.npy', allow_pickle=True)[()]
-#
-# singleunitlist_cruella = [16, 34, 25, 12, 2, 27, 21, 24, 17, 18, 13, 11, 22, 20, 26]
-# singleunitlist_cruella_soundonset = [13, 16, 17, 21, 22, 26, 27, 28, 34]
-# singleunitlist_cruella_2 = [] #unit 25+1 only fires during non pitch shift trials for male talker
-#
-# multiunitlist_cruella_2 = [21, 40,  44, 29, 43, 31, 22, 5, 4, 18, 10, 13,  30, 6] #, cluster 7+1, and 2+1 doesnt fire for every word, cluster 44+1 doesnt fire during non pitch shift trials
-#
-# multiunitlist_cruella = [10, 7, 31, 29, 1, 32, 15, 9, 6, 3, 19, 23, 8, 4, 33, 14, 30, 5]
-# multiunitlist_cruella_soundonset = [6, 8, 9, 14, 23, 29, 30, 21, 33]
-#
-# singleunitlist_nala = [17, 29, 5, 19, 27, 20, 4, 28, 1, 26, 21, 37] #37
-# multiunitlist_nala = [10, 24, 8, 15, 12, 7, 9, 35, 2, 14, 34, 33, 32, 38, 39, 31, 40, 41, 13] #13
-# saveDir = 'D:/Users/cgriffiths/resultsms4/lstmclass_18112022/19112022_12_58_54/'
-# singlunitlistsoundonset_crumble = [6, 7, 11, 17, 21, 22, 26]
-# multiunitlist_soundonset_crumble = [13, 14, 23, 25, 27, 29]
-#
-# singleunitlist_cruella_bb4bb5=[16, 6, 21,5, 8, 33, 27]
-# multiunitlist_cruella_bb4bb5 =[]
 
 
 def scatterplot_and_visualise(probewordlist,
@@ -66,6 +39,14 @@ def scatterplot_and_visualise(probewordlist,
                               ferretname='Crumble',
                               singleunitlist=[0,1,2],
                               multiunitlist=[0,1,2,3], noiselist=[], stream = 'BB_2', fullid = 'F1901_Crumble'):
+
+    if probewordlist == [(2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
+                             (14, 14)]:
+        probewordlist_text = [(15, 15), (42,49), (4, 4), (16, 16), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
+                             (14, 14)]
+    else:
+        probewordlist_text = probewordlist
+
     singleunitlist = [x - 1 for x in singleunitlist]
     multiunitlist = [x - 1 for x in multiunitlist]
     noiselist = [x - 1 for x in noiselist]
@@ -215,6 +196,13 @@ def scatterplot_and_visualise(probewordlist,
                     for i, clus in enumerate(scores[f'talker{talker}'][comp][cond]['cluster_id']):
 
                         print(i, clus)
+                        if probeword == (2,2) and fullid == 'F1604_Squinty' or fullid == 'F1606_Windolene':
+                            probeword =(15,15)
+                        elif probeword == (3,3) and fullid == 'F1604_Squinty' or fullid == 'F1606_Windolene':
+                            probeword = (42,49)
+                        elif probeword == (5,5) and fullid == 'F1604_Squinty' or fullid == 'F1606_Windolene':
+                            probeword = (16,16)
+
 
 
                         if clus in singleunitlist_copy:
@@ -225,7 +213,7 @@ def scatterplot_and_visualise(probewordlist,
                                         su_pitchshiftlist_female = np.append(su_pitchshiftlist_female,
                                                                              scores[f'talker{talker}'][comp][cond][
                                                                                  'lstm_balanced_avg'][i])
-                                        su_pitchshiftlist_female_probeword = np.append(su_pitchshiftlist_female_probeword, probeword[talker -1 ])
+                                        su_pitchshiftlist_female_probeword = np.append(su_pitchshiftlist_female_probeword, probeword[talker-1])
                                 elif talker == 2:
                                     if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
@@ -322,6 +310,8 @@ def scatterplot_and_visualise(probewordlist,
                                                         'male_talker': {}}}
 
                          }
+    if len(su_pitchshiftlist_female_probeword) != len(su_pitchshiftlist_female):
+        print('not equal')
 
     dictofsortedscores['su_list']['pitchshift']['female_talker'] = su_pitchshiftlist_female
     dictofsortedscores['su_list']['pitchshift']['male_talker'] = su_pitchshiftlist_male
@@ -343,7 +333,8 @@ def scatterplot_and_visualise(probewordlist,
     dictofsortedscores['mu_list_probeword']['nonpitchshift']['female_talker'] = mu_nonpitchshiftlist_female_probeword
     dictofsortedscores['mu_list_probeword']['nonpitchshift']['male_talker'] = mu_nonpitchshiftlist_male_probeword
 
-
+    if len( dictofsortedscores['su_list_probeword']['pitchshift']['female_talker']) != len(  dictofsortedscores['su_list']['pitchshift']['female_talker']):
+        print('error in dict')
 
 
     return dictofsortedscores
@@ -632,7 +623,15 @@ def main():
                 #     #print the exception
                 #     print(f'no scores for this stream:{stream}, and {animal}')
                 #     pass
+
+            female_talker_len = len(dictoutput_instance['su_list']['pitchshift']['female_talker'])
+            probeword_len = len(dictoutput_instance['su_list_probeword']['pitchshift']['female_talker'])
+
+            assert female_talker_len == probeword_len, f"Length mismatch: female_talker_len={female_talker_len}, probeword_len={probeword_len}"
+
             try:
+
+
                 if animal == 'F1604_Squinty' or animal == 'F1606_Windolene' or animal == 'F1702_Zola' or animal == 'F1815_Cruella':
                     print('trained animal'+ animal)
                     dictoutput_trained.append(dictoutput_instance)
@@ -661,47 +660,47 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     fig, ax = plt.subplots(1, figsize=(5, 8))
     emptydict = {}
     count = 0
-    for dictoutput in dictlist:
-        for sutype in ['su_list', 'mu_list']:
-            for pitchshiftornot in dictoutput[sutype].keys():
-                for talker in dictoutput[sutype][pitchshiftornot].keys():
-                    for item in dictoutput[sutype][pitchshiftornot][talker]:
-                        if count == 0 or count ==1:
-                            emptydict['trained'] = emptydict.get('trained', []) + [1]
-                        else:
-                            emptydict['trained'] = emptydict.get('trained', []) + [0]
-                        emptydict['ferret']= emptydict.get('ferret', []) + [count]
-                        emptydict['score'] = emptydict.get('score', []) + [item]
-                        if talker == 'female_talker':
-                            emptydict['male_talker'] = emptydict.get('male_talker', []) + [0]
-                        else:
-                            emptydict['male_talker'] = emptydict.get('male_talker', []) + [1]
-                        if pitchshiftornot == 'pitchshift':
-                            emptydict['pitchshift'] = emptydict.get('pitchshift', []) + [1]
-                        else:
-                            emptydict['pitchshift'] = emptydict.get('pitchshift', []) + [0]
-                        if sutype == 'su_list':
-                            emptydict['su'] = emptydict.get('su', []) + [1]
-                        else:
-                            emptydict['su'] = emptydict.get('su', []) + [0]
-        count += 1
-    for keys in emptydict.keys():
-        emptydict[keys] = np.asarray(emptydict[keys])
-
-
-    for dictoutput in dictlist:
-        for key in ['su_list', 'mu_list']:
-            for key3 in dictoutput[key]['pitchshift'].keys():
-                if len(dictoutput[key]['nonpitchshift'][key3]) < len(
-                        dictoutput[key]['pitchshift'][key3]):
-                    dictoutput[key]['pitchshift'][key3] = \
-                        dictoutput[key]['pitchshift'][key3][
-                        :len(dictoutput[key]['nonpitchshift'][key3])]
-                elif len(dictoutput[key]['nonpitchshift'][key3]) > len(
-                        dictoutput[key]['pitchshift'][key3]):
-                    dictoutput[key]['nonpitchshift'][key3] = \
-                        dictoutput[key]['nonpitchshift'][key3][
-                        :len(dictoutput[key]['pitchshift'][key3])]
+    # for dictoutput in dictlist:
+    #     for sutype in ['su_list', 'mu_list']:
+    #         for pitchshiftornot in dictoutput[sutype].keys():
+    #             for talker in dictoutput[sutype][pitchshiftornot].keys():
+    #                 for item in dictoutput[sutype][pitchshiftornot][talker]:
+    #                     if count == 0 or count ==1:
+    #                         emptydict['trained'] = emptydict.get('trained', []) + [1]
+    #                     else:
+    #                         emptydict['trained'] = emptydict.get('trained', []) + [0]
+    #                     emptydict['ferret']= emptydict.get('ferret', []) + [count]
+    #                     emptydict['score'] = emptydict.get('score', []) + [item]
+    #                     if talker == 'female_talker':
+    #                         emptydict['male_talker'] = emptydict.get('male_talker', []) + [0]
+    #                     else:
+    #                         emptydict['male_talker'] = emptydict.get('male_talker', []) + [1]
+    #                     if pitchshiftornot == 'pitchshift':
+    #                         emptydict['pitchshift'] = emptydict.get('pitchshift', []) + [1]
+    #                     else:
+    #                         emptydict['pitchshift'] = emptydict.get('pitchshift', []) + [0]
+    #                     if sutype == 'su_list':
+    #                         emptydict['su'] = emptydict.get('su', []) + [1]
+    #                     else:
+    #                         emptydict['su'] = emptydict.get('su', []) + [0]
+    #     count += 1
+    # for keys in emptydict.keys():
+    #     emptydict[keys] = np.asarray(emptydict[keys])
+    #
+    #
+    # for dictoutput in dictlist:
+    #     for key in ['su_list', 'mu_list']:
+    #         for key3 in dictoutput[key]['pitchshift'].keys():
+    #             if len(dictoutput[key]['nonpitchshift'][key3]) < len(
+    #                     dictoutput[key]['pitchshift'][key3]):
+    #                 dictoutput[key]['pitchshift'][key3] = \
+    #                     dictoutput[key]['pitchshift'][key3][
+    #                     :len(dictoutput[key]['nonpitchshift'][key3])]
+    #             elif len(dictoutput[key]['nonpitchshift'][key3]) > len(
+    #                     dictoutput[key]['pitchshift'][key3]):
+    #                 dictoutput[key]['nonpitchshift'][key3] = \
+    #                     dictoutput[key]['nonpitchshift'][key3][
+    #                     :len(dictoutput[key]['pitchshift'][key3])]
 
     bigconcatenatetrained_ps = np.empty(0)
     bigconcatenatetrained_nonps = np.empty(0)
@@ -730,6 +729,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     emptydict = {}
     count = 0
     probewordlist = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
+    probewordlist_text = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22), (15, 15), (42, 49), (4, 4), (16, 16), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
+                          (14, 14)]
 
     scoredict = {}
     scoredict['(2,2)'] = {}
@@ -745,7 +746,10 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
 
     scoredict['(20,22)'] = {}
     scoredict['(20,22)']['female_talker'] =[]
-
+    for probeword_range in probewordlist_text:
+        probeword_key = f'({probeword_range[0]},{probeword_range[1]})'
+        scoredict[probeword_key] = {}
+        scoredict[probeword_key]['female_talker'] = []
 
 
     # for talker in [1,2]:
@@ -758,26 +762,40 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     #                     scoredict[int(probeword)] = dict['su_list'][key][count]
     #                     count += 1
 
+    # for talker in [1]:
+    #     if talker == 1:
+    #         talker_key = 'female_talker'
+    #     for i, dict in enumerate(dictlist_trained):
+    #         for key in dict['su_list_probeword']:
+    #             probewords = dict['su_list_probeword'][key][talker_key]
+    #             count = 0
+    #             for probeword in probewords:
+    #                 if int(probeword) == 2:
+    #                     probewordtext = '(2,2)'
+    #                 elif int(probeword) == 5:
+    #                     probewordtext = '(5,6)'
+    #                 elif int(probeword) == 42:
+    #                     probewordtext = '(42,49)'
+    #                 elif int(probeword) == 32:
+    #                     probewordtext = '(32,38)'
+    #                 elif int(probeword) == 20:
+    #                     probewordtext = '(20,22)'
+    #
+    #                 scoredict[probewordtext][talker_key].append(dict['su_list'][key][talker_key][count])
+    #                 count = count + 1
+
     for talker in [1]:
         if talker == 1:
             talker_key = 'female_talker'
-        for dict in dictlist_trained:
+        for i, dict in enumerate(dictlist_trained):
             for key in dict['su_list_probeword']:
                 probewords = dict['su_list_probeword'][key][talker_key]
                 count = 0
                 for probeword in probewords:
-                    if int(probeword) == 2:
-                        probewordtext = '(2,2)'
-                    elif int(probeword) == 5:
-                        probewordtext = '(5,6)'
-                    elif int(probeword) == 42:
-                        probewordtext = '(42,49)'
-                    elif int(probeword) == 32:
-                        probewordtext = '(32,38)'
-                    elif int(probeword) == 20:
-                        probewordtext = '(20,22)'
-
-                    scoredict[probewordtext][talker_key].append(dict['su_list'][key][talker_key][count])
+                    probeword_range = int(probeword)
+                    probewordtext = probeword_to_text.get(probeword_range)
+                    if probewordtext:
+                        scoredict[probewordtext][talker_key].append(dict['su_list'][key][talker_key][count])
                     count = count + 1
 
 
