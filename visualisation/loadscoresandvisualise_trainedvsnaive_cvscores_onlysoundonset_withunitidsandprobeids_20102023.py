@@ -818,41 +818,6 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
 
         scoredict_naive[probeword_key]['female_talker']['nonpitchshift']['mu_list'] = []
         scoredict_naive[probeword_key]['female_talker']['pitchshift']['mu_list'] = []
-
-
-
-
-    # for talker in [1,2]:
-    #     for probeword in [1,2,3,4,5]:
-    #         for dict in dictlist_trained:
-    #             for key in dict['su_list_probeword']:
-    #                 probewords = dict['su_list_probeword'][key]
-    #                 count = 0
-    #                 for probeword in probewords:
-    #                     scoredict[int(probeword)] = dict['su_list'][key][count]
-    #                     count += 1
-
-    # for talker in [1]:
-    #     if talker == 1:
-    #         talker_key = 'female_talker'
-    #     for i, dict in enumerate(dictlist_trained):
-    #         for key in dict['su_list_probeword']:
-    #             probewords = dict['su_list_probeword'][key][talker_key]
-    #             count = 0
-    #             for probeword in probewords:
-    #                 if int(probeword) == 2:
-    #                     probewordtext = '(2,2)'
-    #                 elif int(probeword) == 5:
-    #                     probewordtext = '(5,6)'
-    #                 elif int(probeword) == 42:
-    #                     probewordtext = '(42,49)'
-    #                 elif int(probeword) == 32:
-    #                     probewordtext = '(32,38)'
-    #                 elif int(probeword) == 20:
-    #                     probewordtext = '(20,22)'
-    #
-    #                 scoredict[probewordtext][talker_key].append(dict['su_list'][key][talker_key][count])
-    #                 count = count + 1
     probeword_to_text = {
         2: '(2,2)',
         5: '(5,6)',
@@ -870,6 +835,32 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
         12: '(12,12)',
         14: '(14,14)'
     }
+    for talker in [1]:
+        if talker == 1:
+            talker_key = 'female_talker'
+        for i, dict in enumerate(dictlist_trained):
+            for key in dict['su_list_probeword']:
+                probewords = dict['su_list_probeword'][key][talker_key]
+                count = 0
+                for probeword in probewords:
+                    probeword_range = int(probeword)
+                    probewordtext = probeword_to_text.get(probeword_range)
+                    if probewordtext:
+                        scoredict[probewordtext][talker_key][key]['su_list'].append(dict['su_list'][key][talker_key][count])
+                    count = count + 1
+        for key in dict['mu_list_probeword']:
+            probewords = dict['mu_list_probeword'][key][talker_key]
+            count = 0
+            for probeword in probewords:
+                probeword_range = int(probeword)
+                probewordtext = probeword_to_text.get(probeword_range)
+                if probewordtext:
+                    scoredict[probewordtext][talker_key][key]['mu_list'].append(dict['mu_list'][key][talker_key][count])
+                count = count + 1
+
+
+
+
     unit_ids = []
 
     for dict in dictlist_trained:
@@ -915,7 +906,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     unit_ids = np.unique(unit_ids)
 
     # Initialize the scoredict with unit IDs and probeword texts
-    scoredict = {
+    scoredict_byunit = {
         unit_id: {probeword_text: {'su_list': [], 'mu_list': []} for probeword_text in probeword_to_text.values()} for
         unit_id in unit_ids}
 
@@ -932,7 +923,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
                     probewordtext = probeword_to_text.get(probeword_range)
                     unit_id = dict['su_list_unitid'][key][talker_key][count]
                     if probewordtext:
-                        scoredict[unit_id][probewordtext]['su_list'].append(dict['su_list'][key][talker_key][count])
+                        scoredict_byunit[unit_id][probewordtext]['su_list'].append(dict['su_list'][key][talker_key][count])
                     count = count + 1
             for key in dict['mu_list_probeword']:
                 probewords = dict['mu_list_probeword'][key][talker_key]
@@ -943,32 +934,10 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
                     if probewordtext:
                         unit_id = dict['mu_list_unitid'][key][talker_key][count]
 
-                        scoredict[unit_id][probewordtext]['mu_list'].append(dict['mu_list'][key][talker_key][count])
+                        scoredict_byunit[unit_id][probewordtext]['mu_list'].append(dict['mu_list'][key][talker_key][count])
                     count = count + 1
 
 
-    for talker in [1]:
-        if talker == 1:
-            talker_key = 'female_talker'
-        for i, dict in enumerate(dictlist_trained):
-            for key in dict['su_list_probeword']:
-                probewords = dict['su_list_probeword'][key][talker_key]
-                count = 0
-                for probeword in probewords:
-                    probeword_range = int(probeword)
-                    probewordtext = probeword_to_text.get(probeword_range)
-                    if probewordtext:
-                        scoredict[probewordtext][talker_key][key]['su_list'].append(dict['su_list'][key][talker_key][count])
-                    count = count + 1
-        for key in dict['mu_list_probeword']:
-            probewords = dict['mu_list_probeword'][key][talker_key]
-            count = 0
-            for probeword in probewords:
-                probeword_range = int(probeword)
-                probewordtext = probeword_to_text.get(probeword_range)
-                if probewordtext:
-                    scoredict[probewordtext][talker_key][key]['mu_list'].append(dict['mu_list'][key][talker_key][count])
-                count = count + 1
 
     #plot each mean across probeword as a bar plot
     fig, ax = plt.subplots(1, figsize=(10, 10), dpi=300)
