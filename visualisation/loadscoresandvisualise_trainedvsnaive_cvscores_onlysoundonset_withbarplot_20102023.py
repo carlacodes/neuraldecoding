@@ -1026,7 +1026,52 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     plt.show()
 
 
+    #now do the same for the trained animals
+    fig, ax = plt.subplots(figsize=(10, 10), dpi=300)
 
+    data = []
+    x_positions = []
+    hue = []
+
+    # Iterate over the keys in your dictionary
+    for probeword in scoredict.keys():
+        su_list_nops = scoredict[probeword]['female_talker']['nonpitchshift']['su_list']
+        mu_list_nops = scoredict[probeword]['female_talker']['nonpitchshift']['mu_list']
+        total_control = su_list_nops + mu_list_nops
+
+        su_list_ps = scoredict[probeword]['female_talker']['pitchshift']['su_list']
+        mu_list_ps = scoredict[probeword]['female_talker']['pitchshift']['mu_list']
+        total_rove = su_list_ps + mu_list_ps
+
+        # Create a DataFrame for seaborn
+        control_df = pd.DataFrame({'Data': total_control, 'Probe Word': probeword, 'Category': 'Control'})
+        rove_df = pd.DataFrame({'Data': total_rove, 'Probe Word': probeword, 'Category': 'Rove'})
+
+        # Append the data and category
+        data.extend(total_control)
+        data.extend(total_rove)
+        x_positions.extend([probeword] * (len(total_control) + len(total_rove)))
+
+
+        hue.extend(['Control'] * len(total_control))
+        hue.extend(['Rove'] * len(total_rove))
+
+        # Create the violin plot
+    sns.violinplot(x=x_positions, y=data, hue=hue, palette={"Control": "purple", "Rove": "pink"}, split=True, ax=ax)
+
+    # Scatter plot for raw data
+    scatter_data = pd.DataFrame({'x_positions': x_positions, 'Data': data, 'Category': hue})
+
+    sns.scatterplot(x="x_positions", y="Data", hue="Category", data=scatter_data, s=15, ax=ax,
+                    palette={"Control": "white", "Rove": "black"})
+
+    # Customize the plot
+    plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
+    plt.xlabel('Probe Word')
+    plt.ylabel('Data')  # Update with your actual data label
+    plt.legend(title='Category')
+
+    plt.show()
 
 
 
