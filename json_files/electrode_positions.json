@@ -338,5 +338,41 @@
       {"TDT_NUMBER": 23, "area": "VC"},
       {"TDT_NUMBER": 19, "area": "VC"}
     ]
+  },
+   "F1604_Squinty": {
+    "left": [
+      {"TDT_NUMBER": 1, "area": "MEG"},
+      {"TDT_NUMBER": 3, "area": "MEG"},
+      {"TDT_NUMBER": 5, "area": "MEG"},
+      {"TDT_NUMBER": 7, "area": "MEG"},
+      {"TDT_NUMBER": 2, "area": "MEG"},
+      {"TDT_NUMBER": 4, "area": "MEG"},
+      {"TDT_NUMBER": 6, "area": "MEG"},
+      {"TDT_NUMBER": 8, "area": "MEG"},
+      {"TDT_NUMBER": 10, "area": "MEG"},
+      {"TDT_NUMBER": 12, "area": "MEG"},
+      {"TDT_NUMBER": 14, "area": "MEG"},
+      {"TDT_NUMBER": 16, "area": "MEG"},
+      {"TDT_NUMBER": 9, "area": "MEG"},
+      {"TDT_NUMBER": 11, "area": "MEG"},
+      {"TDT_NUMBER": 13, "area": "MEG"},
+      {"TDT_NUMBER": 15, "area": "MEG"},
+      {"TDT_NUMBER": 17, "area": "PEG"},
+      {"TDT_NUMBER": 19, "area": "PEG"},
+      {"TDT_NUMBER": 21, "area": "PEG"},
+      {"TDT_NUMBER": 23, "area": "PEG"},
+      {"TDT_NUMBER": 18, "area": "PEG"},
+      {"TDT_NUMBER": 20, "area": "PEG"},
+      {"TDT_NUMBER": 22, "area": "PEG"},
+      {"TDT_NUMBER": 24, "area": "PEG"},
+      {"TDT_NUMBER": 26, "area": "PEG"},
+      {"TDT_NUMBER": 28, "area": "PEG"},
+      {"TDT_NUMBER": 30, "area": "PEG"},
+      {"TDT_NUMBER": 32, "area": "PEG"},
+      {"TDT_NUMBER": 25, "area": "PEG"},
+      {"TDT_NUMBER": 27, "area": "PEG"},
+      {"TDT_NUMBER": 29, "area": "PEG"},
+      {"TDT_NUMBER": 31, "area": "PEG"}
+    ]
   }
 }
