@@ -30,7 +30,7 @@ def convert_table_to_array(table):
     # Print the resulting array
     for item in data_array:
         print(item)
-    return table
+    return data_array
 
 
 
@@ -73,3 +73,75 @@ if __name__ == '__main__':
     """
 
     array_crumble_rhs = convert_table_to_array(table_crumble_rhs)
+
+    #using the channel map conversion, convert to the new channel map
+    channel_map_array = data = [
+    [1, 1, 0],
+    [3, 3, 1],
+    [5, 5, 2],
+    [7, 7, 3],
+    [2, 2, 4],
+    [4, 4, 5],
+    [6, 6, 6],
+    [8, 8, 7],
+    [10, 10, 8],
+    [12, 12, 9],
+    [14, 14, 10],
+    [16, 16, 11],
+    [9, 9, 12],
+    [11, 11, 13],
+    [13, 13, 14],
+    [15, 15, 15],
+    [17, 17, 16],
+    [19, 19, 17],
+    [21, 21, 18],
+    [23, 23, 19],
+    [18, 18, 20],
+    [20, 20, 21],
+    [22, 22, 22],
+    [24, 24, 23],
+    [26, 26, 24],
+    [28, 28, 25],
+    [30, 30, 26],
+    [32, 32, 27],
+    [25, 25, 28],
+    [27, 27, 29],
+    [29, 29, 30],
+    [31, 31, 31]
+]
+
+    #convert array_crumble_lhs to the new channel map
+    new_array_crumble_lhs = array_crumble_lhs.copy()
+    for i in range(len(array_crumble_lhs)):
+        #warp index
+        index = int(array_crumble_lhs[i][0][-2:])
+        #get the new index
+        new_index = channel_map_array[index][0]
+        #replace new_index as the first element of the array
+        new_array_crumble_lhs[i][0] = new_index
+    new_array_eclair_lhs = array_eclair_lhs.copy()
+    for i in range(len(array_eclair_lhs)):
+        #warp index
+        index = int(array_eclair_lhs[i][0][-2:])
+        #get the new index
+        new_index = channel_map_array[index][0]
+        #replace new_index as the first element of the array
+        new_array_eclair_lhs[i][0] = new_index
+    new_array_crumble_rhs = array_crumble_rhs.copy()
+    for i in range(len(array_crumble_rhs)):
+        #warp index
+        index = int(array_crumble_rhs[i][0][-2:])
+        #get the new index
+        new_index = channel_map_array[index][0]
+        #replace new_index as the first element of the array
+        new_array_crumble_rhs[i][0] = new_index
+    new_array_eclair_rhs = array_eclair_rhs.copy()
+    for i in range(len(array_eclair_rhs)):
+        #warp index
+        index = int(array_eclair_rhs[i][0][-2:])
+        #get the new index
+        new_index = channel_map_array[index][0]
+        #replace new_index as the first element of the array
+        new_array_eclair_rhs[i][0] = new_index
+
+    print('done')
