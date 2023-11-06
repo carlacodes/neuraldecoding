@@ -577,7 +577,6 @@ def scatterplot_and_visualise(probewordlist,
                             clus_id_report = clus
 
 
-
                         if clus in singleunitlist_copy:
                             print('in single unit list')
 
@@ -709,7 +708,15 @@ def scatterplot_and_visualise(probewordlist,
                           'mu_list_unitid': {'pitchshift': {'female_talker': {},
                                                                'male_talker': {}},
                                                 'nonpitchshift': {'female_talker': {},
-                                                                  'male_talker': {}}}
+                                                                  'male_talker': {}}},
+                          'su_list_chanid': {'pitchshift': {'female_talker': {},
+                                                            'male_talker': {}},
+                                             'nonpitchshift': {'female_talker': {},
+                                                               'male_talker': {}}},
+                          'mu_list_chanid': {'pitchshift': {'female_talker': {},
+                                                            'male_talker': {}},
+                                             'nonpitchshift': {'female_talker': {},
+                                                               'male_talker': {}}}
 
                          }
     if len(su_pitchshiftlist_female_probeword) != len(su_pitchshiftlist_female):
@@ -744,6 +751,17 @@ def scatterplot_and_visualise(probewordlist,
     dictofsortedscores['mu_list_unitid']['pitchshift']['male_talker'] = mu_pitchshiftlist_male_unitid
     dictofsortedscores['mu_list_unitid']['nonpitchshift']['female_talker'] = mu_nonpitchshiftlist_female_unitid
     dictofsortedscores['mu_list_unitid']['nonpitchshift']['male_talker'] = mu_nonpitchshiftlist_male_unitid
+
+    dictofsortedscores['su_list_chanid']['pitchshift']['female_talker'] = su_pitchshiftlist_female_channel_id
+    dictofsortedscores['su_list_chanid']['pitchshift']['male_talker']  = su_pitchshiftlist_male_channel_id
+    dictofsortedscores['su_list_chanid']['nonpitchshift']['female_talker'] = su_nonpitchshiftlist_female_channel_id
+    dictofsortedscores['su_list_chanid']['nonpitchshift']['male_talker'] = su_nonpitchshiftlist_male_channel_id
+
+    dictofsortedscores['mu_list_chanid']['pitchshift']['female_talker'] = mu_pitchshiftlist_female_channel_id
+    dictofsortedscores['mu_list_chanid']['pitchshift']['male_talker'] = mu_pitchshiftlist_male_channel_id
+    dictofsortedscores['mu_list_chanid']['nonpitchshift']['female_talker'] = mu_nonpitchshiftlist_female_channel_id
+    dictofsortedscores['mu_list_chanid']['nonpitchshift']['male_talker'] = mu_nonpitchshiftlist_male_channel_id
+
 
 
     if len( dictofsortedscores['su_list_probeword']['pitchshift']['female_talker']) != len(  dictofsortedscores['su_list']['pitchshift']['female_talker']):
@@ -853,19 +871,40 @@ def load_classified_report(path):
         #combine the paths
 
         report = pd.read_csv(report_path)
-        channelpositions = pd.read_pickle(
-            r'D:\spkvisanddecodeproj2/analysisscriptsmodcg/visualisation\channelpositions\F2003_Orecchiette/channelpos.pkl')
-        # remove rows that are not the cluster id, represented by the first column in the np array out of three columns
-        #remove rows that are below the auditory cortex
-                # get the x and y coordinates
-        #only get clusters, first column that are greater than 3200 in depth
-        clusters_above_hpc = channelpositions[channelpositions[:, 2] > 3200]
-        #add one to the cluster ids
-        clusters_above_hpc[:, 0] = clusters_above_hpc[:, 0] + 1
-        singleunitlist = [1, 19, 21, 219, 227]
-        #multiunit list all the other clusters in clusters above hpc
-        multiunitlist = [x for x in clusters_above_hpc[:, 0] if x not in singleunitlist]
-        noiselist = []
+        if 's2cgmod' in path:
+            channelpositions = pd.read_pickle(
+                r'D:\spkvisanddecodeproj2/analysisscriptsmodcg/visualisation\channelpositions\F2003_Orecchiette/channelpos.pkl')
+            # remove rows that are not the cluster id, represented by the first column in the np array out of three columns
+            #remove rows that are below the auditory cortex
+                    # get the x and y coordinates
+            #only get clusters, first column that are greater than 3200 in depth
+            clusters_above_hpc = channelpositions[channelpositions[:, 2] > 3200]
+            #add one to the cluster ids
+            clusters_above_hpc[:, 0] = clusters_above_hpc[:, 0] + 1
+            singleunitlist = [1, 19, 21, 219, 227]
+            #multiunit list all the other clusters in clusters above hpc
+            multiunitlist = [x for x in clusters_above_hpc[:, 0] if x not in singleunitlist]
+            noiselist = []
+        else:
+            report_path = os.path.join(path, 'quality_metrics_classified.csv')
+            # combine the paths
+
+            report = pd.read_csv(report_path)  # get the list of multi units and single units
+            # the column is called unit_type
+            multiunitlist = []
+            singleunitlist = []
+            noiselist = []
+
+            # get the list of multi units and single units
+            for i in range(0, len(report['unit_type'])):
+                if report['unit_type'][i] == 'mua':
+                    multiunitlist.append(i + 1)
+                elif report['unit_type'][i] == 'su':
+                    singleunitlist.append(i + 1)
+                elif report['unit_type'][i] == 'trash':
+                    noiselist.append(i + 1)
+
+
     else:
         report_path = os.path.join(path, 'quality_metrics_classified.csv')
         #combine the paths
