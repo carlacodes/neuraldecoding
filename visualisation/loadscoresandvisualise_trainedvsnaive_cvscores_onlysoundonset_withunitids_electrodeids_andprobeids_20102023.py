@@ -382,7 +382,7 @@ def scatterplot_and_visualise(probewordlist,
                               saveDir='D:/Users/cgriffiths/resultsms4/lstm_output_frommyriad_15012023/lstm_kfold_14012023_crumble',
                               ferretname='Crumble',
                               singleunitlist=[0,1,2],
-                              multiunitlist=[0,1,2,3], noiselist=[], stream = 'BB_2', fullid = 'F1901_Crumble'):
+                              multiunitlist=[0,1,2,3], noiselist=[], stream = 'BB_2', fullid = 'F1901_Crumble', report =[]):
 
     if probewordlist == [(2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
                              (14, 14)]:
@@ -566,11 +566,21 @@ def scatterplot_and_visualise(probewordlist,
                             probeword = (42,49)
                         elif probeword == (5,5) and fullid == 'F1604_Squinty' or fullid == 'F1606_Windolene':
                             probeword = (16,16)
+                        if clus > 100 and fullid != 'F2003_Orecchiette':
+                            clus_id_report = clus - 100
+                        elif clus > 200 and fullid != 'F2003_Orecchiette':
+                            clus_id_report = clus - 200
+                        elif clus > 300 and fullid != 'F2003_Orecchiette':
+                            clus_id_report = clus - 300
+
+                        else:
+                            clus_id_report = clus
 
 
 
                         if clus in singleunitlist_copy:
                             print('in single unit list')
+
                             if cond == 'pitchshift':
                                 if talker == 1:
                                     if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
@@ -580,6 +590,10 @@ def scatterplot_and_visualise(probewordlist,
                                         su_pitchshiftlist_female_probeword = np.append(su_pitchshiftlist_female_probeword, probeword[talker-1])
 
                                         su_pitchshiftlist_female_unitid = np.append(su_pitchshiftlist_female_unitid, clust_text)
+
+
+                                        su_pitchshiftlist_female_channel_id = np.append(su_pitchshiftlist_female_channel_id, report['tdt'][clus_id_report-1])
+
                                 elif talker == 2:
                                     if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
@@ -588,6 +602,8 @@ def scatterplot_and_visualise(probewordlist,
                                                                                'lstm_balanced_avg'][i])
                                         su_pitchshiftlist_male_probeword = np.append(su_pitchshiftlist_male_probeword, probeword[talker -1 ])
                                         su_pitchshiftlist_male_unitid = np.append(su_pitchshiftlist_male_unitid, clust_text)
+                                        su_pitchshiftlist_male_channel_id = np.append(su_pitchshiftlist_male_channel_id, report['tdt'][clus_id_report-1])
+
 
 
                                 # print(pitchshiftlist.size)
@@ -600,6 +616,7 @@ def scatterplot_and_visualise(probewordlist,
                                                                                     'lstm_balanced_avg'][i])
                                         su_nonpitchshiftlist_female_probeword = np.append(su_nonpitchshiftlist_female_probeword, probeword[talker -1 ])
                                         su_nonpitchshiftlist_female_unitid = np.append(su_nonpitchshiftlist_female_unitid, clust_text)
+                                        su_nonpitchshiftlist_female_channel_id = np.append(su_nonpitchshiftlist_female_channel_id, report['tdt'][clus_id_report-1])
 
                                 elif talker == 2:
                                     if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
@@ -610,6 +627,7 @@ def scatterplot_and_visualise(probewordlist,
                                         su_nonpitchshiftlist_male_probeword = np.append(su_nonpitchshiftlist_male_probeword, probeword[talker -1 ])
                                         su_nonpitchshiftlist_male_unitid = np.append(su_nonpitchshiftlist_male_unitid, clust_text)
 
+                                        su_nonpitchshiftlist_male_channel_id = np.append(su_nonpitchshiftlist_male_channel_id, report['tdt'][clus_id_report-1])
 
 
                         elif clus in multiunitlist_copy:
@@ -623,6 +641,7 @@ def scatterplot_and_visualise(probewordlist,
                                                                                  i])
                                         mu_pitchshiftlist_female_probeword = np.append(mu_pitchshiftlist_female_probeword, probeword[talker -1 ])
                                         mu_pitchshiftlist_female_unitid = np.append(mu_pitchshiftlist_female_unitid, clust_text)
+                                        mu_pitchshiftlist_female_channel_id = np.append(mu_pitchshiftlist_female_channel_id, report['tdt'][clus_id_report-1])
 
                                 elif talker == 2:
                                     if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
@@ -634,6 +653,7 @@ def scatterplot_and_visualise(probewordlist,
                                         cluster_list_male_mu = np.append(cluster_list_male_mu, clust_text)
                                         mu_pitchshiftlist_male_probeword = np.append(mu_pitchshiftlist_male_probeword, probeword[talker -1 ])
                                         mu_pitchshiftlist_male_unitid = np.append(mu_pitchshiftlist_male_unitid, clust_text)
+                                        mu_pitchshiftlist_male_channel_id = np.append(mu_pitchshiftlist_male_channel_id, report['tdt'][clus_id_report-1])
 
 
 
@@ -646,6 +666,7 @@ def scatterplot_and_visualise(probewordlist,
                                                                                     'lstm_balanced_avg'][i])
                                         mu_nonpitchshiftlist_female_probeword = np.append(mu_nonpitchshiftlist_female_probeword, probeword[talker -1 ])
                                         mu_nonpitchshiftlist_female_unitid = np.append(mu_nonpitchshiftlist_female_unitid, clust_text)
+                                        mu_nonpitchshiftlist_female_channel_id = np.append(mu_nonpitchshiftlist_female_channel_id, report['tdt'][clus_id_report-1])
 
                                 elif talker == 2:
                                     if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
@@ -656,6 +677,7 @@ def scatterplot_and_visualise(probewordlist,
                                         cluster_list_male_mu_nops= np.append(cluster_list_male_mu_nops, clust_text)
                                         mu_nonpitchshiftlist_male_probeword = np.append(mu_nonpitchshiftlist_male_probeword, probeword[talker -1 ])
                                         mu_nonpitchshiftlist_male_unitid = np.append(mu_nonpitchshiftlist_male_unitid, clust_text)
+                                        mu_nonpitchshiftlist_male_channel_id = np.append(mu_nonpitchshiftlist_male_channel_id, report['tdt'][clus_id_report-1])
 
 
 
@@ -869,7 +891,7 @@ def main():
     probewordlist = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
     probewordlist_l74 = [(2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
                              (14, 14)]
-    animal_list = [ 'F2003_Orecchiette', 'F1901_Crumble', 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala']
+    animal_list = [ 'F1901_Crumble', 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala',  'F2003_Orecchiette',]
     # animal_list = [  'F1815_Cruella', 'F1901_Crumble',]
     # animal_list = [ 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1901_Crumble', 'F1812_Nala']
 
@@ -960,7 +982,7 @@ def main():
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
-                                                                noiselist=noiselist[animal][stream], stream = stream, fullid = animal)
+                                                                noiselist=noiselist[animal][stream], stream = stream, fullid = animal, report = report[animal][stream])
                 dictoutput_all.append(dictoutput_instance)
                 # except:
                 #     #print the exception
@@ -974,7 +996,7 @@ def main():
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
-                                                                noiselist=noiselist[animal][stream], stream = stream, fullid = animal)
+                                                                noiselist=noiselist[animal][stream], stream = stream, fullid = animal,  report = report[animal][stream])
                 dictoutput_all.append(dictoutput_instance)
                 # except:
                 #     #print the exception
@@ -984,7 +1006,7 @@ def main():
                 # try:
                 dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_31102023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
-                                                                multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal)
+                                                                multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal,  report = report[animal][stream])
                 dictoutput_all.append(dictoutput_instance)
                 # except:
                 #     #print the exception
@@ -998,7 +1020,9 @@ def main():
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
                                                                 noiselist=noiselist[animal][stream], stream=stream,
-                                                                fullid=animal)
+                                                                fullid=animal,
+                                                                report=report[animal][stream]
+                                                                )
                 dictoutput_all.append(dictoutput_instance)
                 # except:
                 #     #print the exception
@@ -1008,7 +1032,7 @@ def main():
                 # try:
                 dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_31102023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
-                                                                multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal)
+                                                                multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal,  report = report[animal][stream])
                 dictoutput_all.append(dictoutput_instance)
                 # except:
                 #     #print the exception
