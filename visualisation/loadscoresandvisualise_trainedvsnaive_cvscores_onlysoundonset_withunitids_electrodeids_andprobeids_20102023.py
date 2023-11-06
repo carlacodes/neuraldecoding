@@ -438,7 +438,17 @@ def scatterplot_and_visualise(probewordlist,
     su_pitchshiftlist_male_unitid = np.empty([0])
     su_pitchshiftlist_female_unitid = np.empty([0])
 
+    mu_nonpitchshiftlist_male_channel_id = np.empty([0])
+    mu_nonpitchshiftlist_female_channel_id = np.empty([0])
 
+    mu_pitchshiftlist_male_channel_id= np.empty([0])
+    mu_pitchshiftlist_female_channel_id = np.empty([0])
+
+    su_nonpitchshiftlist_male_channel_id = np.empty([0])
+    su_nonpitchshiftlist_female_channel_id = np.empty([0])
+
+    su_pitchshiftlist_male_channel_id = np.empty([0])
+    su_pitchshiftlist_female_channel_id= np.empty([0])
 
     for probeword in probewordlist:
         singleunitlist_copy = singleunitlist.copy()
@@ -550,6 +560,16 @@ def scatterplot_and_visualise(probewordlist,
 
         recname = saveDir.split('/')[-3]
 
+        if fullid == 'F2003_Orecchiette':
+            try:
+                report['tdt'] = pd.read_csv(f'D:\ms4output_16102023\F2003_Orecchiette/' + {stream} + '/' + 'recording_0/pykilosort/report/' + 'unit_list.csv')
+                #take only the second column
+                report['tdt'] = report['tdt'].iloc[:, 1]
+
+            except:
+                # make a column of 0s for the tdt column
+                report['tdt'] =  np.zeros((len(report), 1))
+
         for talker in [1]:
             comparisons = [comp for comp in scores[f'talker{talker}']]
 
@@ -566,13 +586,14 @@ def scatterplot_and_visualise(probewordlist,
                             probeword = (42,49)
                         elif probeword == (5,5) and fullid == 'F1604_Squinty' or fullid == 'F1606_Windolene':
                             probeword = (16,16)
-                        if clus > 100 and fullid != 'F2003_Orecchiette':
-                            clus_id_report = clus - 100
-                        elif clus > 200 and fullid != 'F2003_Orecchiette':
-                            clus_id_report = clus - 200
-                        elif clus > 300 and fullid != 'F2003_Orecchiette':
-                            clus_id_report = clus - 300
 
+
+                        if 200 > clus >= 100 and fullid != 'F2003_Orecchiette':
+                            clus_id_report = clus - 100
+                        elif 300> clus >= 200 and fullid != 'F2003_Orecchiette':
+                            clus_id_report = clus - 200
+                        elif 400 > clus >= 300 and fullid != 'F2003_Orecchiette':
+                            clus_id_report = clus - 300
                         else:
                             clus_id_report = clus
 
@@ -591,7 +612,7 @@ def scatterplot_and_visualise(probewordlist,
                                         su_pitchshiftlist_female_unitid = np.append(su_pitchshiftlist_female_unitid, clust_text)
 
 
-                                        su_pitchshiftlist_female_channel_id = np.append(su_pitchshiftlist_female_channel_id, report['tdt'][clus_id_report-1])
+                                        su_pitchshiftlist_female_channel_id = np.append(su_pitchshiftlist_female_channel_id, report['tdt'][clus_id_report])
 
                                 elif talker == 2:
                                     if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
@@ -601,7 +622,7 @@ def scatterplot_and_visualise(probewordlist,
                                                                                'lstm_balanced_avg'][i])
                                         su_pitchshiftlist_male_probeword = np.append(su_pitchshiftlist_male_probeword, probeword[talker -1 ])
                                         su_pitchshiftlist_male_unitid = np.append(su_pitchshiftlist_male_unitid, clust_text)
-                                        su_pitchshiftlist_male_channel_id = np.append(su_pitchshiftlist_male_channel_id, report['tdt'][clus_id_report-1])
+                                        su_pitchshiftlist_male_channel_id = np.append(su_pitchshiftlist_male_channel_id, report['tdt'][clus_id_report])
 
 
 
@@ -615,7 +636,7 @@ def scatterplot_and_visualise(probewordlist,
                                                                                     'lstm_balanced_avg'][i])
                                         su_nonpitchshiftlist_female_probeword = np.append(su_nonpitchshiftlist_female_probeword, probeword[talker -1 ])
                                         su_nonpitchshiftlist_female_unitid = np.append(su_nonpitchshiftlist_female_unitid, clust_text)
-                                        su_nonpitchshiftlist_female_channel_id = np.append(su_nonpitchshiftlist_female_channel_id, report['tdt'][clus_id_report-1])
+                                        su_nonpitchshiftlist_female_channel_id = np.append(su_nonpitchshiftlist_female_channel_id, report['tdt'][clus_id_report])
 
                                 elif talker == 2:
                                     if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
@@ -626,7 +647,7 @@ def scatterplot_and_visualise(probewordlist,
                                         su_nonpitchshiftlist_male_probeword = np.append(su_nonpitchshiftlist_male_probeword, probeword[talker -1 ])
                                         su_nonpitchshiftlist_male_unitid = np.append(su_nonpitchshiftlist_male_unitid, clust_text)
 
-                                        su_nonpitchshiftlist_male_channel_id = np.append(su_nonpitchshiftlist_male_channel_id, report['tdt'][clus_id_report-1])
+                                        su_nonpitchshiftlist_male_channel_id = np.append(su_nonpitchshiftlist_male_channel_id, report['tdt'][clus_id_report])
 
 
                         elif clus in multiunitlist_copy:
@@ -640,7 +661,7 @@ def scatterplot_and_visualise(probewordlist,
                                                                                  i])
                                         mu_pitchshiftlist_female_probeword = np.append(mu_pitchshiftlist_female_probeword, probeword[talker -1 ])
                                         mu_pitchshiftlist_female_unitid = np.append(mu_pitchshiftlist_female_unitid, clust_text)
-                                        mu_pitchshiftlist_female_channel_id = np.append(mu_pitchshiftlist_female_channel_id, report['tdt'][clus_id_report-1])
+                                        mu_pitchshiftlist_female_channel_id = np.append(mu_pitchshiftlist_female_channel_id, report['tdt'][clus_id_report])
 
                                 elif talker == 2:
                                     if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
@@ -652,7 +673,7 @@ def scatterplot_and_visualise(probewordlist,
                                         cluster_list_male_mu = np.append(cluster_list_male_mu, clust_text)
                                         mu_pitchshiftlist_male_probeword = np.append(mu_pitchshiftlist_male_probeword, probeword[talker -1 ])
                                         mu_pitchshiftlist_male_unitid = np.append(mu_pitchshiftlist_male_unitid, clust_text)
-                                        mu_pitchshiftlist_male_channel_id = np.append(mu_pitchshiftlist_male_channel_id, report['tdt'][clus_id_report-1])
+                                        mu_pitchshiftlist_male_channel_id = np.append(mu_pitchshiftlist_male_channel_id, report['tdt'][clus_id_report])
 
 
 
@@ -665,7 +686,7 @@ def scatterplot_and_visualise(probewordlist,
                                                                                     'lstm_balanced_avg'][i])
                                         mu_nonpitchshiftlist_female_probeword = np.append(mu_nonpitchshiftlist_female_probeword, probeword[talker -1 ])
                                         mu_nonpitchshiftlist_female_unitid = np.append(mu_nonpitchshiftlist_female_unitid, clust_text)
-                                        mu_nonpitchshiftlist_female_channel_id = np.append(mu_nonpitchshiftlist_female_channel_id, report['tdt'][clus_id_report-1])
+                                        mu_nonpitchshiftlist_female_channel_id = np.append(mu_nonpitchshiftlist_female_channel_id, report['tdt'][clus_id_report])
 
                                 elif talker == 2:
                                     if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
@@ -676,7 +697,7 @@ def scatterplot_and_visualise(probewordlist,
                                         cluster_list_male_mu_nops= np.append(cluster_list_male_mu_nops, clust_text)
                                         mu_nonpitchshiftlist_male_probeword = np.append(mu_nonpitchshiftlist_male_probeword, probeword[talker -1 ])
                                         mu_nonpitchshiftlist_male_unitid = np.append(mu_nonpitchshiftlist_male_unitid, clust_text)
-                                        mu_nonpitchshiftlist_male_channel_id = np.append(mu_nonpitchshiftlist_male_channel_id, report['tdt'][clus_id_report-1])
+                                        mu_nonpitchshiftlist_male_channel_id = np.append(mu_nonpitchshiftlist_male_channel_id, report['tdt'][clus_id_report])
 
 
 
