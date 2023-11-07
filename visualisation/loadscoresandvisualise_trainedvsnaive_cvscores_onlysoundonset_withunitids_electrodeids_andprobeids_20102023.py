@@ -1245,7 +1245,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         elif 'BB_2' in unit_id and animal!='F1604_Squinty':
             side = 'right'
         elif 'BB_4' in unit_id:
-            side = 'right'
+            side = 'left'
         elif 'BB_5' in unit_id:
             side = 'left'
 
