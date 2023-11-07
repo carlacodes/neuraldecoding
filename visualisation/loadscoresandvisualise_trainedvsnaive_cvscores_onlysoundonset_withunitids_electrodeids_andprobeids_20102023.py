@@ -36,8 +36,11 @@ def scatterplot_and_visualise(probewordlist,
                               saveDir='D:/Users/cgriffiths/resultsms4/lstm_output_frommyriad_15012023/lstm_kfold_14012023_crumble',
                               ferretname='Crumble',
                               singleunitlist=[0,1,2],
-                              multiunitlist=[0,1,2,3], noiselist=[], stream = 'BB_2', fullid = 'F1901_Crumble', report =[]):
-
+                              multiunitlist=[0,1,2,3], noiselist=[], stream = 'BB_2', fullid = 'F1901_Crumble', report =[], permutation_scores = False):
+    if permutation_scores == False:
+        score_key = 'lstm_balanced_avg'
+    else:
+        score_key = 'perm_bal_ac'
     if probewordlist == [(2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
                              (14, 14)]:
         probewordlist_text = [(15, 15), (42,49), (4, 4), (16, 16), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
@@ -255,101 +258,93 @@ def scatterplot_and_visualise(probewordlist,
 
                             if cond == 'pitchshift':
                                 if talker == 1:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
-                                        su_pitchshiftlist_female = np.append(su_pitchshiftlist_female,
-                                                                             scores[f'talker{talker}'][comp][cond][
-                                                                                 'lstm_balanced_avg'][i])
-                                        su_pitchshiftlist_female_probeword = np.append(su_pitchshiftlist_female_probeword, probeword[talker-1])
+                                    su_pitchshiftlist_female = np.append(su_pitchshiftlist_female,
+                                                                         scores[f'talker{talker}'][comp][cond][
+                                                                             score_key][i])
+                                    su_pitchshiftlist_female_probeword = np.append(su_pitchshiftlist_female_probeword, probeword[talker-1])
 
-                                        su_pitchshiftlist_female_unitid = np.append(su_pitchshiftlist_female_unitid, clust_text)
+                                    su_pitchshiftlist_female_unitid = np.append(su_pitchshiftlist_female_unitid, clust_text)
 
 
-                                        su_pitchshiftlist_female_channel_id = np.append(su_pitchshiftlist_female_channel_id, report['tdt'][clus_id_report])
+                                    su_pitchshiftlist_female_channel_id = np.append(su_pitchshiftlist_female_channel_id, report['tdt'][clus_id_report])
 
                                 elif talker == 2:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
-                                        su_pitchshiftlist_male = np.append(su_pitchshiftlist_male,
-                                                                           scores[f'talker{talker}'][comp][cond][
-                                                                               'lstm_balanced_avg'][i])
-                                        su_pitchshiftlist_male_probeword = np.append(su_pitchshiftlist_male_probeword, probeword[talker -1 ])
-                                        su_pitchshiftlist_male_unitid = np.append(su_pitchshiftlist_male_unitid, clust_text)
-                                        su_pitchshiftlist_male_channel_id = np.append(su_pitchshiftlist_male_channel_id, report['tdt'][clus_id_report])
+                                    su_pitchshiftlist_male = np.append(su_pitchshiftlist_male,
+                                                                       scores[f'talker{talker}'][comp][cond][
+                                                                           score_key][i])
+                                    su_pitchshiftlist_male_probeword = np.append(su_pitchshiftlist_male_probeword, probeword[talker -1 ])
+                                    su_pitchshiftlist_male_unitid = np.append(su_pitchshiftlist_male_unitid, clust_text)
+                                    su_pitchshiftlist_male_channel_id = np.append(su_pitchshiftlist_male_channel_id, report['tdt'][clus_id_report])
 
 
 
                                 # print(pitchshiftlist.size)
                             elif cond == 'nopitchshift':
                                 if talker == 1:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
-                                        su_nonpitchshiftlist_female = np.append(su_nonpitchshiftlist_female,
-                                                                                scores[f'talker{talker}'][comp][cond][
-                                                                                    'lstm_balanced_avg'][i])
-                                        su_nonpitchshiftlist_female_probeword = np.append(su_nonpitchshiftlist_female_probeword, probeword[talker -1 ])
-                                        su_nonpitchshiftlist_female_unitid = np.append(su_nonpitchshiftlist_female_unitid, clust_text)
-                                        su_nonpitchshiftlist_female_channel_id = np.append(su_nonpitchshiftlist_female_channel_id, report['tdt'][clus_id_report])
+                                    su_nonpitchshiftlist_female = np.append(su_nonpitchshiftlist_female,
+                                                                            scores[f'talker{talker}'][comp][cond][
+                                                                                score_key][i])
+                                    su_nonpitchshiftlist_female_probeword = np.append(su_nonpitchshiftlist_female_probeword, probeword[talker -1 ])
+                                    su_nonpitchshiftlist_female_unitid = np.append(su_nonpitchshiftlist_female_unitid, clust_text)
+                                    su_nonpitchshiftlist_female_channel_id = np.append(su_nonpitchshiftlist_female_channel_id, report['tdt'][clus_id_report])
 
                                 elif talker == 2:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
-                                        su_nonpitchshiftlist_male = np.append(su_nonpitchshiftlist_male,
-                                                                              scores[f'talker{talker}'][comp][cond][
-                                                                                  'lstm_balanced_avg'][i])
-                                        su_nonpitchshiftlist_male_probeword = np.append(su_nonpitchshiftlist_male_probeword, probeword[talker -1 ])
-                                        su_nonpitchshiftlist_male_unitid = np.append(su_nonpitchshiftlist_male_unitid, clust_text)
+                                    su_nonpitchshiftlist_male = np.append(su_nonpitchshiftlist_male,
+                                                                          scores[f'talker{talker}'][comp][cond][
+                                                                              score_key][i])
+                                    su_nonpitchshiftlist_male_probeword = np.append(su_nonpitchshiftlist_male_probeword, probeword[talker -1 ])
+                                    su_nonpitchshiftlist_male_unitid = np.append(su_nonpitchshiftlist_male_unitid, clust_text)
 
-                                        su_nonpitchshiftlist_male_channel_id = np.append(su_nonpitchshiftlist_male_channel_id, report['tdt'][clus_id_report])
+                                    su_nonpitchshiftlist_male_channel_id = np.append(su_nonpitchshiftlist_male_channel_id, report['tdt'][clus_id_report])
 
 
                         elif clus in multiunitlist_copy:
                             if cond == 'pitchshift':
                                 if talker == 1:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
-                                        mu_pitchshiftlist_female = np.append(mu_pitchshiftlist_female,
-                                                                             scores[f'talker{talker}'][comp][cond][
-                                                                                 'lstm_balanced_avg'][
-                                                                                 i])
-                                        mu_pitchshiftlist_female_probeword = np.append(mu_pitchshiftlist_female_probeword, probeword[talker -1 ])
-                                        mu_pitchshiftlist_female_unitid = np.append(mu_pitchshiftlist_female_unitid, clust_text)
-                                        mu_pitchshiftlist_female_channel_id = np.append(mu_pitchshiftlist_female_channel_id, report['tdt'][clus_id_report])
+                                    mu_pitchshiftlist_female = np.append(mu_pitchshiftlist_female,
+                                                                         scores[f'talker{talker}'][comp][cond][
+                                                                             score_key][
+                                                                             i])
+                                    mu_pitchshiftlist_female_probeword = np.append(mu_pitchshiftlist_female_probeword, probeword[talker -1 ])
+                                    mu_pitchshiftlist_female_unitid = np.append(mu_pitchshiftlist_female_unitid, clust_text)
+                                    mu_pitchshiftlist_female_channel_id = np.append(mu_pitchshiftlist_female_channel_id, report['tdt'][clus_id_report])
 
                                 elif talker == 2:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
-                                        mu_pitchshiftlist_male = np.append(mu_pitchshiftlist_male,
-                                                                           scores[f'talker{talker}'][comp][cond][
-                                                                               'lstm_balanced_avg'][
-                                                                               i])
-                                        cluster_list_male_mu = np.append(cluster_list_male_mu, clust_text)
-                                        mu_pitchshiftlist_male_probeword = np.append(mu_pitchshiftlist_male_probeword, probeword[talker -1 ])
-                                        mu_pitchshiftlist_male_unitid = np.append(mu_pitchshiftlist_male_unitid, clust_text)
-                                        mu_pitchshiftlist_male_channel_id = np.append(mu_pitchshiftlist_male_channel_id, report['tdt'][clus_id_report])
+                                    mu_pitchshiftlist_male = np.append(mu_pitchshiftlist_male,
+                                                                       scores[f'talker{talker}'][comp][cond][
+                                                                          score_key][
+                                                                           i])
+                                    cluster_list_male_mu = np.append(cluster_list_male_mu, clust_text)
+                                    mu_pitchshiftlist_male_probeword = np.append(mu_pitchshiftlist_male_probeword, probeword[talker -1 ])
+                                    mu_pitchshiftlist_male_unitid = np.append(mu_pitchshiftlist_male_unitid, clust_text)
+                                    mu_pitchshiftlist_male_channel_id = np.append(mu_pitchshiftlist_male_channel_id, report['tdt'][clus_id_report])
 
 
 
                             if cond == 'nopitchshift':
                                 if talker == 1:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
-                                        mu_nonpitchshiftlist_female = np.append(mu_nonpitchshiftlist_female,
-                                                                                scores[f'talker{talker}'][comp][cond][
-                                                                                    'lstm_balanced_avg'][i])
-                                        mu_nonpitchshiftlist_female_probeword = np.append(mu_nonpitchshiftlist_female_probeword, probeword[talker -1 ])
-                                        mu_nonpitchshiftlist_female_unitid = np.append(mu_nonpitchshiftlist_female_unitid, clust_text)
-                                        mu_nonpitchshiftlist_female_channel_id = np.append(mu_nonpitchshiftlist_female_channel_id, report['tdt'][clus_id_report])
+                                    mu_nonpitchshiftlist_female = np.append(mu_nonpitchshiftlist_female,
+                                                                            scores[f'talker{talker}'][comp][cond][
+                                                                                score_key][i])
+                                    mu_nonpitchshiftlist_female_probeword = np.append(mu_nonpitchshiftlist_female_probeword, probeword[talker -1 ])
+                                    mu_nonpitchshiftlist_female_unitid = np.append(mu_nonpitchshiftlist_female_unitid, clust_text)
+                                    mu_nonpitchshiftlist_female_channel_id = np.append(mu_nonpitchshiftlist_female_channel_id, report['tdt'][clus_id_report])
 
                                 elif talker == 2:
-                                    if scores[f'talker{talker}'][comp][cond]['lstm_balanced_avg'][i] > scores[f'talker{talker}'][comp][cond]['perm_bal_ac'][i]:
 
-                                        mu_nonpitchshiftlist_male = np.append(mu_nonpitchshiftlist_male,
-                                                                              scores[f'talker{talker}'][comp][cond][
-                                                                                  'lstm_balanced_avg'][i])
-                                        cluster_list_male_mu_nops= np.append(cluster_list_male_mu_nops, clust_text)
-                                        mu_nonpitchshiftlist_male_probeword = np.append(mu_nonpitchshiftlist_male_probeword, probeword[talker -1 ])
-                                        mu_nonpitchshiftlist_male_unitid = np.append(mu_nonpitchshiftlist_male_unitid, clust_text)
-                                        mu_nonpitchshiftlist_male_channel_id = np.append(mu_nonpitchshiftlist_male_channel_id, report['tdt'][clus_id_report])
+                                    mu_nonpitchshiftlist_male = np.append(mu_nonpitchshiftlist_male,
+                                                                          scores[f'talker{talker}'][comp][cond][
+                                                                              score_key][i])
+                                    cluster_list_male_mu_nops= np.append(cluster_list_male_mu_nops, clust_text)
+                                    mu_nonpitchshiftlist_male_probeword = np.append(mu_nonpitchshiftlist_male_probeword, probeword[talker -1 ])
+                                    mu_nonpitchshiftlist_male_unitid = np.append(mu_nonpitchshiftlist_male_unitid, clust_text)
+                                    mu_nonpitchshiftlist_male_channel_id = np.append(mu_nonpitchshiftlist_male_channel_id, report['tdt'][clus_id_report])
 
 
 
