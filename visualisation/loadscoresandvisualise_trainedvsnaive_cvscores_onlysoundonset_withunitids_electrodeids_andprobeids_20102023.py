@@ -1285,50 +1285,330 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                 scoredict_by_unit_peg[unit_id] = scoredict_byunit[unit_id]
             elif electrode_position_dict['area'] == 'AEG':
                 scoredict_by_unit_aeg[unit_id] = scoredict_byunit[unit_id]
+    ##do the same for the permutation data
+    scoredict_by_unit_perm_meg = {}
+    scoredict_by_unit_perm_peg = {}
+    scoredict_by_unit_perm_aeg = {}
+    # now sort each of the score_dicts by channel_id
+    for unit_id in scoredict_byunit_trained_perm.keys():
+        example_unit = scoredict_byunit_trained_perm[unit_id]
+        # load the corresponding channel_id
 
+        if 'F1604_Squinty' in unit_id:
+            animal = 'F1604_Squinty'
+            side = 'left'
+        elif 'F1606_Windolene' in unit_id:
+            animal = 'F1606_Windolene'
+        elif 'F1702_Zola' in unit_id:
+            animal = 'F1702_Zola'
+        elif 'F1815_Cruella' in unit_id:
+            animal = 'F1815_Cruella'
+        elif 'F1901_Crumble' in unit_id:
+            animal = 'F1901_Crumble'
+        elif 'F1902_Eclair' in unit_id:
+            animal = 'F1902_Eclair'
+        elif 'F1812_Nala' in unit_id:
+            animal = 'F1812_Nala'
+        elif 'F2003_Orecchiette' in unit_id:
+            animal = 'F2003_Orecchiette'
 
+        if 'BB_3' in unit_id and animal != 'F1604_Squinty':
+            side = 'right'
+        elif 'BB_2' in unit_id and animal != 'F1604_Squinty':
+            side = 'right'
+        elif 'BB_4' in unit_id:
+            side = 'left'
+        elif 'BB_5' in unit_id:
+            side = 'left'
 
+        for probeword in example_unit.keys():
+            try:
+                channel_id = example_unit[probeword]['channel_id'][0]
+            except:
+                continue
+            if channel_id is not None:
+                break
 
+        # load the corresponding electrode position
+        electrode_position_dict_for_animal = electrode_position_data[animal][side]
+        # find where the TDT number is in the electrode position dict
+        for electrode_position in electrode_position_dict_for_animal:
+            if electrode_position['TDT_NUMBER'] == channel_id:
+                electrode_position_dict = electrode_position
+                break
+        if animal == 'F2003_Orecchiette':
+            if 'mod' in unit_id:
+                scoredict_by_unit_perm_peg[unit_id] = scoredict_byunit_trained_perm[unit_id]
+            elif 'S2' in unit_id:
+                scoredict_by_unit_perm_peg[unit_id] = scoredict_byunit_trained_perm[unit_id]
+            elif 'S3' in unit_id:
+                scoredict_by_unit_perm_meg[unit_id] = scoredict_byunit_trained_perm[unit_id]
 
-
-
-    #plot each mean across probeword as a bar plot
-    fig, ax = plt.subplots(1, figsize=(10, 10), dpi=300)
-    plot_count = 0
-    for probeword in scoredict.keys():
-        su_list_nops = scoredict[probeword]['female_talker']['nonpitchshift']['su_list']
-        mu_list_nops = scoredict[probeword]['female_talker']['nonpitchshift']['mu_list']
-        #get the mean of the su_list and mu_list
-        total_control = su_list_nops + mu_list_nops
-        mean = np.mean(total_control)
-        std = np.std(total_control)
-
-        #do the same for the pitchshift
-        su_list_ps = scoredict[probeword]['female_talker']['pitchshift']['su_list']
-        mu_list_ps = scoredict[probeword]['female_talker']['pitchshift']['mu_list']
-        total_rove = su_list_ps + mu_list_ps
-        mean_rove = np.mean(total_rove)
-        std_rove = np.std(total_rove)
-        #plot the bar plot
-
-        if plot_count ==0:
-            ax.bar(plot_count, mean, yerr=std, color='purple', alpha=0.5, label='control')
-            plot_count += 1
-            ax.bar(plot_count, mean_rove, yerr=std_rove, color='pink', alpha=0.5, label='rove')
         else:
+            if electrode_position_dict['area'] == 'MEG':
+                # add it to a new dictionary
+                scoredict_by_unit_perm_meg[unit_id] = scoredict_byunit_trained_perm[unit_id]
+            elif electrode_position_dict['area'] == 'PEG':
+                scoredict_by_unit_perm_peg[unit_id] = scoredict_byunit_trained_perm[unit_id]
+            elif electrode_position_dict['area'] == 'AEG':
+                scoredict_by_unit_perm_aeg[unit_id] = scoredict_byunit_trained_perm[unit_id]
+    #now plot the scores by aeg, peg, meg for the trained animals
+    #initialise a dataframe for each of the areas
+    df_full = pd.DataFrame(columns=['ID', 'ProbeWord', 'Score', 'Below-chance', 'BrainArea'])
 
-            ax.bar(plot_count, mean, yerr = std, color = 'purple', alpha = 0.5, label =None)
-            plot_count += 1
-            ax.bar(plot_count, mean_rove, yerr = std_rove, color = 'pink', alpha = 0.5, label = None)
+    for unit_id in scoredict_by_unit_meg.keys():
+        example_unit = scoredict_by_unit_meg[unit_id]
+        for probeword in example_unit.keys():
+            su_list = example_unit[probeword]['su_list']
+            mu_list = example_unit[probeword]['mu_list']
+            if len(su_list)>0:
+                #calculate the score
+                score = np.mean(su_list)
+                #compare with the permutation data
+                su_list_perm = scoredict_by_unit_perm_meg[unit_id][probeword]['su_list']
+                if score > np.mean(su_list_perm):
+                    below_chance = 0
+                else:
+                    below_chance = 1
+                #calculate the below chance
+                #add to the dataframe
+                df_full = df_full.append({'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance, 'BrainArea': 'MEG'}, ignore_index=True)
+            elif len(mu_list)>0:
+                #calculate the score
+                score = np.mean(mu_list)
+                #compare with the permutation data
+                mu_list_perm = scoredict_by_unit_perm_meg[unit_id][probeword]['mu_list']
+                if score > np.mean(mu_list_perm):
+                    below_chance = 0
+                else:
+                    below_chance = 1
+                #calculate the below chance
+                #add to the dataframe
+                df_full = df_full.append({'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance, 'BrainArea': 'MEG'}, ignore_index=True)
 
-        plot_count += 1
-    plt.legend(fontsize = 8)
-    plt.xlabel('probe word')
-    ax.set_xticks(np.arange(0, 32, 2))
-    ax.set_xticklabels([(2, 2), (5, 6), (42, 49), (32, 38), (20, 22), (15, 15), (42, 49), (4, 4), (16, 16), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
-                          (14, 14)], rotation = 45)
+    for unit_id in scoredict_by_unit_peg.keys():
+        example_unit = scoredict_by_unit_peg[unit_id]
+        for probeword in example_unit.keys():
+            su_list = example_unit[probeword]['su_list']
+            mu_list = example_unit[probeword]['mu_list']
+            if len(su_list)>0:
+                #calculate the score
+                score = np.mean(su_list)
+                #compare with the permutation data
+                su_list_perm = scoredict_by_unit_perm_peg[unit_id][probeword]['su_list']
+                if score > np.mean(su_list_perm):
+                    below_chance = 0
+                else:
+                    below_chance = 1
+                #calculate the below chance
+                #add to the dataframe
+                df_full = df_full.append({'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance, 'BrainArea': 'PEG'}, ignore_index=True)
+            elif len(mu_list)>0:
+                #calculate the score
+                score = np.mean(mu_list)
+                #compare with the permutation data
+                mu_list_perm = scoredict_by_unit_perm_peg[unit_id][probeword]['mu_list']
+                if score > np.mean(mu_list_perm):
+                    below_chance = 0
+                else:
+                    below_chance = 1
+                #calculate the below chance
+                #add to the dataframe
+                df_full = df_full.append({'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance, 'BrainArea': 'PEG'}, ignore_index=True)
+
+    #repeat for aeg
+    for unit_id in scoredict_by_unit_aeg.keys():
+        example_unit = scoredict_by_unit_aeg[unit_id]
+        for probeword in example_unit.keys():
+            su_list = example_unit[probeword]['su_list']
+            mu_list = example_unit[probeword]['mu_list']
+            if len(su_list) > 0:
+                # calculate the score
+                score = np.mean(su_list)
+                # compare with the permutation data
+                su_list_perm = scoredict_by_unit_perm_aeg[unit_id][probeword]['su_list']
+                if score > np.mean(su_list_perm):
+                    below_chance = 0
+                else:
+                    below_chance = 1
+                # calculate the below chance
+                # add to the dataframe
+                df_full = df_full.append(
+                    {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
+                     'BrainArea': 'AEG'}, ignore_index=True)
+            elif len(mu_list) > 0:
+                # calculate the score
+                score = np.mean(mu_list)
+                # compare with the permutation data
+                mu_list_perm = scoredict_by_unit_perm_aeg[unit_id][probeword]['mu_list']
+                if score > np.mean(mu_list_perm):
+                    below_chance = 0
+                else:
+                    below_chance = 1
+                # calculate the below chance
+                # add to the dataframe
+                df_full = df_full.append(
+                    {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
+                     'BrainArea': 'AEG'}, ignore_index=True)
+    #plot as a swarm plot with the below chance as a different colour
+    fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
+    sns.swarmplot(x='BrainArea', y='Score', hue='Below-chance', data=df_full, ax=ax, alpha=0.5)
+    sns.violinplot(x='BrainArea', y='Score', data=df_full, ax=ax, inner=None, color='lightgray')
+    plt.title('Trained animals')
+    plt.show()
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    # Create a custom color palette for ProbeWords
+    probe_word_palette = sns.color_palette("Set1", n_colors=len(df_full['ProbeWord'].unique()))
+
+    # Define a function to apply different colors for ProbeWords
+    def color_by_probeword(probeword):
+        return probe_word_palette[df_full['ProbeWord'].unique().tolist().index(probeword)]
+
+    # Filter the DataFrame for above and below chance scores
+    df_above_chance = df_full[df_full['Below-chance'] == 0]
+    df_below_chance = df_full[df_full['Below-chance'] == 1]
+
+    # Plot the data points color-coded by ProbeWord for above chance scores
+    sns.swarmplot(x='BrainArea', y='Score', data=df_above_chance, ax=ax, size=3, dodge=False, palette=probe_word_palette,
+                  hue='ProbeWord', alpha=0.7)
+
+    # Overlay the data points for below chance scores in grey
+    sns.swarmplot(x='BrainArea', y='Score', data=df_below_chance, ax=ax, size=3, dodge=False, color='lightgray', alpha=0.5)
+
+    # Overlay the violin plot for visualization
+    sns.violinplot(x='BrainArea', y='Score', data=df_full, ax=ax, inner=None, color='white')
+
+    # Customize the legend
+    legend = ax.legend(title='ProbeWord')
+
+    # Set custom colors for ProbeWords in the legend
+    for idx, probeword in enumerate(df_full['ProbeWord'].unique()):
+        legend.get_texts()[idx].set_text(probeword)
+        legend.legendHandles[idx].set_color(color_by_probeword(probeword))
+
+    # Add a title
+    plt.title('Trained animals')
+
+    # Show the plot
+    plt.show()
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    # Create a custom color palette for ProbeWords
+    probe_word_palette = sns.color_palette("Set1", n_colors=len(df_full['ProbeWord'].unique()))
+
+    # Define a function to apply different colors for ProbeWords
+    def color_by_probeword(probeword):
+        return probe_word_palette[df_full['ProbeWord'].unique().tolist().index(probeword)]
+
+    # Filter the DataFrame for above and below chance scores
+    df_above_chance = df_full[df_full['Below-chance'] == 0]
+    df_below_chance = df_full[df_full['Below-chance'] == 1]
+
+    # Plot the data points color-coded by ProbeWord for above chance scores
+    sns.swarmplot(x='BrainArea', y='Score', data=df_above_chance, ax=ax, palette=probe_word_palette, hue='ProbeWord',
+                  alpha=0.7)
+
+    # Manually adjust the x-positions for the below chance scores to avoid overlap
+    for i, row in df_below_chance.iterrows():
+        x_offset = probe_word_palette.index(color_by_probeword(row['ProbeWord']))
+        x = float(row['BrainArea']) + x_offset  # Convert to float for addition
+        ax.scatter(x, row['Score'], color='lightgray', alpha=0.7)
+
+    # Overlay the violin plot for visualization
+    sns.violinplot(x='BrainArea', y='Score', data=df_full, ax=ax, inner=None, color='lightgray')
+
+    # Customize the legend
+    legend = ax.legend(title='ProbeWord')
+
+    # Set custom colors for ProbeWords in the legend
+    for idx, probeword in enumerate(df_full['ProbeWord'].unique()):
+        legend.get_texts()[idx].set_text(probeword)
+        legend.legendHandles[idx].set_color(color_by_probeword(probeword))
+
+    # Add a title
+    plt.title('Trained animals')
+    plt.show()
+
+    # Show the p
+
+    # Define a custom color palette for 'ProbeWord'
+    probe_word_palette = sns.color_palette("Set1", len(df_full['ProbeWord'].unique()))
+
+    # Define a color palette for 'Below-chance' values
+    below_chance_palette = {0: 'lightgrey', 1: 'grey'}
+
+    # Create a new column 'Combined' to combine 'ProbeWord' and 'Below-chance' for hue
+    df_full['Combined'] = df_full['ProbeWord'] + ' - ' + df_full['Below-chance'].astype(str)
+
+    # Get unique values from the 'Combined' column
+    unique_combined_values = df_full['Combined'].unique()
+
+    # Create a custom palette for 'Combined' values
+    custom_palette = {
+        value: below_chance_palette[1] if ' - 1' in value else probe_word_palette[i % len(probe_word_palette)] for
+        i, value in enumerate(unique_combined_values)}
+
+    # Plot as a swarmplot with the 'Combined' column as hue
+    fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
+    sns.swarmplot(x='BrainArea', y='Score', hue='Combined', palette=custom_palette, data=df_full, ax=ax, alpha=0.5)
+    plt.legend()
+    # Add a legend
+    legend = ax.legend(loc='upper right', title='Legend')
+    # for label in legend.get_texts():
+    #     label.set_text('ProbeWord - Below-chance')
 
     plt.show()
+
+    probe_word_palette = sns.color_palette("Set1", len(df_full['ProbeWord'].unique()))
+
+    # Create a new column 'Combined' to combine 'ProbeWord' and 'Below-chance' for hue
+    df_full['Combined'] = df_full['ProbeWord'] + ' - ' + df_full['Below-chance'].astype(str)
+
+    # Create a dictionary to map 'Combined' values to colors
+    combined_color_mapping = {combined: color for combined, color in
+                              zip(df_full['Combined'].unique(), probe_word_palette)}
+
+    # Create a list to store alphas for each point
+    alphas = []
+
+    for index, row in df_full.iterrows():
+        # Check if the point is 'Below-chance' (1) and adjust alpha
+        alpha = 0.3 if row['Below-chance'] == 1 else 1.0
+
+        alphas.append(alpha)
+
+    # Map the 'Combined' values to colors and create a list of colors for each point
+    point_colors = [combined_color_mapping.get(combined, (0.7, 0.7, 0.7)) for combined in df_full['Combined']]
+
+    # Plot as a swarmplot with adjusted alphas
+    fig, ax = plt.subplots(1, figsize=(10, 10), dpi=300)
+    sns.swarmplot(
+        x='BrainArea',
+        y='Score',
+        palette=point_colors,
+        alpha=alphas,
+        data=df_full,
+        ax=ax,
+    )
+
+    # Add a legend
+    legend = ax.legend(loc='upper right', title='Legend')
+    for label in legend.get_texts():
+        label.set_text('ProbeWord - Below-chance')
+
+    plt.show()
+
+
+
+
+
+
+
+
+
+
 ## do the same for the naive animals
     for talker in [1]:
         if talker == 1:
