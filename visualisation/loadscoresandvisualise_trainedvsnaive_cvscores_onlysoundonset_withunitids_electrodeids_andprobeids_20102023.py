@@ -627,9 +627,7 @@ def main():
             stream_name = str(stream_name).split('\\')[-1]
 
             report[animal][stream_name], singleunitlist[animal][stream_name], multiunitlist[animal][stream_name], noiselist[animal][stream_name] = load_classified_report(f'{path}')
-            # except:
-            #     print('no report for this stream:' + str(path))
-            #     pass
+
     # now create a dictionary of dictionaries, where the first key is the animal name, and the second key is the stream name
     #the value is are the decoding scores for each cluster
 
