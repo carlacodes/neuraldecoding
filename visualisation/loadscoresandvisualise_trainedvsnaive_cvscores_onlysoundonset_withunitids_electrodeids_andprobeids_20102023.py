@@ -1210,6 +1210,87 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                         scoredict_byunit_trained_perm[unit_id][probewordtext]['channel_id'].append(
                             channel_id)  # Update 'channel_id'
                     count = count + 1
+    #load the json file which has the electrode positions
+    with open('D:\spkvisanddecodeproj2/analysisscriptsmodcg/json_files\electrode_positions.json') as f:
+        electrode_position_data = json.load(f)
+    scoredict_by_unit_meg = {}
+    scoredict_by_unit_peg = {}
+    scoredict_by_unit_aeg = {}
+    #now sort each of the score_dicts by channel_id
+    for unit_id in scoredict_byunit.keys():
+        example_unit = scoredict_byunit[unit_id]
+        #load the corresponding channel_id
+
+        if 'F1604_Squinty' in unit_id:
+            animal = 'F1604_Squinty'
+            side = 'left'
+        elif 'F1606_Windolene' in unit_id:
+            animal = 'F1606_Windolene'
+        elif 'F1702_Zola' in unit_id:
+            animal = 'F1702_Zola'
+        elif 'F1815_Cruella' in unit_id:
+            animal = 'F1815_Cruella'
+        elif 'F1901_Crumble' in unit_id:
+            animal = 'F1901_Crumble'
+        elif 'F1902_Eclair' in unit_id:
+            animal = 'F1902_Eclair'
+        elif 'F1812_Nala' in unit_id:
+            animal = 'F1812_Nala'
+        elif 'F2003_Orecchiette' in unit_id:
+            animal = 'F2003_Orecchiette'
+
+
+        if 'BB_3' in unit_id and animal!='F1604_Squinty':
+            side = 'right'
+        elif 'BB_2' in unit_id and animal!='F1604_Squinty':
+            side = 'right'
+        elif 'BB_4' in unit_id:
+            side = 'right'
+        elif 'BB_5' in unit_id:
+            side = 'left'
+
+
+
+
+        for probeword in example_unit.keys():
+            try:
+                channel_id = example_unit[probeword]['channel_id'][0]
+            except:
+                continue
+            if channel_id is not None:
+                break
+
+
+
+        #load the corresponding electrode position
+        electrode_position_dict_for_animal = electrode_position_data[animal][side]
+        #find where the TDT number is in the electrode position dict
+        for electrode_position in electrode_position_dict_for_animal:
+            if electrode_position['TDT_NUMBER'] == channel_id:
+                electrode_position_dict = electrode_position
+                break
+        if animal == 'F2003_Orecchiette':
+            if 'mod' in unit_id:
+                scoredict_by_unit_peg[unit_id] = scoredict_byunit[unit_id]
+            elif 'S2' in unit_id:
+                scoredict_by_unit_peg[unit_id] = scoredict_byunit[unit_id]
+            elif 'S3' in unit_id:
+                scoredict_by_unit_meg[unit_id] = scoredict_byunit[unit_id]
+
+        else:
+            if electrode_position_dict['area'] == 'MEG':
+                #add it to a new dictionary
+                scoredict_by_unit_meg[unit_id] = scoredict_byunit[unit_id]
+            elif electrode_position_dict['area'] == 'PEG':
+                scoredict_by_unit_peg[unit_id] = scoredict_byunit[unit_id]
+            elif electrode_position_dict['area'] == 'AEG':
+                scoredict_by_unit_aeg[unit_id] = scoredict_byunit[unit_id]
+
+
+
+
+
+
 
     #plot each mean across probeword as a bar plot
     fig, ax = plt.subplots(1, figsize=(10, 10), dpi=300)
