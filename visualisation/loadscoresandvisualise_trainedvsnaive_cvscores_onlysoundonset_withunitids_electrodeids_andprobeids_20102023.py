@@ -775,54 +775,7 @@ def main():
 
 
 def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
-    # labels = ['cruella', 'zola', 'nala', 'crumble', 'eclair', 'ore']
-    # colors = ['purple', 'magenta', 'darkturquoise', 'olivedrab', 'steelblue', 'darkcyan']
 
-
-    fig, ax = plt.subplots(1, figsize=(5, 8))
-    emptydict = {}
-    count = 0
-    # for dictoutput in dictlist:
-    #     for sutype in ['su_list', 'mu_list']:
-    #         for pitchshiftornot in dictoutput[sutype].keys():
-    #             for talker in dictoutput[sutype][pitchshiftornot].keys():
-    #                 for item in dictoutput[sutype][pitchshiftornot][talker]:
-    #                     if count == 0 or count ==1:
-    #                         emptydict['trained'] = emptydict.get('trained', []) + [1]
-    #                     else:
-    #                         emptydict['trained'] = emptydict.get('trained', []) + [0]
-    #                     emptydict['ferret']= emptydict.get('ferret', []) + [count]
-    #                     emptydict['score'] = emptydict.get('score', []) + [item]
-    #                     if talker == 'female_talker':
-    #                         emptydict['male_talker'] = emptydict.get('male_talker', []) + [0]
-    #                     else:
-    #                         emptydict['male_talker'] = emptydict.get('male_talker', []) + [1]
-    #                     if pitchshiftornot == 'pitchshift':
-    #                         emptydict['pitchshift'] = emptydict.get('pitchshift', []) + [1]
-    #                     else:
-    #                         emptydict['pitchshift'] = emptydict.get('pitchshift', []) + [0]
-    #                     if sutype == 'su_list':
-    #                         emptydict['su'] = emptydict.get('su', []) + [1]
-    #                     else:
-    #                         emptydict['su'] = emptydict.get('su', []) + [0]
-    #     count += 1
-    # for keys in emptydict.keys():
-    #     emptydict[keys] = np.asarray(emptydict[keys])
-    #
-    #
-    # for dictoutput in dictlist:
-    #     for key in ['su_list', 'mu_list']:
-    #         for key3 in dictoutput[key]['pitchshift'].keys():
-    #             if len(dictoutput[key]['nonpitchshift'][key3]) < len(
-    #                     dictoutput[key]['pitchshift'][key3]):
-    #                 dictoutput[key]['pitchshift'][key3] = \
-    #                     dictoutput[key]['pitchshift'][key3][
-    #                     :len(dictoutput[key]['nonpitchshift'][key3])]
-    #             elif len(dictoutput[key]['nonpitchshift'][key3]) > len(
-    #                     dictoutput[key]['pitchshift'][key3]):
-    #                 dictoutput[key]['nonpitchshift'][key3] = \
-    #                     dictoutput[key]['nonpitchshift'][key3][
-    #                     :len(dictoutput[key]['pitchshift'][key3])]
 
     bigconcatenatetrained_ps = np.empty(0)
     bigconcatenatetrained_nonps = np.empty(0)
@@ -848,9 +801,6 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
                     (bigconcatenatenaive_nonps, dictouput[key]['nonpitchshift'][key3]))
 
     #remake dictionary based on probe word
-    emptydict = {}
-    count = 0
-    probewordlist = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
     probewordlist_text = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22), (15, 15), (42, 49), (4, 4), (16, 16), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
                           (14, 14)]
 
