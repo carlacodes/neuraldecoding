@@ -625,17 +625,7 @@ def main():
             stream_name = path.parent.absolute()
             stream_name = stream_name.parent.absolute()
             stream_name = str(stream_name).split('\\')[-1]
-            #maybe just modify this to include the recname
-            # stream_name = str(stream_name)[-4:]
 
-            #check if stream name exists
-            # if stream_name in report[animal].keys():
-            #     stream_name = path.parent.absolute()
-            #     stream_name = stream_name.parent.absolute()
-            #     #find myriad number
-            #     stream_name = str(stream_name)[-6:]
-            #load the report for that stream
-            # try:
             report[animal][stream_name], singleunitlist[animal][stream_name], multiunitlist[animal][stream_name], noiselist[animal][stream_name] = load_classified_report(f'{path}')
             # except:
             #     print('no report for this stream:' + str(path))
