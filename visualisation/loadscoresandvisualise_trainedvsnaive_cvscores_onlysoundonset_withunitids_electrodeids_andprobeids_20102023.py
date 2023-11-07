@@ -1471,11 +1471,11 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_below_chance = df_full[df_full['Below-chance'] == 1]
 
     # Plot the data points color-coded by ProbeWord for above chance scores
-    sns.swarmplot(x='BrainArea', y='Score', data=df_above_chance, ax=ax, size=3, dodge=False, palette=probe_word_palette,
-                  hue='ProbeWord', alpha=0.7)
+    sns.stripplot(x='BrainArea', y='Score', data=df_above_chance, ax=ax, size=3, dodge=False, palette=probe_word_palette,
+                  hue='ProbeWord', alpha=0.7, jitter = 0.2)
 
     # Overlay the data points for below chance scores in grey
-    sns.swarmplot(x='BrainArea', y='Score', data=df_below_chance, ax=ax, size=3, dodge=False, color='lightgray', alpha=0.5)
+    sns.stripplot(x='BrainArea', y='Score', data=df_below_chance, ax=ax, size=3, dodge=False, color='lightgray', alpha=0.5, jitter = 0.2)
 
     # Overlay the violin plot for visualization
     sns.violinplot(x='BrainArea', y='Score', data=df_full, ax=ax, inner=None, color='white')
@@ -1493,116 +1493,42 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
     # Show the plot
     plt.show()
-    fig, ax = plt.subplots(figsize=(10, 6))
 
-    # Create a custom color palette for ProbeWords
-    probe_word_palette = sns.color_palette("Set1", n_colors=len(df_full['ProbeWord'].unique()))
+    #now plot by animal for the trained animals
+    for animal in ['F1604_Squinty', 'F1606_Windolene', 'F1702_Zola', 'F1815_Cruella', 'F1901_Crumble', 'F1902_Eclair', 'F1812_Nala', 'F2003_Orecchiette']:
+        fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
+        df_full_animal = df_full[df_full['ID'].str.contains(animal)]
+        df_above_chance = df_full_animal[df_full_animal['Below-chance'] == 0]
+        df_below_chance = df_full_animal[df_full_animal['Below-chance'] == 1]
 
-    # Define a function to apply different colors for ProbeWords
-    def color_by_probeword(probeword):
-        return probe_word_palette[df_full['ProbeWord'].unique().tolist().index(probeword)]
+        # Plot the data points color-coded by ProbeWord for above chance scores
+        sns.stripplot(x='BrainArea', y='Score', data=df_above_chance, ax=ax, size=3, dodge=False,
+                      palette=probe_word_palette,
+                      hue='ProbeWord', alpha=0.7, jitter=0.2)
 
-    # Filter the DataFrame for above and below chance scores
-    df_above_chance = df_full[df_full['Below-chance'] == 0]
-    df_below_chance = df_full[df_full['Below-chance'] == 1]
+        # Overlay the data points for below chance scores in grey
+        sns.stripplot(x='BrainArea', y='Score', data=df_below_chance, ax=ax, size=3, dodge=False, color='lightgray',
+                      alpha=0.5, jitter=0.2)
 
-    # Plot the data points color-coded by ProbeWord for above chance scores
-    sns.swarmplot(x='BrainArea', y='Score', data=df_above_chance, ax=ax, palette=probe_word_palette, hue='ProbeWord',
-                  alpha=0.7)
+        # Overlay the violin plot for visualization
+        sns.violinplot(x='BrainArea', y='Score', data=df_full, ax=ax, inner=None, color='white')
 
-    # Manually adjust the x-positions for the below chance scores to avoid overlap
-    for i, row in df_below_chance.iterrows():
-        x_offset = probe_word_palette.index(color_by_probeword(row['ProbeWord']))
-        x = float(row['BrainArea']) + x_offset  # Convert to float for addition
-        ax.scatter(x, row['Score'], color='lightgray', alpha=0.7)
+        # Customize the legend
+        legend = ax.legend(title='ProbeWord')
 
-    # Overlay the violin plot for visualization
-    sns.violinplot(x='BrainArea', y='Score', data=df_full, ax=ax, inner=None, color='lightgray')
+        # Set custom colors for ProbeWords in the legend
+        # Add a title
+        plt.title('Trained animal, {}'.format(animal))
 
-    # Customize the legend
-    legend = ax.legend(title='ProbeWord')
+        # Show the plot
+        plt.show()
 
-    # Set custom colors for ProbeWords in the legend
-    for idx, probeword in enumerate(df_full['ProbeWord'].unique()):
-        legend.get_texts()[idx].set_text(probeword)
-        legend.legendHandles[idx].set_color(color_by_probeword(probeword))
 
-    # Add a title
-    plt.title('Trained animals')
-    plt.show()
+
 
     # Show the p
 
     # Define a custom color palette for 'ProbeWord'
-    probe_word_palette = sns.color_palette("Set1", len(df_full['ProbeWord'].unique()))
-
-    # Define a color palette for 'Below-chance' values
-    below_chance_palette = {0: 'lightgrey', 1: 'grey'}
-
-    # Create a new column 'Combined' to combine 'ProbeWord' and 'Below-chance' for hue
-    df_full['Combined'] = df_full['ProbeWord'] + ' - ' + df_full['Below-chance'].astype(str)
-
-    # Get unique values from the 'Combined' column
-    unique_combined_values = df_full['Combined'].unique()
-
-    # Create a custom palette for 'Combined' values
-    custom_palette = {
-        value: below_chance_palette[1] if ' - 1' in value else probe_word_palette[i % len(probe_word_palette)] for
-        i, value in enumerate(unique_combined_values)}
-
-    # Plot as a swarmplot with the 'Combined' column as hue
-    fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
-    sns.swarmplot(x='BrainArea', y='Score', hue='Combined', palette=custom_palette, data=df_full, ax=ax, alpha=0.5)
-    plt.legend()
-    # Add a legend
-    legend = ax.legend(loc='upper right', title='Legend')
-    # for label in legend.get_texts():
-    #     label.set_text('ProbeWord - Below-chance')
-
-    plt.show()
-
-    probe_word_palette = sns.color_palette("Set1", len(df_full['ProbeWord'].unique()))
-
-    # Create a new column 'Combined' to combine 'ProbeWord' and 'Below-chance' for hue
-    df_full['Combined'] = df_full['ProbeWord'] + ' - ' + df_full['Below-chance'].astype(str)
-
-    # Create a dictionary to map 'Combined' values to colors
-    combined_color_mapping = {combined: color for combined, color in
-                              zip(df_full['Combined'].unique(), probe_word_palette)}
-
-    # Create a list to store alphas for each point
-    alphas = []
-
-    for index, row in df_full.iterrows():
-        # Check if the point is 'Below-chance' (1) and adjust alpha
-        alpha = 0.3 if row['Below-chance'] == 1 else 1.0
-
-        alphas.append(alpha)
-
-    # Map the 'Combined' values to colors and create a list of colors for each point
-    point_colors = [combined_color_mapping.get(combined, (0.7, 0.7, 0.7)) for combined in df_full['Combined']]
-
-    # Plot as a swarmplot with adjusted alphas
-    fig, ax = plt.subplots(1, figsize=(10, 10), dpi=300)
-    sns.swarmplot(
-        x='BrainArea',
-        y='Score',
-        palette=point_colors,
-        alpha=alphas,
-        data=df_full,
-        ax=ax,
-    )
-
-    # Add a legend
-    legend = ax.legend(loc='upper right', title='Legend')
-    for label in legend.get_texts():
-        label.set_text('ProbeWord - Below-chance')
-
-    plt.show()
-
-
-
-
 
 
 
