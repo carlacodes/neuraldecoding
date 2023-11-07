@@ -1019,8 +1019,197 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                             dict['mu_list'][key][talker_key][count])
                         scoredict_byunit[unit_id][probewordtext]['channel_id'].append(channel_id)  # Update 'channel_id'
                     count = count + 1
+    unit_ids_naive = []
+    for dict in dictlist_naive:
+        # Get all the unique unit_ids
+        for key in dict['su_list_unitid']:
+            for key2 in dict['su_list_unitid'][key]:
+                for key3 in dict['su_list_unitid'][key][key2]:
+                    unit_ids_naive.append(key3)
+        for key in dict['mu_list_unitid']:
+            for key2 in dict['mu_list_unitid'][key]:
+                for key3 in dict['mu_list_unitid'][key][key2]:
+                    unit_ids_naive.append(key3)
 
+    unit_ids_naive = np.unique(unit_ids_naive)
+    # Initialize the scoredict with unit IDs and probeword texts
+    scoredict_byunit_naive = {
+        unit_id: {probeword_text: {'su_list': [], 'mu_list': [], 'channel_id': []} for probeword_text in
+                  probeword_to_text.values()} for
+        unit_id in unit_ids_naive}
+    for talker in [1]:
+        if talker == 1:
+            talker_key = 'female_talker'
+        for i, dict in enumerate(dictlist_naive):
 
+            for key in dict['su_list_probeword']:
+                probewords = dict['su_list_probeword'][key][talker_key]
+                count = 0
+                for probeword in probewords:
+                    probeword_range = int(probeword)
+                    probewordtext = probeword_to_text.get(probeword_range)
+                    unit_id = dict['su_list_unitid'][key][talker_key][count]
+                    channel_id = dict['su_list_chanid'][key][talker_key][count]
+                    # adding 16 to match the json file
+                    if 'BB_3' in unit_id:
+                        print(unit_id)
+                        channel_id = channel_id + 16
+                    elif 'BB_5' in unit_id:
+                        channel_id = channel_id + 16
+
+                    # Add 'channel_id'
+                    if probewordtext:
+                        scoredict_byunit_naive[unit_id][probewordtext]['su_list'].append(
+                            dict['su_list'][key][talker_key][count])
+                        scoredict_byunit_naive[unit_id][probewordtext]['channel_id'].append(channel_id)  # Update 'channel_id'
+                    count = count + 1
+
+            for key in dict['mu_list_probeword']:
+                probewords = dict['mu_list_probeword'][key][talker_key]
+                count = 0
+                for probeword in probewords:
+                    probeword_range = int(probeword)
+                    probewordtext = probeword_to_text.get(probeword_range)
+                    if probewordtext:
+                        unit_id = dict['mu_list_unitid'][key][talker_key][count]
+                        channel_id = dict['mu_list_chanid'][key][talker_key][count]
+                        if 'BB_3' in unit_id:
+                            channel_id = channel_id + 16
+                        elif 'BB_5' in unit_id:
+                            channel_id = channel_id + 16
+                        # Add 'channel_id'
+                        scoredict_byunit_naive[unit_id][probewordtext]['mu_list'].append(
+                            dict['mu_list'][key][talker_key][count])
+                        scoredict_byunit_naive[unit_id][probewordtext]['channel_id'].append(channel_id)  # Update 'channel_id'
+                    count = count + 1
+    unit_ids_naive_permutation= []
+    for dict in dictlist_naive_permutation:
+        # Get all the unique unit_ids
+        for key in dict['su_list_unitid']:
+            for key2 in dict['su_list_unitid'][key]:
+                for key3 in dict['su_list_unitid'][key][key2]:
+                    unit_ids_naive_permutation.append(key3)
+        for key in dict['mu_list_unitid']:
+            for key2 in dict['mu_list_unitid'][key]:
+                for key3 in dict['mu_list_unitid'][key][key2]:
+                    unit_ids_naive_permutation.append(key3)
+
+    unit_ids_naive_permutation = np.unique(unit_ids_naive_permutation)
+    # Initialize the scoredict with unit IDs and probeword texts
+    scoredict_byunit_naive_perm = {
+        unit_id: {probeword_text: {'su_list': [], 'mu_list': [], 'channel_id': []} for probeword_text in
+                  probeword_to_text.values()} for
+        unit_id in unit_ids_naive_permutation}
+    for talker in [1]:
+        if talker == 1:
+            talker_key = 'female_talker'
+        for i, dict in enumerate(dictlist_naive_permutation):
+
+            for key in dict['su_list_probeword']:
+                probewords = dict['su_list_probeword'][key][talker_key]
+                count = 0
+                for probeword in probewords:
+                    probeword_range = int(probeword)
+                    probewordtext = probeword_to_text.get(probeword_range)
+                    unit_id = dict['su_list_unitid'][key][talker_key][count]
+                    channel_id = dict['su_list_chanid'][key][talker_key][count]
+                    # adding 16 to match the json file
+                    if 'BB_3' in unit_id:
+                        print(unit_id)
+                        channel_id = channel_id + 16
+                    elif 'BB_5' in unit_id:
+                        channel_id = channel_id + 16
+
+                    # Add 'channel_id'
+                    if probewordtext:
+                        scoredict_byunit_naive_perm[unit_id][probewordtext]['su_list'].append(
+                            dict['su_list'][key][talker_key][count])
+                        scoredict_byunit_naive_perm[unit_id][probewordtext]['channel_id'].append(channel_id)  # Update 'channel_id'
+                    count = count + 1
+
+            for key in dict['mu_list_probeword']:
+                probewords = dict['mu_list_probeword'][key][talker_key]
+                count = 0
+                for probeword in probewords:
+                    probeword_range = int(probeword)
+                    probewordtext = probeword_to_text.get(probeword_range)
+                    if probewordtext:
+                        unit_id = dict['mu_list_unitid'][key][talker_key][count]
+                        channel_id = dict['mu_list_chanid'][key][talker_key][count]
+                        if 'BB_3' in unit_id:
+                            channel_id = channel_id + 16
+                        elif 'BB_5' in unit_id:
+                            channel_id = channel_id + 16
+                        # Add 'channel_id'
+                        scoredict_byunit_naive_perm[unit_id][probewordtext]['mu_list'].append(
+                            dict['mu_list'][key][talker_key][count])
+                        scoredict_byunit_naive_perm[unit_id][probewordtext]['channel_id'].append(channel_id)  # Update 'channel_id'
+                    count = count + 1
+
+    unit_ids_trained_permutation = []
+    for dict in dictlist_trained_permutation:
+        # Get all the unique unit_ids
+        for key in dict['su_list_unitid']:
+            for key2 in dict['su_list_unitid'][key]:
+                for key3 in dict['su_list_unitid'][key][key2]:
+                    unit_ids_trained_permutation.append(key3)
+        for key in dict['mu_list_unitid']:
+            for key2 in dict['mu_list_unitid'][key]:
+                for key3 in dict['mu_list_unitid'][key][key2]:
+                    unit_ids_trained_permutation.append(key3)
+
+    unit_ids_trained_permutation = np.unique(unit_ids_trained_permutation)
+    # Initialize the scoredict with unit IDs and probeword texts
+    scoredict_byunit_trained_perm = {
+        unit_id: {probeword_text: {'su_list': [], 'mu_list': [], 'channel_id': []} for probeword_text in
+                  probeword_to_text.values()} for
+        unit_id in unit_ids_trained_permutation}
+    for talker in [1]:
+        if talker == 1:
+            talker_key = 'female_talker'
+        for i, dict in enumerate(dictlist_trained_permutation):
+
+            for key in dict['su_list_probeword']:
+                probewords = dict['su_list_probeword'][key][talker_key]
+                count = 0
+                for probeword in probewords:
+                    probeword_range = int(probeword)
+                    probewordtext = probeword_to_text.get(probeword_range)
+                    unit_id = dict['su_list_unitid'][key][talker_key][count]
+                    channel_id = dict['su_list_chanid'][key][talker_key][count]
+                    if 'BB_3' in unit_id:
+                        print(unit_id)
+                        channel_id = channel_id + 16
+                    elif 'BB_5' in unit_id:
+                        channel_id = channel_id + 16
+
+                    # Add 'channel_id'
+                    if probewordtext:
+                        scoredict_byunit_trained_perm[unit_id][probewordtext]['su_list'].append(
+                            dict['su_list'][key][talker_key][count])
+                        scoredict_byunit_trained_perm[unit_id][probewordtext]['channel_id'].append(
+                            channel_id)  # Update 'channel_id'
+                    count = count + 1
+
+            for key in dict['mu_list_probeword']:
+                probewords = dict['mu_list_probeword'][key][talker_key]
+                count = 0
+                for probeword in probewords:
+                    probeword_range = int(probeword)
+                    probewordtext = probeword_to_text.get(probeword_range)
+                    if probewordtext:
+                        unit_id = dict['mu_list_unitid'][key][talker_key][count]
+                        channel_id = dict['mu_list_chanid'][key][talker_key][count]
+                        if 'BB_3' in unit_id:
+                            channel_id = channel_id + 16
+                        elif 'BB_5' in unit_id:
+                            channel_id = channel_id + 16
+                        # Add 'channel_id'
+                        scoredict_byunit_trained_perm[unit_id][probewordtext]['mu_list'].append(
+                            dict['mu_list'][key][talker_key][count])
+                        scoredict_byunit_trained_perm[unit_id][probewordtext]['channel_id'].append(
+                            channel_id)  # Update 'channel_id'
+                    count = count + 1
 
     #plot each mean across probeword as a bar plot
     fig, ax = plt.subplots(1, figsize=(10, 10), dpi=300)
