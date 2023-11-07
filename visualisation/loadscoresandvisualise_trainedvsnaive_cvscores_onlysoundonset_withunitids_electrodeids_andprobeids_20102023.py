@@ -1249,9 +1249,6 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         elif 'BB_5' in unit_id:
             side = 'left'
 
-
-
-
         for probeword in example_unit.keys():
             try:
                 channel_id = example_unit[probeword]['channel_id'][0]
@@ -1259,9 +1256,6 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                 continue
             if channel_id is not None:
                 break
-
-
-
         #load the corresponding electrode position
         electrode_position_dict_for_animal = electrode_position_data[animal][side]
         #find where the TDT number is in the electrode position dict
@@ -1498,6 +1492,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     for animal in ['F1604_Squinty', 'F1606_Windolene', 'F1702_Zola', 'F1815_Cruella', 'F1901_Crumble', 'F1902_Eclair', 'F1812_Nala', 'F2003_Orecchiette']:
         fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
         df_full_animal = df_full[df_full['ID'].str.contains(animal)]
+        if len(df_full_animal) == 0:
+            continue
         df_above_chance = df_full_animal[df_full_animal['Below-chance'] == 0]
         df_below_chance = df_full_animal[df_full_animal['Below-chance'] == 1]
 
