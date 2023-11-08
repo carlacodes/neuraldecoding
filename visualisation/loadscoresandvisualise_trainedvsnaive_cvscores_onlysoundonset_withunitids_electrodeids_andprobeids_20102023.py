@@ -1636,6 +1636,15 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                          'BrainArea': 'PEG', 'PitchShift': pitchshiftnum}, ignore_index=True)
 
     #plot as a swarm plot with the below chance as a different colour
+
+    for unit_id in df_full['ID']:
+        df_full_unit = df_full[df_full['ID'].str.contains(unit_id)]
+        #check if all the probe words are below chance
+        if np.sum(df_full_unit['Below-chance']) == len(df_full_unit['Below-chance']):
+            df_full = df_full[df_full['ID'] != unit_id]
+
+
+
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
     sns.swarmplot(x='BrainArea', y='Score', hue='Below-chance', data=df_full, ax=ax, alpha=0.5)
     sns.violinplot(x='BrainArea', y='Score', data=df_full, ax=ax, inner=None, color='lightgray')
@@ -2102,7 +2111,12 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                          'BrainArea': 'AEG', 'PitchShift': pitchshiftnum}, ignore_index=True)
 
     # plot as a swarm plot with the below chance as a different colour
-
+    #do the same for the naive animals
+    for unit_id in df_full_naive['ID']:
+        df_full_unit_naive = df_full_naive[df_full_naive['ID'].str.contains(unit_id)]
+        #check if all the probe words are below chance
+        if np.sum(df_full_unit_naive['Below-chance']) == len(df_full_unit_naive['Below-chance']):
+            df_full_naive = df_full_naive[df_full_naive['ID'] != unit_id]
 
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
     sns.swarmplot(x='BrainArea', y='Score', hue='Below-chance', data=df_full_naive, ax=ax, alpha=0.5)
@@ -2182,17 +2196,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
     #if the unit id is below chance for all probe words, exclude it
 
-    for unit_id in df_full['ID']:
-        df_full_unit = df_full[df_full['ID'].str.contains(unit_id)]
-        #check if all the probe words are below chance
-        if np.sum(df_full_unit['Below-chance']) == len(df_full_unit['Below-chance']):
-            df_full = df_full[df_full['ID'] != unit_id]
-    #do the same for the naive animals
-    for unit_id in df_full_naive['ID']:
-        df_full_unit_naive = df_full_naive[df_full_naive['ID'].str.contains(unit_id)]
-        #check if all the probe words are below chance
-        if np.sum(df_full_unit_naive['Below-chance']) == len(df_full_unit_naive['Below-chance']):
-            df_full_naive = df_full_naive[df_full_naive['ID'] != unit_id]
+
 
     for unit_id in df_full_naive_pitchsplit['ID']:
         df_full_unit_naive = df_full_naive_pitchsplit[df_full_naive_pitchsplit['ID'].str.contains(unit_id)]
