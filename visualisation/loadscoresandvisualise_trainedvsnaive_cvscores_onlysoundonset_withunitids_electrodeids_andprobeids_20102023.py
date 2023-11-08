@@ -1781,13 +1781,14 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                 scoredict_by_unit_naive_aeg[unit_id] = scoredict_byunit_naive[unit_id]
     ##do the same for the permutation data
     scoredict_by_unit_perm_naive_meg = {}
+
+
     scoredict_by_unit_perm_naive_peg = {}
     scoredict_by_unit_perm_naive_aeg = {}
     # now sort each of the score_dicts by channel_id
     for unit_id in scoredict_byunit_naive_perm.keys():
         example_unit = scoredict_byunit_naive_perm[unit_id]
         # load the corresponding channel_id
-
         if 'F1604_Squinty' in unit_id:
             animal = 'F1604_Squinty'
             side = 'left'
