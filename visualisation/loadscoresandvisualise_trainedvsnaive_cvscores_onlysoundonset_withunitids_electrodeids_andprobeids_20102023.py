@@ -1875,8 +1875,6 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                 scoredict_by_unit_perm_naive_aeg_pitchsplit[unit_id] = scoredict_byunit_naive_perm_pitchsplit[unit_id]
 
 
-
-
     df_full_naive = pd.DataFrame(columns=['ID', 'ProbeWord', 'Score', 'Below-chance', 'BrainArea'])
     df_full_naive_pitchsplit = pd.DataFrame(columns=['ID', 'ProbeWord', 'Score', 'Below-chance', 'BrainArea', 'PitchShift'])
 
@@ -1982,7 +1980,130 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                 df_full_naive = df_full_naive.append(
                     {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
                      'BrainArea': 'AEG'}, ignore_index=True)
+
+
+    for unit_id in scoredict_by_unit_naive_peg_pitchsplit.keys():
+        example_unit = scoredict_by_unit_naive_peg_pitchsplit[unit_id]
+        for probeword in example_unit.keys():
+            for pitchshiftkey in example_unit[probeword].keys():
+                su_list = example_unit[probeword][pitchshiftkey]['su_list']
+                mu_list = example_unit[probeword][pitchshiftkey]['mu_list']
+                if pitchshiftkey =='pitchshift':
+                    pitchshiftnum = 1
+                elif pitchshiftkey == 'nonpitchshift':
+                    pitchshiftnum = 0
+
+                if len(su_list) > 0:
+                    # calculate the score
+                    score = np.mean(su_list)
+                    # compare with the permutation data
+                    su_list_perm = scoredict_by_unit_perm_naive_peg_pitchsplit[unit_id][probeword][pitchshiftkey]['su_list']
+                    if score > np.mean(su_list_perm):
+                        below_chance = 0
+                    else:
+                        below_chance = 1
+                    # calculate the below chance
+                    # add to the dataframe
+                    df_full_naive_pitchsplit = df_full_naive_pitchsplit.append(
+                        {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
+                         'BrainArea': 'PEG', 'PitchShift': pitchshiftnum}, ignore_index=True)
+                elif len(mu_list) > 0:
+                    # calculate the score
+                    score = np.mean(mu_list)
+                    # compare with the permutation data
+                    mu_list_perm = scoredict_by_unit_perm_naive_peg_pitchsplit[unit_id][probeword][pitchshiftkey]['mu_list']
+                    if score > np.mean(mu_list_perm):
+                        below_chance = 0
+                    else:
+                        below_chance = 1
+                    # calculate the below chance
+                    # add to the dataframe
+                    df_full_naive_pitchsplit = df_full_naive_pitchsplit.append(
+                        {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
+                         'BrainArea': 'PEG', 'PitchShift': pitchshiftnum}, ignore_index=True)
+
+    for unit_id in scoredict_by_unit_naive_meg_pitchsplit.keys():
+        example_unit = scoredict_by_unit_naive_meg_pitchsplit[unit_id]
+        for probeword in example_unit.keys():
+            for pitchshiftkey in example_unit[probeword].keys():
+                su_list = example_unit[probeword][pitchshiftkey]['su_list']
+                mu_list = example_unit[probeword][pitchshiftkey]['mu_list']
+                if pitchshiftkey =='pitchshift':
+                    pitchshiftnum = 1
+                elif pitchshiftkey == 'nonpitchshift':
+                    pitchshiftnum = 0
+
+                if len(su_list) > 0:
+                    # calculate the score
+                    score = np.mean(su_list)
+                    # compare with the permutation data
+                    su_list_perm = scoredict_by_unit_perm_naive_meg_pitchsplit[unit_id][probeword][pitchshiftkey]['su_list']
+                    if score > np.mean(su_list_perm):
+                        below_chance = 0
+                    else:
+                        below_chance = 1
+                    # calculate the below chance
+                    # add to the dataframe
+                    df_full_naive_pitchsplit = df_full_naive_pitchsplit.append(
+                        {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
+                         'BrainArea': 'MEG', 'PitchShift': pitchshiftnum}, ignore_index=True)
+                elif len(mu_list) > 0:
+                    # calculate the score
+                    score = np.mean(mu_list)
+                    # compare with the permutation data
+                    mu_list_perm = scoredict_by_unit_perm_naive_meg_pitchsplit[unit_id][probeword][pitchshiftkey]['mu_list']
+                    if score > np.mean(mu_list_perm):
+                        below_chance = 0
+                    else:
+                        below_chance = 1
+                    # calculate the below chance
+                    # add to the dataframe
+                    df_full_naive_pitchsplit = df_full_naive_pitchsplit.append(
+                        {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
+                         'BrainArea': 'MEG', 'PitchShift': pitchshiftnum}, ignore_index=True)
+    for unit_id in scoredict_by_unit_naive_aeg_pitchsplit.keys():
+        example_unit = scoredict_by_unit_naive_aeg_pitchsplit[unit_id]
+        for probeword in example_unit.keys():
+            for pitchshiftkey in example_unit[probeword].keys():
+                su_list = example_unit[probeword][pitchshiftkey]['su_list']
+                mu_list = example_unit[probeword][pitchshiftkey]['mu_list']
+                if pitchshiftkey =='pitchshift':
+                    pitchshiftnum = 1
+                elif pitchshiftkey == 'nonpitchshift':
+                    pitchshiftnum = 0
+
+                if len(su_list) > 0:
+                    # calculate the score
+                    score = np.mean(su_list)
+                    # compare with the permutation data
+                    su_list_perm = scoredict_by_unit_perm_naive_aeg_pitchsplit[unit_id][probeword][pitchshiftkey]['su_list']
+                    if score > np.mean(su_list_perm):
+                        below_chance = 0
+                    else:
+                        below_chance = 1
+                    # calculate the below chance
+                    # add to the dataframe
+                    df_full_naive_pitchsplit = df_full_naive_pitchsplit.append(
+                        {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
+                         'BrainArea': 'AEG', 'PitchShift': pitchshiftnum}, ignore_index=True)
+                elif len(mu_list) > 0:
+                    # calculate the score
+                    score = np.mean(mu_list)
+                    # compare with the permutation data
+                    mu_list_perm = scoredict_by_unit_perm_naive_aeg_pitchsplit[unit_id][probeword][pitchshiftkey]['mu_list']
+                    if score > np.mean(mu_list_perm):
+                        below_chance = 0
+                    else:
+                        below_chance = 1
+                    # calculate the below chance
+                    # add to the dataframe
+                    df_full_naive_pitchsplit = df_full_naive_pitchsplit.append(
+                        {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
+                         'BrainArea': 'AEG', 'PitchShift': pitchshiftnum}, ignore_index=True)
+
     # plot as a swarm plot with the below chance as a different colour
+
+
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
     sns.swarmplot(x='BrainArea', y='Score', hue='Below-chance', data=df_full_naive, ax=ax, alpha=0.5)
     sns.violinplot(x='BrainArea', y='Score', data=df_full_naive, ax=ax, inner=None, color='lightgray')
@@ -2016,11 +2137,6 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
     # Customize the legend
     legend = ax.legend(title='ProbeWord')
-
-    # Set custom colors for ProbeWords in the legend
-    # for idx, probeword in enumerate(df_full['ProbeWord'].unique()):
-    #     legend.get_texts()[idx].set_text(probeword)
-    #     legend.legendHandles[idx].set_color(color_by_probeword(probeword))
 
     # Add a title
     plt.title('Naive animals')
@@ -2078,10 +2194,21 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         if np.sum(df_full_unit_naive['Below-chance']) == len(df_full_unit_naive['Below-chance']):
             df_full_naive = df_full_naive[df_full_naive['ID'] != unit_id]
 
+    for unit_id in df_full_naive_pitchsplit['ID']:
+        df_full_unit_naive = df_full_naive_pitchsplit[df_full_naive_pitchsplit['ID'].str.contains(unit_id)]
+        #check if all the probe words are below chance
+        if np.sum(df_full_unit_naive['Below-chance']) == len(df_full_unit_naive['Below-chance']):
+            df_full_naive_pitchsplit = df_full_naive_pitchsplit[df_full_naive_pitchsplit['ID'] != unit_id]
+
+    for unit_id in df_full_pitchsplit['ID']:
+        df_full_unit = df_full_pitchsplit[df_full_pitchsplit['ID'].str.contains(unit_id)]
+        #check if all the probe words are below chance
+        if np.sum(df_full_unit['Below-chance']) == len(df_full_unit['Below-chance']):
+            df_full_pitchsplit = df_full_pitchsplit[df_full_pitchsplit['ID'] != unit_id]
+
+
     #now plot by the probe word for the trained animals
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
-
-
     df_above_chance = df_full[df_full['Below-chance'] == 0]
     df_below_chance = df_full[df_full['Below-chance'] == 1]
 
@@ -2093,14 +2220,19 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     # Overlay the data  for below chance scores in grey
     sns.stripplot(x='ProbeWord', y='Score', data=df_below_chance, ax=ax, size=3, dodge=False, color='lightgray',
                   alpha=0.5, jitter=0.2)
-
-
     sns.violinplot(x='ProbeWord', y='Score', data=df_full, ax=ax, color='white')
     plt.title('Trained animals'' scores over distractor word')
     plt.show()
 
-    df_full_probeword14 = df_full[df_full['ProbeWord'] == '(14,14)']
+    #plot strip plot split by pitch shift
+    fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
+    df_above_chance_pitchshift = df_full_pitchsplit[(df_full_pitchsplit['Below-chance'] == 0) & (df_full_pitchsplit['PitchShift'] == 1)]
+    df_above_chance_nonpitchshift = df_full_pitchsplit[(df_full_pitchsplit['Below-chance'] == 0) & (df_full_pitchsplit['PitchShift'] == 0)]
 
+    sns.stripplot(x='ProbeWord', y='Score', data=df_above_chance, ax=ax, size=3, dodge=False,)
+    sns.stripplot(x='ProbeWord', y='Score', data=df_below_chance, ax=ax, size=3, dodge=False, color='lightgray',
+                    alpha=0.5, jitter=0.2)
+    sns.violinplot(x='ProbeWord', y='Score', data=df_full_pitchsplit, ax=ax, hue = 'PitchShift')
 
 
 
