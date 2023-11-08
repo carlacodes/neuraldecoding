@@ -2228,10 +2228,19 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
     df_above_chance_pitchshift = df_full_pitchsplit[(df_full_pitchsplit['Below-chance'] == 0) & (df_full_pitchsplit['PitchShift'] == 1)]
     df_above_chance_nonpitchshift = df_full_pitchsplit[(df_full_pitchsplit['Below-chance'] == 0) & (df_full_pitchsplit['PitchShift'] == 0)]
+    df_below_chance_pitchshift = df_full_pitchsplit[(df_full_pitchsplit['Below-chance'] == 1) & (df_full_pitchsplit['PitchShift'] == 1)]
+    df_below_chance_nonpitchshift = df_full_pitchsplit[(df_full_pitchsplit['Below-chance'] == 1) & (df_full_pitchsplit['PitchShift'] == 0)]
 
-    sns.stripplot(x='ProbeWord', y='Score', data=df_above_chance, ax=ax, size=3, dodge=False,)
-    sns.stripplot(x='ProbeWord', y='Score', data=df_below_chance, ax=ax, size=3, dodge=False, color='lightgray',
-                    alpha=0.5, jitter=0.2)
+
+    sns.stripplot(x='ProbeWord', y='Score', data=df_above_chance_pitchshift, ax=ax, size=3, dodge=False, palette='Set3',)
+    sns.stripplot(x='ProbeWord', y='Score', data=df_above_chance_nonpitchshift, ax=ax, size=3, dodge=False, color='lightgray',
+                    alpha=0.5, jitter=True)
+
+    sns.stripplot(x='ProbeWord', y='Score', data=df_below_chance_pitchshift, ax=ax, size=3, dodge=False, palette='Set3',)
+    sns.stripplot(x='ProbeWord', y='Score', data=df_below_chance_nonpitchshift, ax=ax, size=3, dodge=False, color='lightgray',
+                    alpha=0.5, jitter=True)
+
+
     sns.violinplot(x='ProbeWord', y='Score', data=df_full_pitchsplit, ax=ax, hue = 'PitchShift')
 
 
