@@ -2242,6 +2242,34 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
 
     sns.violinplot(x='ProbeWord', y='Score', data=df_full_pitchsplit, ax=ax, hue = 'PitchShift')
+    plt.title('Trained animals'' scores over distractor word')
+    plt.show()
+
+
+    #now plot by the probe word for the naive animals
+    fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
+    df_above_chance_pitchshift = df_full_naive_pitchsplit[(df_full_naive_pitchsplit['Below-chance'] == 0) & (df_full_naive_pitchsplit['PitchShift'] == 1)]
+    df_above_chance_nonpitchshift = df_full_naive_pitchsplit[(df_full_naive_pitchsplit['Below-chance'] == 0) & (df_full_naive_pitchsplit['PitchShift'] == 0)]
+    df_below_chance_pitchshift = df_full_naive_pitchsplit[(df_full_naive_pitchsplit['Below-chance'] == 1) & (df_full_naive_pitchsplit['PitchShift'] == 1)]
+    df_below_chance_nonpitchshift = df_full_naive_pitchsplit[(df_full_naive_pitchsplit['Below-chance'] == 1) & (df_full_naive_pitchsplit['PitchShift'] == 0)]
+
+
+    sns.stripplot(x='ProbeWord', y='Score', data=df_above_chance_pitchshift, ax=ax, size=3, dodge=False, palette='Set3',)
+    sns.stripplot(x='ProbeWord', y='Score', data=df_above_chance_nonpitchshift, ax=ax, size=3, dodge=False, color='lightgray',
+                    alpha=0.5, jitter=True)
+
+    sns.stripplot(x='ProbeWord', y='Score', data=df_below_chance_pitchshift, ax=ax, size=3, dodge=False, palette='Set3',)
+    sns.stripplot(x='ProbeWord', y='Score', data=df_below_chance_nonpitchshift, ax=ax, size=3, dodge=False, color='lightgray',
+                    alpha=0.5, jitter=True)
+
+
+    sns.violinplot(x='ProbeWord', y='Score', data=df_full_naive_pitchsplit, ax=ax, hue = 'PitchShift')
+    plt.title('Naive animals'' scores over distractor word')
+    plt.show()
+
+    #now plot by animal:
+    for animal in ['F1901_Crumble', 'F1902_Eclair','F2003_Orecchiette', 'F1812_Nala']:
+
 
 
 
