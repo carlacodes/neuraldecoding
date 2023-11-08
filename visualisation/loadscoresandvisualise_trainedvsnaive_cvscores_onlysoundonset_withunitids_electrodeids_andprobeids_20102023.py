@@ -1218,6 +1218,9 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                             dict['su_list'][key][talker_key][count])
                         scoredict_byunit_trained_perm[unit_id][probewordtext]['channel_id'].append(
                             channel_id)  # Update 'channel_id'
+
+                        scoredict_byunit_trained_perm_pitchsplit[unit_id][probewordtext][key]['su_list'].append(
+                            dict['su_list'][key][talker_key][count])
                     count = count + 1
 
             for key in dict['mu_list_probeword']:
