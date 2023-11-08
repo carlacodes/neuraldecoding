@@ -916,14 +916,6 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     scoredict[probewordtext][talker_key][key]['mu_list'].append(dict['mu_list'][key][talker_key][count])
                 count = count + 1
 
-    # unit_ids = []
-    #
-    # for dict in dictlist_trained:
-    #     #get aall the unique unit_ids
-    #     for key in dict['su_list_unitid']:
-    #         for key2 in dict['su_list_unitid'][key]:
-    #             for key3 in dict['su_list_unitid'][key][key2]:
-    #                 unit_ids.append(key3)
 
 
     unit_ids = []
