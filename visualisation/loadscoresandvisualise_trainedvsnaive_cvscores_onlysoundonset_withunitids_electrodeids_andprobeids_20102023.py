@@ -1845,6 +1845,43 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
     # Define a custom color palette for 'ProbeWord'
 
+    #if the unit id is below chance for all probe words, exclude it
+
+    for unit_id in df_full['ID']:
+        df_full_unit = df_full[df_full['ID'].str.contains(unit_id)]
+        #check if all the probe words are below chance
+        if np.sum(df_full_unit['Below-chance']) == len(df_full_unit['Below-chance']):
+            df_full = df_full[df_full['ID'] != unit_id]
+    #do the same for the naive animals
+    for unit_id in df_full_naive['ID']:
+        df_full_unit_naive = df_full_naive[df_full_naive['ID'].str.contains(unit_id)]
+        #check if all the probe words are below chance
+        if np.sum(df_full_unit_naive['Below-chance']) == len(df_full_unit_naive['Below-chance']):
+            df_full_naive = df_full_naive[df_full_naive['ID'] != unit_id]
+
+    #now plot by the probe word for the trained animals
+    fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
+
+
+    df_above_chance = df_full[df_full['Below-chance'] == 0]
+    df_below_chance = df_full[df_full['Below-chance'] == 1]
+
+    # Plot the data points color-coded by ProbeWord for above chance scores
+    sns.stripplot(x='ProbeWord', y='Score', data=df_above_chance, ax=ax, size=3, dodge=False,
+                  palette='Set3',
+                  hue='ProbeWord', alpha=1, jitter=0.2)
+
+    # Overlay the data  for below chance scores in grey
+    sns.stripplot(x='ProbeWord', y='Score', data=df_below_chance, ax=ax, size=3, dodge=False, color='lightgray',
+                  alpha=0.5, jitter=0.2)
+
+
+    sns.violinplot(x='ProbeWord', y='Score', data=df_full, ax=ax, color='white')
+    plt.title('Trained animals'' scores over distractor word')
+    plt.show()
+
+    df_full_probeword14 = df_full[df_full['ProbeWord'] == '(14,14)']
+
 
 
 
