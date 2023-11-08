@@ -942,7 +942,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         unit_id: {
             probeword_text: {
                 'pitchshift': {'su_list': [], 'mu_list': [], 'channel_id': []},
-                'control': {'su_list': [], 'mu_list': [], 'channel_id': []}
+                'nonpitchshift': {'su_list': [], 'mu_list': [], 'channel_id': []}
             } for probeword_text in probeword_to_text.values()
         } for unit_id in unit_ids
     }
@@ -971,7 +971,13 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     if probewordtext:
                         scoredict_byunit[unit_id][probewordtext]['su_list'].append(
                             dict['su_list'][key][talker_key][count])
-                        scoredict_byunit[unit_id][probewordtext]['channel_id'].append(channel_id)  # Update 'channel_id'
+                        scoredict_byunit[unit_id][probewordtext]['channel_id'].append(channel_id)
+
+                        scoredict_byunit_pitchsplit[unit_id][probewordtext][key]['su_list'].append(
+                            dict['su_list'][key][talker_key][count])
+                        scoredict_byunit_pitchsplit[unit_id][probewordtext][key]['channel_id'].append(channel_id)
+
+                        # Update 'channel_id'
                     count = count + 1
 
             for key in dict['mu_list_probeword']:
@@ -990,7 +996,11 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                         # Add 'channel_id'
                         scoredict_byunit[unit_id][probewordtext]['mu_list'].append(
                             dict['mu_list'][key][talker_key][count])
+
+                        scoredict_byunit_pitchsplit[unit_id][probewordtext][key]['mu_list'].append(
+                            dict['mu_list'][key][talker_key][count])
                         scoredict_byunit[unit_id][probewordtext]['channel_id'].append(channel_id)  # Update 'channel_id'
+                        scoredict_byunit_pitchsplit[unit_id][probewordtext][key]['channel_id'].append(channel_id)  # Update 'channel_id'
                     count = count + 1
     unit_ids_naive = []
     for dict in dictlist_naive:
@@ -1010,6 +1020,16 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         unit_id: {probeword_text: {'su_list': [], 'mu_list': [], 'channel_id': []} for probeword_text in
                   probeword_to_text.values()} for
         unit_id in unit_ids_naive}
+
+    scoredict_byunit_naive_pitchsplit = {
+        unit_id: {
+            probeword_text: {
+                'pitchshift': {'su_list': [], 'mu_list': [], 'channel_id': []},
+                'nonpitchshift': {'su_list': [], 'mu_list': [], 'channel_id': []}
+            } for probeword_text in probeword_to_text.values()
+        } for unit_id in unit_ids
+    }
+
     for talker in [1]:
         if talker == 1:
             talker_key = 'female_talker'
@@ -1034,7 +1054,12 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     if probewordtext:
                         scoredict_byunit_naive[unit_id][probewordtext]['su_list'].append(
                             dict['su_list'][key][talker_key][count])
-                        scoredict_byunit_naive[unit_id][probewordtext]['channel_id'].append(channel_id)  # Update 'channel_id'
+
+                        scoredict_byunit_naive_pitchsplit[unit_id][probewordtext][key]['su_list'].append(
+                            dict['su_list'][key][talker_key][count])
+                        scoredict_byunit_naive[unit_id][probewordtext]['channel_id'].append(channel_id)
+                        scoredict_byunit_naive_pitchsplit[unit_id][probewordtext][key]['channel_id'].append(channel_id)
+                        # Update 'channel_id'
                     count = count + 1
 
             for key in dict['mu_list_probeword']:
@@ -1053,7 +1078,12 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                         # Add 'channel_id'
                         scoredict_byunit_naive[unit_id][probewordtext]['mu_list'].append(
                             dict['mu_list'][key][talker_key][count])
-                        scoredict_byunit_naive[unit_id][probewordtext]['channel_id'].append(channel_id)  # Update 'channel_id'
+
+                        scoredict_byunit_naive_pitchsplit[unit_id][probewordtext][key]['mu_list'].append(
+                            dict['mu_list'][key][talker_key][count])
+                        scoredict_byunit_naive[unit_id][probewordtext]['channel_id'].append(channel_id)
+                        scoredict_byunit_naive_pitchsplit[unit_id][probewordtext][key]['channel_id'].append(channel_id)
+                        # Update 'channel_id'
                     count = count + 1
     unit_ids_naive_permutation= []
     for dict in dictlist_naive_permutation:
