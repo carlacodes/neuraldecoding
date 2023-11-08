@@ -2248,7 +2248,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     sns.stripplot(x='ProbeWord', y='Score', data=df_below_chance, ax=ax, size=3, dodge=True, color='lightgray',
                   alpha=0.5, jitter=False, hue='PitchShift')
 
-    sns.violinplot(x='ProbeWord', y='Score', data=df_full_naive_pitchsplit, ax=ax, hue = 'PitchShift')
+    sns.violinplot(x='ProbeWord', y='Score', data=df_full_naive_pitchsplit, ax=ax, palette= 'Paired', hue = 'PitchShift')
     plt.title('Naive animals'' scores over distractor word')
     plt.show()
 
