@@ -1515,7 +1515,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                      'BrainArea': 'AEG'}, ignore_index=True)
 
     for unit_id in scoredict_by_unit_meg_pitchsplit.keys():
-        example_unit = scoredict_by_unit_meg[unit_id]
+        example_unit = scoredict_by_unit_meg_pitchsplit[unit_id]
         for probeword in example_unit.keys():
             for pitchshiftkey in example_unit[probeword].keys():
                 su_list = example_unit[probeword]['su_list']
