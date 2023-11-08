@@ -1257,13 +1257,18 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     with open('D:\spkvisanddecodeproj2/analysisscriptsmodcg/json_files\electrode_positions.json') as f:
         electrode_position_data = json.load(f)
     scoredict_by_unit_meg = {}
+    scoredict_by_unit_meg_pitchsplit = {}
+
     scoredict_by_unit_peg = {}
+    scoredict_by_unit_peg_pitchsplit = {}
     scoredict_by_unit_aeg = {}
+    scoredict_by_unit_aeg_pitchsplit = {}
+
+
     #now sort each of the score_dicts by channel_id
     for unit_id in scoredict_byunit.keys():
         example_unit = scoredict_byunit[unit_id]
         #load the corresponding channel_id
-
         if 'F1604_Squinty' in unit_id:
             animal = 'F1604_Squinty'
             side = 'left'
@@ -1309,28 +1314,39 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         if animal == 'F2003_Orecchiette':
             if 'mod' in unit_id:
                 scoredict_by_unit_peg[unit_id] = scoredict_byunit[unit_id]
+                scoredict_by_unit_peg_pitchsplit[unit_id] = scoredict_byunit_pitchsplit[unit_id]
             elif 'S2' in unit_id:
                 scoredict_by_unit_peg[unit_id] = scoredict_byunit[unit_id]
+                scoredict_by_unit_peg_pitchsplit[unit_id] = scoredict_byunit_pitchsplit[unit_id]
+
             elif 'S3' in unit_id:
                 scoredict_by_unit_meg[unit_id] = scoredict_byunit[unit_id]
+                scoredict_by_unit_meg_pitchsplit[unit_id] = scoredict_byunit_pitchsplit[unit_id]
 
         else:
             if electrode_position_dict['area'] == 'MEG':
                 #add it to a new dictionary
                 scoredict_by_unit_meg[unit_id] = scoredict_byunit[unit_id]
+                scoredict_by_unit_meg_pitchsplit[unit_id] = scoredict_byunit_pitchsplit[unit_id]
             elif electrode_position_dict['area'] == 'PEG':
                 scoredict_by_unit_peg[unit_id] = scoredict_byunit[unit_id]
+                scoredict_by_unit_peg_pitchsplit[unit_id] = scoredict_byunit_pitchsplit[unit_id]
             elif electrode_position_dict['area'] == 'AEG':
                 scoredict_by_unit_aeg[unit_id] = scoredict_byunit[unit_id]
+                scoredict_by_unit_aeg_pitchsplit[unit_id] = scoredict_byunit_pitchsplit[unit_id]
     ##do the same for the permutation data
     scoredict_by_unit_perm_meg = {}
     scoredict_by_unit_perm_peg = {}
     scoredict_by_unit_perm_aeg = {}
+
+    scoredict_by_unit_perm_aeg_pitchsplit = {}
+    scoredict_by_unit_perm_peg_pitchsplit = {}
+    scoredict_by_unit_perm_meg_pitchsplit = {}
+
     # now sort each of the score_dicts by channel_id
     for unit_id in scoredict_byunit_trained_perm.keys():
         example_unit = scoredict_byunit_trained_perm[unit_id]
         # load the corresponding channel_id
-
         if 'F1604_Squinty' in unit_id:
             animal = 'F1604_Squinty'
             side = 'left'
@@ -1376,19 +1392,27 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         if animal == 'F2003_Orecchiette':
             if 'mod' in unit_id:
                 scoredict_by_unit_perm_peg[unit_id] = scoredict_byunit_trained_perm[unit_id]
+                scoredict_by_unit_perm_peg_pitchsplit[unit_id] = scoredict_byunit_trained_perm_pitchsplit[unit_id]
             elif 'S2' in unit_id:
                 scoredict_by_unit_perm_peg[unit_id] = scoredict_byunit_trained_perm[unit_id]
+                scoredict_by_unit_perm_peg_pitchsplit[unit_id] = scoredict_byunit_trained_perm_pitchsplit[unit_id]
+
             elif 'S3' in unit_id:
                 scoredict_by_unit_perm_meg[unit_id] = scoredict_byunit_trained_perm[unit_id]
+                scoredict_by_unit_perm_meg_pitchsplit[unit_id] = scoredict_byunit_trained_perm_pitchsplit[unit_id]
 
         else:
             if electrode_position_dict['area'] == 'MEG':
-                # add it to a new dictionary
                 scoredict_by_unit_perm_meg[unit_id] = scoredict_byunit_trained_perm[unit_id]
+                scoredict_by_unit_perm_meg_pitchsplit[unit_id] = scoredict_byunit_trained_perm_pitchsplit[unit_id]
             elif electrode_position_dict['area'] == 'PEG':
                 scoredict_by_unit_perm_peg[unit_id] = scoredict_byunit_trained_perm[unit_id]
+                scoredict_by_unit_perm_peg_pitchsplit[unit_id] = scoredict_byunit_trained_perm_pitchsplit[unit_id]
             elif electrode_position_dict['area'] == 'AEG':
                 scoredict_by_unit_perm_aeg[unit_id] = scoredict_byunit_trained_perm[unit_id]
+                scoredict_by_unit_perm_aeg_pitchsplit[unit_id] = scoredict_byunit_trained_perm_pitchsplit[unit_id]
+
+
     #now plot the scores by aeg, peg, meg for the trained animals
     #initialise a dataframe for each of the areas
     df_full = pd.DataFrame(columns=['ID', 'ProbeWord', 'Score', 'Below-chance', 'BrainArea'])
