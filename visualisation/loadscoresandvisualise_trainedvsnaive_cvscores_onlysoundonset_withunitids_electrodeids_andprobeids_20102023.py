@@ -946,33 +946,6 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         unit_id: {probeword_text: {'su_list': [], 'mu_list': [], 'channel_id': []} for probeword_text in probeword_to_text.values()} for
         unit_id in unit_ids}
 
-    # for talker in [1]:
-    #     if talker == 1:
-    #         talker_key = 'female_talker'
-    #     for i, dict in enumerate(dictlist_trained):
-    #
-    #         for key in dict['su_list_probeword']:
-    #             probewords = dict['su_list_probeword'][key][talker_key]
-    #             count = 0
-    #             for probeword in probewords:
-    #                 probeword_range = int(probeword)
-    #                 probewordtext = probeword_to_text.get(probeword_range)
-    #                 unit_id = dict['su_list_unitid'][key][talker_key][count]
-    #                 if probewordtext:
-    #                     scoredict_byunit[unit_id][probewordtext]['su_list'].append(dict['su_list'][key][talker_key][count])
-    #                 count = count + 1
-    #         for key in dict['mu_list_probeword']:
-    #             probewords = dict['mu_list_probeword'][key][talker_key]
-    #             count = 0
-    #             for probeword in probewords:
-    #                 probeword_range = int(probeword)
-    #                 probewordtext = probeword_to_text.get(probeword_range)
-    #                 if probewordtext:
-    #                     unit_id = dict['mu_list_unitid'][key][talker_key][count]
-    #
-    #                     scoredict_byunit[unit_id][probewordtext]['mu_list'].append(dict['mu_list'][key][talker_key][count])
-    #                 count = count + 1
-
     for talker in [1]:
         if talker == 1:
             talker_key = 'female_talker'
