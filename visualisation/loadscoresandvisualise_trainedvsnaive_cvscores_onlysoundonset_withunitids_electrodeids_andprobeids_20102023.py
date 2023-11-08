@@ -1518,8 +1518,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         example_unit = scoredict_by_unit_meg_pitchsplit[unit_id]
         for probeword in example_unit.keys():
             for pitchshiftkey in example_unit[probeword].keys():
-                su_list = example_unit[probeword]['su_list']
-                mu_list = example_unit[probeword]['mu_list']
+                su_list = example_unit[probeword][pitchshiftkey]['su_list']
+                mu_list = example_unit[probeword][pitchshiftkey]['mu_list']
                 if pitchshiftkey =='pitchshift':
                     pitchshiftnum = 1
                 elif pitchshiftkey == 'nonpitchshift':
@@ -1530,7 +1530,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     # calculate the score
                     score = np.mean(su_list)
                     # compare with the permutation data
-                    su_list_perm = scoredict_by_unit_perm_meg[unit_id][probeword]['su_list']
+                    su_list_perm = scoredict_by_unit_perm_meg_pitchsplit[unit_id][probeword][pitchshiftkey]['su_list']
                     if score > np.mean(su_list_perm):
                         below_chance = 0
                     else:
@@ -1544,7 +1544,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     # calculate the score
                     score = np.mean(mu_list)
                     # compare with the permutation data
-                    mu_list_perm = scoredict_by_unit_perm_meg[unit_id][probeword]['mu_list']
+                    mu_list_perm = scoredict_by_unit_perm_meg_pitchsplit[unit_id][probeword][pitchshiftkey]['mu_list']
                     if score > np.mean(mu_list_perm):
                         below_chance = 0
                     else:
@@ -1554,6 +1554,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     df_full_pitchsplit = df_full_pitchsplit.append(
                         {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
                          'BrainArea': 'MEG', 'PitchShift': pitchshiftnum}, ignore_index=True)
+
 
 
     #plot as a swarm plot with the below chance as a different colour
