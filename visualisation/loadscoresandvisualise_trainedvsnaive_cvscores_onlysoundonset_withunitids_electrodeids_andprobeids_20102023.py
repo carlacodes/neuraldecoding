@@ -946,11 +946,19 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         unit_id: {probeword_text: {'su_list': [], 'mu_list': [], 'channel_id': []} for probeword_text in probeword_to_text.values()} for
         unit_id in unit_ids}
 
+    scoredict_byunit_pitchsplit = {
+        unit_id: {
+            probeword_text: {
+                'pitchshift': {'su_list': [], 'mu_list': [], 'channel_id': []},
+                'control': {'su_list': [], 'mu_list': [], 'channel_id': []}
+            } for probeword_text in probeword_to_text.values()
+        } for unit_id in unit_ids
+    }
+
     for talker in [1]:
         if talker == 1:
             talker_key = 'female_talker'
         for i, dict in enumerate(dictlist_trained):
-
             for key in dict['su_list_probeword']:
                 probewords = dict['su_list_probeword'][key][talker_key]
                 count = 0
