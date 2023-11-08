@@ -682,7 +682,7 @@ def get_word_aligned_raster_zola_cruella(blocks, clust_id, word=None, pitchshift
         # print(f"Processing segment {s}...")
 
         # check if pitchshiftmat is in annotations
-        if seg.df_bhv is None:
+        if seg.df_bhv is None or 'level41' in seg.df_bhv.fName[0]:
             try:
                 print('Loading bhv data from annotations...')
                 seg.df_bhv = seg.load_bhv_data(seg.annotations['bhv_file'])
