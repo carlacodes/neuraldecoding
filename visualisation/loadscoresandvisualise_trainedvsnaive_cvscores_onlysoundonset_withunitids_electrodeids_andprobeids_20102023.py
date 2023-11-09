@@ -2279,9 +2279,9 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     #remove all rows where the score is NaN
     df_full_pitchsplit_anova = df_full_pitchsplit_anova.dropna(subset = ['Score'])
     #drop brain area
+    #nest ferret as a variable , ,look at the relative magnittud eo fthe coefficients for both lightgbm model and anova
     print(df_full_pitchsplit_anova.dtypes)
     #now run anova
-
     import statsmodels.formula.api as smf
     formula = 'Score ~ C(ProbeWord) + C(PitchShift) +C(BrainArea)'
     model = smf.ols(formula, data=df_full_pitchsplit_anova).fit()
@@ -2289,6 +2289,15 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     #get the coefficient of determination
     print(model.rsquared)
     print(anova_table)
+    #run a random forest regression
+    from sklearn.ensemble import RandomForestRegressor
+    from sklearn.model_selection import train_test_split
+    from sklearn.metrics import mean_squared_error
+    from sklearn.metrics import r2_score
+    from sklearn.metrics import mean_absolute_error
+    from sklearn.metrics import explained_variance_score
+    from sklearn.metrics import max_error
+
 
 
 
