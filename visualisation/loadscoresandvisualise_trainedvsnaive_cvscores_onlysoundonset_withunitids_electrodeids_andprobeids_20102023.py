@@ -2263,8 +2263,10 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_full_pitchsplit_anova['Below-chance'] = df_full_pitchsplit_anova['Below-chance'].cat.set_categories([0, 1])
     df_full_pitchsplit_anova['Below-chance'] = df_full_pitchsplit_anova['Below-chance'].cat.codes
     df_full_pitchsplit_anova['Score'] = df_full_pitchsplit_anova['Score'].astype('float')
+    #remove the unit ID
+    df_full_pitchsplit_anova = df_full_pitchsplit_anova.drop(columns = ['ID'])
     #now run anova
-    model = linear_model.ols('Score ~ C(ProbeWord) + C(PitchShift) + C(BrainArea)', data=df_full_pitchsplit_anova).fit()
+    model = linear_model.OLS('Score ~ C(ProbeWord) + C(PitchShift) + C(BrainArea)', data=df_full_pitchsplit_anova).fit()
     anova_table = sm.stats.anova_lm(model, typ=2)
     print(anova_table)
 
