@@ -2278,7 +2278,6 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
     #remove all rows where the score is NaN
     df_full_pitchsplit_anova = df_full_pitchsplit_anova.dropna(subset = ['Score'])
-    #drop brain area
     #nest ferret as a variable , ,look at the relative magnittud eo fthe coefficients for both lightgbm model and anova
     print(df_full_pitchsplit_anova.dtypes)
     #now run anova
