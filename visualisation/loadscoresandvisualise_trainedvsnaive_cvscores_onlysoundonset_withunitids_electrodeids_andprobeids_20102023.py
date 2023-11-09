@@ -6,6 +6,8 @@ import re
 import seaborn as sns
 import scipy.stats as stats
 import shap
+from statsmodels.regression import linear_model
+import statsmodels as sm
 import lightgbm as lgb
 from pathlib import Path
 import scipy
@@ -2245,6 +2247,28 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     sns.violinplot(x='ProbeWord', y='Score', data=df_full_naive_pitchsplit, ax=ax, palette= 'Paired', hue = 'PitchShift')
     plt.title('Naive animals'' scores over distractor word')
     plt.show()
+    #run an anova to see if probe word is significant
+    #first get the data into a format that can be analysed
+    df_full_pitchsplit_anova = df_full_pitchsplit.copy()
+    df_full_pitchsplit_anova['ProbeWord'] = df_full_pitchsplit_anova['ProbeWord'].astype('category')
+    df_full_pitchsplit_anova['ProbeWord'] = df_full_pitchsplit_anova['ProbeWord'].cat.set_categories(['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'])
+    df_full_pitchsplit_anova['ProbeWord'] = df_full_pitchsplit_anova['ProbeWord'].cat.codes
+    df_full_pitchsplit_anova['PitchShift'] = df_full_pitchsplit_anova['PitchShift'].astype('category')
+    df_full_pitchsplit_anova['PitchShift'] = df_full_pitchsplit_anova['PitchShift'].cat.set_categories([0, 1])
+    df_full_pitchsplit_anova['PitchShift'] = df_full_pitchsplit_anova['PitchShift'].cat.codes
+    df_full_pitchsplit_anova['BrainArea'] = df_full_pitchsplit_anova['BrainArea'].astype('category')
+    df_full_pitchsplit_anova['BrainArea'] = df_full_pitchsplit_anova['BrainArea'].cat.set_categories(['MEG', 'PEG', 'AEG'])
+    df_full_pitchsplit_anova['BrainArea'] = df_full_pitchsplit_anova['BrainArea'].cat.codes
+    df_full_pitchsplit_anova['Below-chance'] = df_full_pitchsplit_anova['Below-chance'].astype('category')
+    df_full_pitchsplit_anova['Below-chance'] = df_full_pitchsplit_anova['Below-chance'].cat.set_categories([0, 1])
+    df_full_pitchsplit_anova['Below-chance'] = df_full_pitchsplit_anova['Below-chance'].cat.codes
+    df_full_pitchsplit_anova['Score'] = df_full_pitchsplit_anova['Score'].astype('float')
+    #now run anova
+    model = linear_model.ols('Score ~ C(ProbeWord) + C(PitchShift) + C(BrainArea)', data=df_full_pitchsplit_anova).fit()
+    anova_table = sm.stats.anova_lm(model, typ=2)
+    print(anova_table)
+
+
 
 
     #now plot by animal:
@@ -2742,8 +2766,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
     dataset = pd.DataFrame({'trained': trainedarray[:,0], 'naive': naivearray[:,0], 'controlF0': controlF0array[:,0], 'rovedF0': rovedF0array[:,0], 'scores': scores})
 
-    import statsmodels.api as sm
-    from statsmodels.formula.api import ols
+
     model = ols('scores ~ C(trained) + C(controlF0) ', data=dataset).fit()
     print(model.summary())
     table = sm.stats.anova_lm(model, typ=2)
