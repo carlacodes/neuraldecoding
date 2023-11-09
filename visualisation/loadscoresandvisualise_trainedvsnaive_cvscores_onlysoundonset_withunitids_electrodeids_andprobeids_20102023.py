@@ -2250,24 +2250,44 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     #run an anova to see if probe word is significant
     #first get the data into a format that can be analysed
     df_full_pitchsplit_anova = df_full_pitchsplit.copy()
-    df_full_pitchsplit_anova = df_full_pitchsplit.copy()
-    df_full_pitchsplit_anova['ProbeWord'] = df_full_pitchsplit_anova['ProbeWord'].astype('category')
-    df_full_pitchsplit_anova['ProbeWord'] = df_full_pitchsplit_anova['ProbeWord'].cat.set_categories(
-        ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'])
-    df_full_pitchsplit_anova['PitchShift'] = df_full_pitchsplit_anova['PitchShift'].astype('category')
-    df_full_pitchsplit_anova['PitchShift'] = df_full_pitchsplit_anova['PitchShift'].cat.set_categories([0, 1])
+
+    unique_probe_words = df_full_pitchsplit_anova['ProbeWord'].unique()
+
+    df_full_pitchsplit_anova = df_full_pitchsplit_anova.reset_index(drop=True)
+
+
+    df_full_pitchsplit_anova['ProbeWord'] = pd.Categorical(df_full_pitchsplit_anova['ProbeWord'],
+                                                           categories=unique_probe_words, ordered=True)
+    df_full_pitchsplit_anova['ProbeWord'] = df_full_pitchsplit_anova['ProbeWord'].cat.codes
+
     df_full_pitchsplit_anova['BrainArea'] = df_full_pitchsplit_anova['BrainArea'].astype('category')
-    df_full_pitchsplit_anova['BrainArea'] = df_full_pitchsplit_anova['BrainArea'].cat.set_categories(
-        ['MEG', 'PEG', 'AEG'])
-    df_full_pitchsplit_anova['Below-chance'] = df_full_pitchsplit_anova['Below-chance'].astype('category')
-    df_full_pitchsplit_anova['Below-chance'] = df_full_pitchsplit_anova['Below-chance'].cat.set_categories([0, 1])
-    df_full_pitchsplit_anova['Score'] = df_full_pitchsplit_anova['Score'].astype('float')
-    df_full_pitchsplit_anova['Score'] = df_full_pitchsplit_anova['Score'].astype('float')
-    #remove the unit ID
-    df_full_pitchsplit_anova = df_full_pitchsplit_anova.drop(columns = ['ID'])
+
+    #cast the probe word category as an int
+    df_full_pitchsplit_anova['ProbeWord'] = df_full_pitchsplit_anova['ProbeWord'].astype('int')
+    df_full_pitchsplit_anova['PitchShift'] = df_full_pitchsplit_anova['PitchShift'].astype('int')
+    df_full_pitchsplit_anova['Below-chance'] = df_full_pitchsplit_anova['Below-chance'].astype('int')
+
+
+    df_full_pitchsplit_anova["ProbeWord"] = pd.to_numeric(df_full_pitchsplit_anova["ProbeWord"])
+    df_full_pitchsplit_anova["PitchShift"] = pd.to_numeric(df_full_pitchsplit_anova["PitchShift"])
+    df_full_pitchsplit_anova["Below_chance"] = pd.to_numeric(df_full_pitchsplit_anova["Below-chance"])
+    df_full_pitchsplit_anova["Score"] = pd.to_numeric(df_full_pitchsplit_anova["Score"])
+    #change the columns to the correct type
+
+
+
+    #remove all rows where the score is NaN
+    df_full_pitchsplit_anova = df_full_pitchsplit_anova.dropna(subset = ['Score'])
+    #drop brain area
+    print(df_full_pitchsplit_anova.dtypes)
     #now run anova
-    model = linear_model.OLS('Score ~ C(ProbeWord) + C(PitchShift) + C(BrainArea)', data=df_full_pitchsplit_anova).fit()
+
+    import statsmodels.formula.api as smf
+    formula = 'Score ~ C(ProbeWord) + C(PitchShift) +C(BrainArea)'
+    model = smf.ols(formula, data=df_full_pitchsplit_anova).fit()
     anova_table = sm.stats.anova_lm(model, typ=2)
+    #get the coefficient of determination
+    print(model.rsquared)
     print(anova_table)
 
 
