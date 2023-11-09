@@ -2250,18 +2250,18 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     #run an anova to see if probe word is significant
     #first get the data into a format that can be analysed
     df_full_pitchsplit_anova = df_full_pitchsplit.copy()
+    df_full_pitchsplit_anova = df_full_pitchsplit.copy()
     df_full_pitchsplit_anova['ProbeWord'] = df_full_pitchsplit_anova['ProbeWord'].astype('category')
-    df_full_pitchsplit_anova['ProbeWord'] = df_full_pitchsplit_anova['ProbeWord'].cat.set_categories(['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'])
-    df_full_pitchsplit_anova['ProbeWord'] = df_full_pitchsplit_anova['ProbeWord'].cat.codes
+    df_full_pitchsplit_anova['ProbeWord'] = df_full_pitchsplit_anova['ProbeWord'].cat.set_categories(
+        ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'])
     df_full_pitchsplit_anova['PitchShift'] = df_full_pitchsplit_anova['PitchShift'].astype('category')
     df_full_pitchsplit_anova['PitchShift'] = df_full_pitchsplit_anova['PitchShift'].cat.set_categories([0, 1])
-    df_full_pitchsplit_anova['PitchShift'] = df_full_pitchsplit_anova['PitchShift'].cat.codes
     df_full_pitchsplit_anova['BrainArea'] = df_full_pitchsplit_anova['BrainArea'].astype('category')
-    df_full_pitchsplit_anova['BrainArea'] = df_full_pitchsplit_anova['BrainArea'].cat.set_categories(['MEG', 'PEG', 'AEG'])
-    df_full_pitchsplit_anova['BrainArea'] = df_full_pitchsplit_anova['BrainArea'].cat.codes
+    df_full_pitchsplit_anova['BrainArea'] = df_full_pitchsplit_anova['BrainArea'].cat.set_categories(
+        ['MEG', 'PEG', 'AEG'])
     df_full_pitchsplit_anova['Below-chance'] = df_full_pitchsplit_anova['Below-chance'].astype('category')
     df_full_pitchsplit_anova['Below-chance'] = df_full_pitchsplit_anova['Below-chance'].cat.set_categories([0, 1])
-    df_full_pitchsplit_anova['Below-chance'] = df_full_pitchsplit_anova['Below-chance'].cat.codes
+    df_full_pitchsplit_anova['Score'] = df_full_pitchsplit_anova['Score'].astype('float')
     df_full_pitchsplit_anova['Score'] = df_full_pitchsplit_anova['Score'].astype('float')
     #remove the unit ID
     df_full_pitchsplit_anova = df_full_pitchsplit_anova.drop(columns = ['ID'])
