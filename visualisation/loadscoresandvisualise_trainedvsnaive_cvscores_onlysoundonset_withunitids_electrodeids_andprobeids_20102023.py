@@ -597,7 +597,8 @@ def load_classified_report(path):
 
     return report, singleunitlist, multiunitlist, noiselist
 def main():
-    probewordlist = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
+    probewordlist_zola = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
+    probewordlist =[ (2,2), (3,3), (4,4),(5,5), (6,6), (7,7), (8,8), (9,9), (10,10)]
     probewordlist_l74 = [(2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
                              (14, 14)]
     animal_list = [ 'F1901_Crumble', 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala',  'F2003_Orecchiette',]
@@ -680,7 +681,7 @@ def main():
             if animal == 'F1604_Squinty':
                 # try:
                 dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
-                                                                saveDir=f'F:/results_31102023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -688,7 +689,7 @@ def main():
                 dictoutput_all.append(dictoutput_instance)
 
                 dictoutput_instance_permutation = scatterplot_and_visualise(probewordlist_l74,
-                                                                saveDir=f'F:/results_31102023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -702,7 +703,7 @@ def main():
 
                 # try:
                 dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
-                                                                saveDir=f'F:/results_31102023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -710,7 +711,7 @@ def main():
                 dictoutput_all.append(dictoutput_instance)
 
                 dictoutput_instance_permutation = scatterplot_and_visualise(probewordlist_l74,
-                                                                saveDir=f'F:/results_31102023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -720,14 +721,29 @@ def main():
                 #     #print the exception
                 #     print(f'no scores for this stream:{stream}, and {animal}')
                 #     pass
-            elif animal == 'F1815_Cruella' or animal == 'F1902_Eclair' or animal =='F1702_Zola':
-                # try:
-                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_31102023/{animal}/{rec_name_unique}/{streamtext}/',
+            elif animal =='F1702_Zola':
+                dictoutput_instance = scatterplot_and_visualise(probewordlist_zola, saveDir= f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal,  report = report[animal][stream])
                 dictoutput_all.append(dictoutput_instance)
 
-                dictoutput_instance_permutation = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_31102023/{animal}/{rec_name_unique}/{streamtext}/',
+                dictoutput_instance_permutation = scatterplot_and_visualise(probewordlist_zola, saveDir= f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
+                                                                multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal,  report = report[animal][stream]
+                                                                            , permutation_scores=True)
+                dictoutput_all_permutation.append(dictoutput_instance_permutation)
+                # except:
+                #     #print the exception
+                #     print(f'no scores for this stream:{stream}, and {animal}')
+                #     pass
+            elif animal == 'F1815_Cruella' or animal == 'F1902_Eclair':
+                # try:
+                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
+                                                                multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal,  report = report[animal][stream])
+                dictoutput_all.append(dictoutput_instance)
+
+                dictoutput_instance_permutation = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal,  report = report[animal][stream]
                                                                             , permutation_scores=True)
@@ -739,7 +755,7 @@ def main():
             elif animal == 'F2003_Orecchiette':
                 # try:
                 dictoutput_instance = scatterplot_and_visualise(probewordlist,
-                                                                saveDir=f'F:/results_31102023/{animal}/{rec_name_unique}/',
+                                                                saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -750,7 +766,7 @@ def main():
                 dictoutput_all.append(dictoutput_instance)
 
                 dictoutput_instance_permutation = scatterplot_and_visualise(probewordlist,
-                                                                saveDir=f'F:/results_31102023/{animal}/{rec_name_unique}/',
+                                                                saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -765,12 +781,12 @@ def main():
                 #     pass
             else:
                 # try:
-                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_31102023/{animal}/{rec_name_unique}/{streamtext}/',
+                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal,  report = report[animal][stream])
                 dictoutput_all.append(dictoutput_instance)
 
-                dictoutput_instance_permutation = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_31102023/{animal}/{rec_name_unique}/{streamtext}/',
+                dictoutput_instance_permutation = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal,  report = report[animal][stream]
                                                                             , permutation_scores=True)
@@ -841,19 +857,19 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
     scoredict = {}
     scoredict_naive={}
-    scoredict['(2,2)'] = {}
-    scoredict['(2,2)']['female_talker'] = []
-    scoredict['(5,6)'] = {}
-    scoredict['(5,6)']['female_talker'] = []
-
-    scoredict['(42,49)'] = {}
-    scoredict['(42,49)']['female_talker'] = []
-
-    scoredict['(32,38)'] = {}
-    scoredict['(32,38)']['female_talker']  = []
-
-    scoredict['(20,22)'] = {}
-    scoredict['(20,22)']['female_talker'] =[]
+    # scoredict['(2,2)'] = {}
+    # scoredict['(2,2)']['female_talker'] = []
+    # scoredict['(5,6)'] = {}
+    # scoredict['(5,6)']['female_talker'] = []
+    #
+    # scoredict['(42,49)'] = {}
+    # scoredict['(42,49)']['female_talker'] = []
+    #
+    # scoredict['(32,38)'] = {}
+    # scoredict['(32,38)']['female_talker']  = []
+    #
+    # scoredict['(20,22)'] = {}
+    # scoredict['(20,22)']['female_talker'] =[]
     for probeword_range in probewordlist_text:
         probeword_key = f'({probeword_range[0]},{probeword_range[1]})'
         scoredict[probeword_key] = {}
@@ -880,17 +896,19 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         scoredict_naive[probeword_key]['female_talker']['pitchshift']['mu_list'] = []
     probeword_to_text = {
         2: '(2,2)',
-        5: '(5,6)',
-        42: '(42,49)',
-        32: '(32,38)',
-        20: '(20,22)',
-        15: '(15,15)',
+        3: '(3,3)',
         4: '(4,4)',
-        16: '(16,16)',
+        5: '(5,5)',
+        6: '(6,6)',
         7: '(7,7)',
         8: '(8,8)',
         9: '(9,9)',
         10: '(10,10)',
+        42: '(42,49)',
+        32: '(32,38)',
+        20: '(20,22)',
+        15: '(15,15)',
+        16: '(16,16)',
         11: '(11,11)',
         12: '(12,12)',
         14: '(14,14)'
