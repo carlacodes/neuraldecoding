@@ -2392,7 +2392,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         plt.show()
 
 
-
+    #get the dataframe with the genfrac score above 0.60%
+    df_full_pitchsplit_good = df_full_pitchsplit[df_full_pitchsplit['GenFrac'] > 0.75]
 
 
 

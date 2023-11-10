@@ -51,18 +51,18 @@ def create_gen_frac_variable(df_full_pitchsplit):
         if len(df_full_pitchsplit_unit) == 0:
             continue
         above_60_scores = df_full_pitchsplit_unit[
-            df_full_pitchsplit_unit['Score'] >= 0.6 ]  # Replace 'score_column' with the actual column name
+            df_full_pitchsplit_unit['Score'] >= 0.75 ]  # Replace 'score_column' with the actual column name
 
         # Check how many probe words are below 60%
 
         below_60_probe_words = df_full_pitchsplit_unit[df_full_pitchsplit_unit[
-                                                           'Score'] <= 0.60]  # Replace 'probe_words_column' with the actual column name
+                                                           'Score'] <= 0.75]  # Replace 'probe_words_column' with the actual column name
         gen_frac = len(above_60_scores) / len(df_full_pitchsplit_unit)
         #add this gen frac to a new column
         df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'GenFrac'] = gen_frac
         # Now you can do something with the counts, for example, print them
-        print(f"Unit ID: {unit_id}")
-        print(f"Number of scores above 60%: {len(above_60_scores)}")
-        print(f"Number of probe words below 60%: {len(below_60_probe_words)}")
-        print("-------------------")
+        # print(f"Unit ID: {unit_id}")
+        # print(f"Number of scores above 60%: {len(above_60_scores)}")
+        # print(f"Number of probe words below 60%: {len(below_60_probe_words)}")
+        # print("-------------------")
     return df_full_pitchsplit
