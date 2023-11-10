@@ -2351,7 +2351,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     import statsmodels.formula.api as smf
     formula = 'Score ~ C(ProbeWord) + C(PitchShift) +C(BrainArea)+C(SingleUnit)'
     model = smf.ols(formula, data=df_full_pitchsplit_anova).fit()
-    anova_table = sm.stats.anova_lm(model, typ=2)
+    anova_table = sm.stats.anova_lm(model, typ=3)
     #get the coefficient of determination
     print(model.rsquared)
     print(anova_table)

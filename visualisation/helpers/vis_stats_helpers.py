@@ -1,5 +1,7 @@
 from statsmodels.regression import linear_model
 import statsmodels as sm
+import pandas as pd
+import statsmodels.formula.api as smf
 
 
 def run_anova_on_dataframe(df_full_pitchsplit):
@@ -31,10 +33,9 @@ def run_anova_on_dataframe(df_full_pitchsplit):
     # nest ferret as a variable , ,look at the relative magnittud eo fthe coefficients for both lightgbm model and anova
     print(df_full_pitchsplit_anova.dtypes)
     # now run anova
-    import statsmodels.formula.api as smf
     formula = 'Score ~ C(ProbeWord) + C(PitchShift) +C(BrainArea)+C(SingleUnit)'
     model = smf.ols(formula, data=df_full_pitchsplit_anova).fit()
-    anova_table = sm.stats.anova_lm(model, typ=2)
+    anova_table = sm.stats.anova.anova_lm(model, typ=3)
     # get the coefficient of determination
     print(model.rsquared)
     print(anova_table)
