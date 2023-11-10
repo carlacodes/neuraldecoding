@@ -18,7 +18,8 @@ from sklearn.model_selection import cross_val_score
 from sklearn.metrics import mean_squared_error
 import json
 import matplotlib.pyplot as plt
-
+import eli5
+from eli5.sklearn import PermutationImportance
 
 def run_anova_on_dataframe(df_full_pitchsplit):
     df_full_pitchsplit_anova = df_full_pitchsplit.copy()
@@ -179,6 +180,19 @@ def runlgbmmodel_score(df_use):
 
     shap.summary_plot(shap_values,dfx,  max_display=20)
     plt.show()
+    #partial dependency plot of the pitch shift versus naive color coded by naive
+
+    shap.dependence_plot("PitchShift", shap_values, dfx, interaction_index='Naive', show=True)
+    #run a permutation importance test
+    from sklearn.inspection import permutation_importance
+    perm = permutation_importance(xg_reg, random_state=1).fit(X_test, y_test)
+    #plot the permutation importance
+    import eli5
+    from eli5.sklearn import PermutationImportance
+    perm = PermutationImportance(xg_reg, random_state=1).fit(X_test, y_test)
+
+    eli5.show_weights(perm, feature_names=X_test.columns.tolist())
+
 
 
     labels = [item.get_text() for item in ax.get_yticklabels()]
