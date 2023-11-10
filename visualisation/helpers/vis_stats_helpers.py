@@ -100,21 +100,51 @@ def create_gen_frac_variable(df_full_pitchsplit, high_score_threshold = False, i
 
 def runlgbmmodel_score(df_use):
     col = 'Score'
+
+    unique_probe_words = df_use['ProbeWord'].unique()
+    unique_IDs = df_use['ID'].unique()
+    df_use = df_use.reset_index(drop=True)
+
+    df_use['ProbeWord'] = pd.Categorical(df_use['ProbeWord'],
+                                                           categories=unique_probe_words, ordered=True)
+    df_use['ID'] = pd.Categorical(df_use['ID'],categories=unique_IDs, ordered=True)
+
+    df_use['ProbeWord'] = df_use['ProbeWord'].cat.codes
+
+    df_use['BrainArea'] = df_use['BrainArea'].astype('category')
+
+    # cast the probe word category as an int
+    df_use['ProbeWord'] = df_use['ProbeWord'].astype('int')
+    df_use['PitchShift'] = df_use['PitchShift'].astype('int')
+    df_use['Below-chance'] = df_use['Below-chance'].astype('int')
+
+    df_use["ProbeWord"] = pd.to_numeric(df_use["ProbeWord"])
+    df_use["PitchShift"] = pd.to_numeric(df_use["PitchShift"])
+    df_use["Below_chance"] = pd.to_numeric(df_use["Below-chance"])
+    df_use["Score"] = pd.to_numeric(df_use["Score"])
+    #only remove the below chance scores
+    df_use = df_use[df_use['Below-chance'] == 0]
+
+
     dfx = df_use.loc[:, df_use.columns != col]
     # remove ferret as possible feature
-    col = 'ID'
-    dfx = dfx.loc[:, dfx.columns != col]
+    # col = 'ID'
+    # dfx = dfx.loc[:, dfx.columns != col]
     col2 = 'SingleUnit'
     dfx = dfx.loc[:, dfx.columns != col2]
     col3 = 'GenFrac'
     dfx = dfx.loc[:, dfx.columns != col3]
     col4 = 'MeanScore'
     dfx = dfx.loc[:, dfx.columns != col4]
+    col5 = 'Below-chance'
+    dfx = dfx.loc[:, dfx.columns != col5]
+    col6 = 'Below_chance'
+    dfx = dfx.loc[:, dfx.columns != col6]
 
     #remove any rows
 
     X_train, X_test, y_train, y_test = train_test_split(dfx, df_use['Score'], test_size=0.2,
-                                                        random_state=42)
+                                                        random_state=42, shuffle=True)
 
     dtrain = lgb.Dataset(X_train, label=y_train)
     dtest = lgb.Dataset(X_test, label=y_test)
