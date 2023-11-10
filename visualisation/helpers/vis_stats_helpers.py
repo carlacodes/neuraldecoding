@@ -57,17 +57,21 @@ def run_anova_on_dataframe(df_full_pitchsplit):
     return anova_table, model
 
 
-def create_gen_frac_variable(df_full_pitchsplit):
+def create_gen_frac_variable(df_full_pitchsplit, high_score_threshold = False):
     for unit_id in df_full_pitchsplit['ID'].unique():
         # Check how many scores for that unit are above 60%
         df_full_pitchsplit_unit = df_full_pitchsplit[df_full_pitchsplit['ID'] == unit_id]
         #filter for the above-chance scores
-        df_full_pitchsplit_unit = df_full_pitchsplit_unit[df_full_pitchsplit_unit['Below-chance'] == 0]
         mean_scores = df_full_pitchsplit_unit['Score'].mean()
         #if the mean score is below 0.75, then we can't calculate the gen frac
-        if len(df_full_pitchsplit_unit) == 0 or mean_scores < 0.60:
-            df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'GenFrac'] = np.nan
-            continue
+        if high_score_threshold:
+            if len(df_full_pitchsplit_unit) == 0 or mean_scores < 0.60:
+                df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'GenFrac'] = np.nan
+                continue
+        else:
+            if len(df_full_pitchsplit_unit) == 0 :
+                df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'GenFrac'] = np.nan
+                continue
         above_60_scores = df_full_pitchsplit_unit[
             df_full_pitchsplit_unit['Score'] >= 0.75 ]  # Replace 'score_column' with the actual column name
 

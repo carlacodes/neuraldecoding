@@ -2274,17 +2274,18 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
     df_full_naive_pitchsplit = create_gen_frac_variable(df_full_naive_pitchsplit)
     df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit[df_full_naive_pitchsplit['GenFrac'].notna()]
+    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot.drop_duplicates(subset = ['ID'])
 
     #plot the distplot of these scores overlaid with the histogram
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
-    sns.distplot(df_full_pitchsplit_plot['GenFrac'], ax=ax, kde=True, norm_hist=False, bins=20, label='Trained')
-    sns.distplot(df_full_naive_pitchsplit_plot['GenFrac'], ax=ax, kde=True, norm_hist=False, bins=20, label='Naive')
+    sns.histplot(df_full_pitchsplit_plot['GenFrac'],ax=ax,  kde=True, bins=20, label='Trained')
+    sns.histplot(df_full_naive_pitchsplit_plot['GenFrac'], ax=ax, kde=True, bins=20, label='Naive')
     plt.legend()
-    plt.title('Distribution of generalizability scores')
+    plt.title('Distribution of generalizability scores for the trained and naive animals, 60% mean score threshold')
     plt.show()
     #man whitney u test
     from scipy.stats import mannwhitneyu
-    stat, p = mannwhitneyu(df_full_pitchsplit_plot['Score'], df_full_naive_pitchsplit_plot['Score'], alternative = 'greater')
+    stat, p = mannwhitneyu(df_full_pitchsplit_plot['GenFrac'], df_full_naive_pitchsplit_plot['GenFrac'], alternative = 'less')
 
     #now plot by the probe word for the trained animals
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
