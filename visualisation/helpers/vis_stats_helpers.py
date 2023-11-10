@@ -64,7 +64,7 @@ def create_gen_frac_variable(df_full_pitchsplit, high_score_threshold = False):
         #filter for the above-chance scores
         mean_scores = df_full_pitchsplit_unit['Score'].mean()
         #if the mean score is below 0.75, then we can't calculate the gen frac
-        if high_score_threshold:
+        if high_score_threshold == True:
             if len(df_full_pitchsplit_unit) == 0 or mean_scores < 0.60:
                 df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'GenFrac'] = np.nan
                 continue
