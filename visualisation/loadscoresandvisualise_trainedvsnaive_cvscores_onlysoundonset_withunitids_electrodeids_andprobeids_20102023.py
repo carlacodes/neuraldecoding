@@ -1481,9 +1481,9 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
     #now plot the scores by aeg, peg, meg for the trained animals
     #initialise a dataframe for each of the areas
-    df_full = pd.DataFrame(columns=['ID', 'ProbeWord', 'Score', 'Below-chance', 'BrainArea'])
+    df_full = pd.DataFrame(columns=['ID', 'ProbeWord', 'Score', 'Below-chance', 'BrainArea', 'SingleUnit'])
 
-    df_full_pitchsplit = pd.DataFrame(columns=['ID', 'ProbeWord', 'Score', 'Below-chance', 'BrainArea', 'PitchShift'])
+    df_full_pitchsplit = pd.DataFrame(columns=['ID', 'ProbeWord', 'Score', 'Below-chance', 'BrainArea', 'PitchShift', 'SingleUnit'])
 
     for unit_id in scoredict_by_unit_meg.keys():
         example_unit = scoredict_by_unit_meg[unit_id]
@@ -1501,7 +1501,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     below_chance = 1
                 #calculate the below chance
                 #add to the dataframe
-                df_full = df_full.append({'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance, 'BrainArea': 'MEG'}, ignore_index=True)
+                df_full = df_full.append({'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance, 'BrainArea': 'MEG', 'SingleUnit': 1}, ignore_index=True)
             elif len(mu_list)>0:
                 #calculate the score
                 score = np.mean(mu_list)
@@ -1513,7 +1513,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     below_chance = 1
                 #calculate the below chance
                 #add to the dataframe
-                df_full = df_full.append({'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance, 'BrainArea': 'MEG'}, ignore_index=True)
+                df_full = df_full.append({'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance, 'BrainArea': 'MEG', 'SingleUnit': 0}, ignore_index=True)
 
     for unit_id in scoredict_by_unit_peg.keys():
         example_unit = scoredict_by_unit_peg[unit_id]
@@ -1531,7 +1531,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     below_chance = 1
                 #calculate the below chance
                 #add to the dataframe
-                df_full = df_full.append({'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance, 'BrainArea': 'PEG'}, ignore_index=True)
+                df_full = df_full.append({'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance, 'BrainArea': 'PEG', 'SingleUnit': 1}, ignore_index=True)
             elif len(mu_list)>0:
                 #calculate the score
                 score = np.mean(mu_list)
@@ -1543,7 +1543,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     below_chance = 1
                 #calculate the below chance
                 #add to the dataframe
-                df_full = df_full.append({'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance, 'BrainArea': 'PEG'}, ignore_index=True)
+                df_full = df_full.append({'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance, 'BrainArea': 'PEG', 'SingleUnit': 0}, ignore_index=True)
 
     #repeat for aeg
     for unit_id in scoredict_by_unit_aeg.keys():
@@ -1564,7 +1564,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                 # add to the dataframe
                 df_full = df_full.append(
                     {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
-                     'BrainArea': 'AEG'}, ignore_index=True)
+                     'BrainArea': 'AEG', 'SingleUnit': 1}, ignore_index=True)
             elif len(mu_list) > 0:
                 # calculate the score
                 score = np.mean(mu_list)
@@ -1578,7 +1578,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                 # add to the dataframe
                 df_full = df_full.append(
                     {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
-                     'BrainArea': 'AEG'}, ignore_index=True)
+                     'BrainArea': 'AEG', 'SingleUnit': 0}, ignore_index=True)
 
     for unit_id in scoredict_by_unit_meg_pitchsplit.keys():
         example_unit = scoredict_by_unit_meg_pitchsplit[unit_id]
@@ -1645,7 +1645,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     # add to the dataframe
                     df_full_pitchsplit = df_full_pitchsplit.append(
                         {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
-                         'BrainArea': 'PEG', 'PitchShift': pitchshiftnum}, ignore_index=True)
+                         'BrainArea': 'PEG', 'PitchShift': pitchshiftnum, 'SingleUnit': 1}, ignore_index=True)
                 elif len(mu_list) > 0:
                     # calculate the score
                     score = np.mean(mu_list)
@@ -1659,7 +1659,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     # add to the dataframe
                     df_full_pitchsplit = df_full_pitchsplit.append(
                         {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
-                         'BrainArea': 'PEG', 'PitchShift': pitchshiftnum}, ignore_index=True)
+                         'BrainArea': 'PEG', 'PitchShift': pitchshiftnum, 'SingleUnit': 0}, ignore_index=True)
     for unit_id in scoredict_by_unit_aeg_pitchsplit.keys():
         example_unit = scoredict_by_unit_aeg_pitchsplit[unit_id]
         for probeword in example_unit.keys():
@@ -1685,7 +1685,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     # add to the dataframe
                     df_full_pitchsplit = df_full_pitchsplit.append(
                         {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
-                         'BrainArea': 'PEG', 'PitchShift': pitchshiftnum}, ignore_index=True)
+                         'BrainArea': 'PEG', 'PitchShift': pitchshiftnum, 'SingleUnit': 1}, ignore_index=True)
                 elif len(mu_list) > 0:
                     # calculate the score
                     score = np.mean(mu_list)
@@ -1699,7 +1699,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     # add to the dataframe
                     df_full_pitchsplit = df_full_pitchsplit.append(
                         {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
-                         'BrainArea': 'PEG', 'PitchShift': pitchshiftnum}, ignore_index=True)
+                         'BrainArea': 'PEG', 'PitchShift': pitchshiftnum, 'SingleUnit': 0}, ignore_index=True)
 
     #plot as a swarm plot with the below chance as a different colour
 
@@ -1950,8 +1950,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                 scoredict_by_unit_perm_naive_aeg_pitchsplit[unit_id] = scoredict_byunit_naive_perm_pitchsplit[unit_id]
 
 
-    df_full_naive = pd.DataFrame(columns=['ID', 'ProbeWord', 'Score', 'Below-chance', 'BrainArea'])
-    df_full_naive_pitchsplit = pd.DataFrame(columns=['ID', 'ProbeWord', 'Score', 'Below-chance', 'BrainArea', 'PitchShift'])
+    df_full_naive = pd.DataFrame(columns=['ID', 'ProbeWord', 'Score', 'Below-chance', 'BrainArea', 'SingleUnit'])
+    df_full_naive_pitchsplit = pd.DataFrame(columns=['ID', 'ProbeWord', 'Score', 'Below-chance', 'BrainArea', 'PitchShift', 'SingleUnit'])
 
     for unit_id in scoredict_by_unit_naive_meg.keys():
         example_unit = scoredict_by_unit_naive_meg[unit_id]
@@ -1971,7 +1971,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                 # add to the dataframe
                 df_full_naive = df_full_naive.append(
                     {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
-                     'BrainArea': 'MEG'}, ignore_index=True)
+                     'BrainArea': 'MEG', 'SingleUnit': 1}, ignore_index=True)
             elif len(mu_list) > 0:
                 # calculate the score
                 score = np.mean(mu_list)
@@ -1985,7 +1985,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                 # add to the dataframe
                 df_full_naive = df_full_naive.append(
                     {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
-                     'BrainArea': 'MEG'}, ignore_index=True)
+                     'BrainArea': 'MEG', 'SingleUnit': 0}, ignore_index=True)
 
     for unit_id in scoredict_by_unit_naive_peg.keys():
         example_unit = scoredict_by_unit_naive_peg[unit_id]
@@ -2005,7 +2005,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                 # add to the dataframe
                 df_full_naive = df_full_naive.append(
                     {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
-                     'BrainArea': 'PEG'}, ignore_index=True)
+                     'BrainArea': 'PEG', 'SingleUnit': 1}, ignore_index=True)
             elif len(mu_list) > 0:
                 # calculate the score
                 score = np.mean(mu_list)
@@ -2019,7 +2019,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                 # add to the dataframe
                 df_full_naive = df_full_naive.append(
                     {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
-                     'BrainArea': 'PEG'}, ignore_index=True)
+                     'BrainArea': 'PEG', 'SingleUnit': 0}, ignore_index=True)
 
     # repeat for aeg
     for unit_id in scoredict_by_unit_naive_aeg.keys():
@@ -2040,7 +2040,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                 # add to the dataframe
                 df_full_naive = df_full_naive.append(
                     {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
-                     'BrainArea': 'AEG'}, ignore_index=True)
+                     'BrainArea': 'AEG', 'SingleUnit': 1}, ignore_index=True)
             elif len(mu_list) > 0:
                 # calculate the score
                 score = np.mean(mu_list)
@@ -2054,7 +2054,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                 # add to the dataframe
                 df_full_naive = df_full_naive.append(
                     {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
-                     'BrainArea': 'AEG'}, ignore_index=True)
+                     'BrainArea': 'AEG', 'SingleUnit': 0}, ignore_index=True)
 
 
     for unit_id in scoredict_by_unit_naive_peg_pitchsplit.keys():
@@ -2081,7 +2081,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     # add to the dataframe
                     df_full_naive_pitchsplit = df_full_naive_pitchsplit.append(
                         {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
-                         'BrainArea': 'PEG', 'PitchShift': pitchshiftnum}, ignore_index=True)
+                         'BrainArea': 'PEG', 'PitchShift': pitchshiftnum,'SingleUnit': 1}, ignore_index=True)
                 elif len(mu_list) > 0:
                     # calculate the score
                     score = np.mean(mu_list)
@@ -2095,7 +2095,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     # add to the dataframe
                     df_full_naive_pitchsplit = df_full_naive_pitchsplit.append(
                         {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
-                         'BrainArea': 'PEG', 'PitchShift': pitchshiftnum}, ignore_index=True)
+                         'BrainArea': 'PEG', 'PitchShift': pitchshiftnum, 'SingleUnit': 0}, ignore_index=True)
 
     for unit_id in scoredict_by_unit_naive_meg_pitchsplit.keys():
         example_unit = scoredict_by_unit_naive_meg_pitchsplit[unit_id]
@@ -2121,7 +2121,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     # add to the dataframe
                     df_full_naive_pitchsplit = df_full_naive_pitchsplit.append(
                         {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
-                         'BrainArea': 'MEG', 'PitchShift': pitchshiftnum}, ignore_index=True)
+                         'BrainArea': 'MEG', 'PitchShift': pitchshiftnum, 'SingleUnit': 1}, ignore_index=True)
                 elif len(mu_list) > 0:
                     # calculate the score
                     score = np.mean(mu_list)
@@ -2135,7 +2135,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     # add to the dataframe
                     df_full_naive_pitchsplit = df_full_naive_pitchsplit.append(
                         {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
-                         'BrainArea': 'MEG', 'PitchShift': pitchshiftnum}, ignore_index=True)
+                         'BrainArea': 'MEG', 'PitchShift': pitchshiftnum, 'SingleUnit': 0}, ignore_index=True)
     for unit_id in scoredict_by_unit_naive_aeg_pitchsplit.keys():
         example_unit = scoredict_by_unit_naive_aeg_pitchsplit[unit_id]
         for probeword in example_unit.keys():
@@ -2160,7 +2160,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     # add to the dataframe
                     df_full_naive_pitchsplit = df_full_naive_pitchsplit.append(
                         {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
-                         'BrainArea': 'AEG', 'PitchShift': pitchshiftnum}, ignore_index=True)
+                         'BrainArea': 'AEG', 'PitchShift': pitchshiftnum, 'SingleUnit': 1}, ignore_index=True)
                 elif len(mu_list) > 0:
                     # calculate the score
                     score = np.mean(mu_list)
@@ -2174,7 +2174,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     # add to the dataframe
                     df_full_naive_pitchsplit = df_full_naive_pitchsplit.append(
                         {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
-                         'BrainArea': 'AEG', 'PitchShift': pitchshiftnum}, ignore_index=True)
+                         'BrainArea': 'AEG', 'PitchShift': pitchshiftnum, 'SingleUnit': 0}, ignore_index=True)
 
     # plot as a swarm plot with the below chance as a different colour
     #do the same for the naive animals
@@ -2346,7 +2346,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     print(df_full_pitchsplit_anova.dtypes)
     #now run anova
     import statsmodels.formula.api as smf
-    formula = 'Score ~ C(ProbeWord) + C(PitchShift) +C(BrainArea)'
+    formula = 'Score ~ C(ProbeWord) + C(PitchShift) +C(BrainArea)+C(SingleUnit)'
     model = smf.ols(formula, data=df_full_pitchsplit_anova).fit()
     anova_table = sm.stats.anova_lm(model, typ=2)
     #get the coefficient of determination
