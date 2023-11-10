@@ -1705,7 +1705,6 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         if np.sum(df_full_unit['Below-chance']) == len(df_full_unit['Below-chance']):
             df_full = df_full[df_full['ID'] != unit_id]
 
-    df_full_pitchsplit = create_gen_frac_variable(df_full_pitchsplit)
 
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
     sns.swarmplot(x='BrainArea', y='Score', hue='Below-chance', data=df_full, ax=ax, alpha=0.5)
@@ -2269,6 +2268,19 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
             df_full_pitchsplit = df_full_pitchsplit[df_full_pitchsplit['ID'] != unit_id]
 
 
+    df_full_pitchsplit = create_gen_frac_variable(df_full_pitchsplit)
+    df_full_naive_pitchsplit = create_gen_frac_variable(df_full_naive_pitchsplit)
+    #remove duplicate genfrac scores
+    df_full_pitchsplit_plot = df_full_pitchsplit.drop_duplicates(subset = ['ID', 'GenFrac'])
+    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit.drop_duplicates(subset = ['ID', 'GenFrac'])
+
+    #plot the distplot of these scores overlaid with the histogram
+    fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
+    sns.distplot(df_full_pitchsplit_plot['Score'], ax=ax, kde=True, norm_hist=False, bins=20, label='Trained')
+    sns.distplot(df_full_naive_pitchsplit_plot['Score'], ax=ax, kde=True, norm_hist=False, bins=20, label='Naive')
+    plt.legend()
+    plt.title('Distribution of generalizability scores')
+    plt.show()
     #now plot by the probe word for the trained animals
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
 
