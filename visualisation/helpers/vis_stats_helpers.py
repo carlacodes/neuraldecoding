@@ -11,14 +11,12 @@ import statsmodels as sm
 import lightgbm as lgb
 from pathlib import Path
 import scipy
-from helpers.GeneratePlotsConcise import *
 from scipy.stats import mannwhitneyu
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import mean_squared_error
 import json
-from helpers.vis_stats_helpers import run_anova_on_dataframe, create_gen_frac_variable
 
 
 def run_anova_on_dataframe(df_full_pitchsplit):
@@ -67,7 +65,7 @@ def create_gen_frac_variable(df_full_pitchsplit):
         df_full_pitchsplit_unit = df_full_pitchsplit_unit[df_full_pitchsplit_unit['Below-chance'] == 0]
         mean_scores = df_full_pitchsplit_unit['Score'].mean()
         #if the mean score is below 0.75, then we can't calculate the gen frac
-        if len(df_full_pitchsplit_unit) == 0 or mean_scores < 0.75:
+        if len(df_full_pitchsplit_unit) == 0 or mean_scores < 0.60:
             df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'GenFrac'] = np.nan
             continue
         above_60_scores = df_full_pitchsplit_unit[

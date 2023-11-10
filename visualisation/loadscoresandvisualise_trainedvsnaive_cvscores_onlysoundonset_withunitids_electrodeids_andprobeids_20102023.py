@@ -2268,10 +2268,12 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
 
     df_full_pitchsplit = create_gen_frac_variable(df_full_pitchsplit)
+    #remove all rows where GenFrac is nan
+    df_full_pitchsplit_plot = df_full_pitchsplit[df_full_pitchsplit['GenFrac'].notna()]
+    df_full_pitchsplit_plot = df_full_pitchsplit_plot.drop_duplicates(subset = ['ID'])
+
     df_full_naive_pitchsplit = create_gen_frac_variable(df_full_naive_pitchsplit)
-    #remove duplicate genfrac scores
-    df_full_pitchsplit_plot = df_full_pitchsplit.drop_duplicates(subset = ['ID'])
-    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit.drop_duplicates(subset = ['ID'])
+    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit[df_full_naive_pitchsplit['GenFrac'].notna()]
 
     #plot the distplot of these scores overlaid with the histogram
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
