@@ -1604,7 +1604,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     # add to the dataframe
                     df_full_pitchsplit = df_full_pitchsplit.append(
                         {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
-                         'BrainArea': 'MEG', 'PitchShift': pitchshiftnum}, ignore_index=True)
+                         'BrainArea': 'MEG', 'PitchShift': pitchshiftnum, 'SingleUnit': int(1)}, ignore_index=True)
                 elif len(mu_list) > 0:
                     # calculate the score
                     score = np.mean(mu_list)
@@ -1618,7 +1618,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     # add to the dataframe
                     df_full_pitchsplit = df_full_pitchsplit.append(
                         {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
-                         'BrainArea': 'MEG', 'PitchShift': pitchshiftnum}, ignore_index=True)
+                         'BrainArea': 'MEG', 'PitchShift': pitchshiftnum, 'SingleUnit': 0}, ignore_index=True)
     for unit_id in scoredict_by_unit_peg_pitchsplit.keys():
         example_unit = scoredict_by_unit_peg_pitchsplit[unit_id]
         for probeword in example_unit.keys():
@@ -2415,7 +2415,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_full_pitchsplit['Naive'] = 0
     combined_df = df_full_naive_pitchsplit.append(df_full_pitchsplit)
     #now run the lightgbm function
-    create_gen_frac_variable(combined_df)
+    runlgbmmodel_score(combined_df)
 
 
 
