@@ -104,8 +104,16 @@ def runlgbmmodel_score(df_use):
     # remove ferret as possible feature
     col = 'ID'
     dfx = dfx.loc[:, dfx.columns != col]
+    col2 = 'SingleUnit'
+    dfx = dfx.loc[:, dfx.columns != col2]
+    col3 = 'GenFrac'
+    dfx = dfx.loc[:, dfx.columns != col3]
+    col4 = 'MeanScore'
+    dfx = dfx.loc[:, dfx.columns != col4]
 
-    X_train, X_test, y_train, y_test = train_test_split(dfx, df_use['score'], test_size=0.2,
+    #remove any rows
+
+    X_train, X_test, y_train, y_test = train_test_split(dfx, df_use['Score'], test_size=0.2,
                                                         random_state=42)
 
     dtrain = lgb.Dataset(X_train, label=y_train)
