@@ -2292,8 +2292,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         from scipy.stats import mannwhitneyu
         stat, p = mannwhitneyu(df_full_pitchsplit_plot['GenFrac'], df_full_naive_pitchsplit_plot['GenFrac'], alternative = 'less')
         print(f'Generalizability scores, high threshold untis, index method: {options}')
-        print(stat_general)
-        print(p_general)
+        print(stat)
+        print(p)
 
         df_full_pitchsplit = create_gen_frac_variable(df_full_pitchsplit, high_score_threshold=False, index_or_frac = options)
         #remove all rows where GenFrac is nan

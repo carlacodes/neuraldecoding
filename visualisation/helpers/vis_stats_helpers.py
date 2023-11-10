@@ -75,12 +75,12 @@ def create_gen_frac_variable(df_full_pitchsplit, high_score_threshold = False, i
                 df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'GenFrac'] = np.nan
                 continue
         above_60_scores = df_full_pitchsplit_unit[
-            df_full_pitchsplit_unit['Score'] >= 0.75 ]  # Replace 'score_column' with the actual column name
+            df_full_pitchsplit_unit['Score'] >= 0.60 ]  # Replace 'score_column' with the actual column name
 
         # Check how many probe words are below 60%
 
         below_60_probe_words = df_full_pitchsplit_unit[df_full_pitchsplit_unit[
-                                                           'Score'] <= 0.75]  # Replace 'probe_words_column' with the actual column name
+                                                           'Score'] < 0.60]  # Replace 'probe_words_column' with the actual column name
         max_score = df_full_pitchsplit_unit.max()['Score']
         min_score = df_full_pitchsplit_unit.min()['Score']
         if index_or_frac == 'index':
