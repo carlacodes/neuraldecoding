@@ -1,9 +1,4 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
 import os
-import re
-import seaborn as sns
 import scipy.stats as stats
 import shap
 from statsmodels.regression import linear_model
@@ -18,7 +13,7 @@ from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import mean_squared_error
 import json
-from helpers.vis_stats_helpers import run_anova_on_dataframe
+from helpers.vis_stats_helpers import run_anova_on_dataframe, create_gen_frac_variable
 
 def find_repeating_substring(text):
     text_length = len(text)
@@ -1710,7 +1705,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         if np.sum(df_full_unit['Below-chance']) == len(df_full_unit['Below-chance']):
             df_full = df_full[df_full['ID'] != unit_id]
 
-
+    df_full_pitchsplit = create_gen_frac_variable(df_full_pitchsplit)
 
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
     sns.swarmplot(x='BrainArea', y='Score', hue='Below-chance', data=df_full, ax=ax, alpha=0.5)
