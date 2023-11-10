@@ -48,7 +48,8 @@ def create_gen_frac_variable(df_full_pitchsplit):
         df_full_pitchsplit_unit = df_full_pitchsplit[df_full_pitchsplit['ID'] == unit_id]
         #filter for the above-chance scores
         df_full_pitchsplit_unit = df_full_pitchsplit_unit[df_full_pitchsplit_unit['Below-chance'] == 0]
-
+        if len(df_full_pitchsplit_unit) == 0:
+            continue
         above_60_scores = df_full_pitchsplit_unit[
             df_full_pitchsplit_unit['Score'] >= 0.6 ]  # Replace 'score_column' with the actual column name
 
