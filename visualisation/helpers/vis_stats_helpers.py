@@ -46,10 +46,14 @@ def create_gen_frac_variable(df_full_pitchsplit):
     for unit_id in df_full_pitchsplit['ID'].unique():
         # Check how many scores for that unit are above 60%
         df_full_pitchsplit_unit = df_full_pitchsplit[df_full_pitchsplit['ID'] == unit_id]
+        #filter for the above-chance scores
+        df_full_pitchsplit_unit = df_full_pitchsplit_unit[df_full_pitchsplit_unit['Below-chance'] == 0]
+
         above_60_scores = df_full_pitchsplit_unit[
             df_full_pitchsplit_unit['Score'] >= 0.6 ]  # Replace 'score_column' with the actual column name
 
         # Check how many probe words are below 60%
+
         below_60_probe_words = df_full_pitchsplit_unit[df_full_pitchsplit_unit[
                                                            'Score'] <= 0.60]  # Replace 'probe_words_column' with the actual column name
         gen_frac = len(above_60_scores) / len(df_full_pitchsplit_unit)
