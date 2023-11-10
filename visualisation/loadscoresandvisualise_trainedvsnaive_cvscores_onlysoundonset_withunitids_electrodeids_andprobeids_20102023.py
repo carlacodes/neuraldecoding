@@ -528,7 +528,6 @@ def runboostedregressiontreeforlstmscore(df_use):
     param['nthread'] = 4
     param['eval_metric'] = 'auc'
     evallist = [(dtrain, 'train'), (dtest, 'eval')]
-    # bst = xgb.train(param, dtrain, num_round, evallist)
     xg_reg = lgb.LGBMRegressor(colsample_bytree=0.3, learning_rate=0.1,
                                max_depth=10, alpha=10, n_estimators=10, verbose=1)
 
@@ -2271,16 +2270,20 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_full_pitchsplit = create_gen_frac_variable(df_full_pitchsplit)
     df_full_naive_pitchsplit = create_gen_frac_variable(df_full_naive_pitchsplit)
     #remove duplicate genfrac scores
-    df_full_pitchsplit_plot = df_full_pitchsplit.drop_duplicates(subset = ['ID', 'GenFrac'])
-    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit.drop_duplicates(subset = ['ID', 'GenFrac'])
+    df_full_pitchsplit_plot = df_full_pitchsplit.drop_duplicates(subset = ['ID'])
+    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit.drop_duplicates(subset = ['ID'])
 
     #plot the distplot of these scores overlaid with the histogram
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
-    sns.distplot(df_full_pitchsplit_plot['Score'], ax=ax, kde=True, norm_hist=False, bins=20, label='Trained')
-    sns.distplot(df_full_naive_pitchsplit_plot['Score'], ax=ax, kde=True, norm_hist=False, bins=20, label='Naive')
+    sns.distplot(df_full_pitchsplit_plot['GenFrac'], ax=ax, kde=True, norm_hist=False, bins=20, label='Trained')
+    sns.distplot(df_full_naive_pitchsplit_plot['GenFrac'], ax=ax, kde=True, norm_hist=False, bins=20, label='Naive')
     plt.legend()
     plt.title('Distribution of generalizability scores')
     plt.show()
+    #man whitney u test
+    from scipy.stats import mannwhitneyu
+    stat, p = mannwhitneyu(df_full_pitchsplit_plot['Score'], df_full_naive_pitchsplit_plot['Score'], alternative = 'greater')
+
     #now plot by the probe word for the trained animals
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
 
