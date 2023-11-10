@@ -237,12 +237,27 @@ def scatterplot_and_visualise(probewordlist,
                         clust_text = str(clus)+'_'+fullid+'_'+recname+'_'+stream_small
 
                         print(i, clus)
-                        if probeword == (2,2) and fullid == 'F1604_Squinty' or fullid == 'F1606_Windolene':
-                            probeword =(15,15)
-                        elif probeword == (3,3) and fullid == 'F1604_Squinty' or fullid == 'F1606_Windolene':
-                            probeword = (42,49)
-                        elif probeword == (5,5) and fullid == 'F1604_Squinty' or fullid == 'F1606_Windolene':
-                            probeword = (16,16)
+
+                        if probeword == (2,2) and fullid == 'F1702_Zola':
+                            probeword = (4,4)
+                        elif probeword == (5,6) and fullid == 'F1702_Zola':
+                            probeword = (2,2)
+                        elif probeword == (20,20) and fullid == 'F1702_Zola':
+                            probeword = (3,3)
+                        elif probeword == (42,49) and fullid == 'F1702_Zola':
+                            probeword = (5,5)
+                        elif probeword == (32,38) and fullid == 'F1702_Zola':
+                            probeword = (7,7)
+
+                        if fullid == 'F1604_Squinty' or fullid == 'F1606_Windolene':
+                            if probeword == (3,3):
+                                probeword = (5,5)
+                            elif probeword == (6,6) :
+                                probeword = (4,4)
+                            else:
+                                probeword_num = probeword[0]
+                                probeword = (probeword_num + 11, probeword_num +11)
+
 
 
                         if 200 > clus >= 100 and fullid != 'F2003_Orecchiette':
@@ -852,8 +867,10 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     (bigconcatenatenaive_nonps, dictouput[key]['nonpitchshift'][key3]))
 
     #remake dictionary based on probe word
-    probewordlist_text = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22), (15, 15), (42, 49), (4, 4), (16, 16), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
-                          (14, 14)]
+    # probewordlist_text = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22), (15, 15), (42, 49), (4, 4), (16, 16), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
+    #                       (14, 14)]
+    probewordlist_text = [(2, 2), (3, 3), (4, 4), (5, 5), (6,6), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12), (13,13),
+                          (14, 14), (15,15), (16,16)]
 
     scoredict = {}
     scoredict_naive={}
@@ -904,9 +921,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         8: '(8,8)',
         9: '(9,9)',
         10: '(10,10)',
-        42: '(42,49)',
-        32: '(32,38)',
-        20: '(20,22)',
+        13: '(13,13)',
         15: '(15,15)',
         16: '(16,16)',
         11: '(11,11)',
