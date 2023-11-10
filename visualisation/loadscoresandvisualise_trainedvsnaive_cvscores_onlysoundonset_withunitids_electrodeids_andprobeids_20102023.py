@@ -254,9 +254,29 @@ def scatterplot_and_visualise(probewordlist,
                                 probeword = (5,5)
                             elif probeword == (6,6) :
                                 probeword = (4,4)
-                            else:
-                                probeword_num = probeword[0]
-                                probeword = (probeword_num + 11, probeword_num +11)
+                            elif probeword == (2,2):
+                                probeword = (13,13)
+                            elif probeword == (4,4):
+                                probeword = (15,15)
+                            elif probeword == (5,5):
+                                probeword = (16,16)
+                            elif probeword == (7,7):
+                                probeword = (18,18)
+                            elif probeword == (8,8):
+                                probeword = (19,19)
+                            elif probeword == (9,9):
+                                probeword = (20,20)
+                            elif probeword == (10,10):
+                                probeword = (21,21)
+                            elif probeword == (11,11):
+
+                                probeword = (22,22)
+                            elif probeword == (12,12):
+
+                                probeword = (23,23)
+                            elif probeword == (14,14):
+                                probeword = (25,25)
+
 
 
 
@@ -614,9 +634,9 @@ def load_classified_report(path):
 def main():
     probewordlist_zola = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
     probewordlist =[ (2,2), (3,3), (4,4),(5,5), (6,6), (7,7), (8,8), (9,9), (10,10)]
-    probewordlist_l74 = [(2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
+    probewordlist_l74 = [(10, 10), (2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (11, 11), (12, 12),
                              (14, 14)]
-    animal_list = [ 'F1901_Crumble', 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala',  'F2003_Orecchiette',]
+    animal_list = [ 'F1604_Squinty', 'F1901_Crumble', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala',  'F2003_Orecchiette',]
     # animal_list = [  'F1815_Cruella', 'F1901_Crumble',]
     # animal_list = [ 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1901_Crumble', 'F1812_Nala']
 
@@ -870,7 +890,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     # probewordlist_text = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22), (15, 15), (42, 49), (4, 4), (16, 16), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
     #                       (14, 14)]
     probewordlist_text = [(2, 2), (3, 3), (4, 4), (5, 5), (6,6), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12), (13,13),
-                          (14, 14), (15,15), (16,16)]
+                          (14, 14), (15,15), (16,16), (17,17), (18,18), (19,19), (20,20), (21,21), (22,22), (23,23), (24,24), (25,25)]
 
     scoredict = {}
     scoredict_naive={}
@@ -926,7 +946,18 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         16: '(16,16)',
         11: '(11,11)',
         12: '(12,12)',
-        14: '(14,14)'
+        14: '(14,14)',
+        15: '(15,15)',
+        16: '(16,16)',
+        17: '(17,17)',
+        18: '(18,18)',
+        19: '(19,19)',
+        20: '(20,20)',
+        21: '(21,21)',
+        22: '(22,22)',
+        23: '(23,23)',
+        24: '(24,24)',
+        25: '(25,25)'
     }
     for talker in [1]:
         if talker == 1:
