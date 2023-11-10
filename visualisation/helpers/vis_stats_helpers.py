@@ -1,3 +1,4 @@
+import numpy as np
 from statsmodels.regression import linear_model
 import statsmodels as sm
 import pandas as pd
@@ -48,7 +49,10 @@ def create_gen_frac_variable(df_full_pitchsplit):
         df_full_pitchsplit_unit = df_full_pitchsplit[df_full_pitchsplit['ID'] == unit_id]
         #filter for the above-chance scores
         df_full_pitchsplit_unit = df_full_pitchsplit_unit[df_full_pitchsplit_unit['Below-chance'] == 0]
-        if len(df_full_pitchsplit_unit) == 0:
+        mean_scores = df_full_pitchsplit_unit['Score'].mean()
+        #if the mean score is below 0.75, then we can't calculate the gen frac
+        if len(df_full_pitchsplit_unit) == 0 or mean_scores < 0.75:
+            df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'GenFrac'] = np.nan
             continue
         above_60_scores = df_full_pitchsplit_unit[
             df_full_pitchsplit_unit['Score'] >= 0.75 ]  # Replace 'score_column' with the actual column name
