@@ -57,8 +57,11 @@ def create_gen_frac_variable(df_full_pitchsplit):
 
         below_60_probe_words = df_full_pitchsplit_unit[df_full_pitchsplit_unit[
                                                            'Score'] <= 0.75]  # Replace 'probe_words_column' with the actual column name
-        gen_frac = len(above_60_scores) / len(df_full_pitchsplit_unit)
-        #add this gen frac to a new column
+        max_score = df_full_pitchsplit_unit.max()['Score']
+        min_score = df_full_pitchsplit_unit.min()['Score']
+        gen_frac = (max_score - min_score) / (max_score+min_score)
+
+
         df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'GenFrac'] = gen_frac
         # Now you can do something with the counts, for example, print them
         # print(f"Unit ID: {unit_id}")
