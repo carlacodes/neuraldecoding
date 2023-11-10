@@ -57,12 +57,14 @@ def run_anova_on_dataframe(df_full_pitchsplit):
     return anova_table, model
 
 
-def create_gen_frac_variable(df_full_pitchsplit, high_score_threshold = False):
+def create_gen_frac_variable(df_full_pitchsplit, high_score_threshold = False, index_or_frac = 'frac'):
     for unit_id in df_full_pitchsplit['ID'].unique():
         # Check how many scores for that unit are above 60%
         df_full_pitchsplit_unit = df_full_pitchsplit[df_full_pitchsplit['ID'] == unit_id]
         #filter for the above-chance scores
         mean_scores = df_full_pitchsplit_unit['Score'].mean()
+        #add the mean score to the dataframe
+        df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'MeanScore'] = mean_scores
         #if the mean score is below 0.75, then we can't calculate the gen frac
         if high_score_threshold == True:
             if len(df_full_pitchsplit_unit) == 0 or mean_scores < 0.60:
@@ -81,7 +83,10 @@ def create_gen_frac_variable(df_full_pitchsplit, high_score_threshold = False):
                                                            'Score'] <= 0.75]  # Replace 'probe_words_column' with the actual column name
         max_score = df_full_pitchsplit_unit.max()['Score']
         min_score = df_full_pitchsplit_unit.min()['Score']
-        gen_frac = (max_score - min_score) / (max_score+min_score)
+        if index_or_frac == 'index':
+            gen_frac = (max_score - min_score) / (max_score+min_score)
+        else:
+            gen_frac = len(above_60_scores) / (len(above_60_scores) + len(below_60_probe_words))
 
 
         df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'GenFrac'] = gen_frac

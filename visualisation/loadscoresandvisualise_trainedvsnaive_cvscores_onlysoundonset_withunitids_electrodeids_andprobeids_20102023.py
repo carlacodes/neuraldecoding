@@ -1,4 +1,6 @@
 import os
+
+import matplotlib.pyplot as plt
 import scipy.stats as stats
 import shap
 from statsmodels.regression import linear_model
@@ -2267,43 +2269,62 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
             df_full_pitchsplit = df_full_pitchsplit[df_full_pitchsplit['ID'] != unit_id]
 
 
-    df_full_pitchsplit_highsubset = create_gen_frac_variable(df_full_pitchsplit, high_score_threshold=True)
-    #remove all rows where GenFrac is nan
-    df_full_pitchsplit_plot = df_full_pitchsplit_highsubset[df_full_pitchsplit_highsubset['GenFrac'].notna()]
-    df_full_pitchsplit_plot = df_full_pitchsplit_plot.drop_duplicates(subset = ['ID'])
 
-    df_full_naive_pitchsplit = create_gen_frac_variable(df_full_naive_pitchsplit, high_score_threshold=True)
-    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit[df_full_naive_pitchsplit['GenFrac'].notna()]
-    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot.drop_duplicates(subset = ['ID'])
+    for options in ['index', 'frac']:
+        df_full_pitchsplit_highsubset = create_gen_frac_variable(df_full_pitchsplit, high_score_threshold=True, index_or_frac = options)
+        #remove all rows where GenFrac is nan
+        df_full_pitchsplit_plot = df_full_pitchsplit_highsubset[df_full_pitchsplit_highsubset['GenFrac'].notna()]
+        df_full_pitchsplit_plot = df_full_pitchsplit_plot.drop_duplicates(subset = ['ID'])
 
-    #plot the distplot of these scores overlaid with the histogram
-    fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
-    sns.histplot(df_full_pitchsplit_plot['GenFrac'],ax=ax,  kde=True, bins=20, label='Trained')
-    sns.histplot(df_full_naive_pitchsplit_plot['GenFrac'], ax=ax, kde=True, bins=20, label='Naive')
-    plt.legend()
-    plt.title('Distribution of generalizability scores for the trained and naive animals, 60% mean score threshold')
-    plt.show()
-    #man whitney u test
-    from scipy.stats import mannwhitneyu
-    stat, p = mannwhitneyu(df_full_pitchsplit_plot['GenFrac'], df_full_naive_pitchsplit_plot['GenFrac'], alternative = 'less')
+        df_full_naive_pitchsplit = create_gen_frac_variable(df_full_naive_pitchsplit, high_score_threshold=True, index_or_frac = options)
+        df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit[df_full_naive_pitchsplit['GenFrac'].notna()]
+        df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot.drop_duplicates(subset = ['ID'])
 
-    df_full_pitchsplit = create_gen_frac_variable(df_full_pitchsplit, high_score_threshold=False)
-    #remove all rows where GenFrac is nan
-    df_full_pitchsplit_plot = df_full_pitchsplit[df_full_pitchsplit['GenFrac'].notna()]
-    df_full_pitchsplit_plot = df_full_pitchsplit_plot.drop_duplicates(subset = ['ID'])
+        #plot the distplot of these scores overlaid with the histogram
+        fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
+        sns.histplot(df_full_pitchsplit_plot['GenFrac'],ax=ax,  kde=True, bins=20, label='Trained')
+        sns.histplot(df_full_naive_pitchsplit_plot['GenFrac'], ax=ax, kde=True, bins=20, label='Naive')
+        plt.legend()
+        plt.title(f'Distribution of generalizability scores for the trained and naive animals, 60% mean score threshold, index or frac:{options}')
+        plt.savefig(f'G:/GenFrac_highthreshold_{options}.png')
+        plt.show()
+        #man whitney u test
+        from scipy.stats import mannwhitneyu
+        stat, p = mannwhitneyu(df_full_pitchsplit_plot['GenFrac'], df_full_naive_pitchsplit_plot['GenFrac'], alternative = 'less')
+        print(f'Generalizability scores, high threshold untis, index method: {options}')
+        print(stat_general)
+        print(p_general)
 
-    df_full_naive_pitchsplit = create_gen_frac_variable(df_full_naive_pitchsplit, high_score_threshold=False)
-    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit[df_full_naive_pitchsplit['GenFrac'].notna()]
-    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot.drop_duplicates(subset = ['ID'])
+        df_full_pitchsplit = create_gen_frac_variable(df_full_pitchsplit, high_score_threshold=False, index_or_frac = options)
+        #remove all rows where GenFrac is nan
+        df_full_pitchsplit_plot = df_full_pitchsplit[df_full_pitchsplit['GenFrac'].notna()]
+        df_full_pitchsplit_plot = df_full_pitchsplit_plot.drop_duplicates(subset = ['ID'])
+        #get the subset of the data where the meanscore is above 0.75
+        df_full_pitchsplit_plot_highsubset = df_full_pitchsplit_plot[df_full_pitchsplit_plot['MeanScore'] > 0.75]
 
-    #plot the distplot of these scores overlaid with the histogram
-    fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
-    sns.histplot(df_full_pitchsplit_plot['GenFrac'],ax=ax,  kde=True, bins=20, label='Trained')
-    sns.histplot(df_full_naive_pitchsplit_plot['GenFrac'], ax=ax, kde=True, bins=20, label='Naive')
-    plt.legend()
-    plt.title('Distribution of generalisability scores for the trained and naive animals, all units')
-    plt.show()
-    stat_general, p_general = mannwhitneyu(df_full_pitchsplit_plot['GenFrac'], df_full_naive_pitchsplit_plot['GenFrac'], alternative = 'two-sided')
+        df_full_naive_pitchsplit = create_gen_frac_variable(df_full_naive_pitchsplit, high_score_threshold=False, index_or_frac = options)
+        df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit[df_full_naive_pitchsplit['GenFrac'].notna()]
+        df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot.drop_duplicates(subset = ['ID'])
+        #get the subset of the data where the meanscore is above 0.75
+        df_full_naive_pitchsplit_plot_highsubset = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['MeanScore'] > 0.75]
+
+        #plot the distplot of these scores overlaid with the histogram
+        fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
+        sns.histplot(df_full_pitchsplit_plot['GenFrac'],ax=ax,  kde=True, bins=20, label='Trained')
+        sns.histplot(df_full_pitchsplit_plot_highsubset['GenFrac'],ax=ax,  kde=True, bins=20, label='Trained, 75% mean score threshold')
+        sns.histplot(df_full_naive_pitchsplit_plot['GenFrac'], ax=ax, kde=True, bins=20, label='Naive')
+        # sns.histplot(df_full_naive_pitchsplit_plot_highsubset['GenFrac'], ax=ax, kde=True, bins=20, label='Naive, 75% mean score threshold')
+        plt.legend()
+        plt.title(f'Distribution of generalisability scores for the trained and naive animals, all units, index method: {options}')
+        stat_general, p_general = mannwhitneyu(df_full_pitchsplit_plot['GenFrac'],
+                                               df_full_naive_pitchsplit_plot['GenFrac'], alternative='two-sided')
+        print(f'Generalizability scores, all units, index method: {options}')
+        print(stat_general)
+        print(p_general)
+
+        plt.savefig(f'G:/GenFrac_allthreshold_{options}.png')
+        plt.show()
+
 
     #now plot by the probe word for the trained animals
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
