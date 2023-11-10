@@ -17,6 +17,7 @@ from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import mean_squared_error
 import json
+import matplotlib.pyplot as plt
 
 
 def run_anova_on_dataframe(df_full_pitchsplit):
@@ -98,10 +99,10 @@ def create_gen_frac_variable(df_full_pitchsplit, high_score_threshold = False, i
     return df_full_pitchsplit
 
 def runlgbmmodel_score(df_use):
-    col = 'score'
+    col = 'Score'
     dfx = df_use.loc[:, df_use.columns != col]
     # remove ferret as possible feature
-    col = 'ferret'
+    col = 'ID'
     dfx = dfx.loc[:, dfx.columns != col]
 
     X_train, X_test, y_train, y_test = train_test_split(dfx, df_use['score'], test_size=0.2,

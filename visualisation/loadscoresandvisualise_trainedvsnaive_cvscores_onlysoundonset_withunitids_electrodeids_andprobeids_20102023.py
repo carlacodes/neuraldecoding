@@ -15,7 +15,7 @@ from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import mean_squared_error
 import json
-from helpers.vis_stats_helpers import run_anova_on_dataframe, create_gen_frac_variable
+from helpers.vis_stats_helpers import run_anova_on_dataframe, create_gen_frac_variable, runlgbmmodel_score
 
 def find_repeating_substring(text):
     text_length = len(text)
@@ -2295,9 +2295,9 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         print(stat)
         print(p)
 
-        df_full_pitchsplit = create_gen_frac_variable(df_full_pitchsplit, high_score_threshold=False, index_or_frac = options)
+        df_full_pitchsplit_allsubset = create_gen_frac_variable(df_full_pitchsplit, high_score_threshold=False, index_or_frac = options)
         #remove all rows where GenFrac is nan
-        df_full_pitchsplit_plot = df_full_pitchsplit[df_full_pitchsplit['GenFrac'].notna()]
+        df_full_pitchsplit_plot = df_full_pitchsplit_allsubset[df_full_pitchsplit_allsubset['GenFrac'].notna()]
         df_full_pitchsplit_plot = df_full_pitchsplit_plot.drop_duplicates(subset = ['ID'])
         #get the subset of the data where the meanscore is above 0.75
         df_full_pitchsplit_plot_highsubset = df_full_pitchsplit_plot[df_full_pitchsplit_plot['MeanScore'] > 0.75]
@@ -2407,7 +2407,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     #get the coefficient of determination
     print(model.rsquared)
     print(anova_table)
-
+    runlgbmmodel_score(df_full_pitchsplit_anova)
 
 
 
