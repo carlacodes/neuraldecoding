@@ -2303,7 +2303,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     plt.legend()
     plt.title('Distribution of generalisability scores for the trained and naive animals, all units')
     plt.show()
-    stat_general, p_general = mannwhitneyu(df_full_pitchsplit_plot['GenFrac'], df_full_naive_pitchsplit_plot['GenFrac'], alternative = 'less')
+    stat_general, p_general = mannwhitneyu(df_full_pitchsplit_plot['GenFrac'], df_full_naive_pitchsplit_plot['GenFrac'], alternative = 'two-sided')
 
     #now plot by the probe word for the trained animals
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
