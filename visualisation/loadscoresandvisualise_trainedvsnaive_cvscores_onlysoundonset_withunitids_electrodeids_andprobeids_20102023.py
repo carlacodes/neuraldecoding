@@ -18,6 +18,7 @@ from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import mean_squared_error
 import json
+from helpers.vis_stats_helpers import run_anova_on_dataframe
 
 def find_repeating_substring(text):
     text_length = len(text)
@@ -2223,7 +2224,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
     # Show the plot
     plt.show()
-
+    anova_table_naive, anova_model_naive = run_anova_on_dataframe(df_full_naive_pitchsplit)
     # now plot by animal for the trained animals
     for animal in [ 'F1901_Crumble', 'F1902_Eclair',
                    'F1812_Nala', 'F2003_Orecchiette']:
@@ -2313,6 +2314,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     plt.show()
     #run an anova to see if probe word is significant
     #first get the data into a format that can be analysed
+
+
     df_full_pitchsplit_anova = df_full_pitchsplit.copy()
 
     unique_probe_words = df_full_pitchsplit_anova['ProbeWord'].unique()
@@ -2352,14 +2355,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     #get the coefficient of determination
     print(model.rsquared)
     print(anova_table)
-    #run a random forest regression
-    from sklearn.ensemble import RandomForestRegressor
-    from sklearn.model_selection import train_test_split
-    from sklearn.metrics import mean_squared_error
-    from sklearn.metrics import r2_score
-    from sklearn.metrics import mean_absolute_error
-    from sklearn.metrics import explained_variance_score
-    from sklearn.metrics import max_error
+
 
 
 
