@@ -2290,6 +2290,16 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         plt.title(f'Distribution of generalizability scores for the trained and naive animals, 60% mean score threshold, index or frac:{options}')
         plt.savefig(f'G:/GenFrac_highthreshold_{options}.png')
         plt.show()
+
+        #plot as a violin plot with brainarea on the x axis
+        fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
+        sns.violinplot(x='BrainArea', y='GenFrac', data=df_full_pitchsplit_plot, ax=ax, inner=None, color='lightgray')
+        sns.stripplot(x='BrainArea', y='GenFrac', data=df_full_pitchsplit_plot, ax=ax, size=3, dodge=False)
+        plt.title(f'Generalizability scores for the trained animals, 60% mean score threshold, index or frac:{options}')
+        plt.savefig(f'G:/GenFrac_highthreshold_violin_{options}.png')
+        plt.show()
+
+
         #man whitney u test
         from scipy.stats import mannwhitneyu
         stat, p = mannwhitneyu(df_full_pitchsplit_plot['GenFrac'], df_full_naive_pitchsplit_plot['GenFrac'], alternative = 'less')
@@ -2325,6 +2335,15 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         print(p_general)
 
         plt.savefig(f'G:/GenFrac_allthreshold_{options}.png')
+        plt.show()
+
+        #plot as a violin plot with brainarea on the x axis
+        fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
+
+        sns.violinplot(x='BrainArea', y='GenFrac', data=df_full_pitchsplit_plot, ax=ax, inner=None, color='lightgray')
+        sns.stripplot(x='BrainArea', y='GenFrac', data=df_full_pitchsplit_plot, ax=ax, size=3, dodge=False)
+        plt.title(f'Generalizability scores for the trained animals, all units, method: {options}')
+        plt.savefig(f'G:/GenFrac_allthreshold_violin_{options}.png')
         plt.show()
 
 

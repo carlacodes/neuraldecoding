@@ -206,12 +206,10 @@ def runlgbmmodel_score(df_use, optimization = False):
     #remove any rows
     if optimization == True:
         params = run_optuna_study_score(dfx.to_numpy(), df_use['Score'].to_numpy())
-        #save params
-        with open('params.json', 'w') as fp:
-            json.dump(params, fp)
+        #save as npy file
+        np.save('params.npy', params)
     else:
-        with open('params.json') as f:
-            params = json.load(f)
+        params = np.load('params.npy', allow_pickle='TRUE').item()
 
     X_train, X_test, y_train, y_test = train_test_split(dfx, df_use['Score'], test_size=0.2,
                                                         random_state=42, shuffle=True)
