@@ -9,8 +9,11 @@ import shap
 from statsmodels.regression import linear_model
 import statsmodels as sm
 import lightgbm as lgb
+from optuna.integration import LightGBMPruningCallback
+
 from pathlib import Path
 import scipy
+import sklearn
 from scipy.stats import mannwhitneyu
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
@@ -20,6 +23,60 @@ import json
 import matplotlib.pyplot as plt
 import eli5
 from eli5.sklearn import PermutationImportance
+import optuna
+def run_optuna_study_score(X, y):
+    study = optuna.create_study(direction="minimize", study_name="LGBM regressor")
+    func = lambda trial: objective_releasetimes(trial, X, y)
+    study.optimize(func, n_trials=1000)
+    print("Number of finished trials: ", len(study.trials))
+    for key, value in study.best_params.items():
+        print(f"\t\t{key}: {value}")
+    return study
+
+
+def objective_releasetimes(trial, X, y):
+    param_grid = {
+        "colsample_bytree": trial.suggest_float("colsample_bytree", 0.1, 0.6),
+        "alpha": trial.suggest_float("alpha", 5, 15),
+        "n_estimators": trial.suggest_int("n_estimators", 2, 100, step=2),
+        "learning_rate": trial.suggest_float("learning_rate", 0.01, 0.3),
+        "max_depth": trial.suggest_int("max_depth", 5, 20),
+        "bagging_fraction": trial.suggest_float(
+            "bagging_fraction", 0.1, 0.95, step=0.1
+        ),
+        "bagging_freq": trial.suggest_int("bagging_freq", 0, 30, step=1),
+    }
+
+    cv = KFold(n_splits=5, shuffle=True, random_state=42)
+
+    cv_scores = np.empty(5)
+    for idx, (train_idx, test_idx) in enumerate(cv.split(X, y)):
+        X_train, X_test = X[train_idx], X[test_idx]
+        y_train, y_test = y[train_idx], y[test_idx]
+
+        model = lgb.LGBMRegressor(random_state=123, **param_grid)
+        model.fit(
+            X_train,
+            y_train,
+
+            eval_set=[(X_test, y_test)],
+            early_stopping_rounds=100,
+            callbacks=[
+                LightGBMPruningCallback(trial, "l2")
+            ],  # Add a pruning callback
+        )
+        preds = model.predict(X_test)
+        cv_scores[idx] = sklearn.metrics.mean_squared_error(y_test, preds)
+
+    return np.mean(cv_scores)
+
+
+def run_optuna_study(dfx, df_use):
+    best_study_results = run_optuna_study_score(dfx.to_numpy(), df_use[col].to_numpy())
+    params = best_study_results.best_params
+    print(params)
+    return params
+
 
 def run_anova_on_dataframe(df_full_pitchsplit):
     df_full_pitchsplit_anova = df_full_pitchsplit.copy()
@@ -102,7 +159,7 @@ def create_gen_frac_variable(df_full_pitchsplit, high_score_threshold = False, i
         # print("-------------------")
     return df_full_pitchsplit
 
-def runlgbmmodel_score(df_use):
+def runlgbmmodel_score(df_use, optimization = False):
     col = 'Score'
 
     unique_probe_words = df_use['ProbeWord'].unique()
@@ -146,6 +203,14 @@ def runlgbmmodel_score(df_use):
     dfx = dfx.loc[:, dfx.columns != col6]
 
     #remove any rows
+    if optimization == True:
+        params = run_optuna_study_score(dfx, df_use)
+        #save params
+        with open('params.json', 'w') as fp:
+            json.dump(params, fp)
+    else:
+        with open('params.json') as f:
+            params = json.load(f)
 
     X_train, X_test, y_train, y_test = train_test_split(dfx, df_use['Score'], test_size=0.2,
                                                         random_state=42, shuffle=True)
@@ -157,8 +222,11 @@ def runlgbmmodel_score(df_use):
     param['nthread'] = 4
     param['eval_metric'] = 'auc'
     evallist = [(dtrain, 'train'), (dtest, 'eval')]
-    xg_reg = lgb.LGBMRegressor(colsample_bytree=0.3, learning_rate=0.1,
-                               max_depth=10, alpha=10, n_estimators=10, verbose=1)
+
+
+    # xg_reg = lgb.LGBMRegressor(colsample_bytree=0.3, learning_rate=0.1,
+    #                            max_depth=10, alpha=10, n_estimators=10, verbose=1)
+    xg_reg = lgb.LGBMRegressor(**params, verbose=1)
 
     xg_reg.fit(X_train, y_train, eval_metric='MSE', verbose=1)
     ypred = xg_reg.predict(X_test)

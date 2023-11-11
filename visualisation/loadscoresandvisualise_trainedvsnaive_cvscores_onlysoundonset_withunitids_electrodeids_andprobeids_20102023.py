@@ -2415,7 +2415,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_full_pitchsplit['Naive'] = 0
     combined_df = df_full_naive_pitchsplit.append(df_full_pitchsplit)
     #now run the lightgbm function
-    runlgbmmodel_score(combined_df)
+    runlgbmmodel_score(combined_df, optimization=True)
 
 
 
