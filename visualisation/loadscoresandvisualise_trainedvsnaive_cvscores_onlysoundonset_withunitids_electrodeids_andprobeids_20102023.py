@@ -2330,6 +2330,58 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     plt.savefig(f'G:/neural_chapter/figurestrained_animals_overdistractor_dividedbypitchshift.png', dpi = 300)
     plt.show()
 
+    ##do the roved - control f0 score divided by the control f0 score plot
+    #first get the data into a format that can be analysed
+    rel_frac_list_naive = []
+    rel_frac_list_trained = []
+    for unit_id in df_full_naive_pitchsplit['ID']:
+        df_full_unit_naive = df_full_naive_pitchsplit[df_full_naive_pitchsplit['ID'] == unit_id]
+        #get all the scores where pitchshift is 1 for the each probe word
+        for probeword in df_full_unit_naive['ProbeWord'].unique():
+            control_score = df_full_unit_naive[(df_full_unit_naive['ProbeWord'] == probeword) & (df_full_unit_naive['PitchShift'] == 0)]['Score'].values[0]
+            pitchshift_score = df_full_unit_naive[(df_full_unit_naive['ProbeWord'] == probeword) & (df_full_unit_naive['PitchShift'] == 1)]['Score'].values[0]
+            if control_score is not None and pitchshift_score is not None:
+                rel_score = (pitchshift_score-control_score)/control_score
+                rel_frac_list_naive.append(rel_score)
+    for unit_id in df_full_pitchsplit['ID']:
+            df_full_unit_naive = df_full_pitchsplit[df_full_pitchsplit['ID'] == unit_id]
+            # get all the scores where pitchshift is 1 for the each probe word
+            for probeword in df_full_pitchsplit['ProbeWord'].unique():
+                control_score = df_full_pitchsplit[
+                    (df_full_pitchsplit['ProbeWord'] == probeword) & (df_full_pitchsplit['PitchShift'] == 0)][
+                    'Score'].values[0]
+                pitchshift_score = df_full_pitchsplit[
+                    (df_full_pitchsplit['ProbeWord'] == probeword) & (df_full_pitchsplit['PitchShift'] == 1)][
+                    'Score'].values[0]
+                if control_score is not None and pitchshift_score is not None:
+                    rel_score = (pitchshift_score - control_score) / control_score
+                    rel_frac_list_trained.append(rel_score)
+        #check if all the probe words are below chance
+    fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
+    # sns.distplot(rel_frac_list_trained, bins=20, label='trained', ax=ax, color='purple')
+    # sns.distplot(rel_frac_list_naive, bins=20, label='naive', ax=ax, color='darkcyan')
+    sns.histplot(rel_frac_list_trained, bins=20, label='trained', color='purple', kde=True)
+    sns.histplot(rel_frac_list_naive, bins=20, label='naive', color='darkcyan', kde=True)
+    plt.axvline(x=0, color='black')
+    # man whiteney test score
+
+    sample1 = np.random.choice(rel_frac_list_trained, size=10000, replace=True)
+
+    # Generate a random sample of size 100 from data2 with replacement
+    sample2 = np.random.choice(rel_frac_list_naive, size=10000, replace=True)
+
+    # Perform a t-test on the samples
+    t_stat, p_value = stats.ttest_ind(sample1, sample2, alternative='less')
+
+    # Print the t-statistic and p-value
+    print(t_stat, p_value)
+    plt.title('Control - roved F0 \n LSTM decoder scores between trained and naive animals', fontsize=18)
+    plt.xlabel('Control - roved F0 \n LSTM decoder scores', fontsize=20)
+    plt.ylabel('Density', fontsize=20)
+    # ax.legend()
+    plt.savefig('G:/neural_chapter/figures/diffF0distribution_20062023.png', dpi=1000)
+    plt.show()
+
 
     #now plot by the probe word for the naive animals
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
