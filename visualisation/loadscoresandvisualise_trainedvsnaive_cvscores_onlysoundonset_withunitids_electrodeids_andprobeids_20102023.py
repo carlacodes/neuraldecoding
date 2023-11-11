@@ -625,7 +625,7 @@ def load_classified_report(path):
 
 
     return report, singleunitlist, multiunitlist, noiselist
-def main():
+def extract_decoding_scores():
     probewordlist_zola = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
     probewordlist =[ (2,2), (3,3), (4,4),(5,5), (6,6), (7,7), (8,8), (9,9), (10,10)]
     probewordlist_l74 = [(10, 10), (2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (11, 11), (12, 12),
@@ -826,16 +826,12 @@ def main():
     colors = ['purple', 'magenta', 'darkturquoise', 'olivedrab', 'steelblue', 'darkcyan', 'darkorange']
 
     generate_plots(dictoutput_all, dictoutput_trained, dictoutput_naive, dictoutput_all_permutation, dictoutput_trained_permutation, dictoutput_naive_permutation, labels, colors)
-
+    plot_general_distributions(dictoutput_all, dictoutput_trained, dictoutput_naive)
     return
 
 
 def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutation, dictlist_trained_permutation, dictlist_naive_permutation, labels, colors):
 
-
-    #remake dictionary based on probe word
-    # probewordlist_text = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22), (15, 15), (42, 49), (4, 4), (16, 16), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
-    #                       (14, 14)]
     probewordlist_text = [(2, 2), (3, 3), (4, 4), (5, 5), (6,6), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12), (13,13),
                           (14, 14), (15,15), (16,16), (17,17), (18,18), (19,19), (20,20), (21,21), (22,22), (23,23), (24,24), (25,25)]
 
@@ -2400,9 +2396,6 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     combined_df = df_full_naive_pitchsplit.append(df_full_pitchsplit)
     #now run the lightgbm function
     runlgbmmodel_score(combined_df, optimization=True)
-
-
-
 
 
     #now plot by animal:
