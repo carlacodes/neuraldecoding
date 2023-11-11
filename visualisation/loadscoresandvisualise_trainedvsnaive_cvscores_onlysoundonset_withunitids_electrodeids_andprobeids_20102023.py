@@ -561,7 +561,7 @@ def runboostedregressiontreeforlstmscore(df_use):
 
 def load_classified_report(path):
     ''' Load the classified report
-    :param path: path to the classified report
+    :param path: path to the report
     :return: classified report
     '''
     #join the path to the report
@@ -625,7 +625,7 @@ def load_classified_report(path):
 
 
     return report, singleunitlist, multiunitlist, noiselist
-def main_():
+def main():
     probewordlist_zola = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
     probewordlist =[ (2,2), (3,3), (4,4),(5,5), (6,6), (7,7), (8,8), (9,9), (10,10)]
     probewordlist_l74 = [(10, 10), (2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (11, 11), (12, 12),
@@ -2278,7 +2278,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         plt.savefig(f'G:/neural_chapter/figuresGenFrac_allthreshold_{options}.png')
         plt.show()
 
-        #plot as a violin plot with brainarea on the x axis
+        #plot as a violin plot with brainarea on the x-axis
         fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
 
         sns.violinplot(x='BrainArea', y='GenFrac', data=df_full_pitchsplit_plot, ax=ax, inner=None, color='lightgray')
@@ -2378,7 +2378,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
     #remove all rows where the score is NaN
     df_full_pitchsplit_anova = df_full_pitchsplit_anova.dropna(subset = ['Score'])
-    #nest ferret as a variable , ,look at the relative magnittud eo fthe coefficients for both lightgbm model and anova
+    #nest ferret as a variable ,look at the relative magnittud eo fthe coefficients for both lightgbm model and anova
     print(df_full_pitchsplit_anova.dtypes)
     #now run anova
     import statsmodels.formula.api as smf
@@ -2460,7 +2460,6 @@ def plot_general_distributions(dictlist, dictlist_naive, dictlist_trained):
                 bigconcatenatenaive_nonps = np.concatenate(
                     (bigconcatenatenaive_nonps, dictouput[key]['nonpitchshift'][key3]))
 
-    # Define labels and colors for scatter plots
     #plot scatter data in a loop
     # for i, (data_dict, label, color) in enumerate(zip(dictlist, labels, colors)):
     #     ax.scatter(data_dict['mu_list']['nonpitchshift']['female_talker'],data_dict['mu_list']['pitchshift']['female_talker'], marker='P',
