@@ -625,7 +625,7 @@ def load_classified_report(path):
 
 
     return report, singleunitlist, multiunitlist, noiselist
-def extract_decoding_scores():
+def main_():
     probewordlist_zola = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
     probewordlist =[ (2,2), (3,3), (4,4),(5,5), (6,6), (7,7), (8,8), (9,9), (10,10)]
     probewordlist_l74 = [(10, 10), (2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (11, 11), (12, 12),
@@ -826,7 +826,6 @@ def extract_decoding_scores():
     colors = ['purple', 'magenta', 'darkturquoise', 'olivedrab', 'steelblue', 'darkcyan', 'darkorange']
 
     generate_plots(dictoutput_all, dictoutput_trained, dictoutput_naive, dictoutput_all_permutation, dictoutput_trained_permutation, dictoutput_naive_permutation, labels, colors)
-    plot_general_distributions(dictoutput_all, dictoutput_trained, dictoutput_naive)
     return
 
 
