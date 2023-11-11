@@ -189,8 +189,8 @@ def runlgbmmodel_score(df_use, optimization = False):
 
     dfx = df_use.loc[:, df_use.columns != col]
     # remove ferret as possible feature
-    # col = 'ID'
-    # dfx = dfx.loc[:, dfx.columns != col]
+    col = 'ID'
+    dfx = dfx.loc[:, dfx.columns != col]
     col2 = 'SingleUnit'
     dfx = dfx.loc[:, dfx.columns != col2]
     col3 = 'GenFrac'
@@ -201,10 +201,11 @@ def runlgbmmodel_score(df_use, optimization = False):
     dfx = dfx.loc[:, dfx.columns != col5]
     col6 = 'Below_chance'
     dfx = dfx.loc[:, dfx.columns != col6]
+    dfx = pd.get_dummies(dfx)
 
     #remove any rows
     if optimization == True:
-        params = run_optuna_study_score(dfx, df_use)
+        params = run_optuna_study_score(dfx.to_numpy(), df_use['Score'].to_numpy())
         #save params
         with open('params.json', 'w') as fp:
             json.dump(params, fp)
