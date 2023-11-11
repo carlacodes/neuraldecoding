@@ -265,3 +265,226 @@ class PlotHelpers():
         plt.ylim(0, 1)
 
         plt.show()
+
+    def general_plots(dictlist_naive, dictlist_trained, probeword_to_text):
+        ## do the same for the naive animals
+        scoredict_naive = {}
+        scoredict = {}
+        for talker in [1]:
+            if talker == 1:
+                talker_key = 'female_talker'
+            for i, dict in enumerate(dictlist_naive):
+                for key in dict['su_list_probeword']:
+                    probewords = dict['su_list_probeword'][key][talker_key]
+                    count = 0
+                    for probeword in probewords:
+                        probeword_range = int(probeword)
+                        probewordtext = probeword_to_text.get(probeword_range)
+                        if probewordtext:
+                            scoredict_naive[probewordtext][talker_key][key]['su_list'].append(
+                                dict['su_list'][key][talker_key][count])
+                        count = count + 1
+            for key in dict['mu_list_probeword']:
+                probewords = dict['mu_list_probeword'][key][talker_key]
+                count = 0
+                for probeword in probewords:
+                    probeword_range = int(probeword)
+                    probewordtext = probeword_to_text.get(probeword_range)
+                    if probewordtext:
+                        scoredict_naive[probewordtext][talker_key][key]['mu_list'].append(
+                            dict['mu_list'][key][talker_key][count])
+                    count = count + 1
+
+        # plot each mean across probeword as a bar plot
+        fig, ax = plt.subplots(1, figsize=(10, 10), dpi=300)
+        plot_count = 0
+        for probeword in scoredict.keys():
+            su_list_nops = scoredict_naive[probeword]['female_talker']['nonpitchshift']['su_list']
+            mu_list_nops = scoredict_naive[probeword]['female_talker']['nonpitchshift']['mu_list']
+            # get the mean of the su_list and mu_list
+            total_control = su_list_nops + mu_list_nops
+            mean = np.mean(total_control)
+            std = np.std(total_control)
+
+            # do the same for the pitchshift
+            su_list_ps = scoredict_naive[probeword]['female_talker']['pitchshift']['su_list']
+            mu_list_ps = scoredict_naive[probeword]['female_talker']['pitchshift']['mu_list']
+            total_rove = su_list_ps + mu_list_ps
+            mean_rove = np.mean(total_rove)
+            std_rove = np.std(total_rove)
+            # plot the bar plot
+            if plot_count == 0:
+                ax.bar(plot_count, mean, yerr=std, color='cyan', alpha=0.5, label='control')
+                plot_count += 1
+                ax.bar(plot_count, mean_rove, yerr=std_rove, color='blue', alpha=0.5, label='rove')
+            else:
+
+                ax.bar(plot_count, mean, yerr=std, color='cyan', alpha=0.5, label=None)
+                plot_count += 1
+                ax.bar(plot_count, mean_rove, yerr=std_rove, color='blue', alpha=0.5, label=None)
+
+            plot_count += 1
+        plt.legend(fontsize=8)
+        plt.xlabel('probe word')
+        # ax.set_xticks(np.arange(0, 16, 1))
+        ax.set_xticklabels(
+            [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22), (15, 15), (42, 49), (4, 4), (16, 16), (7, 7), (8, 8), (9, 9),
+             (10, 10), (11, 11), (12, 12),
+             (14, 14)])
+        plt.show()
+
+        # swarm plot equivalent
+        fig, ax = plt.subplots(figsize=(10, 10), dpi=300)
+        data = []
+        x_positions = []
+        hue = []
+        # Iterate over the keys in your dictionary
+        for probeword in scoredict.keys():
+            su_list_nops = scoredict_naive[probeword]['female_talker']['nonpitchshift']['su_list']
+            mu_list_nops = scoredict_naive[probeword]['female_talker']['nonpitchshift']['mu_list']
+            total_control = su_list_nops + mu_list_nops
+
+            su_list_ps = scoredict_naive[probeword]['female_talker']['pitchshift']['su_list']
+            mu_list_ps = scoredict_naive[probeword]['female_talker']['pitchshift']['mu_list']
+            total_rove = su_list_ps + mu_list_ps
+
+            # Create a DataFrame for seaborn
+            control_df = pd.DataFrame({'Data': total_control, 'Probe Word': probeword, 'Category': 'Control'})
+            rove_df = pd.DataFrame({'Data': total_rove, 'Probe Word': probeword, 'Category': 'Rove'})
+
+            # Append the data and category
+            data.extend(total_control)
+            data.extend(total_rove)
+            x_positions.extend([probeword] * (len(total_control) + len(total_rove)))
+            hue.extend(['Control'] * len(total_control))
+            hue.extend(['Rove'] * len(total_rove))
+
+        # Create the violin plot
+        sns.violinplot(x=x_positions, y=data, hue=hue, palette={"Control": "cyan", "Rove": "blue"}, split=True, ax=ax)
+        # Customize the plot
+        plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
+        plt.xlabel('Probe Word')
+        plt.ylabel('Data')  # Update with your actual data label
+        plt.legend(title='Category')
+        plt.show()
+
+        fig, ax = plt.subplots(figsize=(10, 10), dpi=300)
+        data = []
+        x_positions = []
+        hue = []
+
+        # Iterate over the keys in your dictionary
+        for probeword in scoredict.keys():
+            su_list_nops = scoredict_naive[probeword]['female_talker']['nonpitchshift']['su_list']
+            mu_list_nops = scoredict_naive[probeword]['female_talker']['nonpitchshift']['mu_list']
+            total_control = su_list_nops + mu_list_nops
+
+            su_list_ps = scoredict_naive[probeword]['female_talker']['pitchshift']['su_list']
+            mu_list_ps = scoredict_naive[probeword]['female_talker']['pitchshift']['mu_list']
+            total_rove = su_list_ps + mu_list_ps
+
+            # Create a DataFrame for seaborn
+            control_df = pd.DataFrame({'Data': total_control, 'Probe Word': probeword, 'Category': 'Control'})
+            rove_df = pd.DataFrame({'Data': total_rove, 'Probe Word': probeword, 'Category': 'Rove'})
+
+            # Append the data and category
+            data.extend(total_control)
+            data.extend(total_rove)
+            x_positions.extend([probeword] * (len(total_control) + len(total_rove)))
+            hue.extend(['Control'] * len(total_control))
+            hue.extend(['Rove'] * len(total_rove))
+
+            # Create the violin plot
+        sns.violinplot(x=x_positions, y=data, hue=hue, palette={"Control": "cyan", "Rove": "blue"}, split=True, ax=ax)
+
+        # Scatter plot for raw data
+        scatter_data = pd.DataFrame({'x_positions': x_positions, 'Data': data, 'Category': hue})
+
+        sns.scatterplot(x="x_positions", y="Data", hue="Category", data=scatter_data, s=20, ax=ax,
+                        palette={"Control": "white", "Rove": "yellow"})
+
+        # Customize the plot
+        plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
+        plt.xlabel('Probe Word')
+        plt.ylabel('Data')  # Update with your actual data label
+        plt.legend(title='Category')
+
+        plt.show()
+
+        # now do the same for the trained animals
+        fig, ax = plt.subplots(figsize=(10, 10), dpi=300)
+
+        data = []
+        x_positions = []
+        hue = []
+
+        # Iterate over the keys in your dictionary
+        for probeword in scoredict.keys():
+            su_list_nops = scoredict[probeword]['female_talker']['nonpitchshift']['su_list']
+            mu_list_nops = scoredict[probeword]['female_talker']['nonpitchshift']['mu_list']
+            total_control = su_list_nops + mu_list_nops
+
+            su_list_ps = scoredict[probeword]['female_talker']['pitchshift']['su_list']
+            mu_list_ps = scoredict[probeword]['female_talker']['pitchshift']['mu_list']
+            total_rove = su_list_ps + mu_list_ps
+
+            # Create a DataFrame for seaborn
+            control_df = pd.DataFrame({'Data': total_control, 'Probe Word': probeword, 'Category': 'Control'})
+            rove_df = pd.DataFrame({'Data': total_rove, 'Probe Word': probeword, 'Category': 'Rove'})
+
+            # Append the data and category
+            data.extend(total_control)
+            data.extend(total_rove)
+            x_positions.extend([probeword] * (len(total_control) + len(total_rove)))
+
+            hue.extend(['Control'] * len(total_control))
+            hue.extend(['Rove'] * len(total_rove))
+
+            # Create the violin plot
+        sns.violinplot(x=x_positions, y=data, hue=hue, palette={"Control": "purple", "Rove": "pink"}, split=True, ax=ax)
+
+        # Scatter plot for raw data
+        scatter_data = pd.DataFrame({'x_positions': x_positions, 'Data': data, 'Category': hue})
+
+        sns.scatterplot(x="x_positions", y="Data", hue="Category", data=scatter_data, s=15, ax=ax,
+                        palette={"Control": "white", "Rove": "black"})
+
+        # Customize the plot
+        plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
+        plt.xlabel('Probe Word')
+        plt.ylabel('Data')  # Update with your actual data label
+        plt.legend(title='Category')
+
+        plt.show()
+
+        fig, ax = plt.subplots(figsize=(10, 10), dpi=300)
+        plot_count = 0
+        x_offset = 0  # Initialize x-coordinate offset
+        xtick_labels = []
+
+        for probeword in scoredict.keys():
+            su_list_nops = scoredict[probeword]['female_talker']['nonpitchshift']['su_list']
+            mu_list_nops = scoredict[probeword]['female_talker']['nonpitchshift']['mu_list']
+            total_control = su_list_nops + mu_list_nops
+
+            su_list_ps = scoredict[probeword]['female_talker']['pitchshift']['su_list']
+            mu_list_ps = scoredict[probeword]['female_talker']['pitchshift']['mu_list']
+            total_rove = su_list_ps + mu_list_ps
+
+            sns.swarmplot(x=np.array([plot_count] * len(total_control)) + x_offset, y=total_control, color='purple',
+                          alpha=0.5, label='control')
+            x_offset += 0.2  # Adjust the offset to separate points
+
+            sns.swarmplot(x=np.array([plot_count] * len(total_rove)) + x_offset, y=total_rove, color='pink', alpha=0.5,
+                          label='rove')
+            x_offset += 0.4  # Adjust the offset for the next category
+
+            plot_count += 1
+            # xtick_labels.append(str((2, 2)))  # Adjust this line to add appropriate labels
+
+        plt.legend(fontsize=8)
+        plt.xlabel('probe word')
+        ax.set_xticks(np.arange(0, plot_count))
+        # ax.set_xticklabels([(2, 2), (5, 6), (42, 49), (32, 38), (20, 22), (15, 15), (42, 49), (4, 4), (16, 16), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
+        #                       (14, 14)])
+        plt.show()

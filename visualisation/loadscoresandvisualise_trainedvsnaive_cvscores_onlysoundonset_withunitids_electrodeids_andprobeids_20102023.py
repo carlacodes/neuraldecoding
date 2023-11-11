@@ -860,29 +860,6 @@ def main():
 def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutation, dictlist_trained_permutation, dictlist_naive_permutation, labels, colors):
 
 
-    bigconcatenatetrained_ps = np.empty(0)
-    bigconcatenatetrained_nonps = np.empty(0)
-    for dictouput in dictlist_trained:
-        for key in ['su_list', 'mu_list']:
-            for key3 in dictouput[key]['pitchshift'].keys():
-                bigconcatenatetrained_ps = np.concatenate(
-                    (bigconcatenatetrained_ps, dictouput[key]['pitchshift'][key3]))
-                bigconcatenatetrained_nonps = np.concatenate(
-                    (bigconcatenatetrained_nonps, dictouput[key]['nonpitchshift'][key3]))
-
-
-    bigconcatenatenaive_ps = np.empty(0)
-    bigconcatenatenaive_nonps = np.empty(0)
-
-    for dictouput in dictlist_naive:
-        for key in ['su_list', 'mu_list']:
-            # print(key, 'key')
-            for key3 in dictouput[key]['pitchshift'].keys():
-                # print(key3, 'key3')
-                bigconcatenatenaive_ps = np.concatenate((bigconcatenatenaive_ps, dictouput[key]['pitchshift'][key3]))
-                bigconcatenatenaive_nonps = np.concatenate(
-                    (bigconcatenatenaive_nonps, dictouput[key]['nonpitchshift'][key3]))
-
     #remake dictionary based on probe word
     # probewordlist_text = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22), (15, 15), (42, 49), (4, 4), (16, 16), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
     #                       (14, 14)]
@@ -2288,7 +2265,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         sns.histplot(df_full_naive_pitchsplit_plot['GenFrac'], ax=ax, kde=True, bins=20, label='Naive')
         plt.legend()
         plt.title(f'Distribution of generalizability scores for the trained and naive animals, 60% mean score threshold, index or frac:{options}')
-        plt.savefig(f'G:/GenFrac_highthreshold_{options}.png')
+        plt.savefig(f'G:/neural_chapter/figuresGenFrac_highthreshold_{options}.png')
         plt.show()
 
         #plot as a violin plot with brainarea on the x axis
@@ -2296,14 +2273,14 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         sns.violinplot(x='BrainArea', y='GenFrac', data=df_full_pitchsplit_plot, ax=ax, inner=None, color='lightgray')
         sns.stripplot(x='BrainArea', y='GenFrac', data=df_full_pitchsplit_plot, ax=ax, size=3, dodge=False)
         plt.title(f'Generalizability scores for the trained animals, 60% mean score threshold, index or frac:{options}')
-        plt.savefig(f'G:/GenFrac_highthreshold_violin_{options}.png')
+        plt.savefig(f'G:/neural_chapter/figuresGenFrac_highthreshold_violin_{options}.png')
         plt.show()
 
         fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
         sns.violinplot(x='BrainArea', y='GenFrac', data=df_full_naive_pitchsplit_plot, ax=ax, inner=None, color='lightgray')
         sns.stripplot(x='BrainArea', y='GenFrac', data=df_full_naive_pitchsplit_plot, ax=ax, size=3, dodge=False)
         plt.title(f'Generalizability scores for the naive animals, 60% mean score threshold, index or frac:{options}')
-        plt.savefig(f'G:/GenFrac_highthreshold_violin_naive_{options}.png')
+        plt.savefig(f'G:/neural_chapter/figuresGenFrac_highthreshold_violin_naive_{options}.png')
         plt.show()
 
 
@@ -2342,7 +2319,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         print(stat_general)
         print(p_general)
 
-        plt.savefig(f'G:/GenFrac_allthreshold_{options}.png')
+        plt.savefig(f'G:/neural_chapter/figuresGenFrac_allthreshold_{options}.png')
         plt.show()
 
         #plot as a violin plot with brainarea on the x axis
@@ -2351,14 +2328,14 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         sns.violinplot(x='BrainArea', y='GenFrac', data=df_full_pitchsplit_plot, ax=ax, inner=None, color='lightgray')
         sns.stripplot(x='BrainArea', y='GenFrac', data=df_full_pitchsplit_plot, ax=ax, size=3, dodge=False)
         plt.title(f'Generalizability scores for the trained animals, all units, method: {options}')
-        plt.savefig(f'G:/GenFrac_allthreshold_violin_{options}.png')
+        plt.savefig(f'G:/neural_chapter/figuresGenFrac_allthreshold_violin_{options}.png')
         plt.show()
 
         fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
         sns.violinplot(x='BrainArea', y='GenFrac', data=df_full_naive_pitchsplit_plot, ax=ax, inner=None, color='lightgray')
         sns.stripplot(x='BrainArea', y='GenFrac', data=df_full_naive_pitchsplit_plot, ax=ax, size=3, dodge=False)
         plt.title(f'Generalizability scores for the naive animals, all units, method: {options}')
-        plt.savefig(f'G:/GenFrac_allthreshold_violin_naive_{options}.png')
+        plt.savefig(f'G:/neural_chapter/figuresGenFrac_allthreshold_violin_naive_{options}.png')
         #do the mann whitney u test between genfrac scores from PEG and MEG
         df_full_pitchsplit_plot_peg = df_full_pitchsplit_plot[df_full_pitchsplit_plot['BrainArea'] == 'PEG']
         df_full_pitchsplit_plot_meg = df_full_pitchsplit_plot[df_full_pitchsplit_plot['BrainArea'] == 'MEG']
@@ -2380,7 +2357,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                   hue='Below-chance', alpha=1, jitter=True)
     sns.violinplot(x='ProbeWord', y='Score', data=df_full, ax=ax, color='white')
     plt.title('Trained animals'' scores over distractor word')
-    plt.savefig(f'G:/trained_animals_overdistractor.png', dpi = 300)
+    plt.savefig(f'G:/neural_chapter/figurestrained_animals_overdistractor.png', dpi = 300)
     plt.show()
 
     #plot strip plot split by pitch shift
@@ -2394,7 +2371,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
     sns.violinplot(x='ProbeWord', y='Score', data=df_full_pitchsplit, ax=ax, hue = 'PitchShift')
     plt.title('Trained animals'' scores over distractor word')
-    plt.savefig(f'G:/trained_animals_overdistractor_dividedbypitchshift.png', dpi = 300)
+    plt.savefig(f'G:/neural_chapter/figurestrained_animals_overdistractor_dividedbypitchshift.png', dpi = 300)
     plt.show()
 
 
@@ -2410,7 +2387,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
     sns.violinplot(x='ProbeWord', y='Score', data=df_full_naive_pitchsplit, ax=ax, palette= 'Paired', hue = 'PitchShift')
     plt.title('Naive animals'' scores over distractor word')
-    plt.savefig(f'G:/naive_animals_overdistractor_dividedbypitchshift.png', dpi = 300)
+    plt.savefig(f'G:/neural_chapter/figuresnaive_animals_overdistractor_dividedbypitchshift.png', dpi = 300)
     plt.show()
     #run an anova to see if probe word is significant
     #first get the data into a format that can be analysed
@@ -2483,7 +2460,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
         sns.violinplot(x='ProbeWord', y='Score', data=df_full_naive_ps_animal, ax=ax, hue='PitchShift')
         plt.title(f'Naive scores over distractor word:{animal}')
-        plt.savefig(f'G:/naive_animals_overdistractor_dividedbypitchshift.png', dpi=300)
+        plt.savefig(f'G:/neural_chapter/figuresnaive_animals_overdistractor_dividedbypitchshift.png', dpi=300)
 
         plt.show()
 
@@ -2502,494 +2479,244 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                       alpha=0.5, jitter=False, hue='PitchShift')
         sns.violinplot(x='ProbeWord', y='Score', data=df_full_pitchsplit_animal, ax=ax, hue='PitchShift', palette='Spectral')
         plt.title(f'Trained scores over distractor word:{animal}')
-        plt.savefig(f'G:/trained_{animal}_overdistractor_dividedbypitchshift.png', dpi=300)
+        plt.savefig(f'G:/neural_chapter/figurestrained_{animal}_overdistractor_dividedbypitchshift.png', dpi=300)
 
         plt.show()
 
 
-    #get the dataframe with the genfrac score above 0.60%
-    #get the dataframe with unique
-
-
-def general_plots(dictlist_naive, dictlist_trained, probeword_to_text):
-    ## do the same for the naive animals
-        for talker in [1]:
-            if talker == 1:
-                talker_key = 'female_talker'
-            for i, dict in enumerate(dictlist_naive):
-                for key in dict['su_list_probeword']:
-                    probewords = dict['su_list_probeword'][key][talker_key]
-                    count = 0
-                    for probeword in probewords:
-                        probeword_range = int(probeword)
-                        probewordtext = probeword_to_text.get(probeword_range)
-                        if probewordtext:
-                            scoredict_naive[probewordtext][talker_key][key]['su_list'].append(dict['su_list'][key][talker_key][count])
-                        count = count + 1
-            for key in dict['mu_list_probeword']:
-                probewords = dict['mu_list_probeword'][key][talker_key]
-                count = 0
-                for probeword in probewords:
-                    probeword_range = int(probeword)
-                    probewordtext = probeword_to_text.get(probeword_range)
-                    if probewordtext:
-                        scoredict_naive[probewordtext][talker_key][key]['mu_list'].append(dict['mu_list'][key][talker_key][count])
-                    count = count + 1
-
-        #plot each mean across probeword as a bar plot
-        fig, ax = plt.subplots(1, figsize=(10, 10), dpi=300)
-        plot_count = 0
-        for probeword in scoredict.keys():
-            su_list_nops = scoredict_naive[probeword]['female_talker']['nonpitchshift']['su_list']
-            mu_list_nops = scoredict_naive[probeword]['female_talker']['nonpitchshift']['mu_list']
-            #get the mean of the su_list and mu_list
-            total_control = su_list_nops + mu_list_nops
-            mean = np.mean(total_control)
-            std = np.std(total_control)
-
-            #do the same for the pitchshift
-            su_list_ps = scoredict_naive[probeword]['female_talker']['pitchshift']['su_list']
-            mu_list_ps = scoredict_naive[probeword]['female_talker']['pitchshift']['mu_list']
-            total_rove = su_list_ps + mu_list_ps
-            mean_rove = np.mean(total_rove)
-            std_rove = np.std(total_rove)
-            #plot the bar plot
-            if plot_count ==0:
-                ax.bar(plot_count, mean, yerr=std, color='cyan', alpha=0.5, label='control')
-                plot_count += 1
-                ax.bar(plot_count, mean_rove, yerr=std_rove, color='blue', alpha=0.5, label='rove')
-            else:
-
-                ax.bar(plot_count, mean, yerr = std, color = 'cyan', alpha = 0.5, label =None)
-                plot_count += 1
-                ax.bar(plot_count, mean_rove, yerr = std_rove, color = 'blue', alpha = 0.5, label = None)
-
-            plot_count += 1
-        plt.legend(fontsize = 8)
-        plt.xlabel('probe word')
-        # ax.set_xticks(np.arange(0, 16, 1))
-        ax.set_xticklabels([(2, 2), (5, 6), (42, 49), (32, 38), (20, 22), (15, 15), (42, 49), (4, 4), (16, 16), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
-                              (14, 14)])
-        plt.show()
-
-        #swarm plot equivalent
-        fig, ax = plt.subplots(figsize=(10, 10), dpi=300)
-        data = []
-        x_positions = []
-        hue = []
-        # Iterate over the keys in your dictionary
-        for probeword in scoredict.keys():
-            su_list_nops = scoredict_naive[probeword]['female_talker']['nonpitchshift']['su_list']
-            mu_list_nops = scoredict_naive[probeword]['female_talker']['nonpitchshift']['mu_list']
-            total_control = su_list_nops + mu_list_nops
-
-            su_list_ps = scoredict_naive[probeword]['female_talker']['pitchshift']['su_list']
-            mu_list_ps = scoredict_naive[probeword]['female_talker']['pitchshift']['mu_list']
-            total_rove = su_list_ps + mu_list_ps
-
-            # Create a DataFrame for seaborn
-            control_df = pd.DataFrame({'Data': total_control, 'Probe Word': probeword, 'Category': 'Control'})
-            rove_df = pd.DataFrame({'Data': total_rove, 'Probe Word': probeword, 'Category': 'Rove'})
-
-            # Append the data and category
-            data.extend(total_control)
-            data.extend(total_rove)
-            x_positions.extend([probeword] * (len(total_control) + len(total_rove)))
-            hue.extend(['Control'] * len(total_control))
-            hue.extend(['Rove'] * len(total_rove))
-
-        # Create the violin plot
-        sns.violinplot(x=x_positions, y=data, hue=hue, palette={"Control": "cyan", "Rove": "blue"}, split=True, ax=ax)
-        # Customize the plot
-        plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
-        plt.xlabel('Probe Word')
-        plt.ylabel('Data')  # Update with your actual data label
-        plt.legend(title='Category')
-        plt.show()
-
-
-        fig, ax = plt.subplots(figsize=(10, 10), dpi=300)
-        data = []
-        x_positions = []
-        hue = []
+def plot_general_distributions(dictlist, dictlist_naive, dictlist_trained):
+    bigconcatenatetrained_ps = np.empty(0)
+    bigconcatenatetrained_nonps = np.empty(0)
+    for dictouput in dictlist_trained:
+        for key in ['su_list', 'mu_list']:
+            for key3 in dictouput[key]['pitchshift'].keys():
+                bigconcatenatetrained_ps = np.concatenate(
+                    (bigconcatenatetrained_ps, dictouput[key]['pitchshift'][key3]))
+                bigconcatenatetrained_nonps = np.concatenate(
+                    (bigconcatenatetrained_nonps, dictouput[key]['nonpitchshift'][key3]))
 
-        # Iterate over the keys in your dictionary
-        for probeword in scoredict.keys():
-            su_list_nops = scoredict_naive[probeword]['female_talker']['nonpitchshift']['su_list']
-            mu_list_nops = scoredict_naive[probeword]['female_talker']['nonpitchshift']['mu_list']
-            total_control = su_list_nops + mu_list_nops
+    bigconcatenatenaive_ps = np.empty(0)
+    bigconcatenatenaive_nonps = np.empty(0)
 
-            su_list_ps = scoredict_naive[probeword]['female_talker']['pitchshift']['su_list']
-            mu_list_ps = scoredict_naive[probeword]['female_talker']['pitchshift']['mu_list']
-            total_rove = su_list_ps + mu_list_ps
+    for dictouput in dictlist_naive:
+        for key in ['su_list', 'mu_list']:
+            # print(key, 'key')
+            for key3 in dictouput[key]['pitchshift'].keys():
+                # print(key3, 'key3')
+                bigconcatenatenaive_ps = np.concatenate((bigconcatenatenaive_ps, dictouput[key]['pitchshift'][key3]))
+                bigconcatenatenaive_nonps = np.concatenate(
+                    (bigconcatenatenaive_nonps, dictouput[key]['nonpitchshift'][key3]))
 
-            # Create a DataFrame for seaborn
-            control_df = pd.DataFrame({'Data': total_control, 'Probe Word': probeword, 'Category': 'Control'})
-            rove_df = pd.DataFrame({'Data': total_rove, 'Probe Word': probeword, 'Category': 'Rove'})
+    # Define labels and colors for scatter plots
+    #plot scatter data in a loop
+    # for i, (data_dict, label, color) in enumerate(zip(dictlist, labels, colors)):
+    #     ax.scatter(data_dict['mu_list']['nonpitchshift']['female_talker'],data_dict['mu_list']['pitchshift']['female_talker'], marker='P',
+    #                facecolors =color, edgecolors = color, alpha=0.5)
+    #     ax.scatter(data_dict['su_list']['nonpitchshift']['female_talker'],data_dict['su_list']['pitchshift']['female_talker'], marker='P', color=color, alpha=0.5)
 
-            # Append the data and category
-            data.extend(total_control)
-            data.extend(total_rove)
-            x_positions.extend([probeword] * (len(total_control) + len(total_rove)))
-            hue.extend(['Control'] * len(total_control))
-            hue.extend(['Rove'] * len(total_rove))
 
-            # Create the violin plot
-        sns.violinplot(x=x_positions, y=data, hue=hue, palette={"Control": "cyan", "Rove": "blue"}, split=True, ax=ax)
+    if bigconcatenatenaive_nonps.size > bigconcatenatenaive_ps.size:
+        len(bigconcatenatenaive_ps)
+        bigconcatenatenaive_nonps = bigconcatenatenaive_nonps[:bigconcatenatenaive_ps.size]
+    elif bigconcatenatenaive_nonps.size < bigconcatenatenaive_ps.size:
+        bigconcatenatenaive_ps = bigconcatenatenaive_ps[:bigconcatenatenaive_nonps.size]
 
-        # Scatter plot for raw data
-        scatter_data = pd.DataFrame({'x_positions': x_positions, 'Data': data, 'Category': hue})
+    if bigconcatenatetrained_nonps.size > bigconcatenatetrained_ps.size:
+        bigconcatenatetrained_nonps = bigconcatenatetrained_nonps[:bigconcatenatetrained_ps.size]
+    elif bigconcatenatetrained_nonps.size < bigconcatenatetrained_ps.size:
+        bigconcatenatetrained_ps = bigconcatenatetrained_ps[:bigconcatenatetrained_nonps.size]
 
-        sns.scatterplot(x="x_positions", y="Data", hue="Category", data=scatter_data, s=20, ax=ax,
-                        palette={"Control": "white", "Rove": "yellow"})
+    fig, ax = plt.subplots(1, figsize=(9, 9), dpi=300)
+    ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.8, label='trained', s=0.1)
 
-        # Customize the plot
-        plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
-        plt.xlabel('Probe Word')
-        plt.ylabel('Data')  # Update with your actual data label
-        plt.legend(title='Category')
+    plt.title('trained animals, number of points: ' + str(len(bigconcatenatetrained_ps)))
+    plt.show()
+    unique_scores = np.unique(bigconcatenatetrained_ps)
+    len(unique_scores)
 
-        plt.show()
 
+    fig, ax = plt.subplots(1, figsize=(9,9), dpi=300)
 
-        #now do the same for the trained animals
-        fig, ax = plt.subplots(figsize=(10, 10), dpi=300)
+    ax.scatter(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, marker='P', color='darkcyan', alpha=0.5, label='naive')
+    ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.5, label='trained')
+    x = np.linspace(0.4, 1, 101)
+    ax.plot(x, x, color='black', linestyle = '--')  # identity line
 
-        data = []
-        x_positions = []
-        hue = []
+    slope, intercept, r_value, pv, se = stats.linregress(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)
 
-        # Iterate over the keys in your dictionary
-        for probeword in scoredict.keys():
-            su_list_nops = scoredict[probeword]['female_talker']['nonpitchshift']['su_list']
-            mu_list_nops = scoredict[probeword]['female_talker']['nonpitchshift']['mu_list']
-            total_control = su_list_nops + mu_list_nops
+    sns.regplot(x=bigconcatenatetrained_nonps, y=bigconcatenatetrained_ps, scatter=False, color='purple',
+                label=' $y=%3.7s*x+%3.7s$' % (slope, intercept), ax=ax, line_kws={'label': ' $y=%3.7s*x+%3.7s$' % (slope, intercept)})
+    slope, intercept, r_value, pv, se = stats.linregress(bigconcatenatenaive_nonps, bigconcatenatenaive_ps)
 
-            su_list_ps = scoredict[probeword]['female_talker']['pitchshift']['su_list']
-            mu_list_ps = scoredict[probeword]['female_talker']['pitchshift']['mu_list']
-            total_rove = su_list_ps + mu_list_ps
+    sns.regplot(x=bigconcatenatenaive_nonps, y=bigconcatenatenaive_ps, scatter=False, color='darkcyan', label=' $y=%3.7s*x+%3.7s$' % (slope, intercept),
+                ax=ax, line_kws={'label': '$y=%3.7s*x+%3.7s$' % (slope, intercept)})
 
-            # Create a DataFrame for seaborn
-            control_df = pd.DataFrame({'Data': total_control, 'Probe Word': probeword, 'Category': 'Control'})
-            rove_df = pd.DataFrame({'Data': total_rove, 'Probe Word': probeword, 'Category': 'Rove'})
+    ax.set_ylabel('LSTM decoding score, F0 roved', fontsize=18)
+    ax.set_xlabel('LSTM decoding score, F0 control', fontsize=18)
 
-            # Append the data and category
-            data.extend(total_control)
-            data.extend(total_rove)
-            x_positions.extend([probeword] * (len(total_control) + len(total_rove)))
+    ax.set_title('LSTM decoder scores for' + ' F0 control vs. roved,\n ' + ' trained and naive animals', fontsize=20)
 
 
-            hue.extend(['Control'] * len(total_control))
-            hue.extend(['Rove'] * len(total_rove))
+    plt.legend( fontsize=12, ncol=2)
+    fig.tight_layout()
+    #plt.savfig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.png', dpi=1000)
+    #plt.savfig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000)
 
-            # Create the violin plot
-        sns.violinplot(x=x_positions, y=data, hue=hue, palette={"Control": "purple", "Rove": "pink"}, split=True, ax=ax)
 
-        # Scatter plot for raw data
-        scatter_data = pd.DataFrame({'x_positions': x_positions, 'Data': data, 'Category': hue})
+    plt.show()
 
-        sns.scatterplot(x="x_positions", y="Data", hue="Category", data=scatter_data, s=15, ax=ax,
-                        palette={"Control": "white", "Rove": "black"})
+    #histogram distribution of the trained and naive animals
+    fig, ax = plt.subplots(1, figsize=(8, 8))
+    #relativescoretrained = abs(bigconcatenatetrained_nonps - bigconcatenatetrained_ps)/ bigconcatenatetrained_ps
 
-        # Customize the plot
-        plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
-        plt.xlabel('Probe Word')
-        plt.ylabel('Data')  # Update with your actual data label
-        plt.legend(title='Category')
+    relativescoretrained = [bigconcatenatetrained_nonps - bigconcatenatetrained_ps for bigconcatenatetrained_nonps, bigconcatenatetrained_ps in zip(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)]
+    relativescorenaive = [bigconcatenatenaive_nonps - bigconcatenatenaive_ps for bigconcatenatenaive_nonps, bigconcatenatenaive_ps in zip(bigconcatenatenaive_ps, bigconcatenatenaive_nonps)]
+    relativescoretrainedfrac = [relativescoretrained / (bigconcatenatetrained_nonps + bigconcatenatenaive_nonps) for relativescoretrained, bigconcatenatetrained_nonps, bigconcatenatenaive_nonps in zip(relativescoretrained, bigconcatenatetrained_nonps, bigconcatenatenaive_nonps)]
+    relativescorenaivefrac = [relativescorenaive / (bigconcatenatenaive_nonps + bigconcatenatetrained_nonps) for relativescorenaive, bigconcatenatenaive_nonps, bigconcatenatetrained_nonps in zip(relativescorenaive, bigconcatenatenaive_nonps, bigconcatenatetrained_nonps)]
 
-        plt.show()
 
 
+    sns.distplot(relativescoretrained, bins = 20, label='trained',ax=ax, color='purple')
+    sns.distplot(relativescorenaive, bins = 20, label='naive', ax=ax, color='darkcyan')
+    plt.axvline(x=0, color='black')
+    #man whiteney test score
 
 
-        fig, ax = plt.subplots(figsize=(10, 10), dpi=300)
-        plot_count = 0
-        x_offset = 0  # Initialize x-coordinate offset
-        xtick_labels = []
+    manwhitscore = mannwhitneyu(relativescoretrained, relativescorenaive, alternative = 'greater')
+    sample1 = np.random.choice(relativescoretrained, size=10000, replace=True)
 
-        for probeword in scoredict.keys():
-            su_list_nops = scoredict[probeword]['female_talker']['nonpitchshift']['su_list']
-            mu_list_nops = scoredict[probeword]['female_talker']['nonpitchshift']['mu_list']
-            total_control = su_list_nops + mu_list_nops
+    # Generate a random sample of size 100 from data2 with replacement
+    sample2 = np.random.choice(relativescorenaive, size=10000, replace=True)
 
-            su_list_ps = scoredict[probeword]['female_talker']['pitchshift']['su_list']
-            mu_list_ps = scoredict[probeword]['female_talker']['pitchshift']['mu_list']
-            total_rove = su_list_ps + mu_list_ps
+    # Perform a t-test on the samples
+    t_stat, p_value = stats.ttest_ind(sample1, sample2, alternative='greater')
+
+    # Print the t-statistic and p-value
+    print(t_stat, p_value)
+    plt.title('Control - roved F0 \n LSTM decoder scores between trained and naive animals', fontsize = 18)
+    plt.xlabel('Control - roved F0 \n LSTM decoder scores', fontsize = 20)
+    plt.ylabel('Density', fontsize = 20)
+    #ax.legend()
+    #plt.savfig('G:/neural_chapter/figures/diffF0distribution_20062023.png', dpi=1000)
+    plt.show()
 
-            sns.swarmplot(x=np.array([plot_count] * len(total_control)) + x_offset, y=total_control, color='purple',
-                          alpha=0.5, label='control')
-            x_offset += 0.2  # Adjust the offset to separate points
+    #plot sns histogram of the relative score and with the displot function overlaid
+    fig, ax = plt.subplots(1, figsize=(8, 8))
+    # ax = sns.displot(relativescoretrainedfrac, bins = 20, label='trained',ax=ax, color='purple')
+    sns.histplot(relativescoretrainedfrac, bins=20, label='trained', color='purple', kde = True)
+    sns.histplot(relativescorenaivefrac, bins = 20, label='naive', color='darkcyan', kde = True)
+
+    #plt.savfig('G:/neural_chapter/figures/diffF0distribution_relfrac_histplotwithkde_20062023.png', dpi=1000)
+
+    plt.show()
+
+    fig, ax = plt.subplots(1, figsize=(8, 8))
+    ax = sns.distplot(relativescoretrainedfrac, bins = 20, label='trained',ax=ax, color='purple')
+    x = ax.lines[-1].get_xdata()  # Get the x data of the distribution
+    y = ax.lines[-1].get_ydata()  # Get the y data of the distribution
+    maxidtrained_idx = np.argmax(y)
+    x_coord_trained = x[maxidtrained_idx]
+    ax2 = sns.distplot(relativescorenaivefrac, bins = 20, label='naive', ax=ax, color='darkcyan')
 
-            sns.swarmplot(x=np.array([plot_count] * len(total_rove)) + x_offset, y=total_rove, color='pink', alpha=0.5,
-                          label='rove')
-            x_offset += 0.4  # Adjust the offset for the next category
+    x2 = ax2.lines[-1].get_xdata()  # Get the x data of the distribution
+    y2 = ax2.lines[-1].get_ydata()  # Get the y data of the distribution
+    maxidnaive_idx = np.argmax(y2)  # The id of the peak (maximum of y data)
 
-            plot_count += 1
-            # xtick_labels.append(str((2, 2)))  # Adjust this line to add appropriate labels
+    x_coord_naive = x2[maxidnaive_idx]
+    plt.axvline(x=0, color='black')
+    kstestnaive = scipy.stats.kstest(relativescorenaivefrac,  stats.norm.cdf)
+    leveneteststat = scipy.stats.levene(relativescorenaivefrac, relativescoretrainedfrac)
+    manwhitscorefrac = mannwhitneyu(relativescorenaivefrac, relativescoretrainedfrac, alternative = 'less')
+    #caclulate medians of distribution
 
-        plt.legend(fontsize=8)
-        plt.xlabel('probe word')
-        ax.set_xticks(np.arange(0, plot_count))
-        # ax.set_xticklabels([(2, 2), (5, 6), (42, 49), (32, 38), (20, 22), (15, 15), (42, 49), (4, 4), (16, 16), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11), (12, 12),
-        #                       (14, 14)])
-        plt.show()
+    sample1_trained = np.random.choice(relativescoretrainedfrac, size=10000, replace=True)
 
-        # Define labels and colors for scatter plots
-        #plot scatter data in a loop
-        # for i, (data_dict, label, color) in enumerate(zip(dictlist, labels, colors)):
-        #     ax.scatter(data_dict['mu_list']['nonpitchshift']['female_talker'],data_dict['mu_list']['pitchshift']['female_talker'], marker='P',
-        #                facecolors =color, edgecolors = color, alpha=0.5)
-        #     ax.scatter(data_dict['su_list']['nonpitchshift']['female_talker'],data_dict['su_list']['pitchshift']['female_talker'], marker='P', color=color, alpha=0.5)
+    # Generate a random sample of size 100 from data2 with replacement
+    sample2_naive = np.random.choice(relativescorenaive, size=10000, replace=True)
 
+    # Perform a t-test on the samples
+    t_statfrac, p_valuefrac = stats.ttest_ind(sample2_naive, sample1_trained, alternative='less')
 
-        if bigconcatenatenaive_nonps.size > bigconcatenatenaive_ps.size:
-            len(bigconcatenatenaive_ps)
-            bigconcatenatenaive_nonps = bigconcatenatenaive_nonps[:bigconcatenatenaive_ps.size]
-        elif bigconcatenatenaive_nonps.size < bigconcatenatenaive_ps.size:
-            bigconcatenatenaive_ps = bigconcatenatenaive_ps[:bigconcatenatenaive_nonps.size]
+    # Print the t-statistic and p-value
+    print(t_statfrac, p_valuefrac)
+    plt.title('Control - roved F0 \n LSTM decoder scores between trained and naive animals', fontsize = 18)
+    plt.xlabel('Control - roved F0 \n LSTM decoder scores divided by control F0', fontsize = 20)
+    plt.ylabel('Density', fontsize = 20)
+    #ax.legend(fontsize = 18)
 
-        if bigconcatenatetrained_nonps.size > bigconcatenatetrained_ps.size:
-            bigconcatenatetrained_nonps = bigconcatenatetrained_nonps[:bigconcatenatetrained_ps.size]
-        elif bigconcatenatetrained_nonps.size < bigconcatenatetrained_ps.size:
-            bigconcatenatetrained_ps = bigconcatenatetrained_ps[:bigconcatenatetrained_nonps.size]
 
-        fig, ax = plt.subplots(1, figsize=(9, 9), dpi=300)
-        ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.8, label='trained', s=0.1)
+    #plt.savfig('G:/neural_chapter/figures/diffF0distribution_frac_20062023wlegendintertrialroving.png', dpi=1000)
+    plt.show()
 
-        plt.title('trained animals, number of points: ' + str(len(bigconcatenatetrained_ps)))
-        plt.show()
-        unique_scores = np.unique(bigconcatenatetrained_ps)
-        len(unique_scores)
 
 
-        fig, ax = plt.subplots(1, figsize=(9,9), dpi=300)
+    fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
+    ax.set_xlim([0,1])
 
-        ax.scatter(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, marker='P', color='darkcyan', alpha=0.5, label='naive')
-        ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.5, label='trained')
-        x = np.linspace(0.4, 1, 101)
-        ax.plot(x, x, color='black', linestyle = '--')  # identity line
+    sns.distplot(bigconcatenatetrained_nonps,  label='trained',ax=ax, color='purple')
+    sns.distplot(bigconcatenatenaive_nonps, label='naive', ax=ax, color='darkcyan')
+    #plt.axvline(x=0, color='black')
+    #man whiteney test score
+    plt.title('Control F0 LSTM decoder scores between  \n trained and naive animals', fontsize = 18)
+    plt.xlabel('Control F0 LSTM decoder scores', fontsize = 20)
 
-        slope, intercept, r_value, pv, se = stats.linregress(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)
+    plt.ylabel('Density', fontsize = 20)
+    manwhitscorecontrolf0 = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatenaive_nonps, alternative = 'greater')
 
-        sns.regplot(x=bigconcatenatetrained_nonps, y=bigconcatenatetrained_ps, scatter=False, color='purple',
-                    label=' $y=%3.7s*x+%3.7s$' % (slope, intercept), ax=ax, line_kws={'label': ' $y=%3.7s*x+%3.7s$' % (slope, intercept)})
-        slope, intercept, r_value, pv, se = stats.linregress(bigconcatenatenaive_nonps, bigconcatenatenaive_ps)
+    #ax.legend()
+    #plt.savfig('G:/neural_chapter/figures/controlF0distribution20062023intertrialroving.png', dpi=1000)
 
-        sns.regplot(x=bigconcatenatenaive_nonps, y=bigconcatenatenaive_ps, scatter=False, color='darkcyan', label=' $y=%3.7s*x+%3.7s$' % (slope, intercept),
-                    ax=ax, line_kws={'label': '$y=%3.7s*x+%3.7s$' % (slope, intercept)})
+    plt.show()
 
-        ax.set_ylabel('LSTM decoding score, F0 roved', fontsize=18)
-        ax.set_xlabel('LSTM decoding score, F0 control', fontsize=18)
+    fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
+    ax.set_xlim([0,1])
+    sns.distplot(bigconcatenatetrained_ps,  label='trained',ax=ax, color='purple')
+    sns.distplot(bigconcatenatenaive_ps, label='naive', ax=ax, color='darkcyan')
+    #man whiteney test score
+    #manwhitscore = mannwhitneyu(relativescoretrained, relativescorenaive, alternative = 'greater')
+    plt.title('Roved F0 LSTM decoder scores between  \n trained and naive animals', fontsize = 18)
+    plt.xlabel('Roved F0 LSTM decoder scores', fontsize = 20)
+    plt.ylabel('Density', fontsize = 20)
+    manwhitscorerovedf0 = mannwhitneyu(bigconcatenatetrained_ps, bigconcatenatenaive_ps, alternative = 'greater')
 
-        ax.set_title('LSTM decoder scores for' + ' F0 control vs. roved,\n ' + ' trained and naive animals', fontsize=20)
+    ax.legend(fontsize=18)
+    #plt.savfig('G:/neural_chapter/figures/rovedF0distribution_20062023intertrialroving.png', dpi=1000)
 
+    plt.show()
 
-        plt.legend( fontsize=12, ncol=2)
-        fig.tight_layout()
-        #plt.savfig('D:/29102023figures/scattermuaandsuregplot_mod_21062023.png', dpi=1000)
-        #plt.savfig('D:/29102023figures/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000)
+    fig, ax = plt.subplots(1, figsize=(8, 8), dpi = 800)
+    ax.set_xlim([0,1])
+    sns.distplot(bigconcatenatetrained_ps,  label='trained roved',ax=ax, color='purple')
+    sns.distplot(bigconcatenatetrained_nonps,  label='trained control',ax=ax, color='magenta')
+    ax.legend(fontsize=18)
+    plt.title('Roved and Control F0 Distributions for the Trained Animals', fontsize = 18)
+    plt.xlabel(' LSTM decoder scores', fontsize = 20)
 
+    #plt.savfig('G:/neural_chapter/figures/rovedF0vscontrolF0traineddistribution_20062023intertrialroving.png', dpi=1000)
 
-        plt.show()
+    plt.show()
 
-        #histogram distribution of the trained and naive animals
-        fig, ax = plt.subplots(1, figsize=(8, 8))
-        #relativescoretrained = abs(bigconcatenatetrained_nonps - bigconcatenatetrained_ps)/ bigconcatenatetrained_ps
+    fig, ax = plt.subplots(1, figsize=(8, 8), dpi = 800)
+    ax.set_xlim([0,1])
+    sns.distplot(bigconcatenatenaive_ps,  label='naive roved',ax=ax, color='darkcyan')
+    sns.distplot(bigconcatenatenaive_nonps,  label='naive control',ax=ax, color='cyan')
+    ax.legend(fontsize=18)
+    plt.xlabel(' LSTM decoder scores', fontsize = 20)
+    plt.title('Roved and Control F0 Distributions for the Naive Animals', fontsize = 18)
 
-        relativescoretrained = [bigconcatenatetrained_nonps - bigconcatenatetrained_ps for bigconcatenatetrained_nonps, bigconcatenatetrained_ps in zip(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)]
-        relativescorenaive = [bigconcatenatenaive_nonps - bigconcatenatenaive_ps for bigconcatenatenaive_nonps, bigconcatenatenaive_ps in zip(bigconcatenatenaive_ps, bigconcatenatenaive_nonps)]
-        relativescoretrainedfrac = [relativescoretrained / (bigconcatenatetrained_nonps + bigconcatenatenaive_nonps) for relativescoretrained, bigconcatenatetrained_nonps, bigconcatenatenaive_nonps in zip(relativescoretrained, bigconcatenatetrained_nonps, bigconcatenatenaive_nonps)]
-        relativescorenaivefrac = [relativescorenaive / (bigconcatenatenaive_nonps + bigconcatenatetrained_nonps) for relativescorenaive, bigconcatenatenaive_nonps, bigconcatenatetrained_nonps in zip(relativescorenaive, bigconcatenatenaive_nonps, bigconcatenatetrained_nonps)]
+    plt.savfig('G:/neural_chapter/figures/rovedF0vscontrolF0naivedistribution_20062023intertrialroving.png', dpi=1000)
+    plt.show()
+    kstestcontrolf0vsrovedtrained = scipy.stats.kstest(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, alternative = 'two-sided')
 
+    kstestcontrolf0vsrovednaive = scipy.stats.kstest(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, alternative='two-sided')
 
+    naivearray=np.concatenate((np.zeros((len(bigconcatenatetrained_nonps)+len(bigconcatenatetrained_ps),1)), np.ones((len(bigconcatenatenaive_nonps)+len(bigconcatenatenaive_ps),1))))
+    trainedarray=np.concatenate((np.ones((len(bigconcatenatetrained_nonps)+len(bigconcatenatetrained_ps),1)), np.zeros((len(bigconcatenatenaive_nonps)+len(bigconcatenatenaive_ps),1))))
+    controlF0array=np.concatenate((np.ones((len(bigconcatenatetrained_nonps),1)), np.zeros((len(bigconcatenatetrained_ps),1)), np.ones((len(bigconcatenatenaive_nonps),1)), np.zeros((len(bigconcatenatenaive_ps),1))))
+    rovedF0array = np.concatenate((np.zeros((len(bigconcatenatetrained_nonps),1)), np.ones((len(bigconcatenatetrained_ps),1)), np.zeros((len(bigconcatenatenaive_nonps),1)), np.ones((len(bigconcatenatenaive_ps),1))))
+    scores = np.concatenate((bigconcatenatetrained_nonps, bigconcatenatetrained_ps, bigconcatenatenaive_nonps, bigconcatenatenaive_ps))
 
-        sns.distplot(relativescoretrained, bins = 20, label='trained',ax=ax, color='purple')
-        sns.distplot(relativescorenaive, bins = 20, label='naive', ax=ax, color='darkcyan')
-        plt.axvline(x=0, color='black')
-        #man whiteney test score
 
-
-        manwhitscore = mannwhitneyu(relativescoretrained, relativescorenaive, alternative = 'greater')
-        sample1 = np.random.choice(relativescoretrained, size=10000, replace=True)
-
-        # Generate a random sample of size 100 from data2 with replacement
-        sample2 = np.random.choice(relativescorenaive, size=10000, replace=True)
-
-        # Perform a t-test on the samples
-        t_stat, p_value = stats.ttest_ind(sample1, sample2, alternative='greater')
-
-        # Print the t-statistic and p-value
-        print(t_stat, p_value)
-        plt.title('Control - roved F0 \n LSTM decoder scores between trained and naive animals', fontsize = 18)
-        plt.xlabel('Control - roved F0 \n LSTM decoder scores', fontsize = 20)
-        plt.ylabel('Density', fontsize = 20)
-        #ax.legend()
-        #plt.savfig('D:/29102023figures/diffF0distribution_20062023.png', dpi=1000)
-        plt.show()
-
-        #plot sns histogram of the relative score and with the displot function overlaid
-        fig, ax = plt.subplots(1, figsize=(8, 8))
-        # ax = sns.displot(relativescoretrainedfrac, bins = 20, label='trained',ax=ax, color='purple')
-        sns.histplot(relativescoretrainedfrac, bins=20, label='trained', color='purple', kde = True)
-        sns.histplot(relativescorenaivefrac, bins = 20, label='naive', color='darkcyan', kde = True)
-
-        #plt.savfig('D:/29102023figures/diffF0distribution_relfrac_histplotwithkde_20062023.png', dpi=1000)
-
-        plt.show()
-
-        #now plot a barplot of each of the scores for each word in the probewordlist
-        #first get the scores for each word in the probewordlist
-
-        #get the scores for each word in the probewordlist;
-
-        #need to reorganise the dictlist, create a NEW dictlist in a function
-        for key in dictlist_trained:
-            for key2 in key.keys():
-                for key3 in key[key2].keys():
-                    for key4 in key[key2][key3].keys():
-                        for key5 in key[key2][key3][key4].keys():
-                            print(key5)
-                            print(key[key2][key3][key4][key5])
-
-
-
-
-
-
-        fig, ax = plt.subplots(1, figsize=(8, 8))
-        ax = sns.distplot(relativescoretrainedfrac, bins = 20, label='trained',ax=ax, color='purple')
-        x = ax.lines[-1].get_xdata()  # Get the x data of the distribution
-        y = ax.lines[-1].get_ydata()  # Get the y data of the distribution
-        maxidtrained_idx = np.argmax(y)
-        x_coord_trained = x[maxidtrained_idx]
-        ax2 = sns.distplot(relativescorenaivefrac, bins = 20, label='naive', ax=ax, color='darkcyan')
-
-        x2 = ax2.lines[-1].get_xdata()  # Get the x data of the distribution
-        y2 = ax2.lines[-1].get_ydata()  # Get the y data of the distribution
-        maxidnaive_idx = np.argmax(y2)  # The id of the peak (maximum of y data)
-
-        x_coord_naive = x2[maxidnaive_idx]
-        plt.axvline(x=0, color='black')
-        kstestnaive = scipy.stats.kstest(relativescorenaivefrac,  stats.norm.cdf)
-        leveneteststat = scipy.stats.levene(relativescorenaivefrac, relativescoretrainedfrac)
-        manwhitscorefrac = mannwhitneyu(relativescorenaivefrac, relativescoretrainedfrac, alternative = 'less')
-        #caclulate medians of distribution
-
-        sample1_trained = np.random.choice(relativescoretrainedfrac, size=10000, replace=True)
-
-        # Generate a random sample of size 100 from data2 with replacement
-        sample2_naive = np.random.choice(relativescorenaive, size=10000, replace=True)
-
-        # Perform a t-test on the samples
-        t_statfrac, p_valuefrac = stats.ttest_ind(sample2_naive, sample1_trained, alternative='less')
-
-        # Print the t-statistic and p-value
-        print(t_statfrac, p_valuefrac)
-        plt.title('Control - roved F0 \n LSTM decoder scores between trained and naive animals', fontsize = 18)
-        plt.xlabel('Control - roved F0 \n LSTM decoder scores divided by control F0', fontsize = 20)
-        plt.ylabel('Density', fontsize = 20)
-        #ax.legend(fontsize = 18)
-
-
-        #plt.savfig('D:/29102023figures/diffF0distribution_frac_20062023wlegendintertrialroving.png', dpi=1000)
-        plt.show()
-
-
-
-        fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
-        ax.set_xlim([0,1])
-
-        sns.distplot(bigconcatenatetrained_nonps,  label='trained',ax=ax, color='purple')
-        sns.distplot(bigconcatenatenaive_nonps, label='naive', ax=ax, color='darkcyan')
-        #plt.axvline(x=0, color='black')
-        #man whiteney test score
-        plt.title('Control F0 LSTM decoder scores between  \n trained and naive animals', fontsize = 18)
-        plt.xlabel('Control F0 LSTM decoder scores', fontsize = 20)
-
-        plt.ylabel('Density', fontsize = 20)
-        manwhitscorecontrolf0 = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatenaive_nonps, alternative = 'greater')
-
-        #ax.legend()
-        #plt.savfig('D:/29102023figures/controlF0distribution20062023intertrialroving.png', dpi=1000)
-
-        plt.show()
-
-        fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
-        ax.set_xlim([0,1])
-        sns.distplot(bigconcatenatetrained_ps,  label='trained',ax=ax, color='purple')
-        sns.distplot(bigconcatenatenaive_ps, label='naive', ax=ax, color='darkcyan')
-        #man whiteney test score
-        #manwhitscore = mannwhitneyu(relativescoretrained, relativescorenaive, alternative = 'greater')
-        plt.title('Roved F0 LSTM decoder scores between  \n trained and naive animals', fontsize = 18)
-        plt.xlabel('Roved F0 LSTM decoder scores', fontsize = 20)
-        plt.ylabel('Density', fontsize = 20)
-        manwhitscorerovedf0 = mannwhitneyu(bigconcatenatetrained_ps, bigconcatenatenaive_ps, alternative = 'greater')
-
-        ax.legend(fontsize=18)
-        #plt.savfig('D:/29102023figures/rovedF0distribution_20062023intertrialroving.png', dpi=1000)
-
-        plt.show()
-
-        fig, ax = plt.subplots(1, figsize=(8, 8), dpi = 800)
-        ax.set_xlim([0,1])
-        sns.distplot(bigconcatenatetrained_ps,  label='trained roved',ax=ax, color='purple')
-        sns.distplot(bigconcatenatetrained_nonps,  label='trained control',ax=ax, color='magenta')
-        ax.legend(fontsize=18)
-        plt.title('Roved and Control F0 Distributions for the Trained Animals', fontsize = 18)
-        plt.xlabel(' LSTM decoder scores', fontsize = 20)
-
-        #plt.savfig('D:/29102023figures/rovedF0vscontrolF0traineddistribution_20062023intertrialroving.png', dpi=1000)
-
-        plt.show()
-
-        fig, ax = plt.subplots(1, figsize=(8, 8), dpi = 800)
-        ax.set_xlim([0,1])
-        sns.distplot(bigconcatenatenaive_ps,  label='naive roved',ax=ax, color='darkcyan')
-        sns.distplot(bigconcatenatenaive_nonps,  label='naive control',ax=ax, color='cyan')
-        ax.legend(fontsize=18)
-        plt.xlabel(' LSTM decoder scores', fontsize = 20)
-        plt.title('Roved and Control F0 Distributions for the Naive Animals', fontsize = 18)
-
-        #plt.savfig('D:/29102023figures/rovedF0vscontrolF0naivedistribution_20062023intertrialroving.png', dpi=1000)
-        plt.show()
-        kstestcontrolf0vsrovedtrained = scipy.stats.kstest(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, alternative = 'two-sided')
-
-        kstestcontrolf0vsrovednaive = scipy.stats.kstest(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, alternative='two-sided')
-
-        naivearray=np.concatenate((np.zeros((len(bigconcatenatetrained_nonps)+len(bigconcatenatetrained_ps),1)), np.ones((len(bigconcatenatenaive_nonps)+len(bigconcatenatenaive_ps),1))))
-        trainedarray=np.concatenate((np.ones((len(bigconcatenatetrained_nonps)+len(bigconcatenatetrained_ps),1)), np.zeros((len(bigconcatenatenaive_nonps)+len(bigconcatenatenaive_ps),1))))
-        controlF0array=np.concatenate((np.ones((len(bigconcatenatetrained_nonps),1)), np.zeros((len(bigconcatenatetrained_ps),1)), np.ones((len(bigconcatenatenaive_nonps),1)), np.zeros((len(bigconcatenatenaive_ps),1))))
-        rovedF0array = np.concatenate((np.zeros((len(bigconcatenatetrained_nonps),1)), np.ones((len(bigconcatenatetrained_ps),1)), np.zeros((len(bigconcatenatenaive_nonps),1)), np.ones((len(bigconcatenatenaive_ps),1))))
-        scores = np.concatenate((bigconcatenatetrained_nonps, bigconcatenatetrained_ps, bigconcatenatenaive_nonps, bigconcatenatenaive_ps))
-
-        dataset = pd.DataFrame({'trained': trainedarray[:,0], 'naive': naivearray[:,0], 'controlF0': controlF0array[:,0], 'rovedF0': rovedF0array[:,0], 'scores': scores})
-
-
-        model = ols('scores ~ C(trained) + C(controlF0) ', data=dataset).fit()
-        print(model.summary())
-        table = sm.stats.anova_lm(model, typ=2)
-        print(table)
-        from statsmodels.iolib.summary2 import summary_col
-
-
-
-        res = summary_col([model], regressor_order=model.params.index.tolist())
-
-        df = pd.DataFrame(model.summary().tables[1])
-        res.tables[0].to_csv("D:/29102023figures/trainedrovescores.csv")
-
-        df2= pd.DataFrame(table)
-
-        csvexport2 = df2.to_csv('D:/29102023figures/trainedrovescores2.csv')
-
-        # Save the DataFrame to a CSV file
-        df.to_csv('anova_results.csv', index=False)
-
-        model = ols('scores ~ C(trained) + C(controlF0) ', data=dataset).fit()
-        print(model.summary())
-        table = sm.stats.anova_lm(model, typ=2)
-        # plotting both mu sound driven and single unit units
-        # for sutype in mergednaiveanimaldict.keys():
 
 
 
