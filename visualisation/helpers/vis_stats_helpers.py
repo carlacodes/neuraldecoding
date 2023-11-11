@@ -63,6 +63,9 @@ def create_gen_frac_variable(df_full_pitchsplit, high_score_threshold = False, i
     for unit_id in df_full_pitchsplit['ID'].unique():
         # Check how many scores for that unit are above 60%
         df_full_pitchsplit_unit = df_full_pitchsplit[df_full_pitchsplit['ID'] == unit_id]
+        #limit the scores to above 50%
+        df_full_pitchsplit_unit = df_full_pitchsplit_unit[df_full_pitchsplit_unit['Score'] >= 0.50]
+
         #filter for the above-chance scores
         mean_scores = df_full_pitchsplit_unit['Score'].mean()
         #add the mean score to the dataframe
