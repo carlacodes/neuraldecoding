@@ -31,7 +31,7 @@ def run_optuna_study_score(X, y):
     print("Number of finished trials: ", len(study.trials))
     for key, value in study.best_params.items():
         print(f"\t\t{key}: {value}")
-    return study
+    return study.best_params
 
 
 def objective_releasetimes(trial, X, y):
