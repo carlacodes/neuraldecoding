@@ -1329,16 +1329,16 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     #     ax.scatter(data_dict['su_list']['nonpitchshift']['female_talker'],data_dict['su_list']['pitchshift']['female_talker'], marker='P', color=color, alpha=0.5)
 
 
-    if bigconcatenatenaive_nonps.size > bigconcatenatenaive_ps.size:
-        len(bigconcatenatenaive_ps)
-        bigconcatenatenaive_nonps = bigconcatenatenaive_nonps[:bigconcatenatenaive_ps.size]
-    elif bigconcatenatenaive_nonps.size < bigconcatenatenaive_ps.size:
-        bigconcatenatenaive_ps = bigconcatenatenaive_ps[:bigconcatenatenaive_nonps.size]
-
-    if bigconcatenatetrained_nonps.size > bigconcatenatetrained_ps.size:
-        bigconcatenatetrained_nonps = bigconcatenatetrained_nonps[:bigconcatenatetrained_ps.size]
-    elif bigconcatenatetrained_nonps.size < bigconcatenatetrained_ps.size:
-        bigconcatenatetrained_ps = bigconcatenatetrained_ps[:bigconcatenatetrained_nonps.size]
+    # if bigconcatenatenaive_nonps.size > bigconcatenatenaive_ps.size:
+    #     len(bigconcatenatenaive_ps)
+    #     bigconcatenatenaive_nonps = bigconcatenatenaive_nonps[:bigconcatenatenaive_ps.size]
+    # elif bigconcatenatenaive_nonps.size < bigconcatenatenaive_ps.size:
+    #     bigconcatenatenaive_ps = bigconcatenatenaive_ps[:bigconcatenatenaive_nonps.size]
+    #
+    # if bigconcatenatetrained_nonps.size > bigconcatenatetrained_ps.size:
+    #     bigconcatenatetrained_nonps = bigconcatenatetrained_nonps[:bigconcatenatetrained_ps.size]
+    # elif bigconcatenatetrained_nonps.size < bigconcatenatetrained_ps.size:
+    #     bigconcatenatetrained_ps = bigconcatenatetrained_ps[:bigconcatenatetrained_nonps.size]
 
     fig, ax = plt.subplots(1, figsize=(9, 9), dpi=300)
     ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.8, label='trained', s=0.1)
@@ -1401,7 +1401,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     sample2 = np.random.choice(relativescorenaive, size=10000, replace=True)
 
     # Perform a t-test on the samples
-    t_stat, p_value = stats.ttest_ind(sample1, sample2, alternative='greater')
+    t_stat, p_value = stats.ttest_ind(sample1, sample2, alternative='less')
 
     # Print the t-statistic and p-value
     print(t_stat, p_value)
@@ -1487,10 +1487,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
 
     plt.ylabel('Density', fontsize = 20)
     manwhitscorecontrolf0 = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatenaive_nonps, alternative = 'greater')
-
     #ax.legend()
     plt.savefig('G:/neural_chapter/figures/controlF0distribution20062023intertrialroving.png', dpi=1000)
-
     plt.show()
 
     fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
@@ -1502,7 +1500,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     plt.title('Roved F0 LSTM decoder scores between  \n trained and naive animals', fontsize = 18)
     plt.xlabel('Roved F0 LSTM decoder scores', fontsize = 20)
     plt.ylabel('Density', fontsize = 20)
-    manwhitscorerovedf0 = mannwhitneyu(bigconcatenatetrained_ps, bigconcatenatenaive_ps, alternative = 'greater')
+    manwhitscorerovedf0 = mannwhitneyu(bigconcatenatetrained_ps, bigconcatenatenaive_ps, alternative = 'less')
 
     ax.legend(fontsize=18)
     plt.savefig('G:/neural_chapter/figures/rovedF0distribution_20062023intertrialroving.png', dpi=1000)
