@@ -184,14 +184,37 @@ def runlgbmmodel_score(df_use):
 
     shap.dependence_plot("PitchShift", shap_values, dfx, interaction_index='Naive', show=True)
     #run a permutation importance test
-    from sklearn.inspection import permutation_importance
-    perm = permutation_importance(xg_reg, random_state=1).fit(X_test, y_test)
-    #plot the permutation importance
-    import eli5
-    from eli5.sklearn import PermutationImportance
-    perm = PermutationImportance(xg_reg, random_state=1).fit(X_test, y_test)
 
-    eli5.show_weights(perm, feature_names=X_test.columns.tolist())
+
+
+    from sklearn.inspection import permutation_importance
+
+    # Assuming X_test and y_test are your test data
+    result = permutation_importance(xg_reg, X_test, y_test, n_repeats=10, random_state=0)
+
+    # Extract and print the importances
+    importances = result.importances_mean
+
+    # Map feature names to their importances
+    feature_importance_dict = dict(zip(X_test.columns, importances))
+    importances = result.importances_mean
+
+    # Map feature names to their importances
+    feature_importance_dict = dict(zip(X_test.columns, importances))
+
+    # Sort the features by importance in descending order
+    sorted_feature_importance = sorted(feature_importance_dict.items(), key=lambda x: x[1], reverse=True)
+
+    # Print feature importances
+    for feature, importance in feature_importance_dict.items():
+        print(f"{feature}: {importance}")
+
+    features, importance = zip(*sorted_feature_importance)
+    plt.barh(features, importance)
+    plt.xlabel('Permutation Importance')
+    plt.title('Permutation Importances of Features')
+    plt.show()
+
 
 
 
