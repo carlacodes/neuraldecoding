@@ -33,7 +33,7 @@ def find_repeating_substring(text):
 
 
 
-def scatterplot_and_visualise2(probewordlist,
+def scatterplot_and_visualise(probewordlist,
                               saveDir='D:/Users/cgriffiths/resultsms4/lstm_output_frommyriad_15012023/lstm_kfold_14012023_crumble',
                               ferretname='Crumble',
                               singleunitlist=[0,1,2],
@@ -710,7 +710,7 @@ def main():
             if animal == 'F1604_Squinty':
                 # try:
                 dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
-                                                                saveDir=f'F:/results_31102023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -724,7 +724,7 @@ def main():
 
                 # try:
                 dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
-                                                                saveDir=f'F:/results_31102023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -736,7 +736,7 @@ def main():
                 #     pass
             elif animal == 'F1815_Cruella' or animal == 'F1902_Eclair' or animal =='F1702_Zola':
                 # try:
-                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_31102023/{animal}/{rec_name_unique}/{streamtext}/',
+                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal)
                 dictoutput_all.append(dictoutput_instance)
@@ -747,7 +747,7 @@ def main():
             elif animal == 'F2003_Orecchiette':
                 # try:
                 dictoutput_instance = scatterplot_and_visualise(probewordlist,
-                                                                saveDir=f'F:/results_31102023/{animal}/{rec_name_unique}/',
+                                                                saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -760,7 +760,7 @@ def main():
                 #     pass
             else:
                 # try:
-                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_31102023/{animal}/{rec_name_unique}/{streamtext}/',
+                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal)
                 dictoutput_all.append(dictoutput_instance)
@@ -1305,8 +1305,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
 
     plt.legend( fontsize=12, ncol=2)
     fig.tight_layout()
-    #plt.savfig('D:/29102023figures/scattermuaandsuregplot_mod_21062023.png', dpi=1000)
-    #plt.savfig('D:/29102023figures/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000)
+    plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.png', dpi=1000)
+    plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000)
 
 
     plt.show()
@@ -1319,8 +1319,6 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     relativescorenaive = [bigconcatenatenaive_nonps - bigconcatenatenaive_ps for bigconcatenatenaive_nonps, bigconcatenatenaive_ps in zip(bigconcatenatenaive_ps, bigconcatenatenaive_nonps)]
     relativescoretrainedfrac = [relativescoretrained / (bigconcatenatetrained_nonps + bigconcatenatenaive_nonps) for relativescoretrained, bigconcatenatetrained_nonps, bigconcatenatenaive_nonps in zip(relativescoretrained, bigconcatenatetrained_nonps, bigconcatenatenaive_nonps)]
     relativescorenaivefrac = [relativescorenaive / (bigconcatenatenaive_nonps + bigconcatenatetrained_nonps) for relativescorenaive, bigconcatenatenaive_nonps, bigconcatenatetrained_nonps in zip(relativescorenaive, bigconcatenatenaive_nonps, bigconcatenatetrained_nonps)]
-
-
 
     sns.distplot(relativescoretrained, bins = 20, label='trained',ax=ax, color='purple')
     sns.distplot(relativescorenaive, bins = 20, label='naive', ax=ax, color='darkcyan')
@@ -1343,7 +1341,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     plt.xlabel('Control - roved F0 \n LSTM decoder scores', fontsize = 20)
     plt.ylabel('Density', fontsize = 20)
     #ax.legend()
-    #plt.savfig('D:/29102023figures/diffF0distribution_20062023.png', dpi=1000)
+    plt.savefig('G:/neural_chapter/figures/diffF0distribution_20062023.png', dpi=1000)
     plt.show()
 
     #plot sns histogram of the relative score and with the displot function overlaid
@@ -1352,7 +1350,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     sns.histplot(relativescoretrainedfrac, bins=20, label='trained', color='purple', kde = True)
     sns.histplot(relativescorenaivefrac, bins = 20, label='naive', color='darkcyan', kde = True)
 
-    #plt.savfig('D:/29102023figures/diffF0distribution_relfrac_histplotwithkde_20062023.png', dpi=1000)
+    plt.savefig('G:/neural_chapter/figures/diffF0distribution_relfrac_histplotwithkde_20062023.png', dpi=1000)
 
     plt.show()
 
@@ -1410,7 +1408,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     #ax.legend(fontsize = 18)
 
 
-    #plt.savfig('D:/29102023figures/diffF0distribution_frac_20062023wlegendintertrialroving.png', dpi=1000)
+    plt.savefig('G:/neural_chapter/figures/diffF0distribution_frac_20062023wlegendintertrialroving.png', dpi=1000)
     plt.show()
 
 
@@ -1420,7 +1418,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
 
     sns.distplot(bigconcatenatetrained_nonps,  label='trained',ax=ax, color='purple')
     sns.distplot(bigconcatenatenaive_nonps, label='naive', ax=ax, color='darkcyan')
-    #plt.axvline(x=0, color='black')
+    plt.axvline(x=0, color='black')
     #man whiteney test score
     plt.title('Control F0 LSTM decoder scores between  \n trained and naive animals', fontsize = 18)
     plt.xlabel('Control F0 LSTM decoder scores', fontsize = 20)
@@ -1429,7 +1427,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     manwhitscorecontrolf0 = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatenaive_nonps, alternative = 'greater')
 
     #ax.legend()
-    #plt.savfig('D:/29102023figures/controlF0distribution20062023intertrialroving.png', dpi=1000)
+    plt.savefig('G:/neural_chapter/figures/controlF0distribution20062023intertrialroving.png', dpi=1000)
 
     plt.show()
 
@@ -1445,7 +1443,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     manwhitscorerovedf0 = mannwhitneyu(bigconcatenatetrained_ps, bigconcatenatenaive_ps, alternative = 'greater')
 
     ax.legend(fontsize=18)
-    #plt.savfig('D:/29102023figures/rovedF0distribution_20062023intertrialroving.png', dpi=1000)
+    plt.savefig('G:/neural_chapter/figures/rovedF0distribution_20062023intertrialroving.png', dpi=1000)
 
     plt.show()
 
@@ -1457,7 +1455,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     plt.title('Roved and Control F0 Distributions for the Trained Animals', fontsize = 18)
     plt.xlabel(' LSTM decoder scores', fontsize = 20)
 
-    #plt.savfig('D:/29102023figures/rovedF0vscontrolF0traineddistribution_20062023intertrialroving.png', dpi=1000)
+    plt.savefig('G:/neural_chapter/figures/rovedF0vscontrolF0traineddistribution_20062023intertrialroving.png', dpi=1000)
 
     plt.show()
 
@@ -1469,7 +1467,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     plt.xlabel(' LSTM decoder scores', fontsize = 20)
     plt.title('Roved and Control F0 Distributions for the Naive Animals', fontsize = 18)
 
-    #plt.savfig('D:/29102023figures/rovedF0vscontrolF0naivedistribution_20062023intertrialroving.png', dpi=1000)
+    plt.savefig('G:/neural_chapter/figures/rovedF0vscontrolF0naivedistribution_20062023intertrialroving.png', dpi=1000)
     plt.show()
     kstestcontrolf0vsrovedtrained = scipy.stats.kstest(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, alternative = 'two-sided')
 
@@ -1496,11 +1494,11 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     res = summary_col([model], regressor_order=model.params.index.tolist())
 
     df = pd.DataFrame(model.summary().tables[1])
-    res.tables[0].to_csv("D:/29102023figures/trainedrovescores.csv")
+    res.tables[0].to_csv("G:/neural_chapter/figures/trainedrovescores.csv")
 
     df2= pd.DataFrame(table)
 
-    csvexport2 = df2.to_csv('D:/29102023figures/trainedrovescores2.csv')
+    csvexport2 = df2.to_csv('G:/neural_chapter/figures/trainedrovescores2.csv')
 
     # Save the DataFrame to a CSV file
     df.to_csv('anova_results.csv', index=False)
