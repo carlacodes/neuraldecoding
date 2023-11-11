@@ -1,9 +1,6 @@
 import os
-
-import matplotlib.pyplot as plt
 import scipy.stats as stats
 import shap
-from statsmodels.regression import linear_model
 import statsmodels as sm
 import lightgbm as lgb
 from pathlib import Path
@@ -727,10 +724,7 @@ def main():
                                                                 multiunitlist=multiunitlist[animal][stream],
                                                                 noiselist=noiselist[animal][stream], stream = stream, fullid = animal, report = report[animal][stream], permutation_scores=True)
                 dictoutput_all_permutation.append(dictoutput_instance_permutation)
-                # except:
-                #     #print the exception
-                #     print(f'no scores for this stream:{stream}, and {animal}')
-                #     pass
+
             elif animal == 'F1606_Windolene':
 
                 # try:
@@ -807,10 +801,7 @@ def main():
                                                                 report=report[animal][stream], permutation_scores=True
                                                                 )
                 dictoutput_all_permutation.append(dictoutput_instance_permutation)
-                # except:
-                #     #print the exception
-                #     print(f'no scores for this stream:{stream}, and {animal}')
-                #     pass
+
             else:
                 # try:
                 dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
@@ -824,10 +815,7 @@ def main():
                                                                             , permutation_scores=True)
 
                 dictoutput_all_permutation.append(dictoutput_instance_permutation)
-                # except:
-                #     #print the exception
-                #     print(f'no scores for this stream:{stream}, and {animal}')
-                #     pass
+
 
             female_talker_len = len(dictoutput_instance['su_list']['pitchshift']['female_talker'])
             probeword_len = len(dictoutput_instance['su_list_probeword']['pitchshift']['female_talker'])
