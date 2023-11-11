@@ -2333,13 +2333,17 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     ##do the roved - control f0 score divided by the control f0 score plot
     #first get the data into a format that can be analysed
     rel_frac_list_naive = []
+
     rel_frac_list_trained = []
     for unit_id in df_full_naive_pitchsplit['ID']:
         df_full_unit_naive = df_full_naive_pitchsplit[df_full_naive_pitchsplit['ID'] == unit_id]
         #get all the scores where pitchshift is 1 for the each probe word
         for probeword in df_full_unit_naive['ProbeWord'].unique():
-            control_score = df_full_unit_naive[(df_full_unit_naive['ProbeWord'] == probeword) & (df_full_unit_naive['PitchShift'] == 0)]['Score'].values[0]
-            pitchshift_score = df_full_unit_naive[(df_full_unit_naive['ProbeWord'] == probeword) & (df_full_unit_naive['PitchShift'] == 1)]['Score'].values[0]
+            try:
+                control_score = df_full_unit_naive[(df_full_unit_naive['ProbeWord'] == probeword) & (df_full_unit_naive['PitchShift'] == 0)]['Score'].values[0]
+                pitchshift_score = df_full_unit_naive[(df_full_unit_naive['ProbeWord'] == probeword) & (df_full_unit_naive['PitchShift'] == 1)]['Score'].values[0]
+            except:
+                continue
             if control_score is not None and pitchshift_score is not None:
                 rel_score = (pitchshift_score-control_score)/control_score
                 rel_frac_list_naive.append(rel_score)
@@ -2347,12 +2351,15 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
             df_full_unit_naive = df_full_pitchsplit[df_full_pitchsplit['ID'] == unit_id]
             # get all the scores where pitchshift is 1 for the each probe word
             for probeword in df_full_pitchsplit['ProbeWord'].unique():
-                control_score = df_full_pitchsplit[
-                    (df_full_pitchsplit['ProbeWord'] == probeword) & (df_full_pitchsplit['PitchShift'] == 0)][
-                    'Score'].values[0]
-                pitchshift_score = df_full_pitchsplit[
-                    (df_full_pitchsplit['ProbeWord'] == probeword) & (df_full_pitchsplit['PitchShift'] == 1)][
-                    'Score'].values[0]
+                try:
+                    control_score = df_full_pitchsplit[
+                        (df_full_pitchsplit['ProbeWord'] == probeword) & (df_full_pitchsplit['PitchShift'] == 0)][
+                        'Score'].values[0]
+                    pitchshift_score = df_full_pitchsplit[
+                        (df_full_pitchsplit['ProbeWord'] == probeword) & (df_full_pitchsplit['PitchShift'] == 1)][
+                        'Score'].values[0]
+                except:
+                    continue
                 if control_score is not None and pitchshift_score is not None:
                     rel_score = (pitchshift_score - control_score) / control_score
                     rel_frac_list_trained.append(rel_score)
@@ -2381,7 +2388,35 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     # ax.legend()
     plt.savefig('G:/neural_chapter/figures/diffF0distribution_20062023.png', dpi=1000)
     plt.show()
-
+    # fig, ax = plt.subplots(1, figsize=(9,9), dpi=300)
+    #
+    # ax.scatter(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, marker='P', color='darkcyan', alpha=0.5, label='naive')
+    # ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.5, label='trained')
+    # x = np.linspace(0.4, 1, 101)
+    # ax.plot(x, x, color='black', linestyle = '--')  # identity line
+    #
+    # slope, intercept, r_value, pv, se = stats.linregress(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)
+    #
+    # sns.regplot(x=bigconcatenatetrained_nonps, y=bigconcatenatetrained_ps, scatter=False, color='purple',
+    #             label=' $y=%3.7s*x+%3.7s$' % (slope, intercept), ax=ax, line_kws={'label': ' $y=%3.7s*x+%3.7s$' % (slope, intercept)})
+    # slope, intercept, r_value, pv, se = stats.linregress(bigconcatenatenaive_nonps, bigconcatenatenaive_ps)
+    #
+    # sns.regplot(x=bigconcatenatenaive_nonps, y=bigconcatenatenaive_ps, scatter=False, color='darkcyan', label=' $y=%3.7s*x+%3.7s$' % (slope, intercept),
+    #             ax=ax, line_kws={'label': '$y=%3.7s*x+%3.7s$' % (slope, intercept)})
+    #
+    # ax.set_ylabel('LSTM decoding score, F0 roved', fontsize=18)
+    # ax.set_xlabel('LSTM decoding score, F0 control', fontsize=18)
+    #
+    # ax.set_title('LSTM decoder scores for' + ' F0 control vs. roved,\n ' + ' trained and naive animals', fontsize=20)
+    #
+    #
+    # plt.legend( fontsize=12, ncol=2)
+    # fig.tight_layout()
+    # plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.png', dpi=1000)
+    # plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000)
+    #
+    #
+    # plt.show()
 
     #now plot by the probe word for the naive animals
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)

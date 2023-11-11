@@ -1393,33 +1393,33 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     # plt.axvline(x=0, color='black')
     #man whiteney test score
 
-
-    manwhitscore = mannwhitneyu(relativescoretrained, relativescorenaive, alternative = 'greater')
-    sample1 = np.random.choice(relativescoretrained, size=10000, replace=True)
-
-    # Generate a random sample of size 100 from data2 with replacement
-    sample2 = np.random.choice(relativescorenaive, size=10000, replace=True)
-
-    # Perform a t-test on the samples
-    t_stat, p_value = stats.ttest_ind(sample1, sample2, alternative='less')
-
-    # Print the t-statistic and p-value
-    print(t_stat, p_value)
-    plt.title('Control - roved F0 \n LSTM decoder scores between trained and naive animals', fontsize = 18)
-    plt.xlabel('Control - roved F0 \n LSTM decoder scores', fontsize = 20)
-    plt.ylabel('Density', fontsize = 20)
-    #ax.legend()
-    plt.savefig('G:/neural_chapter/figures/diffF0distribution_20062023.png', dpi=1000)
-    plt.show()
-
-    #plot sns histogram of the relative score and with the displot function overlaid
-    fig, ax = plt.subplots(1, figsize=(8, 8))
-    sns.histplot(relativescoretrainedfrac, bins=20, label='trained', color='purple', kde = True)
-    sns.histplot(relativescorenaivefrac, bins = 20, label='naive', color='darkcyan', kde = True)
-    plt.title('Control - roved F0 \n LSTM decoder scores between trained and naive animals', fontsize = 18)
-    plt.legend(fontsize = 18)
-    plt.savefig('G:/neural_chapter/figures/diffF0distribution_relfrac_histplotwithkde_20062023.png', dpi=1000)
-    plt.show()
+    #
+    # manwhitscore = mannwhitneyu(relativescoretrained, relativescorenaive, alternative = 'greater')
+    # sample1 = np.random.choice(relativescoretrained, size=10000, replace=True)
+    #
+    # # Generate a random sample of size 100 from data2 with replacement
+    # sample2 = np.random.choice(relativescorenaive, size=10000, replace=True)
+    #
+    # # Perform a t-test on the samples
+    # t_stat, p_value = stats.ttest_ind(sample1, sample2, alternative='less')
+    #
+    # # Print the t-statistic and p-value
+    # print(t_stat, p_value)
+    # plt.title('Control - roved F0 \n LSTM decoder scores between trained and naive animals', fontsize = 18)
+    # plt.xlabel('Control - roved F0 \n LSTM decoder scores', fontsize = 20)
+    # plt.ylabel('Density', fontsize = 20)
+    # #ax.legend()
+    # plt.savefig('G:/neural_chapter/figures/diffF0distribution_20062023.png', dpi=1000)
+    # plt.show()
+    #
+    # #plot sns histogram of the relative score and with the displot function overlaid
+    # fig, ax = plt.subplots(1, figsize=(8, 8))
+    # sns.histplot(relativescoretrainedfrac, bins=20, label='trained', color='purple', kde = True)
+    # sns.histplot(relativescorenaivefrac, bins = 20, label='naive', color='darkcyan', kde = True)
+    # plt.title('Control - roved F0 \n LSTM decoder scores between trained and naive animals', fontsize = 18)
+    # plt.legend(fontsize = 18)
+    # plt.savefig('G:/neural_chapter/figures/diffF0distribution_relfrac_histplotwithkde_20062023.png', dpi=1000)
+    # plt.show()
 
     #now plot a barplot of each of the scores for each word in the probewordlist
     #first get the scores for each word in the probewordlist
@@ -1439,39 +1439,39 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
 
 
 
-
-    fig, ax = plt.subplots(1, figsize=(8, 8))
-    ax = sns.distplot(relativescoretrainedfrac, bins = 20, label='trained',ax=ax, color='purple')
-    x = ax.lines[-1].get_xdata()  # Get the x data of the distribution
-    y = ax.lines[-1].get_ydata()  # Get the y data of the distribution
-    maxidtrained_idx = np.argmax(y)
-    x_coord_trained = x[maxidtrained_idx]
-    ax2 = sns.distplot(relativescorenaivefrac, bins = 20, label='naive', ax=ax, color='darkcyan')
-    x2 = ax2.lines[-1].get_xdata()  # Get the x data of the distribution
-    y2 = ax2.lines[-1].get_ydata()  # Get the y data of the distribution
-    maxidnaive_idx = np.argmax(y2)  # The id of the peak (maximum of y data)
-    x_coord_naive = x2[maxidnaive_idx]
-    plt.axvline(x=0, color='black')
-    kstestnaive = scipy.stats.kstest(relativescorenaivefrac,  stats.norm.cdf)
-    leveneteststat = scipy.stats.levene(relativescorenaivefrac, relativescoretrainedfrac)
-    manwhitscorefrac = mannwhitneyu(relativescorenaivefrac, relativescoretrainedfrac, alternative = 'less')
-    #caclulate medians of distribution
-    sample1_trained = np.random.choice(relativescoretrainedfrac, size=10000, replace=True)
-    # Generate a random sample of size 100 from data2 with replacement
-    sample2_naive = np.random.choice(relativescorenaive, size=10000, replace=True)
-    # Perform a t-test on the samples
-    t_statfrac, p_valuefrac = stats.ttest_ind(sample2_naive, sample1_trained, alternative='less')
-
-    # Print the t-statistic and p-value
-    print(t_statfrac, p_valuefrac)
-    plt.title('Control - roved F0 \n LSTM decoder scores between trained and naive animals', fontsize = 18)
-    plt.xlabel('Control - roved F0 \n LSTM decoder scores divided by control F0', fontsize = 20)
-    plt.ylabel('Density', fontsize = 20)
-    #ax.legend(fontsize = 18)
-
-
-    plt.savefig('G:/neural_chapter/figures/diffF0distribution_frac_20062023wlegendintertrialroving.png', dpi=1000)
-    plt.show()
+    #
+    # fig, ax = plt.subplots(1, figsize=(8, 8))
+    # ax = sns.distplot(relativescoretrainedfrac, bins = 20, label='trained',ax=ax, color='purple')
+    # x = ax.lines[-1].get_xdata()  # Get the x data of the distribution
+    # y = ax.lines[-1].get_ydata()  # Get the y data of the distribution
+    # maxidtrained_idx = np.argmax(y)
+    # x_coord_trained = x[maxidtrained_idx]
+    # ax2 = sns.distplot(relativescorenaivefrac, bins = 20, label='naive', ax=ax, color='darkcyan')
+    # x2 = ax2.lines[-1].get_xdata()  # Get the x data of the distribution
+    # y2 = ax2.lines[-1].get_ydata()  # Get the y data of the distribution
+    # maxidnaive_idx = np.argmax(y2)  # The id of the peak (maximum of y data)
+    # x_coord_naive = x2[maxidnaive_idx]
+    # plt.axvline(x=0, color='black')
+    # kstestnaive = scipy.stats.kstest(relativescorenaivefrac,  stats.norm.cdf)
+    # leveneteststat = scipy.stats.levene(relativescorenaivefrac, relativescoretrainedfrac)
+    # manwhitscorefrac = mannwhitneyu(relativescorenaivefrac, relativescoretrainedfrac, alternative = 'less')
+    # #caclulate medians of distribution
+    # sample1_trained = np.random.choice(relativescoretrainedfrac, size=10000, replace=True)
+    # # Generate a random sample of size 100 from data2 with replacement
+    # sample2_naive = np.random.choice(relativescorenaive, size=10000, replace=True)
+    # # Perform a t-test on the samples
+    # t_statfrac, p_valuefrac = stats.ttest_ind(sample2_naive, sample1_trained, alternative='less')
+    #
+    # # Print the t-statistic and p-value
+    # print(t_statfrac, p_valuefrac)
+    # plt.title('Control - roved F0 \n LSTM decoder scores between trained and naive animals', fontsize = 18)
+    # plt.xlabel('Control - roved F0 \n LSTM decoder scores divided by control F0', fontsize = 20)
+    # plt.ylabel('Density', fontsize = 20)
+    # #ax.legend(fontsize = 18)
+    #
+    #
+    # plt.savefig('G:/neural_chapter/figures/diffF0distribution_frac_20062023wlegendintertrialroving.png', dpi=1000)
+    # plt.show()
 
 
 
