@@ -1340,57 +1340,57 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     # elif bigconcatenatetrained_nonps.size < bigconcatenatetrained_ps.size:
     #     bigconcatenatetrained_ps = bigconcatenatetrained_ps[:bigconcatenatetrained_nonps.size]
 
-    fig, ax = plt.subplots(1, figsize=(9, 9), dpi=300)
-    ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.8, label='trained', s=0.1)
-
-    plt.title('trained animals, number of points: ' + str(len(bigconcatenatetrained_ps)))
-    plt.show()
-    unique_scores = np.unique(bigconcatenatetrained_ps)
-    len(unique_scores)
-
-
-    fig, ax = plt.subplots(1, figsize=(9,9), dpi=300)
-
-    ax.scatter(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, marker='P', color='darkcyan', alpha=0.5, label='naive')
-    ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.5, label='trained')
-    x = np.linspace(0.4, 1, 101)
-    ax.plot(x, x, color='black', linestyle = '--')  # identity line
-
-    slope, intercept, r_value, pv, se = stats.linregress(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)
-
-    sns.regplot(x=bigconcatenatetrained_nonps, y=bigconcatenatetrained_ps, scatter=False, color='purple',
-                label=' $y=%3.7s*x+%3.7s$' % (slope, intercept), ax=ax, line_kws={'label': ' $y=%3.7s*x+%3.7s$' % (slope, intercept)})
-    slope, intercept, r_value, pv, se = stats.linregress(bigconcatenatenaive_nonps, bigconcatenatenaive_ps)
-
-    sns.regplot(x=bigconcatenatenaive_nonps, y=bigconcatenatenaive_ps, scatter=False, color='darkcyan', label=' $y=%3.7s*x+%3.7s$' % (slope, intercept),
-                ax=ax, line_kws={'label': '$y=%3.7s*x+%3.7s$' % (slope, intercept)})
-
-    ax.set_ylabel('LSTM decoding score, F0 roved', fontsize=18)
-    ax.set_xlabel('LSTM decoding score, F0 control', fontsize=18)
-
-    ax.set_title('LSTM decoder scores for' + ' F0 control vs. roved,\n ' + ' trained and naive animals', fontsize=20)
-
-
-    plt.legend( fontsize=12, ncol=2)
-    fig.tight_layout()
-    plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.png', dpi=1000)
-    plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000)
-
-
-    plt.show()
-
-    #histogram distribution of the trained and naive animals
-    fig, ax = plt.subplots(1, figsize=(8, 8))
-    #relativescoretrained = abs(bigconcatenatetrained_nonps - bigconcatenatetrained_ps)/ bigconcatenatetrained_ps
-
-    relativescoretrained = [bigconcatenatetrained_nonps - bigconcatenatetrained_ps for bigconcatenatetrained_nonps, bigconcatenatetrained_ps in zip(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)]
-    relativescorenaive = [bigconcatenatenaive_nonps - bigconcatenatenaive_ps for bigconcatenatenaive_nonps, bigconcatenatenaive_ps in zip(bigconcatenatenaive_ps, bigconcatenatenaive_nonps)]
-    relativescoretrainedfrac = [relativescoretrained / (bigconcatenatetrained_nonps + bigconcatenatenaive_nonps) for relativescoretrained, bigconcatenatetrained_nonps, bigconcatenatenaive_nonps in zip(relativescoretrained, bigconcatenatetrained_nonps, bigconcatenatenaive_nonps)]
-    relativescorenaivefrac = [relativescorenaive / (bigconcatenatenaive_nonps + bigconcatenatetrained_nonps) for relativescorenaive, bigconcatenatenaive_nonps, bigconcatenatetrained_nonps in zip(relativescorenaive, bigconcatenatenaive_nonps, bigconcatenatetrained_nonps)]
-
-    sns.distplot(relativescoretrained, bins = 20, label='trained',ax=ax, color='purple')
-    sns.distplot(relativescorenaive, bins = 20, label='naive', ax=ax, color='darkcyan')
-    plt.axvline(x=0, color='black')
+    # fig, ax = plt.subplots(1, figsize=(9, 9), dpi=300)
+    # ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.8, label='trained', s=0.1)
+    #
+    # plt.title('trained animals, number of points: ' + str(len(bigconcatenatetrained_ps)))
+    # plt.show()
+    # unique_scores = np.unique(bigconcatenatetrained_ps)
+    # len(unique_scores)
+    #
+    #
+    # fig, ax = plt.subplots(1, figsize=(9,9), dpi=300)
+    #
+    # ax.scatter(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, marker='P', color='darkcyan', alpha=0.5, label='naive')
+    # ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.5, label='trained')
+    # x = np.linspace(0.4, 1, 101)
+    # ax.plot(x, x, color='black', linestyle = '--')  # identity line
+    #
+    # slope, intercept, r_value, pv, se = stats.linregress(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)
+    #
+    # sns.regplot(x=bigconcatenatetrained_nonps, y=bigconcatenatetrained_ps, scatter=False, color='purple',
+    #             label=' $y=%3.7s*x+%3.7s$' % (slope, intercept), ax=ax, line_kws={'label': ' $y=%3.7s*x+%3.7s$' % (slope, intercept)})
+    # slope, intercept, r_value, pv, se = stats.linregress(bigconcatenatenaive_nonps, bigconcatenatenaive_ps)
+    #
+    # sns.regplot(x=bigconcatenatenaive_nonps, y=bigconcatenatenaive_ps, scatter=False, color='darkcyan', label=' $y=%3.7s*x+%3.7s$' % (slope, intercept),
+    #             ax=ax, line_kws={'label': '$y=%3.7s*x+%3.7s$' % (slope, intercept)})
+    #
+    # ax.set_ylabel('LSTM decoding score, F0 roved', fontsize=18)
+    # ax.set_xlabel('LSTM decoding score, F0 control', fontsize=18)
+    #
+    # ax.set_title('LSTM decoder scores for' + ' F0 control vs. roved,\n ' + ' trained and naive animals', fontsize=20)
+    #
+    #
+    # plt.legend( fontsize=12, ncol=2)
+    # fig.tight_layout()
+    # plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.png', dpi=1000)
+    # plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000)
+    #
+    #
+    # plt.show()
+    #
+    # #histogram distribution of the trained and naive animals
+    # fig, ax = plt.subplots(1, figsize=(8, 8))
+    # #relativescoretrained = abs(bigconcatenatetrained_nonps - bigconcatenatetrained_ps)/ bigconcatenatetrained_ps
+    #
+    # relativescoretrained = [bigconcatenatetrained_nonps - bigconcatenatetrained_ps for bigconcatenatetrained_nonps, bigconcatenatetrained_ps in zip(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)]
+    # relativescorenaive = [bigconcatenatenaive_nonps - bigconcatenatenaive_ps for bigconcatenatenaive_nonps, bigconcatenatenaive_ps in zip(bigconcatenatenaive_ps, bigconcatenatenaive_nonps)]
+    # relativescoretrainedfrac = [relativescoretrained / (bigconcatenatetrained_nonps + bigconcatenatenaive_nonps) for relativescoretrained, bigconcatenatetrained_nonps, bigconcatenatenaive_nonps in zip(relativescoretrained, bigconcatenatetrained_nonps, bigconcatenatenaive_nonps)]
+    # relativescorenaivefrac = [relativescorenaive / (bigconcatenatenaive_nonps + bigconcatenatetrained_nonps) for relativescorenaive, bigconcatenatenaive_nonps, bigconcatenatetrained_nonps in zip(relativescorenaive, bigconcatenatenaive_nonps, bigconcatenatetrained_nonps)]
+    #
+    # sns.distplot(relativescoretrained, bins = 20, label='trained',ax=ax, color='purple')
+    # sns.distplot(relativescorenaive, bins = 20, label='naive', ax=ax, color='darkcyan')
+    # plt.axvline(x=0, color='black')
     #man whiteney test score
 
 
