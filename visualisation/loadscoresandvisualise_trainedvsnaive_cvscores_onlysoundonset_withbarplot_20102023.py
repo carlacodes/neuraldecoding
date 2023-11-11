@@ -1543,33 +1543,6 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
 
     dataset = pd.DataFrame({'trained': trainedarray[:,0], 'naive': naivearray[:,0], 'controlF0': controlF0array[:,0], 'rovedF0': rovedF0array[:,0], 'scores': scores})
 
-    import statsmodels.api as sm
-    from statsmodels.formula.api import ols
-    model = ols('scores ~ C(trained) + C(controlF0) ', data=dataset).fit()
-    print(model.summary())
-    table = sm.stats.anova_lm(model, typ=2)
-    print(table)
-    from statsmodels.iolib.summary2 import summary_col
-
-
-
-    res = summary_col([model], regressor_order=model.params.index.tolist())
-
-    df = pd.DataFrame(model.summary().tables[1])
-    res.tables[0].to_csv("G:/neural_chapter/figures/trainedrovescores.csv")
-
-    df2= pd.DataFrame(table)
-
-    csvexport2 = df2.to_csv('G:/neural_chapter/figures/trainedrovescores2.csv')
-
-    # Save the DataFrame to a CSV file
-    df.to_csv('anova_results.csv', index=False)
-
-    model = ols('scores ~ C(trained) + C(controlF0) ', data=dataset).fit()
-    print(model.summary())
-    table = sm.stats.anova_lm(model, typ=2)
-    # plotting both mu sound driven and single unit units
-    # for sutype in mergednaiveanimaldict.keys():
 
 
 
