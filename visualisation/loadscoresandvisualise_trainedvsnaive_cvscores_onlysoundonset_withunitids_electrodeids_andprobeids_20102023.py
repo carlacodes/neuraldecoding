@@ -856,19 +856,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
     scoredict = {}
     scoredict_naive={}
-    # scoredict['(2,2)'] = {}
-    # scoredict['(2,2)']['female_talker'] = []
-    # scoredict['(5,6)'] = {}
-    # scoredict['(5,6)']['female_talker'] = []
-    #
-    # scoredict['(42,49)'] = {}
-    # scoredict['(42,49)']['female_talker'] = []
-    #
-    # scoredict['(32,38)'] = {}
-    # scoredict['(32,38)']['female_talker']  = []
-    #
-    # scoredict['(20,22)'] = {}
-    # scoredict['(20,22)']['female_talker'] =[]
+
     for probeword_range in probewordlist_text:
         probeword_key = f'({probeword_range[0]},{probeword_range[1]})'
         scoredict[probeword_key] = {}
