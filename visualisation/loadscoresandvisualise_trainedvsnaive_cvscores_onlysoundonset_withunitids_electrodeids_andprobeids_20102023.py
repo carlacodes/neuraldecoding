@@ -533,8 +533,8 @@ def runboostedregressiontreeforlstmscore(df_use):
     xg_reg.fit(X_train, y_train, eval_metric='MSE', verbose=1)
     ypred = xg_reg.predict(X_test)
     lgb.plot_importance(xg_reg)
-    plt.title('feature importances for the lstm decoding score  model')
-
+    plt.title('feature importances for the lstm decoding score model')
+    plt.savefig(f'G:/neural_chapter/figures/lightgbm_model_feature_importances.png', dpi = 300)
     plt.show()
 
     kfold = KFold(n_splits=10)
@@ -550,8 +550,8 @@ def runboostedregressiontreeforlstmscore(df_use):
     # title kwargs still does nothing so need this workaround for summary plots
 
     fig, ax = plt.subplots(1, figsize=(10, 10), dpi = 300)
-
     shap.summary_plot(shap_values,dfx,  max_display=20)
+    plt.savefig(f'G:/neural_chapter/figures/lightgbm_summary_plot.png', dpi = 300)
     plt.show()
 
 
@@ -1646,6 +1646,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     sns.swarmplot(x='BrainArea', y='Score', hue='Below-chance', data=df_full, ax=ax, alpha=0.5)
     sns.violinplot(x='BrainArea', y='Score', data=df_full, ax=ax, inner=None, color='lightgray')
     plt.title('Trained animals')
+    plt.savefig(f'G:/neural_chapter/figures/violinplot_ofdecodingscores_bybrainarea_trainedanimals.png', dpi = 300)
     plt.show()
 
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -1681,8 +1682,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
     # Add a title
     plt.title('Trained animals')
-
-    # Show the plot
+    plt.savefig(f'G:/neural_chapter/figures/stripplot_overlaidvioline_ofdecodingscores_bybrainarea_trainedanimals.png', dpi = 300)
     plt.show()
 
     #now plot by animal for the trained animals
@@ -1712,6 +1712,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         # Set custom colors for ProbeWords in the legend
         # Add a title
         plt.title('Trained animal, {}'.format(animal))
+        plt.savefig(f'G:/neural_chapter/figures/violinplot_ofdecodingscores_bybrainarea_{animal}.png', dpi=300)
 
         # Show the plot
         plt.show()
@@ -2119,6 +2120,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     sns.swarmplot(x='BrainArea', y='Score', hue='Below-chance', data=df_full_naive, ax=ax, alpha=0.5)
     sns.violinplot(x='BrainArea', y='Score', data=df_full_naive, ax=ax, inner=None, color='lightgray')
     plt.title('Naive animals')
+    plt.savefig(f'G:/neural_chapter/figures/violinplot_by_area_score_naiveanimals.png')
     plt.show()
 
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -2151,7 +2153,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
     # Add a title
     plt.title('Naive animals')
-
+    plt.savefig(f'G:/neural_chapter/figures/violinplot_ofdecodingscores_bybrainarea_naiveanimals.png', dpi = 300)
     # Show the plot
     plt.show()
     anova_table_naive, anova_model_naive = run_anova_on_dataframe(df_full_naive_pitchsplit)
@@ -2183,6 +2185,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         # Set custom colors for ProbeWords in the legend
         # Add a title
         plt.title('Naive animal, {}'.format(animal))
+        plt.savefig(f'G:/neural_chapter/figures/violinplot_by_area_score_naive_{animal}.png')
 
         # Show the plot
         plt.show()
@@ -2221,7 +2224,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         sns.histplot(df_full_naive_pitchsplit_plot['GenFrac'], ax=ax, kde=True, bins=20, label='Naive')
         plt.legend()
         plt.title(f'Distribution of generalizability scores for the trained and naive animals, 60% mean score threshold, index or frac:{options}')
-        plt.savefig(f'G:/neural_chapter/figuresGenFrac_highthreshold_{options}.png')
+        plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_{options}.png')
         plt.show()
 
         #plot as a violin plot with brainarea on the x axis
@@ -2229,14 +2232,14 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         sns.violinplot(x='BrainArea', y='GenFrac', data=df_full_pitchsplit_plot, ax=ax, inner=None, color='lightgray')
         sns.stripplot(x='BrainArea', y='GenFrac', data=df_full_pitchsplit_plot, ax=ax, size=3, dodge=False)
         plt.title(f'Generalizability scores for the trained animals, 60% mean score threshold, index or frac:{options}')
-        plt.savefig(f'G:/neural_chapter/figuresGenFrac_highthreshold_violin_{options}.png')
+        plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_violin_{options}.png')
         plt.show()
 
         fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
         sns.violinplot(x='BrainArea', y='GenFrac', data=df_full_naive_pitchsplit_plot, ax=ax, inner=None, color='lightgray')
         sns.stripplot(x='BrainArea', y='GenFrac', data=df_full_naive_pitchsplit_plot, ax=ax, size=3, dodge=False)
         plt.title(f'Generalizability scores for the naive animals, 60% mean score threshold, index or frac:{options}')
-        plt.savefig(f'G:/neural_chapter/figuresGenFrac_highthreshold_violin_naive_{options}.png')
+        plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_violin_naive_{options}.png')
         plt.show()
 
 
@@ -2275,7 +2278,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         print(stat_general)
         print(p_general)
 
-        plt.savefig(f'G:/neural_chapter/figuresGenFrac_allthreshold_{options}.png')
+        plt.savefig(f'G:/neural_chapter/figures/GenFrac_allthreshold_{options}.png')
         plt.show()
 
         #plot as a violin plot with brainarea on the x-axis
@@ -2284,14 +2287,14 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         sns.violinplot(x='BrainArea', y='GenFrac', data=df_full_pitchsplit_plot, ax=ax, inner=None, color='lightgray')
         sns.stripplot(x='BrainArea', y='GenFrac', data=df_full_pitchsplit_plot, ax=ax, size=3, dodge=False)
         plt.title(f'Generalizability scores for the trained animals, all units, method: {options}')
-        plt.savefig(f'G:/neural_chapter/figuresGenFrac_allthreshold_violin_{options}.png')
+        plt.savefig(f'G:/neural_chapter/figures/GenFrac_allthreshold_violin_{options}.png')
         plt.show()
 
         fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
         sns.violinplot(x='BrainArea', y='GenFrac', data=df_full_naive_pitchsplit_plot, ax=ax, inner=None, color='lightgray')
         sns.stripplot(x='BrainArea', y='GenFrac', data=df_full_naive_pitchsplit_plot, ax=ax, size=3, dodge=False)
         plt.title(f'Generalizability scores for the naive animals, all units, method: {options}')
-        plt.savefig(f'G:/neural_chapter/figuresGenFrac_allthreshold_violin_naive_{options}.png')
+        plt.savefig(f'G:/neural_chapter/figures/GenFrac_allthreshold_violin_naive_{options}.png')
         #do the mann whitney u test between genfrac scores from PEG and MEG
         df_full_pitchsplit_plot_peg = df_full_pitchsplit_plot[df_full_pitchsplit_plot['BrainArea'] == 'PEG']
         df_full_pitchsplit_plot_meg = df_full_pitchsplit_plot[df_full_pitchsplit_plot['BrainArea'] == 'MEG']
@@ -2388,12 +2391,6 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     maxidtrained_idx = np.argmax(y1)  # The id of the peak (maximum of y data)
     x_coord_trained = x1[maxidtrained_idx]
 
-    # man whiteney test score
-    #
-    # sample1 = np.random.choice(rel_frac_list_trained, size=10000, replace=True)
-    #
-    # # Generate a random sample of size 100 from data2 with replacement
-    # sample2 = np.random.choice(rel_frac_list_naive, size=10000, replace=True)
 
     # Perform a t-test on the samples
     t_stat, p_value = stats.ttest_ind(rel_frac_list_trained, rel_frac_list_naive, alternative='greater')
@@ -2432,8 +2429,6 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     fig.tight_layout()
     plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.png', dpi=1000)
     plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000)
-
-
     plt.show()
 
     #now plot by the probe word for the naive animals
@@ -2585,7 +2580,6 @@ def plot_general_distributions(dictlist, dictlist_naive, dictlist_trained):
 
     fig, ax = plt.subplots(1, figsize=(9, 9), dpi=300)
     ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.8, label='trained', s=0.1)
-
     plt.title('trained animals, number of points: ' + str(len(bigconcatenatetrained_ps)))
     plt.show()
     unique_scores = np.unique(bigconcatenatetrained_ps)
@@ -2610,16 +2604,9 @@ def plot_general_distributions(dictlist, dictlist_naive, dictlist_trained):
 
     ax.set_ylabel('LSTM decoding score, F0 roved', fontsize=18)
     ax.set_xlabel('LSTM decoding score, F0 control', fontsize=18)
-
     ax.set_title('LSTM decoder scores for' + ' F0 control vs. roved,\n ' + ' trained and naive animals', fontsize=20)
-
-
     plt.legend( fontsize=12, ncol=2)
     fig.tight_layout()
-    #plt.savfig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.png', dpi=1000)
-    #plt.savfig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000)
-
-
     plt.show()
 
     #histogram distribution of the trained and naive animals

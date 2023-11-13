@@ -231,7 +231,7 @@ def runlgbmmodel_score(df_use, optimization = False):
     ypred = xg_reg.predict(X_test)
     lgb.plot_importance(xg_reg)
     plt.title('feature importances for the lstm decoding score  model')
-
+    plt.savefig(f'G:/neural_chapter/figures/lightgbm_model_feature_importances.png', dpi = 300)
     plt.show()
 
     kfold = KFold(n_splits=10)
@@ -249,10 +249,14 @@ def runlgbmmodel_score(df_use, optimization = False):
     fig, ax = plt.subplots(1, figsize=(10, 10), dpi = 300)
 
     shap.summary_plot(shap_values,dfx,  max_display=20)
+    plt.savefig(f'G:/neural_chapter/figures/summary_plot_lightgbm.png', dpi = 300)
+
     plt.show()
     #partial dependency plot of the pitch shift versus naive color coded by naive
 
-    shap.dependence_plot("PitchShift", shap_values, dfx, interaction_index='Naive', show=True)
+    shap.dependence_plot("PitchShift", shap_values, dfx, interaction_index='Naive', show=False)
+    plt.savefig(f'G:/neural_chapter/figures/naiveandpitchshift_lightgbmdependencyplot.png', dpi = 300)
+    plt.show()
     #run a permutation importance test
 
 
