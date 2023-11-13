@@ -642,7 +642,10 @@ def main():
     path_list = {}
 
     for animal in animal_list:
-        path = Path('D:\ms4output_16102023/' + animal + '/')
+        if animal == 'F2003_Orecchiette':
+            path = Path('G:\F2003_Orecchiette/')
+        else:
+            path = Path('D:\ms4output_16102023/' + animal + '/')
         path_list[animal] = [path for path in path.glob('**/quality metrics.csv')]
         #get the parent directory of each path
         path_list[animal] = [path.parent for path in path_list[animal]]
