@@ -166,8 +166,8 @@ def runlgbmmodel_score(df_use, optimization = False):
     unique_IDs = df_use['ID'].unique()
     df_use = df_use.reset_index(drop=True)
 
-    df_use['ProbeWord'] = pd.Categorical(df_use['ProbeWord'],
-                                                           categories=unique_probe_words, ordered=True)
+    # df_use['ProbeWord'] = pd.Categorical(df_use['ProbeWord'],
+    #                                                        categories=unique_probe_words, ordered=True)
     df_use['ID'] = pd.Categorical(df_use['ID'],categories=unique_IDs, ordered=True)
 
     df_use['ProbeWord'] = df_use['ProbeWord'].cat.codes
@@ -257,6 +257,12 @@ def runlgbmmodel_score(df_use, optimization = False):
     shap.dependence_plot("PitchShift", shap_values, dfx, interaction_index='Naive', show=False)
     plt.savefig(f'G:/neural_chapter/figures/naiveandpitchshift_lightgbmdependencyplot.png', dpi = 300)
     plt.show()
+
+    shap.dependence_plot("BrainArea_PEG", shap_values, dfx, interaction_index='Naive', show=False)
+    plt.show()
+
+    shap.dependence_plot("BrainArea_MEG", shap_values, dfx, interaction_index='Naive', show=False)
+    plt.show()
     #run a permutation importance test
 
 
@@ -288,6 +294,8 @@ def runlgbmmodel_score(df_use, optimization = False):
     plt.xlabel('Permutation Importance')
     plt.title('Permutation Importances of Features')
     plt.show()
+
+
 
 
 

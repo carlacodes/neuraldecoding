@@ -2443,7 +2443,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
     sns.violinplot(x='ProbeWord', y='Score', data=df_full_naive_pitchsplit, ax=ax, palette= 'Paired', hue = 'PitchShift')
     plt.title('Naive animals'' scores over distractor word')
-    plt.savefig(f'G:/neural_chapter/figuresnaive_animals_overdistractor_dividedbypitchshift.png', dpi = 300)
+    plt.savefig(f'G:/neural_chapter/figures/naive_animals_overdistractor_dividedbypitchshift.png', dpi = 300)
     plt.show()
     #run an anova to see if probe word is significant
     #first get the data into a format that can be analysed
@@ -2494,7 +2494,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_full_pitchsplit['Naive'] = 0
     combined_df = df_full_naive_pitchsplit.append(df_full_pitchsplit)
     #now run the lightgbm function
-    # runlgbmmodel_score(combined_df, optimization=False)
+    runlgbmmodel_score(combined_df, optimization=True)
 
 
     #now plot by animal:
@@ -2513,7 +2513,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
         sns.violinplot(x='ProbeWord', y='Score', data=df_full_naive_ps_animal, ax=ax, hue='PitchShift')
         plt.title(f'Naive scores over distractor word:{animal}')
-        plt.savefig(f'G:/neural_chapter/figuresnaive_animals_overdistractor_dividedbypitchshift.png', dpi=300)
+        plt.savefig(f'G:/neural_chapter/figures/naive_animals_overdistractor_dividedbypitchshift.png', dpi=300)
 
         plt.show()
 
