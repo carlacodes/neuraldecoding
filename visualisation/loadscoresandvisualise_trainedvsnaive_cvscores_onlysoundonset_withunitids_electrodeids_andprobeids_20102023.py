@@ -707,7 +707,7 @@ def main():
             if animal == 'F1604_Squinty':
                 # try:
                 dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
-                                                                saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                saveDir=f'F:/results_13112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -715,7 +715,7 @@ def main():
                 dictoutput_all.append(dictoutput_instance)
 
                 dictoutput_instance_permutation = scatterplot_and_visualise(probewordlist_l74,
-                                                                saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                saveDir=f'F:/results_13112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -724,7 +724,7 @@ def main():
 
             elif animal == 'F1606_Windolene':
                 dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
-                                                                saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                saveDir=f'F:/results_13112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -732,7 +732,7 @@ def main():
                 dictoutput_all.append(dictoutput_instance)
 
                 dictoutput_instance_permutation = scatterplot_and_visualise(probewordlist_l74,
-                                                                saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                saveDir=f'F:/results_13112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -740,24 +740,24 @@ def main():
                 dictoutput_all_permutation.append(dictoutput_instance_permutation)
 
             elif animal =='F1702_Zola':
-                dictoutput_instance = scatterplot_and_visualise(probewordlist_zola, saveDir= f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
+                dictoutput_instance = scatterplot_and_visualise(probewordlist_zola, saveDir= f'F:/results_13112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal,  report = report[animal][stream])
                 dictoutput_all.append(dictoutput_instance)
 
-                dictoutput_instance_permutation = scatterplot_and_visualise(probewordlist_zola, saveDir= f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
+                dictoutput_instance_permutation = scatterplot_and_visualise(probewordlist_zola, saveDir= f'F:/results_13112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal,  report = report[animal][stream]
                                                                             , permutation_scores=True)
                 dictoutput_all_permutation.append(dictoutput_instance_permutation)
 
             elif animal == 'F1815_Cruella' or animal == 'F1902_Eclair':
-                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
+                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_13112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal,  report = report[animal][stream])
                 dictoutput_all.append(dictoutput_instance)
 
-                dictoutput_instance_permutation = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
+                dictoutput_instance_permutation = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_13112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal,  report = report[animal][stream]
                                                                             , permutation_scores=True)
@@ -766,7 +766,7 @@ def main():
             elif animal == 'F2003_Orecchiette':
                 # try:
                 dictoutput_instance = scatterplot_and_visualise(probewordlist,
-                                                                saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/',
+                                                                saveDir=f'F:/results_13112023/{animal}/{rec_name_unique}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -777,7 +777,7 @@ def main():
                 dictoutput_all.append(dictoutput_instance)
 
                 dictoutput_instance_permutation = scatterplot_and_visualise(probewordlist,
-                                                                saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/',
+                                                                saveDir=f'F:/results_13112023/{animal}/{rec_name_unique}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -789,12 +789,12 @@ def main():
 
             else:
                 # try:
-                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
+                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_13112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal,  report = report[animal][stream])
                 dictoutput_all.append(dictoutput_instance)
 
-                dictoutput_instance_permutation = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
+                dictoutput_instance_permutation = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_13112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal,  report = report[animal][stream]
                                                                             , permutation_scores=True)
@@ -2376,16 +2376,27 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     # sns.distplot(rel_frac_list_naive, bins=20, label='naive', ax=ax, color='darkcyan')
     sns.histplot(rel_frac_list_trained, bins=20, label='trained', color='purple', kde=True)
     sns.histplot(rel_frac_list_naive, bins=20, label='naive', color='darkcyan', kde=True)
+    #get the peak of the distribution on the y axis
+    x2 = ax.lines[-1].get_xdata()  # Get the x data of the distribution
+    y2 = ax.lines[-1].get_ydata()  # Get the y data of the distribution
+    maxidnaive_idx = np.argmax(y2)  # The id of the peak (maximum of y data)
+    x_coord_naive = x2[maxidnaive_idx]
     plt.axvline(x=0, color='black')
+
+    x1 = ax.lines[-2].get_xdata()  # Get the x data of the distribution
+    y1 = ax.lines[-2].get_ydata()  # Get the y data of the distribution
+    maxidtrained_idx = np.argmax(y1)  # The id of the peak (maximum of y data)
+    x_coord_trained = x1[maxidtrained_idx]
+
     # man whiteney test score
-
-    sample1 = np.random.choice(rel_frac_list_trained, size=10000, replace=True)
-
-    # Generate a random sample of size 100 from data2 with replacement
-    sample2 = np.random.choice(rel_frac_list_naive, size=10000, replace=True)
+    #
+    # sample1 = np.random.choice(rel_frac_list_trained, size=10000, replace=True)
+    #
+    # # Generate a random sample of size 100 from data2 with replacement
+    # sample2 = np.random.choice(rel_frac_list_naive, size=10000, replace=True)
 
     # Perform a t-test on the samples
-    t_stat, p_value = stats.ttest_ind(sample1, sample2, alternative='greater')
+    t_stat, p_value = stats.ttest_ind(rel_frac_list_trained, rel_frac_list_naive, alternative='greater')
 
     # Print the t-statistic and p-value
     print(t_stat, p_value)
