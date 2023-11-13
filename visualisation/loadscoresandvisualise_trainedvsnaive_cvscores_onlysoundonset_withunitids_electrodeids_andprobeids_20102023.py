@@ -602,11 +602,13 @@ def load_classified_report(path):
             # get the list of multi units and single units
             for i in range(0, len(report)):
                 channel_id = unit_list['max_on_channel_id'][i]
-                #remove the AP from the channel id
-                channel_id = channel_id.split('AP')[0]
+                #remove the AP from the channel id str
+
+                channel_id = channel_id.replace('AP', '')
                 channel_id = int(channel_id)
-                
-                row = channel_pos[channel_id, :]
+                #get that tow from the channel pos
+
+                row = channel_pos.iloc[channel_id-1]
                 if row[1] >= 3200 and report['d_prime'][i] < 4:
                     singleunitlist.append(i+1)
                 elif row[1] >= 3200 and report['d_prime'][i] >= 4:
@@ -668,7 +670,11 @@ def main():
         for path in path_list[animal]:
             stream_name = path.parent.absolute()
             stream_name = stream_name.parent.absolute()
-            stream_name = str(stream_name).split('\\')[-1]
+            if animal == 'F2003_Orecchiette':
+                stream_name = str(stream_name).split('\\')[-2]
+            else:
+                stream_name = str(stream_name).split('\\')[-1]
+
 
             report[animal][stream_name], singleunitlist[animal][stream_name], multiunitlist[animal][stream_name], noiselist[animal][stream_name] = load_classified_report(f'{path}')
 
