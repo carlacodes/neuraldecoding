@@ -213,13 +213,13 @@ def scatterplot_and_visualise(probewordlist,
         recname = saveDir.split('/')[-3]
 
         if fullid == 'F2003_Orecchiette':
+
             try:
-                report['tdt'] = pd.read_csv(f'D:\ms4output_16102023\F2003_Orecchiette/' + {stream} + '/' + 'recording_0/pykilosort/report/' + 'unit_list.csv')
+                report['tdt'] = pd.read_csv(f'G:/F2003_Orecchiette/{stream}/recording_0/pykilosort/report/' + 'unit_list.csv')
                 #take only the second column
                 report['tdt'] = report['tdt'].iloc[:, 1]
 
-            except:
-                # make a column of 0s for the tdt column
+            except:                # make a column of 0s for the tdt column
                 report['tdt'] =  np.zeros((len(report), 1))
 
         for talker in [1]:
@@ -585,7 +585,10 @@ def load_classified_report(path):
             multiunitlist = [x for x in clusters_above_hpc[:, 0] if x not in singleunitlist]
             noiselist = []
         else:
-            report_path = os.path.join(path, 'quality_metrics_classified.csv')
+            if 's2 ' in path:
+                report_path = os.path.join(path, 'channelpos_s2.csv')
+            elif 's3' in path:
+                report_path = os.path.join(path, 'channelpos_s3.csv')
             # combine the paths
 
             report = pd.read_csv(report_path)  # get the list of multi units and single units
@@ -595,13 +598,13 @@ def load_classified_report(path):
             noiselist = []
 
             # get the list of multi units and single units
-            for i in range(0, len(report['unit_type'])):
-                if report['unit_type'][i] == 'mua':
-                    multiunitlist.append(i + 1)
-                elif report['unit_type'][i] == 'su':
-                    singleunitlist.append(i + 1)
-                elif report['unit_type'][i] == 'trash':
-                    noiselist.append(i + 1)
+            for i in range(0, len(report)):
+                row = report.iloc[i]
+                if row[1] >= 3200:
+                    singleunitlist.append(i+1)
+                else:
+                    noiselist.append(i+1)
+
 
 
     else:
