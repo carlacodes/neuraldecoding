@@ -589,8 +589,10 @@ def load_classified_report(path):
                 channel_pos = os.path.join(path, 'channelpos_s2.csv')
             elif 's3' in path:
                 channel_pos = os.path.join(path, 'channelpos_s3.csv')
+            unit_list = pd.read_csv(os.path.join(path, 'unit_list.csv'), delimiter='\t')
+            #remove the AP from each
             # combine the paths
-
+            channel_pos = pd.read_csv(channel_pos)
             report = pd.read_csv(report_path)  # get the list of multi units and single units
             # the column is called unit_type
             multiunitlist = []
@@ -599,10 +601,15 @@ def load_classified_report(path):
 
             # get the list of multi units and single units
             for i in range(0, len(report)):
-                row = channel_pos[i, :]
-                if row[1] >= 3200 and report['d_prime'] < 4:
+                channel_id = unit_list['max_on_channel_id'][i]
+                #remove the AP from the channel id
+                channel_id = channel_id.split('AP')[0]
+                channel_id = int(channel_id)
+                
+                row = channel_pos[channel_id, :]
+                if row[1] >= 3200 and report['d_prime'][i] < 4:
                     singleunitlist.append(i+1)
-                elif row[1] >= 3200 and report['d_prime'] >= 4:
+                elif row[1] >= 3200 and report['d_prime'][i] >= 4:
                     multiunitlist.append(i+1)
                 else:
                     noiselist.append(i+1)
