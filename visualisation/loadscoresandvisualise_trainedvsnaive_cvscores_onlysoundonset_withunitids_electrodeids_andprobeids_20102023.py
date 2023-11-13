@@ -2346,7 +2346,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         df_kruskal = df_kruskal.append({'ProbeWord': probe_word, 'Kruskal_pvalue_trained': result_kruskal.pvalue},
                                        ignore_index=True)
     # export the dataframe
-    df_kruskal.to_csv('G:/neural_chapter/figures/kruskal_pvalues_trianed.csv')
+    df_kruskal.to_csv('G:/neural_chapter/figures/kruskal_pvalues_trained.csv')
 
     ##do the roved - control f0 score divided by the control f0 score plot
     #first get the data into a format that can be analysed
