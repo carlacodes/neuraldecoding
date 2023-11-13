@@ -701,7 +701,7 @@ def main():
             if animal == 'F1604_Squinty':
                 # try:
                 dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
-                                                                saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                saveDir=f'F:/results_13112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -710,7 +710,7 @@ def main():
                 dictoutput_all.append(dictoutput_instance)
 
                 dictoutput_instance_permutation = scatterplot_and_visualise(probewordlist_l74,
-                                                                            saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                            saveDir=f'F:/results_13112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                             ferretname=animal_text,
                                                                             singleunitlist=singleunitlist[animal][
                                                                                 stream],
@@ -723,7 +723,7 @@ def main():
 
             elif animal == 'F1606_Windolene':
                 dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
-                                                                saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                saveDir=f'F:/results_13112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -732,7 +732,7 @@ def main():
                 dictoutput_all.append(dictoutput_instance)
 
                 dictoutput_instance_permutation = scatterplot_and_visualise(probewordlist_l74,
-                                                                            saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                            saveDir=f'F:/results_13112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                             ferretname=animal_text,
                                                                             singleunitlist=singleunitlist[animal][
                                                                                 stream],
@@ -745,7 +745,7 @@ def main():
 
             elif animal == 'F1702_Zola':
                 dictoutput_instance = scatterplot_and_visualise(probewordlist_zola,
-                                                                saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                saveDir=f'F:/results_13112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -754,7 +754,7 @@ def main():
                 dictoutput_all.append(dictoutput_instance)
 
                 dictoutput_instance_permutation = scatterplot_and_visualise(probewordlist_zola,
-                                                                            saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                            saveDir=f'F:/results_13112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                             ferretname=animal_text,
                                                                             singleunitlist=singleunitlist[animal][
                                                                                 stream],
@@ -767,7 +767,7 @@ def main():
 
             elif animal == 'F1815_Cruella' or animal == 'F1902_Eclair':
                 dictoutput_instance = scatterplot_and_visualise(probewordlist,
-                                                                saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                saveDir=f'F:/results_13112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -776,7 +776,7 @@ def main():
                 dictoutput_all.append(dictoutput_instance)
 
                 dictoutput_instance_permutation = scatterplot_and_visualise(probewordlist,
-                                                                            saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                            saveDir=f'F:/results_13112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                             ferretname=animal_text,
                                                                             singleunitlist=singleunitlist[animal][
                                                                                 stream],
@@ -790,7 +790,7 @@ def main():
             elif animal == 'F2003_Orecchiette':
                 # try:
                 dictoutput_instance = scatterplot_and_visualise(probewordlist,
-                                                                saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/',
+                                                                saveDir=f'F:/results_13112023/{animal}/{rec_name_unique}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -801,7 +801,7 @@ def main():
                 dictoutput_all.append(dictoutput_instance)
 
                 dictoutput_instance_permutation = scatterplot_and_visualise(probewordlist,
-                                                                            saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/',
+                                                                            saveDir=f'F:/results_13112023/{animal}/{rec_name_unique}/',
                                                                             ferretname=animal_text,
                                                                             singleunitlist=singleunitlist[animal][
                                                                                 stream],
@@ -817,7 +817,7 @@ def main():
             else:
                 # try:
                 dictoutput_instance = scatterplot_and_visualise(probewordlist,
-                                                                saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                saveDir=f'F:/results_13112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -826,7 +826,7 @@ def main():
                 dictoutput_all.append(dictoutput_instance)
 
                 dictoutput_instance_permutation = scatterplot_and_visualise(probewordlist,
-                                                                            saveDir=f'F:/results_10112023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                            saveDir=f'F:/results_13112023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                             ferretname=animal_text,
                                                                             singleunitlist=singleunitlist[animal][
                                                                                 stream],
@@ -1487,7 +1487,14 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
 
     plt.ylabel('Density', fontsize = 20)
     manwhitscorecontrolf0 = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatenaive_nonps, alternative = 'greater')
+
+    n1 = len(bigconcatenatetrained_nonps)
+    n2 = len(bigconcatenatenaive_nonps)
+    r_controlf0 = 1 - (2 * manwhitscorecontrolf0.statistic) / (n1 * n2)
+
     #ax.legend()
+
+
     plt.savefig('G:/neural_chapter/figures/controlF0distribution20062023intertrialroving.png', dpi=1000)
     plt.show()
 
@@ -1502,6 +1509,11 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     plt.ylabel('Density', fontsize = 20)
     manwhitscorerovedf0 = mannwhitneyu(bigconcatenatetrained_ps, bigconcatenatenaive_ps, alternative = 'less')
 
+    n1 = len(bigconcatenatetrained_ps)
+    n2 = len(bigconcatenatenaive_ps)
+    r_rovef0 = 1 - (2 * manwhitscorerovedf0.statistic) / (n1 * n2)
+
+    # ax.leg
     ax.legend(fontsize=18)
     plt.savefig('G:/neural_chapter/figures/rovedF0distribution_20062023intertrialroving.png', dpi=1000)
 
@@ -1531,8 +1543,31 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     plt.show()
     kstestcontrolf0vsrovedtrained = scipy.stats.kstest(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, alternative = 'two-sided')
 
+    #do levene's test
+    leveneteststat = scipy.stats.levene(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)
     kstestcontrolf0vsrovednaive = scipy.stats.kstest(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, alternative='two-sided')
+    #run mann whitney u test
+    manwhitscore_stat, manwhitescore_pvalue = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, alternative = 'two-sided')
+    manwhitscore_statnaive, manwhitescore_pvaluenaive = mannwhitneyu(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, alternative = 'two-sided')
 
+    # Calculate rank-biserial correlation coefficient
+
+    n1 = len(bigconcatenatetrained_nonps)
+    n2 = len(bigconcatenatetrained_ps)
+    r = 1 - (2 * manwhitscore_stat) / (n1 * n2)
+
+    n1 = len(bigconcatenatenaive_nonps)
+    n2 = len(bigconcatenatenaive_ps)
+    r_naive = 1 - (2 * manwhitscore_statnaive) / (n1 * n2)
+
+
+    #put these stats into a table and export to csv
+    #create a dataframe
+
+
+
+    #do levene's test
+    leveneteststat_naive = scipy.stats.levene(bigconcatenatenaive_nonps, bigconcatenatenaive_ps)
     naivearray=np.concatenate((np.zeros((len(bigconcatenatetrained_nonps)+len(bigconcatenatetrained_ps),1)), np.ones((len(bigconcatenatenaive_nonps)+len(bigconcatenatenaive_ps),1))))
     trainedarray=np.concatenate((np.ones((len(bigconcatenatetrained_nonps)+len(bigconcatenatetrained_ps),1)), np.zeros((len(bigconcatenatenaive_nonps)+len(bigconcatenatenaive_ps),1))))
     controlF0array=np.concatenate((np.ones((len(bigconcatenatetrained_nonps),1)), np.zeros((len(bigconcatenatetrained_ps),1)), np.ones((len(bigconcatenatenaive_nonps),1)), np.zeros((len(bigconcatenatenaive_ps),1))))
