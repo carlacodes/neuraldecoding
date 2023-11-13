@@ -2466,8 +2466,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     for probe_word in df_above_chance['ProbeWord'].unique():
         subset_data = df_above_chance[df_above_chance['ProbeWord'] == probe_word]
 
-        result_kruskal = scipy.stats.kruskal(subset_data[subset_data['PitchShift'] == 'Pitch']['Score'],
-                                 subset_data[subset_data['PitchShift'] == 'Control']['Score'])
+        result_kruskal = scipy.stats.kruskal(subset_data[subset_data['PitchShift'] == 1]['Score'],
+                                 subset_data[subset_data['PitchShift'] == 0]['Score'])
 
         print(f"ProbeWord: {probe_word}, Kruskal-Wallis p-value: {result_kruskal.pvalue}")
         #append to a dataframe
