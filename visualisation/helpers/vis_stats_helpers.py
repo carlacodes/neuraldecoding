@@ -170,16 +170,18 @@ def runlgbmmodel_score(df_use, optimization = False):
     #                                                        categories=unique_probe_words, ordered=True)
     df_use['ID'] = pd.Categorical(df_use['ID'],categories=unique_IDs, ordered=True)
 
-    df_use['ProbeWord'] = df_use['ProbeWord'].cat.codes
+    # df_use['ProbeWord'] = df_use['ProbeWord'].cat.codes
 
     df_use['BrainArea'] = df_use['BrainArea'].astype('category')
+    df_use['ID'] = df_use['ID'].astype('category')
+    df_use['ProbeWord'] = df_use['ProbeWord'].astype('category')
+
 
     # cast the probe word category as an int
-    df_use['ProbeWord'] = df_use['ProbeWord'].astype('int')
     df_use['PitchShift'] = df_use['PitchShift'].astype('int')
     df_use['Below-chance'] = df_use['Below-chance'].astype('int')
 
-    df_use["ProbeWord"] = pd.to_numeric(df_use["ProbeWord"])
+    # df_use["ProbeWord"] = pd.to_numeric(df_use["ProbeWord"])
     df_use["PitchShift"] = pd.to_numeric(df_use["PitchShift"])
     df_use["Below_chance"] = pd.to_numeric(df_use["Below-chance"])
     df_use["Score"] = pd.to_numeric(df_use["Score"])
