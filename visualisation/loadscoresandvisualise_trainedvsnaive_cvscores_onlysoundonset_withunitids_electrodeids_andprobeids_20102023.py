@@ -585,10 +585,10 @@ def load_classified_report(path):
             multiunitlist = [x for x in clusters_above_hpc[:, 0] if x not in singleunitlist]
             noiselist = []
         else:
-            if 's2 ' in path:
-                report_path = os.path.join(path, 'channelpos_s2.csv')
+            if 's2' in str(path):
+                channel_pos = os.path.join(path, 'channelpos_s2.csv')
             elif 's3' in path:
-                report_path = os.path.join(path, 'channelpos_s3.csv')
+                channel_pos = os.path.join(path, 'channelpos_s3.csv')
             # combine the paths
 
             report = pd.read_csv(report_path)  # get the list of multi units and single units
@@ -599,9 +599,11 @@ def load_classified_report(path):
 
             # get the list of multi units and single units
             for i in range(0, len(report)):
-                row = report.iloc[i]
-                if row[1] >= 3200:
+                row = channel_pos[i, :]
+                if row[1] >= 3200 and report['d_prime'] < 4:
                     singleunitlist.append(i+1)
+                elif row[1] >= 3200 and report['d_prime'] >= 4:
+                    multiunitlist.append(i+1)
                 else:
                     noiselist.append(i+1)
 
