@@ -1563,8 +1563,10 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
 
     #put these stats into a table and export to csv
     #create a dataframe
+    dataframe_stats = pd.DataFrame({'effect sizes r value': [r_controlf0, r_rovef0, r, r_naive], 'trained animals p value': [manwhitscorecontrolf0.pvalue, manwhitscorerovedf0.pvalue, manwhitescore_pvalue, manwhitescore_pvaluenaive]},  index = ['control naive vs. trained(alt = trained > naive) ', 'roved naive vs trained (alt = trained < naive)', 'control vs. roved trained (two sided)', 'control naive vs. roved naive (two sided)'])
 
-
+    #export to csv
+    dataframe_stats.to_csv('G:/neural_chapter/figures/stats_13112023_comparingdistributions_generalintertrialroving.csv')
 
     #do levene's test
     leveneteststat_naive = scipy.stats.levene(bigconcatenatenaive_nonps, bigconcatenatenaive_ps)
