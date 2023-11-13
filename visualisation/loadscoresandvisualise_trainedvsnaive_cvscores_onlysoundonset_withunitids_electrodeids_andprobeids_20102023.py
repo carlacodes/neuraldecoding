@@ -2333,6 +2333,21 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     plt.savefig(f'G:/neural_chapter/figurestrained_animals_overdistractor_dividedbypitchshift.png', dpi = 300)
     plt.show()
 
+    df_kruskal = pd.DataFrame(columns=['ProbeWord', 'Kruskal_pvalue_trained'])
+    # Perform Kruskal-Wallis test for each ProbeWord
+    for probe_word in df_above_chance_ps['ProbeWord'].unique():
+        subset_data = df_above_chance_ps[df_above_chance_ps['ProbeWord'] == probe_word]
+
+        result_kruskal = scipy.stats.kruskal(subset_data[subset_data['PitchShift'] == 'Pitch']['Score'],
+                                             subset_data[subset_data['PitchShift'] == 'Control']['Score'])
+
+        print(f"ProbeWord: {probe_word}, Kruskal-Wallis p-value: {result_kruskal.pvalue}")
+        # append to a dataframe
+        df_kruskal = df_kruskal.append({'ProbeWord': probe_word, 'Kruskal_pvalue_trained': result_kruskal.pvalue},
+                                       ignore_index=True)
+    # export the dataframe
+    df_kruskal.to_csv('G:/neural_chapter/figures/kruskal_pvalues_trianed.csv')
+
     ##do the roved - control f0 score divided by the control f0 score plot
     #first get the data into a format that can be analysed
     rel_frac_list_naive = []
@@ -2445,6 +2460,20 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     plt.title('Naive animals'' scores over distractor word')
     plt.savefig(f'G:/neural_chapter/figures/naive_animals_overdistractor_dividedbypitchshift.png', dpi = 300)
     plt.show()
+
+    df_kruskal = pd.DataFrame(columns=['ProbeWord', 'Kruskal_pvalue'])
+    # Perform Kruskal-Wallis test for each ProbeWord
+    for probe_word in df_above_chance['ProbeWord'].unique():
+        subset_data = df_above_chance[df_above_chance['ProbeWord'] == probe_word]
+
+        result_kruskal = scipy.stats.kruskal(subset_data[subset_data['PitchShift'] == 'Pitch']['Score'],
+                                 subset_data[subset_data['PitchShift'] == 'Control']['Score'])
+
+        print(f"ProbeWord: {probe_word}, Kruskal-Wallis p-value: {result_kruskal.pvalue}")
+        #append to a dataframe
+        df_kruskal = df_kruskal.append({'ProbeWord': probe_word, 'Kruskal_pvalue': result_kruskal.pvalue}, ignore_index=True)
+    #export the dataframe
+    df_kruskal.to_csv('G:/neural_chapter/figures/kruskal_pvalues_naive.csv')
     #run an anova to see if probe word is significant
     #first get the data into a format that can be analysed
 
@@ -2494,7 +2523,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_full_pitchsplit['Naive'] = 0
     combined_df = df_full_naive_pitchsplit.append(df_full_pitchsplit)
     #now run the lightgbm function
-    runlgbmmodel_score(combined_df, optimization=True)
+    # runlgbmmodel_score(combined_df, optimization=True)
 
 
     #now plot by animal:
@@ -2513,9 +2542,10 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
         sns.violinplot(x='ProbeWord', y='Score', data=df_full_naive_ps_animal, ax=ax, hue='PitchShift')
         plt.title(f'Naive scores over distractor word:{animal}')
-        plt.savefig(f'G:/neural_chapter/figures/naive_animals_overdistractor_dividedbypitchshift.png', dpi=300)
+        plt.savefig(f'G:/neural_chapter/figures/naive_animals_overdistractor_dividedbypitchshift_{animal}.png', dpi=300)
 
         plt.show()
+
 
     for animal in ['F1702_Zola', 'F1815_Cruella', 'F1604_Squinty', 'F1606_Windolene']:
         df_full_pitchsplit_animal = df_full_pitchsplit[df_full_pitchsplit['ID'].str.contains(animal)]
