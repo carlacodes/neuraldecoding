@@ -7,6 +7,7 @@ import os
 import scipy.stats as stats
 import shap
 from statsmodels.regression import linear_model
+import seaborn as sns
 import statsmodels as sm
 import lightgbm as lgb
 from optuna.integration import LightGBMPruningCallback
@@ -248,6 +249,9 @@ def runlgbmmodel_score(df_use, optimization = False):
     print("negative MSE on train set: %.2f%%" % (np.mean(results) * 100.0))
     print(results)
     shap_values = shap.TreeExplainer(xg_reg).shap_values(dfx)
+    explainer = shap.Explainer(xg_reg, X_train, feature_names=dfx.columns)
+    shap_values2 = explainer(X_train)
+
     fig, ax = plt.subplots(figsize=(15, 15))
     # title kwargs still does nothing so need this workaround for summary plots
 
@@ -283,6 +287,45 @@ def runlgbmmodel_score(df_use, optimization = False):
     plt.savefig(f'G:/neural_chapter/figures/naiveandprobe2_lightgbmdependencyplot.png', dpi = 300)
     plt.show()
     #run a permutation importance test
+
+    #F0 by talker violin plot, supp.
+    pitchshift = shap_values2[:, "PitchShift"].data
+    naive_values = shap_values2[:, "Naive"].data
+    shap_values = shap_values2[:, "PitchShift"].values
+
+    # Create a DataFrame with the necessary data
+    data_df = pd.DataFrame({
+        "pitchshift": pitchshift,
+        "naive": naive_values,
+        "SHAP value": shap_values
+    })
+    custom_colors = ['slategray', 'hotpink', "yellow"]  # Add more colors as needed
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.violinplot(x="pitchshift", y="SHAP value", hue="naive", data=data_df, split=True, inner="quart",
+                   palette=custom_colors, ax=ax)
+
+    ax.set_xticks([ 0, 1, 2, 3, 4])
+    ax.set_xticklabels(['True', 'False'], fontsize=18, rotation=45)
+    ax.set_xlabel('Pitch Shift', fontsize=18)
+    ax.set_ylabel('Impact on decoding score', fontsize=18)
+    plt.savefig(f'G:/neural_chapter/figures/violinplot_pitchshift.png', dpi = 300)
+    plt.show()
+
+    MEG = shap_values2[:, "BrainArea_MEG"].data
+    naive_values = shap_values2[:, "Naive"].data
+    shap_values = shap_values2[:, "BrainArea_MEG"].values
+    data_df = pd.DataFrame({
+        "MEG": MEG,
+        "naive": naive_values,
+        "SHAP value": shap_values
+    })
+    custom_colors = ['slategray', 'hotpink', "yellow"]  # Add more colors as needed
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.violinplot(x="MEG", y="SHAP value", hue="naive", data=data_df, split=True, inner="quart",
+                     palette=custom_colors, ax=ax)
+    ax.set_xticks([0, 1])
+    ax.set_xticklabels(['True', 'False'], fontsize=18, rotation=45)
 
 
 
