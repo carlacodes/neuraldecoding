@@ -2401,6 +2401,14 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
             # get all the scores where pitchshift is 1 for the each probe word
             for probeword in df_full_unit['ProbeWord'].unique():
                 try:
+                    control_df = df_full_unit_naive[
+                        (df_full_unit_naive['ProbeWord'] == probeword) & (df_full_unit_naive['PitchShift'] == 0) & (
+                                    df_full_unit_naive['Below-chance'] == 0)]
+                    roved_df = df_full_unit_naive[
+                        (df_full_unit_naive['ProbeWord'] == probeword) & (df_full_unit_naive['PitchShift'] == 1) & (
+                                    df_full_unit_naive['Below-chance'] == 0)]
+                    if len(control_df) == 0 and len(roved_df) == 0:
+                        continue
                     control_score = df_full_unit[
                         (df_full_unit['ProbeWord'] == probeword) & (df_full_unit['PitchShift'] == 0)][
                         'Score'].values[0]
