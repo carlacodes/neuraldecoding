@@ -1532,6 +1532,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     sns.distplot(bigconcatenatetrained_nonps,  label='trained',ax=ax, color='purple')
     sns.distplot(bigconcatenatenaive_nonps, label='naive', ax=ax, color='darkcyan')
     plt.axvline(x=0, color='black')
+    plt.xlim([0.35,1])
     #man whiteney test score
     plt.title('Control F0 LSTM decoder scores between  \n trained and naive animals', fontsize = 18)
     plt.xlabel('Control F0 LSTM decoder scores', fontsize = 20)
@@ -1559,6 +1560,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     plt.xlabel('Roved F0 LSTM decoder scores', fontsize = 20)
     plt.ylabel('Density', fontsize = 20)
     manwhitscorerovedf0 = mannwhitneyu(bigconcatenatetrained_ps, bigconcatenatenaive_ps, alternative = 'greater')
+    plt.xlim([0.35,1])
 
     n1 = len(bigconcatenatetrained_ps)
     n2 = len(bigconcatenatenaive_ps)
@@ -1577,6 +1579,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     ax.legend(fontsize=18)
     plt.title('Roved and Control F0 Distributions for the Trained Animals', fontsize = 18)
     plt.xlabel(' LSTM decoder scores', fontsize = 20)
+    plt.xlim([0.35,1])
 
     plt.savefig('G:/neural_chapter/figures/rovedF0vscontrolF0traineddistribution_20062023intertrialroving.png', dpi=1000)
 
@@ -1586,6 +1589,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     ax.set_xlim([0,1])
     sns.distplot(bigconcatenatenaive_ps,  label='naive roved',ax=ax, color='darkcyan')
     sns.distplot(bigconcatenatenaive_nonps,  label='naive control',ax=ax, color='cyan')
+    plt.xlim([0.35,1])
+
     ax.legend(fontsize=18)
     plt.xlabel(' LSTM decoder scores', fontsize = 20)
     plt.title('Roved and Control F0 Distributions for the Naive Animals', fontsize = 18)
