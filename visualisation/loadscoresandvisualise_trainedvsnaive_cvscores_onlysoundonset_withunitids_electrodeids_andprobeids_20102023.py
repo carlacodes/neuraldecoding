@@ -2382,6 +2382,11 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         #get all the scores where pitchshift is 1 for the each probe word
         for probeword in df_full_unit_naive['ProbeWord'].unique():
             try:
+                control_df = df_full_unit_naive[(df_full_unit_naive['ProbeWord'] == probeword) & (df_full_unit_naive['PitchShift'] == 0) & (df_full_unit_naive['Below-chance'] == 0)]
+                roved_df = df_full_unit_naive[(df_full_unit_naive['ProbeWord'] == probeword) & (df_full_unit_naive['PitchShift'] == 1) & (df_full_unit_naive['Below-chance'] == 0)]
+                if len(control_df) == 0 and len(roved_df) == 0:
+                    continue
+
                 control_score = df_full_unit_naive[(df_full_unit_naive['ProbeWord'] == probeword) & (df_full_unit_naive['PitchShift'] == 0)]['Score'].values[0]
                 pitchshift_score = df_full_unit_naive[(df_full_unit_naive['ProbeWord'] == probeword) & (df_full_unit_naive['PitchShift'] == 1)]['Score'].values[0]
             except:
@@ -2413,8 +2418,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     fig, ax = plt.subplots(1, figsize=(10, 10), dpi=300)
     # sns.distplot(rel_frac_list_trained, bins=20, label='trained', ax=ax, color='purple')
     # sns.distplot(rel_frac_list_naive, bins=20, label='naive', ax=ax, color='darkcyan')
-    sns.histplot(rel_frac_list_trained, bins=20, label='trained', color='purple', kde=True)
-    sns.histplot(rel_frac_list_naive, bins=20, label='naive', color='darkcyan', kde=True)
+    sns.histplot(rel_frac_list_trained,  label='trained', color='purple', kde=True)
+    sns.histplot(rel_frac_list_naive, label='naive', color='darkcyan', kde=True)
 
     # get the peak of the distribution on the y axis
 
@@ -2470,6 +2475,21 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.png', dpi=1000)
     plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000)
     plt.show()
+
+    #make a kde plot
+    #makea  dataframe
+    df_naive = pd.DataFrame({'F0_control': bigconcatenatenaive_nonps, 'F0_roved': bigconcatenatenaive_ps})
+    fig, ax = plt.subplots(1, figsize=(9,9), dpi=300)
+    sns.kdeplot(df_naive, x='F0_control', y ='F0_roved', shade=True, shade_lowest=False, ax=ax, label='naive')
+    plt.title('F0 control vs. roved, naive animals')
+    plt.show()
+
+    df_trained_kde = pd.DataFrame({'F0_control': bigconcatenatetrained_nonps, 'F0_roved': bigconcatenatetrained_ps})
+    fig, ax = plt.subplots(1, figsize=(9,9), dpi=300)
+    sns.kdeplot(df_trained_kde, x= 'F0_control', y = 'F0_roved', cmap="Reds", shade=True, shade_lowest=False, ax=ax, label='trained')
+    plt.title('F0 control vs. roved, trained animals')
+    plt.show()
+
 
     #now plot by the probe word for the naive animals
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
