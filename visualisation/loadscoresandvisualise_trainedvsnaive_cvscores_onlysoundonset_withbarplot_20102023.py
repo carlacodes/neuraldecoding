@@ -575,7 +575,7 @@ def runboostedregressiontreeforlstmscore(df_use):
 
 def load_classified_report(path):
     ''' Load the classified report
-    :param path: path to the classified report
+    :param path: path to the report
     :return: classified report
     '''
     #join the path to the report
@@ -584,19 +584,54 @@ def load_classified_report(path):
         #combine the paths
 
         report = pd.read_csv(report_path)
-        channelpositions = pd.read_pickle(
-            r'D:\spkvisanddecodeproj2/analysisscriptsmodcg/visualisation\channelpositions\F2003_Orecchiette/channelpos.pkl')
-        # remove rows that are not the cluster id, represented by the first column in the np array out of three columns
-        #remove rows that are below the auditory cortex
-                # get the x and y coordinates
-        #only get clusters, first column that are greater than 3200 in depth
-        clusters_above_hpc = channelpositions[channelpositions[:, 2] > 3200]
-        #add one to the cluster ids
-        clusters_above_hpc[:, 0] = clusters_above_hpc[:, 0] + 1
-        singleunitlist = [1, 19, 21, 219, 227]
-        #multiunit list all the other clusters in clusters above hpc
-        multiunitlist = [x for x in clusters_above_hpc[:, 0] if x not in singleunitlist]
-        noiselist = []
+        if 's2cgmod' in path:
+            channelpositions = pd.read_pickle(
+                r'D:\spkvisanddecodeproj2/analysisscriptsmodcg/visualisation\channelpositions\F2003_Orecchiette/channelpos.pkl')
+            # remove rows that are not the cluster id, represented by the first column in the np array out of three columns
+            #remove rows that are below the auditory cortex
+                    # get the x and y coordinates
+            #only get clusters, first column that are greater than 3200 in depth
+            clusters_above_hpc = channelpositions[channelpositions[:, 2] > 3200]
+            #add one to the cluster ids
+            clusters_above_hpc[:, 0] = clusters_above_hpc[:, 0] + 1
+            singleunitlist = [1, 19, 21, 219, 227]
+            #multiunit list all the other clusters in clusters above hpc
+            multiunitlist = [x for x in clusters_above_hpc[:, 0] if x not in singleunitlist]
+            noiselist = []
+        else:
+            if 's2' in str(path):
+                channel_pos = os.path.join(path, 'channelpos_s2.csv')
+            elif 's3' in path:
+                channel_pos = os.path.join(path, 'channelpos_s3.csv')
+            unit_list = pd.read_csv(os.path.join(path, 'unit_list.csv'), delimiter='\t')
+            #remove the AP from each
+            # combine the paths
+            channel_pos = pd.read_csv(channel_pos)
+            report = pd.read_csv(report_path)  # get the list of multi units and single units
+            # the column is called unit_type
+            multiunitlist = []
+            singleunitlist = []
+            noiselist = []
+
+            # get the list of multi units and single units
+            for i in range(0, len(report)):
+                channel_id = unit_list['max_on_channel_id'][i]
+                #remove the AP from the channel id str
+
+                channel_id = channel_id.replace('AP', '')
+                channel_id = int(channel_id)
+                #get that tow from the channel pos
+
+                row = channel_pos.iloc[channel_id-1]
+                if row[1] >= 3200 and report['d_prime'][i] < 4:
+                    singleunitlist.append(i+1)
+                elif row[1] >= 3200 and report['d_prime'][i] >= 4:
+                    multiunitlist.append(i+1)
+                else:
+                    noiselist.append(i+1)
+
+
+
     else:
         report_path = os.path.join(path, 'quality_metrics_classified.csv')
         #combine the paths
@@ -618,13 +653,14 @@ def load_classified_report(path):
 
 
     return report, singleunitlist, multiunitlist, noiselist
+
 def main():
     probewordlist_zola = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
     probewordlist = [(2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10)]
     probewordlist_l74 = [(10, 10), (2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (11, 11), (12, 12),
                          (14, 14)]
-    animal_list = ['F1604_Squinty', 'F1901_Crumble', 'F1606_Windolene', 'F1702_Zola', 'F1815_Cruella', 'F1902_Eclair',
-                   'F1812_Nala', 'F2003_Orecchiette', ]
+    animal_list = ['F1604_Squinty', 'F1901_Crumble', 'F1606_Windolene', 'F1702_Zola', 'F1815_Cruella',
+                   'F1902_Eclair', 'F1812_Nala', 'F2003_Orecchiette', ]
 
     report = {}
     singleunitlist = {}
@@ -633,7 +669,10 @@ def main():
     path_list = {}
 
     for animal in animal_list:
-        path = Path('D:\ms4output_16102023/' + animal + '/')
+        if animal == 'F2003_Orecchiette':
+            path = Path('G:\F2003_Orecchiette/')
+        else:
+            path = Path('D:\ms4output_16102023/' + animal + '/')
         path_list[animal] = [path for path in path.glob('**/quality metrics.csv')]
         # get the parent directory of each path
         path_list[animal] = [path.parent for path in path_list[animal]]
@@ -647,7 +686,10 @@ def main():
         for path in path_list[animal]:
             stream_name = path.parent.absolute()
             stream_name = stream_name.parent.absolute()
-            stream_name = str(stream_name).split('\\')[-1]
+            if animal == 'F2003_Orecchiette':
+                stream_name = str(stream_name).split('\\')[-2]
+            else:
+                stream_name = str(stream_name).split('\\')[-1]
 
             report[animal][stream_name], singleunitlist[animal][stream_name], multiunitlist[animal][stream_name], \
             noiselist[animal][stream_name] = load_classified_report(f'{path}')
@@ -714,7 +756,8 @@ def main():
                                                                             ferretname=animal_text,
                                                                             singleunitlist=singleunitlist[animal][
                                                                                 stream],
-                                                                            multiunitlist=multiunitlist[animal][stream],
+                                                                            multiunitlist=multiunitlist[animal][
+                                                                                stream],
                                                                             noiselist=noiselist[animal][stream],
                                                                             stream=stream, fullid=animal,
                                                                             report=report[animal][stream],
@@ -736,7 +779,8 @@ def main():
                                                                             ferretname=animal_text,
                                                                             singleunitlist=singleunitlist[animal][
                                                                                 stream],
-                                                                            multiunitlist=multiunitlist[animal][stream],
+                                                                            multiunitlist=multiunitlist[animal][
+                                                                                stream],
                                                                             noiselist=noiselist[animal][stream],
                                                                             stream=stream, fullid=animal,
                                                                             report=report[animal][stream],
@@ -758,7 +802,8 @@ def main():
                                                                             ferretname=animal_text,
                                                                             singleunitlist=singleunitlist[animal][
                                                                                 stream],
-                                                                            multiunitlist=multiunitlist[animal][stream],
+                                                                            multiunitlist=multiunitlist[animal][
+                                                                                stream],
                                                                             noiselist=noiselist[animal][stream],
                                                                             stream=stream, fullid=animal,
                                                                             report=report[animal][stream]
@@ -780,7 +825,8 @@ def main():
                                                                             ferretname=animal_text,
                                                                             singleunitlist=singleunitlist[animal][
                                                                                 stream],
-                                                                            multiunitlist=multiunitlist[animal][stream],
+                                                                            multiunitlist=multiunitlist[animal][
+                                                                                stream],
                                                                             noiselist=noiselist[animal][stream],
                                                                             stream=stream, fullid=animal,
                                                                             report=report[animal][stream]
@@ -805,7 +851,8 @@ def main():
                                                                             ferretname=animal_text,
                                                                             singleunitlist=singleunitlist[animal][
                                                                                 stream],
-                                                                            multiunitlist=multiunitlist[animal][stream],
+                                                                            multiunitlist=multiunitlist[animal][
+                                                                                stream],
                                                                             noiselist=noiselist[animal][stream],
                                                                             stream=stream,
                                                                             fullid=animal,
@@ -830,7 +877,8 @@ def main():
                                                                             ferretname=animal_text,
                                                                             singleunitlist=singleunitlist[animal][
                                                                                 stream],
-                                                                            multiunitlist=multiunitlist[animal][stream],
+                                                                            multiunitlist=multiunitlist[animal][
+                                                                                stream],
                                                                             noiselist=noiselist[animal][stream],
                                                                             stream=stream, fullid=animal,
                                                                             report=report[animal][stream]
@@ -862,7 +910,10 @@ def main():
     colors = ['purple', 'magenta', 'darkturquoise', 'olivedrab', 'steelblue', 'darkcyan', 'darkorange']
 
     generate_plots(dictoutput_all, dictoutput_trained, dictoutput_naive,  labels, colors)
+
     return
+
+    # return
 
 
 def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
@@ -1507,7 +1558,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     plt.title('Roved F0 LSTM decoder scores between  \n trained and naive animals', fontsize = 18)
     plt.xlabel('Roved F0 LSTM decoder scores', fontsize = 20)
     plt.ylabel('Density', fontsize = 20)
-    manwhitscorerovedf0 = mannwhitneyu(bigconcatenatetrained_ps, bigconcatenatenaive_ps, alternative = 'less')
+    manwhitscorerovedf0 = mannwhitneyu(bigconcatenatetrained_ps, bigconcatenatenaive_ps, alternative = 'greater')
 
     n1 = len(bigconcatenatetrained_ps)
     n2 = len(bigconcatenatenaive_ps)
@@ -1563,7 +1614,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
 
     #put these stats into a table and export to csv
     #create a dataframe
-    dataframe_stats = pd.DataFrame({'effect sizes r value': [r_controlf0, r_rovef0, r, r_naive], 'trained animals p value': [manwhitscorecontrolf0.pvalue, manwhitscorerovedf0.pvalue, manwhitescore_pvalue, manwhitescore_pvaluenaive]},  index = ['control naive vs. trained(alt = trained > naive) ', 'roved naive vs trained (alt = trained < naive)', 'control vs. roved trained (two sided)', 'control naive vs. roved naive (two sided)'])
+    dataframe_stats = pd.DataFrame({'effect sizes r value': [r_controlf0, r_rovef0, r, r_naive], 'trained animals p value': [manwhitscorecontrolf0.pvalue, manwhitscorerovedf0.pvalue, manwhitescore_pvalue, manwhitescore_pvaluenaive]},  index = ['control naive vs. trained(alt = trained > naive) ', 'roved naive vs trained (alt = trained > naive)', 'control vs. roved trained (two sided)', 'control naive vs. roved naive (two sided)'])
 
     #export to csv
     dataframe_stats.to_csv('G:/neural_chapter/figures/stats_13112023_comparingdistributions_generalintertrialroving.csv')

@@ -1332,11 +1332,11 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
             if 'mod' in unit_id:
                 scoredict_by_unit_peg[unit_id] = scoredict_byunit[unit_id]
                 scoredict_by_unit_peg_pitchsplit[unit_id] = scoredict_byunit_pitchsplit[unit_id]
-            elif 'S2' in unit_id:
+            elif 's2' in unit_id:
                 scoredict_by_unit_peg[unit_id] = scoredict_byunit[unit_id]
                 scoredict_by_unit_peg_pitchsplit[unit_id] = scoredict_byunit_pitchsplit[unit_id]
 
-            elif 'S3' in unit_id:
+            elif 's3' in unit_id:
                 scoredict_by_unit_meg[unit_id] = scoredict_byunit[unit_id]
                 scoredict_by_unit_meg_pitchsplit[unit_id] = scoredict_byunit_pitchsplit[unit_id]
 
@@ -1410,11 +1410,11 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
             if 'mod' in unit_id:
                 scoredict_by_unit_perm_peg[unit_id] = scoredict_byunit_trained_perm[unit_id]
                 scoredict_by_unit_perm_peg_pitchsplit[unit_id] = scoredict_byunit_trained_perm_pitchsplit[unit_id]
-            elif 'S2' in unit_id:
+            elif 's2' in unit_id:
                 scoredict_by_unit_perm_peg[unit_id] = scoredict_byunit_trained_perm[unit_id]
                 scoredict_by_unit_perm_peg_pitchsplit[unit_id] = scoredict_byunit_trained_perm_pitchsplit[unit_id]
 
-            elif 'S3' in unit_id:
+            elif 's3' in unit_id:
                 scoredict_by_unit_perm_meg[unit_id] = scoredict_byunit_trained_perm[unit_id]
                 scoredict_by_unit_perm_meg_pitchsplit[unit_id] = scoredict_byunit_trained_perm_pitchsplit[unit_id]
 
@@ -1801,10 +1801,10 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
             if 'mod' in unit_id:
                 scoredict_by_unit_naive_peg[unit_id] = scoredict_byunit_naive[unit_id]
                 scoredict_by_unit_naive_peg_pitchsplit[unit_id] = scoredict_byunit_naive_pitchsplit[unit_id]
-            elif 'S2' in unit_id:
+            elif 's2' in unit_id:
                 scoredict_by_unit_naive_peg[unit_id] = scoredict_byunit_naive[unit_id]
                 scoredict_by_unit_naive_peg_pitchsplit[unit_id] = scoredict_byunit_naive_pitchsplit[unit_id]
-            elif 'S3' in unit_id:
+            elif 's3' in unit_id:
                 scoredict_by_unit_naive_meg[unit_id] = scoredict_byunit_naive[unit_id]
                 scoredict_by_unit_naive_meg_pitchsplit[unit_id] = scoredict_byunit_naive_pitchsplit[unit_id]
 
@@ -1883,10 +1883,10 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
             if 'mod' in unit_id:
                 scoredict_by_unit_perm_naive_peg[unit_id] = scoredict_byunit_naive_perm[unit_id]
                 scoredict_by_unit_perm_naive_peg_pitchsplit[unit_id] = scoredict_byunit_naive_perm_pitchsplit[unit_id]
-            elif 'S2' in unit_id:
+            elif 's2' in unit_id:
                 scoredict_by_unit_perm_naive_peg[unit_id] = scoredict_byunit_naive_perm[unit_id]
                 scoredict_by_unit_perm_naive_peg_pitchsplit[unit_id] = scoredict_byunit_naive_perm_pitchsplit[unit_id]
-            elif 'S3' in unit_id:
+            elif 's3' in unit_id:
                 scoredict_by_unit_perm_naive_meg[unit_id] = scoredict_byunit_naive_perm[unit_id]
                 scoredict_by_unit_perm_naive_meg_pitchsplit[unit_id] = scoredict_byunit_naive_perm_pitchsplit[unit_id]
 
@@ -2244,7 +2244,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         sns.histplot(df_full_pitchsplit_plot['GenFrac'],ax=ax,  kde=True, bins=20, label='Trained')
         sns.histplot(df_full_naive_pitchsplit_plot['GenFrac'], ax=ax, kde=True, bins=20, label='Naive')
         plt.legend()
-        plt.title(f'Distribution of generalizability scores for the trained and naive animals, 60% mean score threshold, index or frac:{options}')
+        plt.title(f'Distribution of generalizability scores for the trained and naive animals, upper quartile threshold, index or frac:{options}')
         plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_{options}.png')
         plt.show()
 
@@ -2252,7 +2252,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
         sns.violinplot(x='BrainArea', y='GenFrac', data=df_full_pitchsplit_plot, ax=ax, inner=None, color='lightgray')
         sns.stripplot(x='BrainArea', y='GenFrac', data=df_full_pitchsplit_plot, ax=ax, size=3, dodge=False)
-        plt.title(f'Generalizability scores for the trained animals, 60% mean score threshold, index or frac:{options}')
+        plt.title(f'Generalizability scores for the trained animals,u pper quartile threshold, index or frac:{options}')
         plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_violin_{options}.png')
         plt.show()
 
@@ -2434,8 +2434,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     # Print the t-statistic and p-value
     print(t_stat, p_value)
     plt.title('Control - roved F0 \n LSTM decoder scores between trained and naive animals', fontsize=18)
-    plt.xlabel('Control - roved F0 \n LSTM decoder scores', fontsize=20)
-    plt.ylabel('Density', fontsize=20)
+    plt.xlabel('Control - roved F0 \n LSTM decoder scores divided by Control F0', fontsize=20)
+    plt.ylabel('Count', fontsize=20)
     # ax.legend()
     plt.savefig('G:/neural_chapter/figures/diffF0distribution_20062023.png', dpi=1000)
     plt.show()
