@@ -2415,15 +2415,19 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     # sns.distplot(rel_frac_list_naive, bins=20, label='naive', ax=ax, color='darkcyan')
     sns.histplot(rel_frac_list_trained, bins=20, label='trained', color='purple', kde=True)
     sns.histplot(rel_frac_list_naive, bins=20, label='naive', color='darkcyan', kde=True)
+
+    # get the peak of the distribution on the y axis
+
     #get the peak of the distribution on the y axis
-    x2 = ax.lines[-1].get_xdata()  # Get the x data of the distribution
-    y2 = ax.lines[-1].get_ydata()  # Get the y data of the distribution
+    x2 = ax.lines[1].get_xdata()  # Get the x data of the distribution
+    y2 = ax.lines[1].get_ydata()  # Get the y data of the distribution
     maxidnaive_idx = np.argmax(y2)  # The id of the peak (maximum of y data)
     x_coord_naive = x2[maxidnaive_idx]
+
     plt.axvline(x=0, color='black')
 
-    x1 = ax.lines[-2].get_xdata()  # Get the x data of the distribution
-    y1 = ax.lines[-2].get_ydata()  # Get the y data of the distribution
+    x1 = ax.lines[0].get_xdata()  # Get the x data of the distribution
+    y1 = ax.lines[0].get_ydata()  # Get the y data of the distribution
     maxidtrained_idx = np.argmax(y1)  # The id of the peak (maximum of y data)
     x_coord_trained = x1[maxidtrained_idx]
 
