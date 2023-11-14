@@ -280,15 +280,15 @@ def runlgbmmodel_score(df_use, optimization = False):
     plt.savefig(f'G:/neural_chapter/figures/naiveandbrainarea_lightgbmdependencyplot.png', dpi = 300)
     plt.show()
 
-    shap.dependence_plot("the vast", shap_values, dfx, interaction_index='Naive', show=False)
+    shap.dependence_plot("ProbeWord_the vast", shap_values, dfx, interaction_index='Naive', show=False)
     plt.savefig(f'G:/neural_chapter/figures/naiveandprobe1_lightgbmdependencyplot.png', dpi = 300)
     plt.show()
 
-    shap.dependence_plot("when a", shap_values, dfx, interaction_index='Naive', show=False)
+    shap.dependence_plot("ProbeWord_when a", shap_values, dfx, interaction_index='Naive', show=False)
     plt.savefig(f'G:/neural_chapter/figures/naiveandprobe1_lightgbmdependencyplot.png', dpi = 300)
     plt.show()
 
-    shap.dependence_plot("craft", shap_values, dfx, interaction_index='Naive', show=False)
+    shap.dependence_plot("ProbeWord_craft", shap_values, dfx, interaction_index='Naive', show=False)
     plt.savefig(f'G:/neural_chapter/figures/naiveandprobe2_lightgbmdependencyplot.png', dpi = 300)
     plt.show()
     #run a permutation importance test
@@ -362,9 +362,9 @@ def runlgbmmodel_score(df_use, optimization = False):
 
     plt.show()
 
-    probeword_20 = shap_values2[:, "ProbeWord_(2,2)"].data
+    probeword_20 = shap_values2[:, "ProbeWord_craft"].data
     naive_values = shap_values2[:, "Naive"].data
-    shap_values = shap_values2[:, "ProbeWord_(2,2)"].values
+    shap_values = shap_values2[:, "ProbeWord_craft"].values
     data_df = pd.DataFrame({
         "ProbeWord_(20,20)": probeword_20,
         "naive": naive_values,
@@ -372,7 +372,7 @@ def runlgbmmodel_score(df_use, optimization = False):
     })
     custom_colors = ['blue', 'hotpink', "purple"]  # Add more colors as needed
     fig, ax = plt.subplots(figsize=(10, 6))
-    sns.violinplot(x="ProbeWord_(20,20)", y="SHAP value", hue="naive", data=data_df, split=True, inner="quart",
+    sns.violinplot(x="ProbeWord_craft", y="SHAP value", hue="naive", data=data_df, split=True, inner="quart",
                         palette=custom_colors, ax=ax)
     legend_handles, legend_labels = ax.get_legend_handles_labels()
     #reinsert the legend_hanldes and labels
