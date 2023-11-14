@@ -2489,6 +2489,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     fig, ax = plt.subplots(1, figsize=(9,9), dpi=300)
     sns.kdeplot(df_naive, x='F0_control', y ='F0_roved', shade=True, shade_lowest=False, ax=ax, label='naive')
     plt.title('F0 control vs. roved, naive animals')
+    plt.ylabel('F0 roved score')
+    plt.xlabel('F0 control score')
     plt.savefig('G:/neural_chapter/figures/kdeplot_naiveanimals.png', dpi=300)
     plt.show()
 
@@ -2496,6 +2498,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     fig, ax = plt.subplots(1, figsize=(9,9), dpi=300)
     sns.kdeplot(df_trained_kde, x= 'F0_control', y = 'F0_roved', cmap="Reds", shade=True, shade_lowest=False, ax=ax, label='trained')
     plt.title('F0 control vs. roved, trained animals')
+    plt.ylabel('F0 roved score')
+    plt.xlabel('F0 control score')
     plt.savefig('G:/neural_chapter/figures/kdeplot_trainedanimals.png', dpi=300)
     plt.show()
 
