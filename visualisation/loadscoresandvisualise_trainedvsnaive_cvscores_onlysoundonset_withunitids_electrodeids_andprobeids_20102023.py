@@ -2449,9 +2449,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     plt.savefig('G:/neural_chapter/figures/diffF0distribution_20062023.png', dpi=1000)
     plt.show()
     fig, ax = plt.subplots(1, figsize=(9,9), dpi=300)
-
-    ax.scatter(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, marker='P', color='darkcyan', alpha=0.5, label='naive')
     ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.5, label='trained')
+    ax.scatter(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, marker='P', color='darkcyan', alpha=0.5, label='naive')
     x = np.linspace(0.4, 1, 101)
     ax.plot(x, x, color='black', linestyle = '--')  # identity line
 

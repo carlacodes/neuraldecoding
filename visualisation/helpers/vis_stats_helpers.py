@@ -117,6 +117,8 @@ def run_anova_on_dataframe(df_full_pitchsplit):
 
 
 def create_gen_frac_variable(df_full_pitchsplit, high_score_threshold = False, index_or_frac = 'frac'):
+    upper_quartile = np.percentile(df_full_pitchsplit['Score'], 75)
+
     for unit_id in df_full_pitchsplit['ID'].unique():
         # Check how many scores for that unit are above 60%
         df_full_pitchsplit_unit = df_full_pitchsplit[df_full_pitchsplit['ID'] == unit_id]
@@ -126,7 +128,6 @@ def create_gen_frac_variable(df_full_pitchsplit, high_score_threshold = False, i
         #filter for the above-chance scores
         mean_scores = df_full_pitchsplit_unit['Score'].mean()
         #find the upper quartile of the scores
-        upper_quartile = df_full_pitchsplit_unit['Score'].quantile(0.75)
         #add the mean score to the dataframe
         df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'MeanScore'] = mean_scores
         #if the mean score is below 0.75, then we can't calculate the gen frac
