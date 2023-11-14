@@ -176,6 +176,9 @@ def runlgbmmodel_score(df_use, optimization = False):
 
     # df_use['ProbeWord'] = df_use['ProbeWord'].cat.codes
 
+    #relabel the probe word labels to be the same as the paper
+    df_use['ProbeWord'] = df_use['ProbeWord'].replace({(19,19): 1, (4,4): 2, (2,2): 3})
+
     df_use['BrainArea'] = df_use['BrainArea'].astype('category')
     df_use['ID'] = df_use['ID'].astype('category')
     df_use['ProbeWord'] = df_use['ProbeWord'].astype('category')
@@ -191,6 +194,8 @@ def runlgbmmodel_score(df_use, optimization = False):
     df_use["Score"] = pd.to_numeric(df_use["Score"])
     #only remove the below chance scores
     df_use = df_use[df_use['Below-chance'] == 0]
+
+
 
 
     dfx = df_use.loc[:, df_use.columns != col]

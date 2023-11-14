@@ -264,13 +264,12 @@ def scatterplot_and_visualise(probewordlist,
                             elif probeword == (10,10):
                                 probeword = (21,21)
                             elif probeword == (11,11):
-
                                 probeword = (22,22)
                             elif probeword == (12,12):
 
                                 probeword = (23,23)
                             elif probeword == (14,14):
-                                probeword = (25,25)
+                                probeword = (7,7)
 
 
 
