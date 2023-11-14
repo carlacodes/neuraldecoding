@@ -177,7 +177,8 @@ def runlgbmmodel_score(df_use, optimization = False):
     # df_use['ProbeWord'] = df_use['ProbeWord'].cat.codes
 
     #relabel the probe word labels to be the same as the paper
-    df_use['ProbeWord'] = df_use['ProbeWord'].replace({(19,19): 1, (4,4): 2, (2,2): 3})
+    df_use['ProbeWord'] = df_use['ProbeWord'].replace({ '(2,2)': 'craft', '(3,3)': 'in contrast to', '(4,4)': 'when a', '(5,5)': 'accurate', '(6,6)': 'pink noise', '(7,7)': 'of science', '(8,8)': 'rev. instruments', '(9,9)': 'boats', '(10,10)': 'today',
+        '(13,13)': 'sailor', '(15,15)': 'but', '(16,16)': 'researched', '(18,18)': 'took', '(19,19)': 'the vast', '(20,20)': 'today', '(21,21)': 'he takes', '(22,22)': 'becomes', '(23,23)': 'any', '(24,24)': 'more'})
 
     df_use['BrainArea'] = df_use['BrainArea'].astype('category')
     df_use['ID'] = df_use['ID'].astype('category')
@@ -262,9 +263,8 @@ def runlgbmmodel_score(df_use, optimization = False):
 
     fig, ax = plt.subplots(1, figsize=(10, 10), dpi = 300)
 
-    shap.summary_plot(shap_values,dfx,  max_display=20)
+    shap.summary_plot(shap_values,dfx,  max_display=20, show = False)
     plt.savefig(f'G:/neural_chapter/figures/summary_plot_lightgbm.png', dpi = 300)
-
     plt.show()
     #partial dependency plot of the pitch shift versus naive color coded by naive
 
@@ -280,15 +280,15 @@ def runlgbmmodel_score(df_use, optimization = False):
     plt.savefig(f'G:/neural_chapter/figures/naiveandbrainarea_lightgbmdependencyplot.png', dpi = 300)
     plt.show()
 
-    shap.dependence_plot("ProbeWord_(19,19)", shap_values, dfx, interaction_index='Naive', show=False)
+    shap.dependence_plot("the vast", shap_values, dfx, interaction_index='Naive', show=False)
     plt.savefig(f'G:/neural_chapter/figures/naiveandprobe1_lightgbmdependencyplot.png', dpi = 300)
     plt.show()
 
-    shap.dependence_plot("ProbeWord_(4,4)", shap_values, dfx, interaction_index='Naive', show=False)
+    shap.dependence_plot("when a", shap_values, dfx, interaction_index='Naive', show=False)
     plt.savefig(f'G:/neural_chapter/figures/naiveandprobe1_lightgbmdependencyplot.png', dpi = 300)
     plt.show()
 
-    shap.dependence_plot("ProbeWord_(2,2)", shap_values, dfx, interaction_index='Naive', show=False)
+    shap.dependence_plot("craft", shap_values, dfx, interaction_index='Naive', show=False)
     plt.savefig(f'G:/neural_chapter/figures/naiveandprobe2_lightgbmdependencyplot.png', dpi = 300)
     plt.show()
     #run a permutation importance test
