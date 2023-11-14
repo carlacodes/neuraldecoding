@@ -305,12 +305,17 @@ def runlgbmmodel_score(df_use, optimization = False):
     sns.violinplot(x="pitchshift", y="SHAP value", hue="naive", data=data_df, split=True, inner="quart",
                    palette=custom_colors, ax=ax)
 
-    ax.set_xticks([ 0, 1, 2, 3, 4])
+    ax.set_xticks([ 0, 1])
     ax.set_xticklabels(['True', 'False'], fontsize=18, rotation=45)
     ax.set_xlabel('Pitch Shift', fontsize=18)
     ax.set_ylabel('Impact on decoding score', fontsize=18)
+    legend_handles, legend_labels = ax.get_legend_handles_labels()
+    #reinsert the legend_hanldes and labels
+    ax.legend(legend_handles, ['Trained', 'Naive'], loc='upper right', fontsize=13)
     plt.savefig(f'G:/neural_chapter/figures/violinplot_pitchshift.png', dpi = 300)
     plt.show()
+
+    fig, ax = plt.subplots(figsize=(10, 6))
 
     MEG = shap_values2[:, "BrainArea_MEG"].data
     naive_values = shap_values2[:, "Naive"].data
@@ -320,12 +325,59 @@ def runlgbmmodel_score(df_use, optimization = False):
         "naive": naive_values,
         "SHAP value": shap_values
     })
-    custom_colors = ['slategray', 'hotpink', "yellow"]  # Add more colors as needed
+    custom_colors = ['blue', 'hotpink', "purple"]  # Add more colors as needed
     fig, ax = plt.subplots(figsize=(10, 6))
     sns.violinplot(x="MEG", y="SHAP value", hue="naive", data=data_df, split=True, inner="quart",
                      palette=custom_colors, ax=ax)
     ax.set_xticks([0, 1])
     ax.set_xticklabels(['True', 'False'], fontsize=18, rotation=45)
+    legend_handles, legend_labels = ax.get_legend_handles_labels()
+    #reinsert the legend_hanldes and labels
+    ax.legend(legend_handles, ['Trained', 'Naive'], loc='upper right', fontsize=13)
+    plt.show()
+
+
+    PEG = shap_values2[:, "BrainArea_PEG"].data
+    naive_values = shap_values2[:, "Naive"].data
+    shap_values = shap_values2[:, "BrainArea_PEG"].values
+    data_df = pd.DataFrame({
+        "PEG": PEG,
+        "naive": naive_values,
+        "SHAP value": shap_values
+    })
+    custom_colors = ['blue', 'hotpink', "purple"]  # Add more colors as needed
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.violinplot(x="PEG", y="SHAP value", hue="naive", data=data_df, split=True, inner="quart",
+                        palette=custom_colors, ax=ax)
+    legend_handles, legend_labels = ax.get_legend_handles_labels()
+    #reinsert the legend_hanldes and labels
+    ax.legend(legend_handles, ['Trained', 'Naive'], loc='upper right', fontsize=13)
+    ax.set_xticks([0, 1])
+    ax.set_xticklabels(['True', 'False'], fontsize=18, rotation=45)
+
+    plt.show()
+
+    probeword_20 = shap_values2[:, "ProbeWord_(2,2)"].data
+    naive_values = shap_values2[:, "Naive"].data
+    shap_values = shap_values2[:, "ProbeWord_(2,2)"].values
+    data_df = pd.DataFrame({
+        "ProbeWord_(20,20)": probeword_20,
+        "naive": naive_values,
+        "SHAP value": shap_values
+    })
+    custom_colors = ['blue', 'hotpink', "purple"]  # Add more colors as needed
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.violinplot(x="ProbeWord_(20,20)", y="SHAP value", hue="naive", data=data_df, split=True, inner="quart",
+                        palette=custom_colors, ax=ax)
+    legend_handles, legend_labels = ax.get_legend_handles_labels()
+    #reinsert the legend_hanldes and labels
+    ax.legend(legend_handles, ['Trained', 'Naive'], loc='upper right', fontsize=13)
+    ax.set_xticks([0, 1])
+    ax.set_xticklabels(['True', 'False'], fontsize=18, rotation=45)
+    plt.show()
+
+
+
 
 
 
