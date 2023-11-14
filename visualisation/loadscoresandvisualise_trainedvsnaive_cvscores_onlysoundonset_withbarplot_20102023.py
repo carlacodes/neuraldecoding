@@ -1543,10 +1543,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     n1 = len(bigconcatenatetrained_nonps)
     n2 = len(bigconcatenatenaive_nonps)
     r_controlf0 = 1 - (2 * manwhitscorecontrolf0.statistic) / (n1 * n2)
-
     #ax.legend()
-
-
     plt.savefig('G:/neural_chapter/figures/controlF0distribution20062023intertrialroving.png', dpi=1000)
     plt.show()
 
