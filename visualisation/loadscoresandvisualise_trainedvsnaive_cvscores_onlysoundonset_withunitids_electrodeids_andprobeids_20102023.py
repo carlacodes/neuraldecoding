@@ -2243,7 +2243,13 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         sns.histplot(df_full_pitchsplit_plot['GenFrac'],ax=ax,  kde=True, bins=20, label='Trained')
         sns.histplot(df_full_naive_pitchsplit_plot['GenFrac'], ax=ax, kde=True, bins=20, label='Naive')
         plt.legend()
-        plt.title(f'Distribution of generalizability scores for the trained and naive animals, upper quartile threshold, index or frac:{options}')
+        # plt.title(f'Distribution of generalizability scores for the trained and naive animals, upper quartile threshold, index or frac:{options}')
+        if options == 'index':
+            plt.xlabel('Generalizability Index of Top 25% of Units', fontsize = 20)
+        elif options == 'frac':
+            plt.xlabel('Generalizability Fraction of Top 25% of Units', fontsize = 20)
+
+
         plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_{options}.png')
         plt.show()
 
@@ -2251,14 +2257,22 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
         sns.violinplot(x='BrainArea', y='GenFrac', data=df_full_pitchsplit_plot, ax=ax, inner=None, color='lightgray')
         sns.stripplot(x='BrainArea', y='GenFrac', data=df_full_pitchsplit_plot, ax=ax, size=3, dodge=False)
-        plt.title(f'Generalizability scores for the trained animals,u pper quartile threshold, index or frac:{options}')
+        # plt.title(f'Generalizability scores for the trained animals, upper quartile threshold, index or frac:{options}')
+        if options == 'index':
+            plt.xlabel('Generalizability Index of Top 25% of Units', fontsize = 20)
+        elif options == 'frac':
+            plt.xlabel('Generalizability Fraction of Top 25% of Units', fontsize = 20)
         plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_violin_{options}.png')
         plt.show()
 
         fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
         sns.violinplot(x='BrainArea', y='GenFrac', data=df_full_naive_pitchsplit_plot, ax=ax, inner=None, color='lightgray')
         sns.stripplot(x='BrainArea', y='GenFrac', data=df_full_naive_pitchsplit_plot, ax=ax, size=3, dodge=False)
-        plt.title(f'Generalizability scores for the naive animals, 60% mean score threshold, index or frac:{options}')
+        # plt.title(f'Generalizability scores for the naive animals, 60% mean score threshold, index or frac:{options}')
+        if options == 'index':
+            plt.xlabel('Generalizability Index of Top 25% of Units', fontsize = 20)
+        elif options == 'frac':
+            plt.xlabel('Generalizability Fraction of Top 25% of Units', fontsize = 20)
         plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_violin_naive_{options}.png')
         plt.show()
 
@@ -2281,10 +2295,9 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         df_full_naive_pitchsplit = create_gen_frac_variable(df_full_naive_pitchsplit, high_score_threshold=False, index_or_frac = options)
         df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit[df_full_naive_pitchsplit['GenFrac'].notna()]
         df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot.drop_duplicates(subset = ['ID'])
-        #get the subset of the data where the meanscore is above 0.75
-        df_full_naive_pitchsplit_plot_highsubset = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['MeanScore'] > 0.75]
 
-        #plot the distplot of these scores overlaid with the histogram
+
+
         fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
         sns.histplot(df_full_pitchsplit_plot['GenFrac'],ax=ax,  kde=True, bins=20, label='Trained')
         sns.histplot(df_full_pitchsplit_plot_highsubset['GenFrac'],ax=ax,  kde=True, bins=20, label='Trained, 75% mean score threshold')
@@ -2292,6 +2305,9 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         # sns.histplot(df_full_naive_pitchsplit_plot_highsubset['GenFrac'], ax=ax, kde=True, bins=20, label='Naive, 75% mean score threshold')
         plt.legend()
         plt.title(f'Distribution of generalisability scores for the trained and naive animals, all units, index method: {options}')
+
+
+
         stat_general, p_general = mannwhitneyu(df_full_pitchsplit_plot['GenFrac'],
                                                df_full_naive_pitchsplit_plot['GenFrac'], alternative='two-sided')
         print(f'Generalizability scores, all units, index method: {options}')
@@ -2307,12 +2323,22 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         sns.violinplot(x='BrainArea', y='GenFrac', data=df_full_pitchsplit_plot, ax=ax, inner=None, color='lightgray')
         sns.stripplot(x='BrainArea', y='GenFrac', data=df_full_pitchsplit_plot, ax=ax, size=3, dodge=False)
         plt.title(f'Generalizability scores for the trained animals, all units, method: {options}')
+        if options == 'index':
+            plt.xlabel('Generalizability Index ', fontsize = 20)
+        elif options == 'frac':
+            plt.xlabel('Generalizability Fraction', fontsize = 20)
+
         plt.savefig(f'G:/neural_chapter/figures/GenFrac_allthreshold_violin_{options}.png')
         plt.show()
 
         fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
         sns.violinplot(x='BrainArea', y='GenFrac', data=df_full_naive_pitchsplit_plot, ax=ax, inner=None, color='lightgray')
         sns.stripplot(x='BrainArea', y='GenFrac', data=df_full_naive_pitchsplit_plot, ax=ax, size=3, dodge=False)
+
+        if options == 'index':
+            plt.xlabel('Generalizability Index', fontsize = 20)
+        elif options == 'frac':
+            plt.xlabel('Generalizability Fraction', fontsize = 20)
         plt.title(f'Generalizability scores for the naive animals, all units, method: {options}')
         plt.savefig(f'G:/neural_chapter/figures/GenFrac_allthreshold_violin_naive_{options}.png')
         #do the mann whitney u test between genfrac scores from PEG and MEG
@@ -2353,17 +2379,18 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     plt.savefig(f'G:/neural_chapter/figurestrained_animals_overdistractor_dividedbypitchshift.png', dpi = 300)
     plt.show()
 
-    df_kruskal = pd.DataFrame(columns=['ProbeWord', 'Kruskal_pvalue_trained'])
+    df_kruskal = pd.DataFrame(columns=['ProbeWord', 'Kruskal_pvalue_trained', 'less than 0.05'])
     # Perform Kruskal-Wallis test for each ProbeWord
     for probe_word in df_above_chance_ps['ProbeWord'].unique():
         subset_data = df_above_chance_ps[df_above_chance_ps['ProbeWord'] == probe_word]
 
         result_kruskal = scipy.stats.kruskal(subset_data[subset_data['PitchShift'] == 1]['Score'],
                                              subset_data[subset_data['PitchShift'] == 0]['Score'])
+        less_than_alpha = result_kruskal.pvalue < 0.05
 
         print(f"ProbeWord: {probe_word}, Kruskal-Wallis p-value: {result_kruskal.pvalue}")
         # append to a dataframe
-        df_kruskal = df_kruskal.append({'ProbeWord': probe_word, 'Kruskal_pvalue_trained': result_kruskal.pvalue},
+        df_kruskal = df_kruskal.append({'ProbeWord': probe_word, 'Kruskal_pvalue_trained': result_kruskal.pvalue, 'less than 0.05': less_than_alpha},
                                        ignore_index=True)
     # export the dataframe
     df_kruskal.to_csv('G:/neural_chapter/figures/kruskal_pvalues_trained.csv')
@@ -2503,6 +2530,14 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     plt.xlabel('F0 control score', fontsize = 20)
     plt.savefig('G:/neural_chapter/figures/kdeplot_trainedanimals.png', dpi=300)
     plt.show()
+    manwhitscorecontrolf0 = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatenaive_nonps, alternative='greater')
+
+    n1 = len(bigconcatenatetrained_nonps)
+    n2 = len(bigconcatenatenaive_nonps)
+    r_controlf0 = 1 - (2 * manwhitscorecontrolf0.statistic) / (n1 * n2)
+    # ax.legend()
+    plt.savefig('G:/neural_chapter/figures/controlF0distribution20062023intertrialroving.png', dpi=1000)
+    plt.show()
 
     fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
     ax.set_xlim([0, 1])
@@ -2587,6 +2622,12 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     n1 = len(bigconcatenatenaive_nonps)
     n2 = len(bigconcatenatenaive_ps)
     r_naive = 1 - (2 * manwhitscore_statnaive) / (n1 * n2)
+    #put these stats into a table and export to csv
+    #create a dataframe
+    dataframe_stats = pd.DataFrame({'effect sizes r value': [r_controlf0, r_rovef0, r, r_naive], 'trained animals p value': [manwhitscorecontrolf0.pvalue, manwhitscorerovedf0.pvalue, manwhitescore_pvalue, manwhitescore_pvaluenaive]},  index = ['control naive vs. trained(alt = trained > naive) ', 'roved naive vs trained (alt = trained > naive)', 'control vs. roved trained (two sided)', 'control naive vs. roved naive (two sided)'])
+
+    #export to csv
+    dataframe_stats.to_csv('G:/neural_chapter/figures/stats_16112023_comparingdistributions_generalintertrialroving.csv')
 
     #now plot by the probe word for the naive animals
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
@@ -2603,7 +2644,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     plt.savefig(f'G:/neural_chapter/figures/naive_animals_overdistractor_dividedbypitchshift.png', dpi = 300)
     plt.show()
 
-    df_kruskal = pd.DataFrame(columns=['ProbeWord', 'Kruskal_pvalue'])
+    df_kruskal = pd.DataFrame(columns=['ProbeWord', 'Kruskal_pvalue', 'less than 0.05'])
     # Perform Kruskal-Wallis test for each ProbeWord
     for probe_word in df_above_chance['ProbeWord'].unique():
         subset_data = df_above_chance[df_above_chance['ProbeWord'] == probe_word]
@@ -2611,9 +2652,11 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         result_kruskal = scipy.stats.kruskal(subset_data[subset_data['PitchShift'] == 1]['Score'],
                                  subset_data[subset_data['PitchShift'] == 0]['Score'])
 
+        less_than_alpha = result_kruskal.pvalue < 0.05
+
         print(f"ProbeWord: {probe_word}, Kruskal-Wallis p-value: {result_kruskal.pvalue}")
         #append to a dataframe
-        df_kruskal = df_kruskal.append({'ProbeWord': probe_word, 'Kruskal_pvalue': result_kruskal.pvalue}, ignore_index=True)
+        df_kruskal = df_kruskal.append({'ProbeWord': probe_word, 'Kruskal_pvalue': result_kruskal.pvalue, 'less than 0.05':less_than_alpha}, ignore_index=True)
     #export the dataframe
     df_kruskal.to_csv('G:/neural_chapter/figures/kruskal_pvalues_naive.csv')
     #run an anova to see if probe word is significant
