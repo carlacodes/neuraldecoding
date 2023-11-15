@@ -134,6 +134,7 @@ def create_gen_frac_variable(df_full_pitchsplit, high_score_threshold = False, i
         #if the mean score is below 0.75, then we can't calculate the gen frac
         all_scores = df_full_pitchsplit_unit['Score'].to_numpy()
         #figure out if any of the scores are above 0.75
+        skip_param = False
         for score in all_scores:
             if score < upper_quartile:
                 skip_param = True
