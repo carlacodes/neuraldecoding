@@ -1663,7 +1663,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
 
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
-    sns.swarmplot(x='BrainArea', y='Score', hue='Below-chance', data=df_full, ax=ax, alpha=0.5)
+    sns.stripplot(x='BrainArea', y='Score', hue='Below-chance', data=df_full, ax=ax, alpha=0.5)
     sns.violinplot(x='BrainArea', y='Score', data=df_full, ax=ax, inner=None, color='lightgray')
     plt.title('Trained animals')
     plt.savefig(f'G:/neural_chapter/figures/violinplot_ofdecodingscores_bybrainarea_trainedanimals.png', dpi = 300)
@@ -2137,7 +2137,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
             df_full_naive = df_full_naive[df_full_naive['ID'] != unit_id]
 
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
-    sns.swarmplot(x='BrainArea', y='Score', hue='Below-chance', data=df_full_naive, ax=ax, alpha=0.5)
+    sns.stripplot(x='BrainArea', y='Score', hue='Below-chance', data=df_full_naive, ax=ax, alpha=0.5)
     sns.violinplot(x='BrainArea', y='Score', data=df_full_naive, ax=ax, inner=None, color='lightgray')
     plt.title('Naive animals')
     plt.savefig(f'G:/neural_chapter/figures/violinplot_by_area_score_naiveanimals.png')
