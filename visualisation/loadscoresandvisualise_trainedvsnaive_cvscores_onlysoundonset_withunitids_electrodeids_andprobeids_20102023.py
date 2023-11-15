@@ -2504,6 +2504,89 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     plt.savefig('G:/neural_chapter/figures/kdeplot_trainedanimals.png', dpi=300)
     plt.show()
 
+    fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
+    ax.set_xlim([0, 1])
+    sns.distplot(bigconcatenatetrained_ps, label='trained', ax=ax, color='purple')
+    sns.distplot(bigconcatenatenaive_ps, label='naive', ax=ax, color='darkcyan')
+    # man whiteney test score
+    # manwhitscore = mannwhitneyu(relativescoretrained, relativescorenaive, alternative = 'greater')
+    plt.title('Roved F0 LSTM decoder scores between  \n trained and naive animals', fontsize=18)
+    plt.xlabel('Roved F0 LSTM decoder scores', fontsize=20)
+    plt.ylabel('Density', fontsize=20)
+    manwhitscorerovedf0 = mannwhitneyu(bigconcatenatetrained_ps, bigconcatenatenaive_ps, alternative='greater')
+    plt.xlim([0.35, 1])
+
+    n1 = len(bigconcatenatetrained_ps)
+    n2 = len(bigconcatenatenaive_ps)
+    r_rovef0 = 1 - (2 * manwhitscorerovedf0.statistic) / (n1 * n2)
+
+    # ax.leg
+    ax.legend(fontsize=18)
+    plt.savefig('G:/neural_chapter/figures/rovedF0distribution_20062023intertrialroving.png', dpi=1000)
+
+    plt.show()
+
+    fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
+    ax.set_xlim([0, 1])
+    sns.distplot(bigconcatenatetrained_ps, label='trained roved', ax=ax, color='purple')
+    sns.distplot(bigconcatenatetrained_nonps, label='trained control', ax=ax, color='magenta')
+    ax.legend(fontsize=18)
+    plt.title('Roved and Control F0 Distributions for the Trained Animals', fontsize=18)
+    plt.xlabel(' LSTM decoder scores', fontsize=20)
+    plt.xlim([0.35, 1])
+
+    plt.savefig('G:/neural_chapter/figures/rovedF0vscontrolF0traineddistribution_20062023intertrialroving.png',
+                dpi=1000)
+
+    plt.show()
+
+    fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
+    ax.set_xlim([0, 1])
+    sns.distplot(bigconcatenatenaive_ps, label='naive roved', ax=ax, color='darkcyan')
+    sns.distplot(bigconcatenatenaive_nonps, label='naive control', ax=ax, color='cyan')
+    plt.xlim([0.35, 1])
+
+    ax.legend(fontsize=18)
+    plt.xlabel(' LSTM decoder scores', fontsize=20)
+    plt.title('Roved and Control F0 Distributions for the Naive Animals', fontsize=18)
+
+    plt.savefig('G:/neural_chapter/figures/rovedF0vscontrolF0naivedistribution_20062023intertrialroving.png', dpi=1000)
+    plt.show()
+    kstestcontrolf0vsrovedtrained = scipy.stats.kstest(bigconcatenatetrained_nonps, bigconcatenatetrained_ps,
+                                                       alternative='two-sided')
+
+    # do levene's test
+    leveneteststat = scipy.stats.levene(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)
+    kstestcontrolf0vsrovednaive = scipy.stats.kstest(bigconcatenatenaive_nonps, bigconcatenatenaive_ps,
+                                                     alternative='two-sided')
+
+    # Calculating Cramér's V for effect size
+    def cramers_v(n, ks_statistic):
+        return np.sqrt(ks_statistic / n)
+
+    n = len(bigconcatenatenaive_nonps) * len(bigconcatenatenaive_ps) / (
+                len(bigconcatenatenaive_nonps) + len(bigconcatenatenaive_ps))
+    effect_size_naive = cramers_v(n, kstestcontrolf0vsrovednaive.statistic)
+
+    n_trained = len(bigconcatenatetrained_nonps) * len(bigconcatenatetrained_ps) / (
+                len(bigconcatenatetrained_nonps) + len(bigconcatenatetrained_ps))
+    effect_size_trained = cramers_v(n_trained, kstestcontrolf0vsrovedtrained.statistic)
+
+    # run mann whitney u test
+    manwhitscore_stat, manwhitescore_pvalue = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatetrained_ps,
+                                                           alternative='two-sided')
+    manwhitscore_statnaive, manwhitescore_pvaluenaive = mannwhitneyu(bigconcatenatenaive_nonps, bigconcatenatenaive_ps,
+                                                                     alternative='two-sided')
+
+    # Calculate rank-biserial correlation coefficient
+
+    n1 = len(bigconcatenatetrained_nonps)
+    n2 = len(bigconcatenatetrained_ps)
+    r = 1 - (2 * manwhitscore_stat) / (n1 * n2)
+
+    n1 = len(bigconcatenatenaive_nonps)
+    n2 = len(bigconcatenatenaive_ps)
+    r_naive = 1 - (2 * manwhitscore_statnaive) / (n1 * n2)
 
     #now plot by the probe word for the naive animals
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
