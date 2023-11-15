@@ -180,9 +180,18 @@ def runlgbmmodel_score(df_use, optimization = False):
     df_use['ProbeWord'] = df_use['ProbeWord'].replace({ '(2,2)': 'craft', '(3,3)': 'in contrast to', '(4,4)': 'when a', '(5,5)': 'accurate', '(6,6)': 'pink noise', '(7,7)': 'of science', '(8,8)': 'rev. instruments', '(9,9)': 'boats', '(10,10)': 'today',
         '(13,13)': 'sailor', '(15,15)': 'but', '(16,16)': 'researched', '(18,18)': 'took', '(19,19)': 'the vast', '(20,20)': 'today', '(21,21)': 'he takes', '(22,22)': 'becomes', '(23,23)': 'any', '(24,24)': 'more'})
 
-    df_use['BrainArea'] = df_use['BrainArea'].astype('category')
+    #replace probeword with number ordered by length
+    #order the probewords by length
+    unique_probe_words = df_use['ProbeWord'].unique()
+    unique_probe_words = sorted(unique_probe_words, key=len)
+    for i, probe in enumerate(unique_probe_words):
+        df_use['ProbeWord'] = df_use['ProbeWord'].replace({probe: i})
+
+    df_use['BrainArea'] = df_use['BrainArea'] .replace({'PEG': 0, 'AEG': 1, 'MEG': 2})
+
+    # df_use['BrainArea'] = df_use['BrainArea'].astype('category')
     df_use['ID'] = df_use['ID'].astype('category')
-    df_use['ProbeWord'] = df_use['ProbeWord'].astype('category')
+    # df_use['ProbeWord'] = df_use['ProbeWord'].astype('category')
 
 
     # cast the probe word category as an int
@@ -213,7 +222,6 @@ def runlgbmmodel_score(df_use, optimization = False):
     dfx = dfx.loc[:, dfx.columns != col5]
     col6 = 'Below_chance'
     dfx = dfx.loc[:, dfx.columns != col6]
-    dfx = pd.get_dummies(dfx)
 
     #remove any rows
     if optimization == True:
@@ -346,6 +354,51 @@ def runlgbmmodel_score(df_use, optimization = False):
     plt.savefig(f'G:/neural_chapter/figures/lightgbm_violinplot_brainarea_meg.png', dpi = 300, bbox_inches='tight')
     plt.show()
 
+    AEG = shap_values2[:, "BrainArea_AEG"].data
+    naive_values = shap_values2[:, "Naive"].data
+    shap_values = shap_values2[:, "BrainArea_AEG"].values
+    data_df = pd.DataFrame({
+        "AEG": AEG,
+        "naive": naive_values,
+        "SHAP value": shap_values
+    })
+    # custom_colors = ['blue', 'hotpink', "purple"]  # Add more colors as needed
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.violinplot(x="AEG", y="SHAP value", hue="naive", data=data_df, split=True, inner="quart",
+                        palette=custom_colors, ax=ax)
+    legend_handles, legend_labels = ax.get_legend_handles_labels()
+    #reinsert the legend_hanldes and labels
+    ax.legend(legend_handles, ['Trained', 'Naive'], loc='upper right', fontsize=13)
+    ax.set_xticks([0, 1])
+    ax.set_xticklabels(['True', 'False'], fontsize=18, rotation=45)
+    plt.xlabel('Brain Area: AEG', fontsize=18)
+    ax.set_ylabel('Impact on decoding score', fontsize=18)
+    plt.savefig(f'G:/neural_chapter/figures/lightgbm_violinplot_brainarea_aeg.png', dpi = 300, bbox_inches = 'tight')
+    plt.show()
+
+    naive = shap_values2[:, "Naive"].data
+    ps_values = shap_values2[:, "PitchShift"].data
+    shap_values = shap_values2[:, "Naive"].values
+    data_df = pd.DataFrame({
+        "Naive": naive,
+        "pitchshift": ps_values,
+        "SHAP value": shap_values
+    })
+    # custom_colors = ['blue', 'hotpink', "purple"]  # Add more colors as needed
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.violinplot(x="Naive", y="SHAP value", hue="pitchshift", data=data_df, split=True, inner="quart",
+                        palette=custom_colors, ax=ax)
+    legend_handles, legend_labels = ax.get_legend_handles_labels()
+    #reinsert the legend_hanldes and labels
+    ax.legend(legend_handles, ['pitchshift', 'control'], loc='upper right', fontsize=13)
+    ax.set_xticks([0, 1])
+    ax.set_xticklabels(['Trained', 'Naive'], fontsize=18, rotation=45)
+    plt.xlabel('Naive', fontsize=18)
+    ax.set_ylabel('Impact on decoding score', fontsize=18)
+    plt.savefig(f'G:/neural_chapter/figures/lightgbm_violinplot_naive.png', dpi = 300, bbox_inches = 'tight')
+    plt.show()
+
+
 
     PEG = shap_values2[:, "BrainArea_PEG"].data
     naive_values = shap_values2[:, "Naive"].data
@@ -412,6 +465,8 @@ def runlgbmmodel_score(df_use, optimization = False):
 
     plt.savefig(f'G:/neural_chapter/figures/lightgbm_violinplot_probe_when_a.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
+
+
 
 
 
