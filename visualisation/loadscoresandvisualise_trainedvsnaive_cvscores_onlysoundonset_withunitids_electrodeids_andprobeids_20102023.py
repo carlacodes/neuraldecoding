@@ -1,4 +1,6 @@
 import os
+
+import matplotlib.pyplot as plt
 import scipy.stats as stats
 import shap
 import statsmodels as sm
@@ -2239,9 +2241,9 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot.drop_duplicates(subset = ['ID'])
 
         #plot the distplot of these scores overlaid with the histogram
-        fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
-        sns.histplot(df_full_pitchsplit_plot['GenFrac'],ax=ax,  kde=True, bins=20, label='Trained')
-        sns.histplot(df_full_naive_pitchsplit_plot['GenFrac'], ax=ax, kde=True, bins=20, label='Naive')
+        fig, ax = plt.subplots(1, dpi=300)
+        sns.histplot(df_full_pitchsplit_plot['GenFrac'],ax=ax,  kde=True, bins=20, color = 'purple', label='Trained')
+        sns.histplot(df_full_naive_pitchsplit_plot['GenFrac'], ax=ax, kde=True, bins=20, color = 'cyan', label='Naive')
         plt.legend()
         # plt.title(f'Distribution of generalizability scores for the trained and naive animals, upper quartile threshold, index or frac:{options}')
         if options == 'index':
@@ -2249,19 +2251,20 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         elif options == 'frac':
             plt.xlabel('Generalizability Fraction of Top 25% of Units', fontsize = 20)
 
-
+        plt.ylabel('Count', fontsize = 20)
         plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_{options}.png')
         plt.show()
 
         #plot as a violin plot with brainarea on the x axis
-        fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
+        fig, ax = plt.subplots(1, dpi=300)
         sns.violinplot(x='BrainArea', y='GenFrac', data=df_full_pitchsplit_plot, ax=ax, inner=None, color='lightgray')
-        sns.stripplot(x='BrainArea', y='GenFrac', data=df_full_pitchsplit_plot, ax=ax, size=3, dodge=False)
+        sns.stripplot(x='BrainArea', y='GenFrac', data=df_full_pitchsplit_plot, ax=ax, size=3, color = 'purple', dodge=False)
         # plt.title(f'Generalizability scores for the trained animals, upper quartile threshold, index or frac:{options}')
         if options == 'index':
             plt.xlabel('Generalizability Index of Top 25% of Units', fontsize = 20)
         elif options == 'frac':
             plt.xlabel('Generalizability Fraction of Top 25% of Units', fontsize = 20)
+        plt.ylabel('Count', fontsize = 20)
         plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_violin_{options}.png')
         plt.show()
 
@@ -2275,6 +2278,79 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
             plt.xlabel('Generalizability Fraction of Top 25% of Units', fontsize = 20)
         plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_violin_naive_{options}.png')
         plt.show()
+
+        #do the mann whitney u test between genfrac scores from PEG and MEG
+        df_full_pitchsplit_plot_peg = df_full_pitchsplit_plot[df_full_pitchsplit_plot['BrainArea'] == 'PEG']
+        df_full_pitchsplit_plot_meg = df_full_pitchsplit_plot[df_full_pitchsplit_plot['BrainArea'] == 'MEG']
+        df_full_naive_pitchsplit_plot_peg = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['BrainArea'] == 'PEG']
+        df_full_naive_pitchsplit_plot_meg = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['BrainArea'] == 'MEG']
+
+        stat_peg, p_peg = mannwhitneyu(df_full_pitchsplit_plot_peg['GenFrac'], df_full_pitchsplit_plot_meg['GenFrac'], alternative = 'less')
+        #plot the brain area loation of the units that are significantly different
+        fig, ax = plt.subplots(1, dpi=300)
+        sns.violinplot(x='BrainArea', y='GenFrac', data=df_full_pitchsplit_plot, ax=ax, inner=None, color='lightgray')
+        sns.stripplot(x='BrainArea', y='GenFrac', data=df_full_pitchsplit_plot, ax=ax, color = 'purple', dodge=False)
+        plt.title(f'Generalizability scores for the trained animals, upper quartile threshold, index or frac:{options}')
+        if options == 'index':
+
+            plt.xlabel('Generalizability Index of Top 25% of Units', fontsize = 20)
+        elif options == 'frac':
+
+            plt.xlabel('Generalizability Fraction of Top 25% of Units', fontsize = 20)
+        plt.ylabel('Count', fontsize = 20)
+        plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_violin_bybrainarea_{options}.png')
+
+        fig, ax = plt.subplots(1, dpi=300)
+        sns.violinplot(x='BrainArea', y='MeanScore', data=df_full_pitchsplit_plot, ax=ax, inner=None, color='lightgray')
+        sns.stripplot(x='BrainArea', y='MeanScore', data=df_full_pitchsplit_plot, color = 'purple', ax=ax, dodge=False)
+        # do a mann whitney u test between the meanscores for PEG and MEG
+        stat_peg, p_peg = mannwhitneyu(df_full_pitchsplit_plot_peg['MeanScore'], df_full_pitchsplit_plot_meg['MeanScore'], alternative='greater')
+        if options == 'index':
+            plt.xlabel(f'Mean Decoding Score of Top 25% of Units', fontsize=20)
+        elif options == 'frac':
+            plt.xlabel(f'Mean Decoding Score of Top 25% of Units', fontsize=20)
+        plt.ylabel('Mean Score', fontsize=20)
+        plt.savefig(f'G:/neural_chapter/figures/meanscore_highthreshold_violin_bybrainarea_{options}.png')
+
+        fig, ax = plt.subplots(1, dpi=300)
+        sns.violinplot(x='BrainArea', y='GenFrac', data=df_full_naive_pitchsplit_plot, ax=ax, inner=None, color='lightgray')
+        sns.stripplot(x='BrainArea', y='GenFrac', data=df_full_naive_pitchsplit_plot, ax=ax, color ='cyan', dodge=False)
+        plt.title(f'Generalizability scores for the naive animals, upper quartile threshold, index or frac:{options}')
+        if options == 'index':
+            plt.xlabel('Generalizability Index of Top 25% of Units', fontsize = 20)
+        elif options == 'frac':
+            plt.xlabel('Generalizability Fraction of Top 25% of Units', fontsize = 20)
+        plt.ylabel('GenFrac', fontsize = 20)
+        plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_violin_naive_bybrainarea_{options}.png')
+
+        stat_peg, p_peg = mannwhitneyu(df_full_naive_pitchsplit_plot_peg['GenFrac'], df_full_naive_pitchsplit_plot_meg['GenFrac'], alternative = 'less')
+        #plot the brain area loation of the units that are significantly different
+        fig, ax = plt.subplots(1, dpi=300)
+        #make the dataframe in the order of PEG, MEG, AEG
+        df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot.sort_values(by=['BrainArea'])
+
+        sns.violinplot(x='BrainArea', y='MeanScore', data=df_full_naive_pitchsplit_plot, ax=ax, inner=None, color='lightgray', order = ['MEG', 'PEG', 'AEG'])
+        sns.stripplot(x='BrainArea', y='MeanScore', data=df_full_naive_pitchsplit_plot, ax=ax, color = 'cyan', dodge=False, order = ['MEG', 'PEG', 'AEG'])
+        # do a mann whitney u test between the meanscores for PEG and MEG
+        stat_peg_naive, p_peg_naive = mannwhitneyu(df_full_naive_pitchsplit_plot_peg['MeanScore'], df_full_naive_pitchsplit_plot_meg['MeanScore'], alternative='less')
+        plt.xlabel(f'Mean Decoding Score of Top 25% of Unit', fontsize=20)
+        plt.ylabel('Mean Score', fontsize=20)
+        plt.savefig(f'G:/neural_chapter/figures/meanscore_highthreshold_violin_naive_bybrainarea.png')
+
+        n1 = len(df_full_naive_pitchsplit_plot_peg)
+        n2 = len(df_full_naive_pitchsplit_plot_meg)
+        r_naive = 1 - (2 * stat_peg_naive) / (n1 * n2)
+
+        n1 = len(df_full_pitchsplit_plot_peg)
+        n2 = len(df_full_pitchsplit_plot_meg)
+        r_trained = 1 - (2 * stat_peg) / (n1 * n2)
+
+        #export the p values to a csv file
+        df_pvalues = pd.DataFrame(columns = ['Trained/naive', 'pvalue', 'statistic', 'effectsize'])
+        df_pvalues = df_pvalues.append({'Trained/naive': 'Trained', 'pvalue': p_peg, 'statistic': stat_peg, 'effectsize': r_trained}, ignore_index = True)
+        df_pvalues = df_pvalues.append({'Trained/naive': 'Naive', 'pvalue': p_peg_naive, 'statistic': stat_peg_naive, 'effectsize': r_naive}, ignore_index = True)
+        df_pvalues.to_csv(f'G:/neural_chapter/figures/pvalues_highthreshold_manwhittest_{options}.csv')
+
 
 
 
@@ -2708,7 +2784,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_full_pitchsplit['Naive'] = 0
     combined_df = df_full_naive_pitchsplit.append(df_full_pitchsplit)
     #now run the lightgbm function
-    # runlgbmmodel_score(combined_df, optimization=False)
+    runlgbmmodel_score(combined_df, optimization=False)
 
 
     #now plot by animal:
