@@ -1599,6 +1599,18 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     #do levene's test
     leveneteststat = scipy.stats.levene(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)
     kstestcontrolf0vsrovednaive = scipy.stats.kstest(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, alternative='two-sided')
+
+    # Calculating Cramér's V for effect size
+    def cramers_v(n, ks_statistic):
+        return np.sqrt(ks_statistic / n)
+
+    n = len(bigconcatenatenaive_nonps) * len(bigconcatenatenaive_ps) / (len(bigconcatenatenaive_nonps) + len(bigconcatenatenaive_ps))
+    effect_size_naive = cramers_v(n, kstestcontrolf0vsrovednaive.statistic)
+
+    n_trained = len(bigconcatenatetrained_nonps) * len(bigconcatenatetrained_ps) / (len(bigconcatenatetrained_nonps) + len(bigconcatenatetrained_ps))
+    effect_size_trained = cramers_v(n_trained, kstestcontrolf0vsrovedtrained.statistic)
+
+
     #run mann whitney u test
     manwhitscore_stat, manwhitescore_pvalue = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, alternative = 'two-sided')
     manwhitscore_statnaive, manwhitescore_pvaluenaive = mannwhitneyu(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, alternative = 'two-sided')

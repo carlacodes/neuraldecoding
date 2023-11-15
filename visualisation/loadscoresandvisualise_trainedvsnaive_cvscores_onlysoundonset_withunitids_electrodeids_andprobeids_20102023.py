@@ -2482,6 +2482,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000)
     plt.show()
 
+    unique_unit_ids_naive = df_full_naive_pitchsplit['ID'].unique()
+    unique_unit_ids_trained = df_full_pitchsplit['ID'].unique()
     #make a kde plot
     #makea  dataframe
     df_naive = pd.DataFrame({'F0_control': bigconcatenatenaive_nonps, 'F0_roved': bigconcatenatenaive_ps})
