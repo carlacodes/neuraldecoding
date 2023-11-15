@@ -280,6 +280,28 @@ def runlgbmmodel_score(df_use, optimization = False):
     plt.savefig(f'G:/neural_chapter/figures/naiveandpitchshift_lightgbmdependencyplot.png', dpi = 300)
     plt.show()
 
+    naive = shap_values2[:, "Naive"].data
+    pitchshift = shap_values2[:, "PitchShift"].data
+    shap_values = shap_values2[:, "Naive"].values
+    data_df = pd.DataFrame({
+        "pitchshift": pitchshift,
+        "naive": naive,
+        "SHAP value": shap_values
+    })
+    custom_colors = ['cyan', 'hotpink', "purple"]  # Add more colors as needed
+
+    fig, ax = plt.subplots(figsize=(10, 7))
+    sns.violinplot(x="naive", y="SHAP value", hue="pitchshift", data=data_df, split=True, inner="quart",
+                   palette=custom_colors, ax=ax)
+    ax.set_xticks([0, 1])
+    ax.set_xticklabels(['True', 'False'], fontsize=18, rotation=45)
+    ax.set_xlabel('Naive', fontsize=18)
+    ax.set_ylabel('Impact on decoding score', fontsize=18)
+    legend_handles, legend_labels = ax.get_legend_handles_labels()
+    #reinsert the legend_hanldes and labels
+    plt.savefig(f'G:/neural_chapter/figures/violinplot_naive.png', dpi = 300, bbox_inches = 'tight')
+    plt.show()
+
 
     #F0 by talker violin plot, supp.
     pitchshift = shap_values2[:, "PitchShift"].data
@@ -330,10 +352,34 @@ def runlgbmmodel_score(df_use, optimization = False):
     legend_handles, legend_labels = ax.get_legend_handles_labels()
     #reinsert the legend_hanldes and labels
     ax.legend(legend_handles, ['Trained', 'Naive'], loc='upper right', fontsize=13)
-    plt.xlabel('Brain Area: MEG', fontsize=18)
+    plt.xlabel('Brain Area', fontsize=18)
     plt.savefig(f'G:/neural_chapter/figures/lightgbm_violinplot_brainarea.png', dpi = 300, bbox_inches='tight')
     plt.show()
 
+
+    #plot the pro0be word
+    fig, ax = plt.subplots(figsize=(10, 6))
+    probe_word = shap_values2[:, "ProbeWord"].data
+    naive_values = shap_values2[:, "Naive"].data
+
+    shap_values = shap_values2[:, "ProbeWord"].values
+    data_df = pd.DataFrame({
+        "ProbeWord": probe_word,
+        "naive": naive_values,
+        "SHAP value": shap_values
+    })
+    # custom_colors = ['blue', 'hotpink', "purple"]  # Add more colors as needed
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.violinplot(x="ProbeWord", y="SHAP value", hue="naive", data=data_df, split=True, inner="quart",
+                        palette=custom_colors, ax=ax)
+    # ax.set_xticks([0, 1, 2, 3, 4, 5, 6, 7, 8])
+    # ax.set_xticklabels(['craft', 'in contrast to', 'when a', 'accurate', 'pink noise', 'of science', 'rev. instruments', 'boats', 'today'], fontsize=18, rotation=45)
+    #
+    ax.legend(legend_handles, ['Trained', 'Naive'], loc='upper right', fontsize=13)
+    plt.xlabel('Probe Word', fontsize=18)
+    plt.ylabel('Impact on decoding score', fontsize=18)
+    plt.savefig(f'G:/neural_chapter/figures/lightgbm_violinplot_probeword.png', dpi = 300, bbox_inches='tight')
+    plt.show()
 
 
 
