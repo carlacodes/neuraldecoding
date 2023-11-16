@@ -14,6 +14,7 @@ from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import mean_squared_error
 import json
+from scipy.stats import mannwhitneyu
 from helpers.vis_stats_helpers import run_anova_on_dataframe, create_gen_frac_variable, runlgbmmodel_score
 
 def find_repeating_substring(text):
@@ -2355,7 +2356,6 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
 
         #man whitney u test
-        from scipy.stats import mannwhitneyu
         stat, p = mannwhitneyu(df_full_pitchsplit_plot['GenFrac'], df_full_naive_pitchsplit_plot['GenFrac'], alternative = 'less')
         print(f'Generalizability scores, high threshold untis, index method: {options}')
         print(stat)
