@@ -295,7 +295,7 @@ def runlgbmmodel_score(df_use, optimization = False):
     legend_handles, legend_labels = ax.get_legend_handles_labels()
     ax.set_xlabel(None)
     #reinsert the legend_hanldes and labels
-    ax.legend(legend_handles, ['Pitch-shifted', 'Control'], loc='upper right', fontsize=13)
+    ax.legend(legend_handles, ['Control', 'Pitch-shifted'], loc='upper right', fontsize=13)
     plt.savefig(f'G:/neural_chapter/figures/violinplot_naive.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
 
