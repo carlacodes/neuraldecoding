@@ -377,13 +377,10 @@ def runlgbmmodel_score(df_use, optimization = False):
         "naive": naive_values,
         "SHAP value": shap_values
     })
-    # custom_colors = ['blue', 'hotpink', "purple"]  # Add more colors as needed
     fig, ax = plt.subplots(figsize=(10, 6))
     sns.violinplot(x="ProbeWord", y="SHAP value", hue="naive", data=data_df, split=True, inner="quart",
                         palette=custom_colors, ax=ax)
-    # ax.set_xticks([0, 1, 2, 3, 4, 5, 6, 7, 8])
-    # ax.set_xticklabels(['craft', 'in contrast to', 'when a', 'accurate', 'pink noise', 'of science', 'rev. instruments', 'boats', 'today'], fontsize=18, rotation=45)
-    #
+
     ax.legend(legend_handles, ['Trained', 'Naive'], loc='upper right', fontsize=13)
     plt.xlabel('Probe Word', fontsize=18)
     plt.ylabel('Impact on decoding score', fontsize=18)
