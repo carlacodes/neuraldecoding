@@ -2455,7 +2455,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     plt.savefig(f'G:/neural_chapter/figurestrained_animals_overdistractor_dividedbypitchshift.png', dpi = 300)
     plt.show()
 
-    df_kruskal = pd.DataFrame(columns=['ProbeWord', 'Kruskal_pvalue_trained', 'less than 0.05'])
+    df_kruskal = pd.DataFrame(columns=['ProbeWord', 'Kruskal_pvalue_trained', 'less than 0.05', 'epsilon_squared'])
     # Perform Kruskal-Wallis test for each ProbeWord
     for probe_word in df_above_chance_ps['ProbeWord'].unique():
         subset_data = df_above_chance_ps[df_above_chance_ps['ProbeWord'] == probe_word]
@@ -2464,9 +2464,21 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                                              subset_data[subset_data['PitchShift'] == 0]['Score'])
         less_than_alpha = result_kruskal.pvalue < 0.05
 
-        print(f"ProbeWord: {probe_word}, Kruskal-Wallis p-value: {result_kruskal.pvalue}")
+        n1 = len(subset_data[subset_data['PitchShift'] == 1]['Score'])
+        n2 = len(subset_data[subset_data['PitchShift'] == 0]['Score'])
+        N = n1 + n2
+        # Calculate degrees of freedom for the Kruskal-Wallis test
+        k = 2  # Assuming two groups
+        df_H = k - 1
+        # Calculate total degrees of freedom
+        df_T = N - 1
+        # Calculate epsilon-squared (effect size)
+        epsilon_squared = (result_kruskal.statistic - df_H) / (N - df_T)
+
+        print(f"ProbeWord: {probe_word}, Kruskal-Wallis p-value: {result_kruskal.pvalue}, epsilon-squared: {epsilon_squared}")
         # append to a dataframe
-        df_kruskal = df_kruskal.append({'ProbeWord': probe_word, 'Kruskal_pvalue_trained': result_kruskal.pvalue, 'less than 0.05': less_than_alpha},
+        df_kruskal = df_kruskal.append({'ProbeWord': probe_word, 'Kruskal_pvalue_trained': result_kruskal.pvalue,
+                                        'less than 0.05': less_than_alpha, 'epsilon_squared': epsilon_squared},
                                        ignore_index=True)
     # export the dataframe
     df_kruskal.to_csv('G:/neural_chapter/figures/kruskal_pvalues_trained.csv')
