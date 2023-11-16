@@ -61,7 +61,6 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
     for st in blocks[0].segments[0].spiketrains:
         print(f"Cluster ID: {st.annotations['cluster_id']}, Group: {st.annotations['group']}")
 
-    clust_ids = [1]
 
     for cluster_id in clust_ids:
         print('now starting cluster')
@@ -73,6 +72,9 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
                                                                                   correctresp=True,
                                                                                   df_filter=['No Level Cue'], talker = 'female')
         raster_target = raster_target.reshape(raster_target.shape[0], )
+        if len(raster_target) == 0:
+            print('raster target empty:', cluster_id)
+            continue
 
         bins = np.arange(window[0], window[1], binsize)
 
@@ -130,7 +132,7 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
             fig,ax = plt.subplots(2,)
 
-            rasterplot(spiketrains, c=color_option, histogram_bins=100, axes=ax, s=0.5)
+            rasterplot(spiketrains, c=color_option, histogram_bins=100, axes=ax,s=0.3 ) #s=0.5
 
             ax[0].set_ylabel('trial')
             # ax[0].set_xlabel('Time relative to word presentation (s)')
@@ -144,7 +146,7 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
             plt.suptitle(f'Raster for F1815, word: {probeword_text}, unit id: {cluster_id}, {pitchtext}', fontsize = 12)
             plt.savefig(
-                str(saveDir) + f'/targdist_{probewords[0]}_clusterid_{stream}_pitchshift_{pitchshift}' + str(cluster_id)+ '.png')
+                str(saveDir) + f'/targdist_{probewords[0]}_clusterid_{cluster_id}_{stream}_pitchshift_{pitchshift}_' + str(cluster_id)+ '.png')
             #plt.show()
         except:
             print('no spikes')
@@ -157,23 +159,26 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
 
 def generate_rasters(dir):
-    datapath = Path(f'D:\ms4output_16102023\F1815_Cruella/23082023_cruella/23082023_cruella_23082023_cruella_BB_3\mountainsort4\phy/')
-    stream = str(datapath).split('\\')[-3]
-    stream = stream[-4:]
-    print(stream)
-    folder = str(datapath).split('\\')[-2]
 
-    probewords_list = [(1,1), (2,2), (3,3), (4,4), (5,5), (6,6), (7,7), (8,8), (9,9), (10,10)]
-    with open(datapath / 'new_blocks.pkl', 'rb') as f:
-        new_blocks = pickle.load(f)
+    datapath_big = Path(f'D:\ms4output_16102023\F1815_Cruella/')
+    datapaths = [x for x in datapath_big.glob('**/mountainsort4/phy//') if x.is_dir()]
+    datapaths = datapaths[5:]
+    for datapath in datapaths:
+        stream = str(datapath).split('\\')[-3]
+        stream = stream[-4:]
+        print(stream)
+        folder = str(datapath).split('\\')[-3]
 
-
-    for probeword in probewords_list:
-        print('now starting')
-        print(probeword)
-        for talker in [1]:
-            for pitchshift in [True, False]:
-                target_vs_probe_with_raster(new_blocks, talker=talker,probewords=probeword,pitchshift=pitchshift, stream = stream, phydir=folder)
+        probewords_list = [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10)]
+        probewords_list = [(1, 1)]
+        with open(datapath / 'new_blocks.pkl', 'rb') as f:
+            new_blocks = pickle.load(f)
+        for probeword in probewords_list:
+            print('now starting')
+            print(probeword)
+            for talker in [1]:
+                for pitchshift in [True, False]:
+                    target_vs_probe_with_raster(new_blocks, talker=talker,probewords=probeword,pitchshift=pitchshift, stream = stream, phydir=folder)
 
 
 
