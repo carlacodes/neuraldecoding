@@ -177,12 +177,7 @@ def runlgbmmodel_score(df_use, optimization = False):
     unique_probe_words = df_use['ProbeWord'].unique()
     unique_IDs = df_use['ID'].unique()
     df_use = df_use.reset_index(drop=True)
-
-    # df_use['ProbeWord'] = pd.Categorical(df_use['ProbeWord'],
-    #                                                        categories=unique_probe_words, ordered=True)
     df_use['ID'] = pd.Categorical(df_use['ID'],categories=unique_IDs, ordered=True)
-
-    # df_use['ProbeWord'] = df_use['ProbeWord'].cat.codes
 
     #relabel the probe word labels to be the same as the paper
     df_use['ProbeWord'] = df_use['ProbeWord'].replace({ '(2,2)': 'craft', '(3,3)': 'in contrast to', '(4,4)': 'when a', '(5,5)': 'accurate', '(6,6)': 'pink noise', '(7,7)': 'of science', '(8,8)': 'rev. instruments', '(9,9)': 'boats', '(10,10)': 'today',
@@ -251,8 +246,6 @@ def runlgbmmodel_score(df_use, optimization = False):
     evallist = [(dtrain, 'train'), (dtest, 'eval')]
 
 
-    # xg_reg = lgb.LGBMRegressor(colsample_bytree=0.3, learning_rate=0.1,
-    #                            max_depth=10, alpha=10, n_estimators=10, verbose=1)
     xg_reg = lgb.LGBMRegressor(**params, verbose=1)
 
     xg_reg.fit(X_train, y_train, eval_metric='MSE', verbose=1)
@@ -270,23 +263,17 @@ def runlgbmmodel_score(df_use, optimization = False):
     print("neg MSE on test set: %.2f" % (np.mean(results_TEST)*100))
     print("negative MSE on train set: %.2f%%" % (np.mean(results) * 100.0))
     print(results)
-    shap_values = shap.TreeExplainer(xg_reg).shap_values(dfx)
+    shap_values_summary = shap.TreeExplainer(xg_reg).shap_values(dfx)
     explainer = shap.Explainer(xg_reg, X_train, feature_names=dfx.columns)
     shap_values2 = explainer(X_train)
 
-    fig, ax = plt.subplots(figsize=(15, 15))
-    # title kwargs still does nothing so need this workaround for summary plots
-
     fig, ax = plt.subplots(1, figsize=(10, 10), dpi = 300)
-
-    shap.summary_plot(shap_values,dfx,  max_display=20, show = False, cmap = 'cool')
+    shap.summary_plot(shap_values_summary,dfx,  max_display=20, show = False, cmap = 'cool')
     plt.savefig(f'G:/neural_chapter/figures/summary_plot_lightgbm.png', dpi = 300)
     plt.show()
     #partial dependency plot of the pitch shift versus naive color coded by naive
 
-    shap.dependence_plot("PitchShift", shap_values, dfx, interaction_index='Naive', show=False)
-    plt.savefig(f'G:/neural_chapter/figures/naiveandpitchshift_lightgbmdependencyplot.png', dpi = 300)
-    plt.show()
+
 
     naive = shap_values2[:, "Naive"].data
     pitchshift = shap_values2[:, "PitchShift"].data
@@ -338,26 +325,23 @@ def runlgbmmodel_score(df_use, optimization = False):
     plt.savefig(f'G:/neural_chapter/figures/violinplot_pitchshift.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
 
-    fig, ax = plt.subplots(figsize=(10, 6))
-
-    MEG = shap_values2[:, "BrainArea"].data
+    fig, ax = plt.subplots(dpi = 300)
+    BrainArea = shap_values2[:, "BrainArea"].data
     naive_values = shap_values2[:, "Naive"].data
     shap_values = shap_values2[:, "BrainArea"].values
     data_df = pd.DataFrame({
-        "MEG": MEG,
+        "BrainArea": BrainArea,
         "naive": naive_values,
         "SHAP value": shap_values
     })
-    # custom_colors = ['blue', 'hotpink', "purple"]  # Add more colors as needed
-    fig, ax = plt.subplots(figsize=(10, 6))
-    sns.violinplot(x="MEG", y="SHAP value", hue="naive", data=data_df, split=True, inner="quart",
-                     palette=custom_colors, ax=ax, order = ['MEG', 'PEG','AEG'])
+    sns.violinplot(x="BrainArea", y="SHAP value", hue="naive", data=data_df, split=True, inner="quart",
+                     palette=custom_colors, ax=ax, order = [0,2, 1])
     ax.set_xlim(-0.5, 1.5)
+    ax.set_ylim(-0.02, 0.02)
     ax.set_xticks([0, 1])
     ax.set_xticklabels(['MEG', 'PEG'], fontsize=18, rotation=45)
     plt.xlabel('Brain Area', fontsize=18)
     ax.set_ylabel('Impact on decoding score', fontsize=18)
-
     legend_handles, legend_labels = ax.get_legend_handles_labels()
     #reinsert the legend_hanldes and labels
     ax.legend(legend_handles, ['Trained', 'Naive'], loc='upper right', fontsize=13)
@@ -386,13 +370,6 @@ def runlgbmmodel_score(df_use, optimization = False):
     plt.ylabel('Impact on decoding score', fontsize=18)
     plt.savefig(f'G:/neural_chapter/figures/lightgbm_violinplot_probeword.png', dpi = 300, bbox_inches='tight')
     plt.show()
-
-
-
-
-
-
-
 
 
     from sklearn.inspection import permutation_importance
