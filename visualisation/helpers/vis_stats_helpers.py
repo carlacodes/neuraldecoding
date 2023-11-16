@@ -289,11 +289,13 @@ def runlgbmmodel_score(df_use, optimization = False):
     sns.violinplot(x="naive", y="SHAP value", hue="pitchshift", data=data_df, split=True, inner="quart",
                    palette=custom_colors, ax=ax)
     ax.set_xticks([0, 1])
-    ax.set_xticklabels(['True', 'False'], fontsize=18, rotation=45)
-    ax.set_xlabel('Naive', fontsize=18)
-    ax.set_ylabel('Impact on decoding score', fontsize=18)
+    ax.set_xticklabels(['Trained', 'Naive'], fontsize=20, rotation=45)
+    # ax.set_xlabel('Naive', fontsize=18)
+    ax.set_ylabel('Impact on decoding score', fontsize=20)
     legend_handles, legend_labels = ax.get_legend_handles_labels()
+    ax.set_xlabel(None)
     #reinsert the legend_hanldes and labels
+    ax.legend(legend_handles, ['Pitch-shifted', 'Control'], loc='upper right', fontsize=13)
     plt.savefig(f'G:/neural_chapter/figures/violinplot_naive.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
 
@@ -316,9 +318,10 @@ def runlgbmmodel_score(df_use, optimization = False):
                    palette=custom_colors, ax=ax)
 
     ax.set_xticks([ 0, 1])
-    ax.set_xticklabels(['True', 'False'], fontsize=18, rotation=45)
-    ax.set_xlabel('Pitch Shift', fontsize=18)
-    ax.set_ylabel('Impact on decoding score', fontsize=18)
+    ax.set_xticklabels(['Control', 'Pitch Shifted'], fontsize=18, rotation=45)
+    # ax.set_xlabel('Pitch Shift', fontsize=18)
+    ax.set_xlabel(None)
+    ax.set_ylabel('Impact on decoding score', fontsize=20)
     legend_handles, legend_labels = ax.get_legend_handles_labels()
     #reinsert the legend_hanldes and labels
     ax.legend(legend_handles, ['Trained', 'Naive'], loc='upper right', fontsize=13)
@@ -351,23 +354,24 @@ def runlgbmmodel_score(df_use, optimization = False):
 
 
     #plot the pro0be word
-    fig, ax = plt.subplots(figsize=(10, 6))
     probe_word = shap_values2[:, "ProbeWord"].data
     naive_values = shap_values2[:, "Naive"].data
-
     shap_values = shap_values2[:, "ProbeWord"].values
     data_df = pd.DataFrame({
         "ProbeWord": probe_word,
         "naive": naive_values,
         "SHAP value": shap_values
     })
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(10, 6), dpi = 300)
     sns.violinplot(x="ProbeWord", y="SHAP value", hue="naive", data=data_df, split=True, inner="quart",
                         palette=custom_colors, ax=ax)
 
+    xticks = np.arange(0, 17, 1)
+    plt.xticks( xticks,labels = unique_probe_words, rotation=45)
+    ax.set_xticklabels(unique_probe_words, rotation=45, fontsize=16)
     ax.legend(legend_handles, ['Trained', 'Naive'], loc='upper right', fontsize=13)
-    plt.xlabel('Probe Word', fontsize=18)
-    plt.ylabel('Impact on decoding score', fontsize=18)
+    plt.xlabel('Probe Word', fontsize=20)
+    plt.ylabel('Impact on decoding score', fontsize=20)
     plt.savefig(f'G:/neural_chapter/figures/lightgbm_violinplot_probeword.png', dpi = 300, bbox_inches='tight')
     plt.show()
 
@@ -378,10 +382,8 @@ def runlgbmmodel_score(df_use, optimization = False):
     result = permutation_importance(xg_reg, X_test, y_test, n_repeats=10, random_state=0)
 
     # Extract and print the importances
-    importances = result.importances_mean
 
     # Map feature names to their importances
-    feature_importance_dict = dict(zip(X_test.columns, importances))
     importances = result.importances_mean
 
     # Map feature names to their importances
@@ -395,9 +397,13 @@ def runlgbmmodel_score(df_use, optimization = False):
         print(f"{feature}: {importance}")
 
     features, importance = zip(*sorted_feature_importance)
-    plt.barh(features, importance)
-    plt.xlabel('Permutation Importance')
-    plt.title('Permutation Importances of Features')
+    fig, ax = plt.subplots(dpi = 300, figsize=(10, 3))
+    plt.barh(features, importance, color = 'skyblue', edgecolor = 'black')
+    ax.set_xticklabels(ax.get_xticks(), fontsize=16)
+    ax.set_yticklabels(features, fontsize=20, rotation = 45)
+    plt.xlabel('Permutation Importance', fontsize = 20)
+    plt.title('Permutation Importances of Features', fontsize = 20)
+    plt.savefig(f'G:/neural_chapter/figures/permutation_importance_lightgbm.png', dpi = 300, bbox_inches='tight')
     plt.show()
 
 
