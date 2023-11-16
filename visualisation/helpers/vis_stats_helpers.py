@@ -351,9 +351,10 @@ def runlgbmmodel_score(df_use, optimization = False):
     # custom_colors = ['blue', 'hotpink', "purple"]  # Add more colors as needed
     fig, ax = plt.subplots(figsize=(10, 6))
     sns.violinplot(x="MEG", y="SHAP value", hue="naive", data=data_df, split=True, inner="quart",
-                     palette=custom_colors, ax=ax)
-    ax.set_xticks([0, 1, 2])
-    ax.set_xticklabels(['PEG', 'AEG', 'MEG'], fontsize=18, rotation=45)
+                     palette=custom_colors, ax=ax, order = ['MEG', 'PEG','AEG'])
+    ax.set_xlim(-0.5, 1.5)
+    ax.set_xticks([0, 1])
+    ax.set_xticklabels(['MEG', 'PEG'], fontsize=18, rotation=45)
     plt.xlabel('Brain Area', fontsize=18)
     ax.set_ylabel('Impact on decoding score', fontsize=18)
 

@@ -2471,9 +2471,9 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         k = 2  # Assuming two groups
         df_H = k - 1
         # Calculate total degrees of freedom
-        df_T = N - 1
+        # df_T = N - 1
         # Calculate epsilon-squared (effect size)
-        epsilon_squared = (result_kruskal.statistic - df_H) / (N - df_T)
+        epsilon_squared = (result_kruskal.statistic - df_H) / N
 
         print(f"ProbeWord: {probe_word}, Kruskal-Wallis p-value: {result_kruskal.pvalue}, epsilon-squared: {epsilon_squared}")
         # append to a dataframe
