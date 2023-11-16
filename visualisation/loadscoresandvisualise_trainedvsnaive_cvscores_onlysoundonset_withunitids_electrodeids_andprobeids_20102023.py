@@ -2236,11 +2236,12 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         #remove all rows where GenFrac is nan
         df_full_pitchsplit_plot = df_full_pitchsplit_highsubset[df_full_pitchsplit_highsubset['GenFrac'].notna()]
         df_full_pitchsplit_plot = df_full_pitchsplit_plot.drop_duplicates(subset = ['ID'])
-
+        #export the unit ids of the units that are in the top 25% of genfrac scores
+        df_full_pitchsplit_plot.to_csv(f'G:/neural_chapter/figures/unit_ids_trained_highthreshold_{options}.csv')
         df_full_naive_pitchsplit_plot = create_gen_frac_variable(df_full_naive_pitchsplit, high_score_threshold=True, index_or_frac = options)
         df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['GenFrac'].notna()]
         df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot.drop_duplicates(subset = ['ID'])
-
+        df_full_naive_pitchsplit_plot.to_csv(f'G:/neural_chapter/figures/unit_ids_naive_highthreshold_{options}.csv')
         #plot the distplot of these scores overlaid with the histogram
         fig, ax = plt.subplots(1, dpi=300)
         sns.histplot(df_full_pitchsplit_plot['GenFrac'],ax=ax,  kde=True, bins=20, color = 'purple', label='Trained')
