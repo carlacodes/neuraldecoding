@@ -2736,12 +2736,14 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_below_chance = df_full_naive_pitchsplit_violinplot[df_full_naive_pitchsplit_violinplot['Below-chance'] == 1]
     custom_colors_naive = ["#5ec962","#fde725"]
     sns.stripplot(x='ProbeWord', y='Score', data=df_above_chance, ax=ax, size=3, dodge=True, palette=custom_colors_naive,
-                  hue='PitchShift')
+                  hue='PitchShift', edgecolor='k', linewidth=0.2, jitter=True)
     sns.stripplot(x='ProbeWord', y='Score', data=df_below_chance, ax=ax, size=3, dodge=True, color='lightgray',
-                  alpha=0.1, jitter=False, hue='PitchShift', palette=custom_colors_naive)
+                  alpha=0.1, jitter=True, hue='PitchShift', palette=custom_colors_naive, edgecolor='k', linewidth=0.2)
 
     sns.violinplot(x='ProbeWord', y='Score', data=df_full_naive_pitchsplit, ax=ax, palette= custom_colors_naive, hue = 'PitchShift')
     #get the legend handles
+    plt.ylabel('Decoding Score', fontsize = 20)
+    plt.xlabel(None)
     handles, labels = ax.get_legend_handles_labels()
     ax.set_xticklabels(ax.get_xticklabels(), rotation=45, horizontalalignment='right', fontsize = 18)
     ax.legend(handles=handles[0:2], labels=['Control', 'Pitch-shifted'], title=None, fontsize = 18)
