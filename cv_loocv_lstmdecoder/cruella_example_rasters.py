@@ -46,9 +46,9 @@ def run_cleaning_of_rasters(blocks, datapath):
     with open(datapath / 'new_blocks.pkl', 'wb') as f:
         pickle.dump(new_blocks, f)
     return new_blocks
-def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshift=True, stream = 'BB_3'):
+def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshift=True, stream = 'BB_3', phydir = 'phy'):
 
-    tarDir = Path(f'E:/rastersms4spikesortinginter/F1815_Cruella/figs_dist_and_targ_1611/{stream}/')
+    tarDir = Path(f'E:/rastersms4spikesortinginter/F1815_Cruella/figs_dist_and_targ_1611/{phydir}/{stream}/')
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
 
@@ -61,9 +61,8 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
     for st in blocks[0].segments[0].spiketrains:
         print(f"Cluster ID: {st.annotations['cluster_id']}, Group: {st.annotations['group']}")
 
-    clust_ids = [120]
+    clust_ids = [1]
 
-    cluster_id_droplist = np.empty([])
     for cluster_id in clust_ids:
         print('now starting cluster')
         print(cluster_id)
@@ -100,7 +99,29 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
             elif probewords[0] == 1:
                 probeword_text = 'instruments'
                 color_option = 'blue'
+            elif probewords[0] == 2:
+                probeword_text = 'craft'
+                color_option = 'black'
+            elif probewords[0] == 3:
+                probeword_text = 'in contrast'
+                color_option = 'black'
+            elif probewords[0] == 5:
+                probeword_text = 'accurate'
+                color_option = 'black'
+            elif probewords[0] == 6:
+                probeword_text = 'pink noise'
+                color_option = 'black'
+            elif probewords[0] == 7:
+                probeword_text = 'of science'
+                color_option = 'black'
+            elif probewords[0] == 8:
+                probeword_text = 'rev. instruments'
+                color_option = 'black'
             elif probewords[0] == 9:
+                probeword_text = 'boats'
+                color_option = 'black'
+
+            elif probewords[0] == 10:
                 probeword_text = 'today'
                 color_option = 'green'
             else:
@@ -136,12 +157,13 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
 
 def generate_rasters(dir):
-    datapath = Path(f'D:\ms4output_16102023\F1815_Cruella/01_03_2022_cruellabb4bb5/01_03_2022_cruellabb4bb5_01_03_2022_cruellabb4bb5_BB_5\mountainsort4\phy/')
+    datapath = Path(f'D:\ms4output_16102023\F1815_Cruella/23082023_cruella/23082023_cruella_23082023_cruella_BB_3\mountainsort4\phy/')
     stream = str(datapath).split('\\')[-3]
     stream = stream[-4:]
     print(stream)
+    folder = str(datapath).split('\\')[-2]
 
-    probewords_list = [(9,9), (1,1)]
+    probewords_list = [(1,1), (2,2), (3,3), (4,4), (5,5), (6,6), (7,7), (8,8), (9,9), (10,10)]
     with open(datapath / 'new_blocks.pkl', 'rb') as f:
         new_blocks = pickle.load(f)
 
@@ -151,7 +173,7 @@ def generate_rasters(dir):
         print(probeword)
         for talker in [1]:
             for pitchshift in [True, False]:
-                target_vs_probe_with_raster(new_blocks, talker=talker,probewords=probeword,pitchshift=pitchshift, stream = stream)
+                target_vs_probe_with_raster(new_blocks, talker=talker,probewords=probeword,pitchshift=pitchshift, stream = stream, phydir=folder)
 
 
 
