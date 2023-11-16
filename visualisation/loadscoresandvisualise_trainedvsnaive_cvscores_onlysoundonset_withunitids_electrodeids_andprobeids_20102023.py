@@ -2431,7 +2431,6 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
     #now plot by the probe word for the trained animals
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
-
     # Plot the data points color-coded by ProbeWord for above chance scores
     sns.stripplot(x='ProbeWord', y='Score', data=df_full, ax=ax, size=3, dodge=True,
                   palette='Set1',
@@ -2442,22 +2441,31 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     plt.show()
 
     #plot strip plot split by pitch shift
+    df_full_pitchsplit_violinplot = df_full_pitchsplit
+    df_full_pitchsplit_violinplot['ProbeWord'] = df_full_pitchsplit_violinplot['ProbeWord'].replace({ '(2,2)': 'craft', '(3,3)': 'in contrast to', '(4,4)': 'when a', '(5,5)': 'accurate', '(6,6)': 'pink noise', '(7,7)': 'of science', '(8,8)': 'rev. instruments', '(9,9)': 'boats', '(10,10)': 'today',
+        '(13,13)': 'sailor', '(15,15)': 'but', '(16,16)': 'researched', '(18,18)': 'took', '(19,19)': 'the vast', '(20,20)': 'today', '(21,21)': 'he takes', '(22,22)': 'becomes', '(23,23)': 'any', '(24,24)': 'more'})
+
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
     df_above_chance_ps = df_full_pitchsplit[df_full_pitchsplit['Below-chance'] == 0]
     df_below_chance_ps = df_full_pitchsplit[df_full_pitchsplit['Below-chance'] == 1]
 
-    sns.stripplot(x='ProbeWord', y='Score', data=df_above_chance_ps, ax=ax, size=3, dodge=True, edgecolor = 'k', linewidth=0.1, hue='PitchShift')
-    sns.stripplot(x='ProbeWord', y='Score', data=df_below_chance_ps, ax=ax, size=3, dodge=True,edgecolor = 'k', linewidth=0.1,
-                  alpha=1, jitter=False, hue='PitchShift')
+    sns.stripplot(x='ProbeWord', y='Score', data=df_above_chance_ps, ax=ax, size=3, dodge=True, edgecolor = 'k', linewidth=0.2, hue='PitchShift')
+    sns.stripplot(x='ProbeWord', y='Score', data=df_below_chance_ps, ax=ax, size=3, dodge=True,
+                  alpha=0.1, jitter=False,  hue = 'PitchShift', palette='Set1')
+    plt.ylabel('Decoding Score', fontsize = 20)
 
     sns.violinplot(x='ProbeWord', y='Score', data=df_full_pitchsplit, ax=ax, hue = 'PitchShift')
-    plt.title('Trained animals'' scores over distractor word')
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, horizontalalignment='right', fontsize = 18)
+    #get legend
+    handles, labels = ax.get_legend_handles_labels()
+    ax.legend(handles=handles[0:2], labels=['Control', 'Pitch-shifted'], title=None)
+    plt.title('Trained animals'' scores over distractor word', fontsize = 20 )
     plt.savefig(f'G:/neural_chapter/figurestrained_animals_overdistractor_dividedbypitchshift.png', dpi = 300)
     plt.show()
 
     df_kruskal = pd.DataFrame(columns=['ProbeWord', 'Kruskal_pvalue_trained', 'less than 0.05', 'epsilon_squared'])
     # Perform Kruskal-Wallis test for each ProbeWord
-    for probe_word in df_above_chance_ps['ProbeWord'].unique():
+    for probe_word in df_full_pitchsplit_violinplot['ProbeWord'].unique():
         subset_data = df_above_chance_ps[df_above_chance_ps['ProbeWord'] == probe_word]
 
         result_kruskal = scipy.stats.kruskal(subset_data[subset_data['PitchShift'] == 1]['Score'],
@@ -2796,7 +2804,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_full_pitchsplit['Naive'] = 0
     combined_df = df_full_naive_pitchsplit.append(df_full_pitchsplit)
     #now run the lightgbm function
-    runlgbmmodel_score(combined_df, optimization=False)
+    # runlgbmmodel_score(combined_df, optimization=False)
 
 
     #now plot by animal:
