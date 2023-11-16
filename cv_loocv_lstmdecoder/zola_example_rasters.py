@@ -8,7 +8,7 @@ import numpy as np
 # import seaborn as sns
 # from numba import njit, prange
 # import time
-from sklearn.model_selection import train_test_split, StratifiedKFold, get_word_aligned_raster
+from sklearn.model_selection import train_test_split, StratifiedKFold
 from tqdm import tqdm
 from keras import backend as K
 from viziphant.rasterplot import rasterplot
@@ -24,6 +24,8 @@ from astropy.stats import bootstrap
 import sklearn
 from instruments.helpers.util import simple_xy_axes, set_font_axes
 from instruments.helpers.neural_analysis_helpers import get_soundonset_alignedraster, split_cluster_base_on_segment_zola
+
+from helpers.neural_analysis_helpers_zolainter import get_word_aligned_raster, get_word_aligned_raster_zola_cruella
 from instruments.helpers.euclidean_classification_minimal_function import classify_sweeps
 # Import standard packages
 import numpy as np
@@ -46,7 +48,7 @@ def run_cleaning_of_rasters(blocks, datapath):
     return new_blocks
 def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshift=True, stream = 'BB_3'):
 
-    tarDir = Path(f'E:/rastersms4spikesortinginter/F1702_Zola/figsonset2/{stream}/')
+    tarDir = Path(f'E:/rastersms4spikesortinginter/F1702_Zola/figs_dist_and_targ1611/{stream}/')
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
 
@@ -59,21 +61,21 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
     for st in blocks[0].segments[0].spiketrains:
         print(f"Cluster ID: {st.annotations['cluster_id']}, Group: {st.annotations['group']}")
 
-    # clust_ids = [2]
+    clust_ids = [113]
 
     cluster_id_droplist = np.empty([])
     for cluster_id in clust_ids:
         print('now starting cluster')
         print(cluster_id)
-
         filter = ['No Level Cue']  # , 'Non Correction Trials']
-
         # try:
-        raster_target, raster_target_compare = get_word_aligned_raster(blocks, cluster_id, df_filter=filter)
+        raster_target, raster_target_compare = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=probewords[0],
+                                                                                  pitchshift=pitchshift,
+                                                                                  correctresp=True,
+                                                                                  df_filter=['No Level Cue'], talker = 'female')
         raster_target = raster_target.reshape(raster_target.shape[0], )
 
         bins = np.arange(window[0], window[1], binsize)
-
 
         unique_trials_targ = np.unique(raster_target['trial_num'])
         raster_targ_reshaped = np.empty([len(unique_trials_targ), len(bins) - 1])
@@ -92,19 +94,32 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
         print(spiketrains)
         try:
-            fig,ax = plt.subplots(2, figsize=(10, 5))
-            #ax.scatter(raster_target['spike_time'], np.ones_like(raster_target['spike_time']))
-            rasterplot(spiketrains, c='black', histogram_bins=100, axes=ax, s=0.5 )
+            if probewords[0] == 4:
+                probeword_text = 'when a'
+                color_option = 'black'
+            elif probewords[0] == 1:
+                probeword_text = 'instruments'
+                color_option = 'blue'
+            else:
+                probeword_text = 'error'
+                color_option = 'red'
+            fig,ax = plt.subplots(2,)
+
+            rasterplot(spiketrains, c=color_option, histogram_bins=100, axes=ax, s=0.5)
 
             ax[0].set_ylabel('trial')
-            ax[0].set_xlabel('Time relative to word presentation (s)')
+            # ax[0].set_xlabel('Time relative to word presentation (s)')
             custom_xlim = (-0.1, 0.6)
 
             plt.setp(ax, xlim=custom_xlim)
+            if pitchshift == False:
+                pitchtext = 'Control F0'
+            else:
+                pitchtext = 'Pitch-shifted F0'
 
-            plt.suptitle(f'Sound onset firings for Zola,  clus id '+ str(cluster_id) +'stream:'+ f'{stream}', fontsize = 12)
+            plt.suptitle(f'Raster for F1702, word: {probeword_text}, unit id: {cluster_id}, {pitchtext}', fontsize = 12)
             plt.savefig(
-                str(saveDir) + f'/soundonset_clusterid_{stream}_' + str(cluster_id)+ '.png')
+                str(saveDir) + f'/targdist_{probewords[0]}_clusterid_{stream}_pitchshift_{pitchshift}' + str(cluster_id)+ '.png')
             #plt.show()
         except:
             print('no spikes')
@@ -117,14 +132,14 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
 
 def generate_rasters(dir):
-    datapath = Path(f'E:\ms4output2\F1702_Zola\BB2BB3_zola_intertrialroving_26092023\BB2BB3_zola_intertrialroving_26092023_BB2BB3_zola_intertrialroving_26092023_BB_2\mountainsort4\phy/')
+    datapath = Path(f'D:\ms4output_16102023\F1702_Zola\BB2BB3_zola_intertrialroving_26092023\BB2BB3_zola_intertrialroving_26092023_BB2BB3_zola_intertrialroving_26092023_BB_2\mountainsort4\phy/')
     stream = str(datapath).split('\\')[-3]
     stream = stream[-4:]
     print(stream)
     with open(datapath / 'blocks.pkl', 'rb') as f:
         blocks = pickle.load(f)
     scores = {}
-    probewords_list = [(4,4),]
+    probewords_list = [(4,4), (1,1)]
     with open(datapath / 'new_blocks.pkl', 'rb') as f:
         new_blocks = pickle.load(f)
 
@@ -133,11 +148,10 @@ def generate_rasters(dir):
         print('now starting')
         print(probeword)
         for talker in [1]:
+            for pitchshift in [True, False]:
+                target_vs_probe_with_raster(new_blocks, talker=talker,probewords=probeword,pitchshift=pitchshift, stream = stream)
             # new_blocks = run_cleaning_of_rasters(blocks, datapath)
-
-
             # target_vs_probe_with_raster(blocks, talker=talker,probewords=probeword,pitchshift=False)
-            target_vs_probe_with_raster(new_blocks, talker=talker,probewords=probeword,pitchshift=False, stream = stream)
 
 
 
