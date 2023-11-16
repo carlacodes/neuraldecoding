@@ -2454,21 +2454,24 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     sns.stripplot(x='ProbeWord', y='Score', data=df_above_chance_ps, ax=ax, size=3, dodge=True, palette=custom_colors, edgecolor = 'k', linewidth=0.2, hue='PitchShift', jitter = True)
     sns.stripplot(x='ProbeWord', y='Score', data=df_below_chance_ps, ax=ax, size=3, dodge=True, edgecolor = 'k', linewidth=0.2,
                   alpha=0.25, jitter=False,  hue = 'PitchShift', palette=custom_colors)
-    plt.ylabel('Decoding Score', fontsize = 20)
 
     sns.violinplot(x='ProbeWord', y='Score', data=df_full_pitchsplit, ax=ax, hue = 'PitchShift', palette=custom_colors)
-    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, horizontalalignment='right', fontsize = 18)
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, horizontalalignment='right', fontsize = 30)
+    ax.set_yticklabels(ax.get_yticklabels(), fontsize = 30)
+    # ax.set_ylim([0, 1])
     #get legend
     handles, labels = ax.get_legend_handles_labels()
     ax.legend(handles=handles[0:2], labels=['Control', 'Pitch-shifted'], title=None, fontsize = 18)
-    plt.title('Trained animals" scores over probe word', fontsize = 20 )
-    plt.savefig(f'G:/neural_chapter/figurestrained_animals_overdistractor_dividedbypitchshift.png', dpi = 300)
+    plt.ylabel('Decoding Score', fontsize = 40)
+    plt.xlabel(None)
+    plt.title('Trained animals'' scores over probe word', fontsize = 40 )
+    plt.savefig(f'G:/neural_chapter/figures/trained_animals_overdistractor_dividedbypitchshift.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
 
     df_kruskal = pd.DataFrame(columns=['ProbeWord', 'Kruskal_pvalue_trained', 'less than 0.05', 'epsilon_squared'])
     # Perform Kruskal-Wallis test for each ProbeWord
     for probe_word in df_full_pitchsplit_violinplot['ProbeWord'].unique():
-        subset_data = df_above_chance_ps[df_above_chance_ps['ProbeWord'] == probe_word]
+        subset_data = df_full_pitchsplit_violinplot[df_full_pitchsplit_violinplot['ProbeWord'] == probe_word]
 
         result_kruskal = scipy.stats.kruskal(subset_data[subset_data['PitchShift'] == 1]['Score'],
                                              subset_data[subset_data['PitchShift'] == 0]['Score'])
@@ -2483,7 +2486,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         # Calculate total degrees of freedom
         # df_T = N - 1
         # Calculate epsilon-squared (effect size)
-        epsilon_squared = (result_kruskal.statistic - df_H) / N
+        epsilon_squared = (result_kruskal.statistic - df_H) / (N-k)
 
         print(f"ProbeWord: {probe_word}, Kruskal-Wallis p-value: {result_kruskal.pvalue}, epsilon-squared: {epsilon_squared}")
         # append to a dataframe
@@ -2670,7 +2673,6 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
     plt.savefig('G:/neural_chapter/figures/rovedF0vscontrolF0traineddistribution_20062023intertrialroving.png',
                 dpi=1000)
-
     plt.show()
 
     fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
@@ -2742,28 +2744,43 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
     sns.violinplot(x='ProbeWord', y='Score', data=df_full_naive_pitchsplit, ax=ax, palette= custom_colors_naive, hue = 'PitchShift')
     #get the legend handles
-    plt.ylabel('Decoding Score', fontsize = 20)
+    plt.ylabel('Decoding Score', fontsize = 40)
     plt.xlabel(None)
     handles, labels = ax.get_legend_handles_labels()
-    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, horizontalalignment='right', fontsize = 18)
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, horizontalalignment='right', fontsize = 30)
+    ax.set_yticklabels(ax.get_yticklabels(), fontsize = 30)
     ax.legend(handles=handles[0:2], labels=['Control', 'Pitch-shifted'], title=None, fontsize = 18)
-    plt.title('Naive animals'' scores over distractor word', fontsize = 20)
+    plt.title('Naive animals'' scores over distractor word', fontsize = 40)
     plt.savefig(f'G:/neural_chapter/figures/naive_animals_overdistractor_dividedbypitchshift.png', dpi = 300, bbox_inches='tight')
     plt.show()
 
-    df_kruskal = pd.DataFrame(columns=['ProbeWord', 'Kruskal_pvalue', 'less than 0.05'])
+    df_kruskal = pd.DataFrame(columns=['ProbeWord', 'Kruskal_pvalue', 'less than 0.05', 'epsilon_squared'])
     # Perform Kruskal-Wallis test for each ProbeWord
-    for probe_word in df_above_chance['ProbeWord'].unique():
-        subset_data = df_above_chance[df_above_chance['ProbeWord'] == probe_word]
+    for probe_word in df_full_naive_pitchsplit_violinplot['ProbeWord'].unique():
+        subset_data = df_full_naive_pitchsplit_violinplot[df_full_naive_pitchsplit_violinplot['ProbeWord'] == probe_word]
 
         result_kruskal = scipy.stats.kruskal(subset_data[subset_data['PitchShift'] == 1]['Score'],
                                  subset_data[subset_data['PitchShift'] == 0]['Score'])
 
         less_than_alpha = result_kruskal.pvalue < 0.05
 
-        print(f"ProbeWord: {probe_word}, Kruskal-Wallis p-value: {result_kruskal.pvalue}")
+        n1 = len(subset_data[subset_data['PitchShift'] == 1]['Score'])
+        n2 = len(subset_data[subset_data['PitchShift'] == 0]['Score'])
+        N = n1 + n2
+        # Calculate degrees of freedom for the Kruskal-Wallis test
+        k = 2  # Assuming two groups
+        df_H = k - 1
+        # Calculate total degrees of freedom
+        # df_T = N - 1
+        # Calculate epsilon-squared (effect size)
+
+        epsilon_squared = (result_kruskal.statistic - df_H) / (N - k)
+
+        print(
+            f"ProbeWord: {probe_word}, Kruskal-Wallis p-value: {result_kruskal.pvalue}, epsilon-squared: {epsilon_squared}")
+
         #append to a dataframe
-        df_kruskal = df_kruskal.append({'ProbeWord': probe_word, 'Kruskal_pvalue': result_kruskal.pvalue, 'less than 0.05':less_than_alpha}, ignore_index=True)
+        df_kruskal = df_kruskal.append({'ProbeWord': probe_word, 'Kruskal_pvalue': result_kruskal.pvalue, 'less than 0.05':less_than_alpha, 'epsilon_squared': epsilon_squared}, ignore_index=True)
     #export the dataframe
     df_kruskal.to_csv('G:/neural_chapter/figures/kruskal_pvalues_naive.csv')
     #run an anova to see if probe word is significant
