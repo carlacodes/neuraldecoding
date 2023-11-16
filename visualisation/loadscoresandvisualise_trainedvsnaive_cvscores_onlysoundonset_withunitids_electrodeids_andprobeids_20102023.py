@@ -2368,8 +2368,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         #get the subset of the data where the meanscore is above 0.75
         df_full_pitchsplit_plot_highsubset = df_full_pitchsplit_plot[df_full_pitchsplit_plot['MeanScore'] > 0.75]
 
-        df_full_naive_pitchsplit = create_gen_frac_variable(df_full_naive_pitchsplit, high_score_threshold=False, index_or_frac = options)
-        df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit[df_full_naive_pitchsplit['GenFrac'].notna()]
+        df_full_naive_pitchsplit_plot = create_gen_frac_variable(df_full_naive_pitchsplit, high_score_threshold=False, index_or_frac = options)
+        df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['GenFrac'].notna()]
         df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot.drop_duplicates(subset = ['ID'])
 
 
