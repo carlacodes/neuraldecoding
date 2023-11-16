@@ -1582,7 +1582,8 @@ def get_word_aligned_raster_with_pitchshift(blocks, clust_id, word=None, correct
 
             try:
 
-                pitchoftarg[i] = chosentrial[targpos[0][0]]
+                pitchoftarg[i] = chosentrial[targpos[0][0]]  # check this for target raster function TODO
+                if pitchoftarg[i] == 3:
                     pitchoftarg[i] = 3
 
                 elif pitchoftarg[i] == 8:
