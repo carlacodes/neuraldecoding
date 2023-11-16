@@ -48,7 +48,7 @@ def run_cleaning_of_rasters(blocks, datapath):
     return new_blocks
 def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshift=True, stream = 'BB_3'):
 
-    tarDir = Path(f'E:/rastersms4spikesortinginter/F1702_Zola/figs_dist_and_targ1611/{stream}/')
+    tarDir = Path(f'E:/rastersms4spikesortinginter/F1815_Cruella/figs_dist_and_targ_1611/{stream}/')
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
 
@@ -61,7 +61,7 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
     for st in blocks[0].segments[0].spiketrains:
         print(f"Cluster ID: {st.annotations['cluster_id']}, Group: {st.annotations['group']}")
 
-    clust_ids = [307]
+    clust_ids = [120]
 
     cluster_id_droplist = np.empty([])
     for cluster_id in clust_ids:
@@ -100,9 +100,13 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
             elif probewords[0] == 1:
                 probeword_text = 'instruments'
                 color_option = 'blue'
+            elif probewords[0] == 9:
+                probeword_text = 'today'
+                color_option = 'green'
             else:
                 probeword_text = 'error'
                 color_option = 'red'
+
             fig,ax = plt.subplots(2,)
 
             rasterplot(spiketrains, c=color_option, histogram_bins=100, axes=ax, s=0.5)
@@ -117,7 +121,7 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
             else:
                 pitchtext = 'Pitch-shifted F0'
 
-            plt.suptitle(f'Raster for F1702, word: {probeword_text}, unit id: {cluster_id}, {pitchtext}', fontsize = 12)
+            plt.suptitle(f'Raster for F1815, word: {probeword_text}, unit id: {cluster_id}, {pitchtext}', fontsize = 12)
             plt.savefig(
                 str(saveDir) + f'/targdist_{probewords[0]}_clusterid_{stream}_pitchshift_{pitchshift}' + str(cluster_id)+ '.png')
             #plt.show()
@@ -132,14 +136,12 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
 
 def generate_rasters(dir):
-    datapath = Path(f'D:\ms4output_16102023\F1702_Zola\BB2BB3_zola_intertrialroving_26092023\BB2BB3_zola_intertrialroving_26092023_BB2BB3_zola_intertrialroving_26092023_BB_2\mountainsort4\phy/')
+    datapath = Path(f'D:\ms4output_16102023\F1815_Cruella/01_03_2022_cruellabb4bb5/01_03_2022_cruellabb4bb5_01_03_2022_cruellabb4bb5_BB_5\mountainsort4\phy/')
     stream = str(datapath).split('\\')[-3]
     stream = stream[-4:]
     print(stream)
-    with open(datapath / 'blocks.pkl', 'rb') as f:
-        blocks = pickle.load(f)
-    scores = {}
-    probewords_list = [(4,4), (1,1)]
+
+    probewords_list = [(9,9), (1,1)]
     with open(datapath / 'new_blocks.pkl', 'rb') as f:
         new_blocks = pickle.load(f)
 
@@ -150,8 +152,6 @@ def generate_rasters(dir):
         for talker in [1]:
             for pitchshift in [True, False]:
                 target_vs_probe_with_raster(new_blocks, talker=talker,probewords=probeword,pitchshift=pitchshift, stream = stream)
-            # new_blocks = run_cleaning_of_rasters(blocks, datapath)
-            # target_vs_probe_with_raster(blocks, talker=talker,probewords=probeword,pitchshift=False)
 
 
 
