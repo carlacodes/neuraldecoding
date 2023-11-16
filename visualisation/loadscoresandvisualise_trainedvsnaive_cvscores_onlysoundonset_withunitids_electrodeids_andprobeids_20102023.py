@@ -2237,8 +2237,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         df_full_pitchsplit_plot = df_full_pitchsplit_highsubset[df_full_pitchsplit_highsubset['GenFrac'].notna()]
         df_full_pitchsplit_plot = df_full_pitchsplit_plot.drop_duplicates(subset = ['ID'])
 
-        df_full_naive_pitchsplit = create_gen_frac_variable(df_full_naive_pitchsplit, high_score_threshold=True, index_or_frac = options)
-        df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit[df_full_naive_pitchsplit['GenFrac'].notna()]
+        df_full_naive_pitchsplit_plot = create_gen_frac_variable(df_full_naive_pitchsplit, high_score_threshold=True, index_or_frac = options)
+        df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['GenFrac'].notna()]
         df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot.drop_duplicates(subset = ['ID'])
 
         #plot the distplot of these scores overlaid with the histogram
