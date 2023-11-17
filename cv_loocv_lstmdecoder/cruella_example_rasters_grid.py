@@ -38,7 +38,23 @@ import pickle
 
 
 
+def find_repeating_substring(string):
+    length = len(string)
+    half_length = length // 2
 
+    # Iterate through possible lengths of the repeating substring
+    for i in range(1, half_length + 1):
+        substring = string[:i]
+        times = length // i
+
+        # Construct the potential repeating substring
+        potential_repeat = substring * times
+
+        # Check if the constructed substring matches the original string
+        if potential_repeat == string:
+            return substring
+
+    return None
 
 def run_cleaning_of_rasters(blocks, datapath):
     clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
@@ -52,10 +68,6 @@ def target_vs_probe_with_raster(blocks, talker=1, clust_ids = [], stream = 'BB_3
 
     tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_dist_and_targ_1611/{phydir}/{stream}/')
     #load the high generalizable clusters, csv file
-
-
-
-
 
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
@@ -204,14 +216,30 @@ def generate_rasters(dir):
 
         high_units = pd.read_csv(f'G:/neural_chapter/figures/unit_ids_trained_highthreshold_index_{animal}.csv')
         # remove trailing steam
-        rec_name = folder[:-4]
+        rec_name = folder[:-5]
+        #find the unique string
+        repeating_substring = find_repeating_substring(rec_name)
+
+
+        #remove the repeating substring
 
         # find the units that have the phydir
-        high_units = high_units[(high_units['rec_name'] == rec_name) and (high_units['stream'] == stream)]
-        clust_ids = high_units['ID'].to_list()
 
+        max_length = len(rec_name) // 2
+
+        for length in range(1, max_length + 1):
+            for i in range(len(rec_name) - length):
+                substring = rec_name[i:i + length]
+                if rec_name.count(substring) > 1:
+                    repeating_substring = substring
+                    break
+
+        print(repeating_substring)
+        rec_name = repeating_substring
+        high_units = high_units[(high_units['rec_name'] == rec_name) & (high_units['stream'] == stream)]
+        clust_ids = high_units['ID'].to_list()
         for talker in [1]:
-            target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=folder, animal = animal)
+            target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal)
 
 
 
