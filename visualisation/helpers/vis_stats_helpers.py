@@ -127,7 +127,8 @@ def create_gen_frac_variable(df_full_pitchsplit, high_score_threshold = False, i
         if need_ps == True:
             #isolate the pitch shifted trials
             df_full_pitchsplit_unit_ps = df_full_pitchsplit_unit[df_full_pitchsplit_unit['PitchShift'] == 1]
-            if len(df_full_pitchsplit_unit_ps) == 0:
+            df_full_pitchsplit_unit_ns = df_full_pitchsplit_unit[df_full_pitchsplit_unit['PitchShift'] == 0]
+            if len(df_full_pitchsplit_unit_ps) == 0 or len(df_full_pitchsplit_unit_ns) == 0:
                 df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'GenFrac'] = np.nan
                 continue
 
