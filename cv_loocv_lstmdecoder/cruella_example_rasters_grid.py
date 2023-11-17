@@ -66,7 +66,7 @@ def run_cleaning_of_rasters(blocks, datapath):
     return new_blocks
 def target_vs_probe_with_raster(blocks, talker=1, clust_ids = [], stream = 'BB_3', phydir = 'phy', animal = 'F1702_Zola'):
 
-    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_dist_and_targ_1611/{phydir}/{stream}/')
+    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_dist_and_targ_1711/{phydir}/{stream}/')
     #load the high generalizable clusters, csv file
 
     saveDir = tarDir
@@ -76,20 +76,15 @@ def target_vs_probe_with_raster(blocks, talker=1, clust_ids = [], stream = 'BB_3
     window = [0, 0.6]
     probewords_list = [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10)]
 
-    for st in blocks[0].segments[0].spiketrains:
-        print(f"Cluster ID: {st.annotations['cluster_id']}, Group: {st.annotations['group']}")
-
 
     for cluster_id in clust_ids:
         #make a figure of 2 columns and 10 rows
-        fig, ax = plt.subplots(10, 2, figsize=(10, 20))
+        fig, ax = plt.subplots(len(probewords_list), 2, figsize=(10, 20))
         count = 0
-        for probeword in probewords_list:
+        for idx, probewords in enumerate(probewords_list):
             for pitchshift_option in [True, False]:
-                print('now starting cluster')
-                print(cluster_id)
-                # try:
-                raster_target, raster_target_compare = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=probeword,
+
+                raster_target, raster_target_compare = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=probewords[0],
                                                                                           pitchshift=pitchshift_option,
                                                                                           correctresp=True,
                                                                                           df_filter=['No Level Cue'], talker = 'female')
@@ -115,84 +110,104 @@ def target_vs_probe_with_raster(blocks, talker=1, clust_ids = [], stream = 'BB_3
                     spiketrain = neo.SpikeTrain(selected_trials['spike_time'], units='s', t_start=min(selected_trials['spike_time']), t_stop=max(selected_trials['spike_time']))
                     spiketrains.append(spiketrain)
 
-                print(spiketrains)
                 try:
-                    if probewords[0] == 4:
+                    if probewords[0] == 4 and pitchshift_option == False:
                         probeword_text = 'when a'
-                        color_option = 'black'
-                    elif probewords[0] == 1:
+                        color_option = 'green'
+                    elif probewords[0] == 4 and pitchshift_option == True:
+                        probeword_text = 'when a'
+                        color_option = 'lightgreen'
+
+                    elif probewords[0] == 1 and pitchshift_option == False:
                         probeword_text = 'instruments'
                         color_option = 'blue'
-                    elif probewords[0] == 2:
+                    elif probewords[0] == 1 and pitchshift_option == True:
+                        probeword_text = 'instruments'
+                        color_option = 'skyblue'
+
+
+                    elif probewords[0] == 2 and pitchshift_option == False:
                         probeword_text = 'craft'
-                        color_option = 'black'
-                    elif probewords[0] == 3:
+                        color_option = 'deeppink'
+                    elif probewords[0] == 2 and pitchshift_option == True:
+                        probeword_text = 'craft'
+                        color_option = 'pink'
+
+                    elif probewords[0] == 3 and pitchshift_option == False:
                         probeword_text = 'in contrast'
-                        color_option = 'black'
-                    elif probewords[0] == 5:
+                        color_option = 'mediumpurple'
+                    elif probewords[0] == 3 and pitchshift_option == True:
+                        probeword_text = 'in contrast'
+                        color_option = 'purple'
+
+                    elif probewords[0] == 5 and pitchshift_option == False:
                         probeword_text = 'accurate'
                         color_option = 'black'
-                    elif probewords[0] == 6:
-                        probeword_text = 'pink noise'
-                        color_option = 'black'
-                    elif probewords[0] == 7:
-                        probeword_text = 'of science'
-                        color_option = 'black'
-                    elif probewords[0] == 8:
-                        probeword_text = 'rev. instruments'
-                        color_option = 'black'
-                    elif probewords[0] == 9:
-                        probeword_text = 'boats'
-                        color_option = 'black'
 
-                    elif probewords[0] == 10:
+                    elif probewords[0] == 5 and pitchshift_option == True:
+                        probeword_text = 'accurate'
+                        color_option = 'grey'
+                    elif probewords[0] == 6 and pitchshift_option == False:
+                        probeword_text = 'pink noise'
+                        color_option = 'navy'
+                    elif probewords[0] == 6 and pitchshift_option == True:
+                        probeword_text = 'pink noise'
+                        color_option = 'lightblue'
+
+                    elif probewords[0] == 7 and pitchshift_option == False:
+                        probeword_text = 'of science'
+                        color_option = 'coral'
+                    elif probewords[0] == 7 and pitchshift_option == True:
+                        probeword_text = 'of science'
+                        color_option = 'orange'
+
+
+                    elif probewords[0] == 8 and pitchshift_option == False:
+                        probeword_text = 'rev. instruments'
+                        color_option = 'plum'
+                    elif probewords[0] == 8 and pitchshift_option == True:
+                        probeword_text = 'rev. instruments'
+                        color_option = 'darkorchid'
+                    elif probewords[0] == 9 and pitchshift_option == False:
+                        probeword_text = 'boats'
+                        color_option = 'slategrey'
+                    elif probewords[0] == 9 and pitchshift_option == True:
+                        probeword_text = 'boats'
+                        color_option = 'royalblue'
+
+                    elif probewords[0] == 10 and pitchshift_option == False:
                         probeword_text = 'today'
-                        color_option = 'green'
+                        color_option = 'gold'
+                    elif probewords[0] == 10 and pitchshift_option == True:
+                        probeword_text = 'today'
+                        color_option = 'yellow'
                     else:
                         probeword_text = 'error'
                         color_option = 'red'
                     #if pitchshift plot on the second column
                     custom_xlim = (-0.1, 0.6)
 
-                    if pitchshift_option == True:
-                        rasterplot(spiketrains, c=color_option, histogram_bins=100, axes=ax[count, 1], s=0.3 ) #s=0.5
-                        ax[count, 1].set_ylabel('trial')
-                        plt.setp(ax[count, 1], xlim=custom_xlim)
-                        #add a title to the first row
-                        ax[0, 1].set_title('Pitch-shifted F0')
-                        # ax[0].set_xlabel('Time relative to word presentation (s)')
-                    elif pitchshift_option == False:
-                        rasterplot(spiketrains, c=color_option, histogram_bins=100, axes=ax[count, 0], s=0.3 )
-                        ax[count, 0].set_ylabel('trial')
-                        plt.setp(ax[count, 0], xlim=custom_xlim)
-                        #add label next to the y axis for the probeword
-                        ax[count, 0].text(-0.2, 0.5, probeword_text, horizontalalignment='center', verticalalignment='center', rotation=90, transform=ax[count, 0].transAxes)
-                        #add a title to the first row
-                        ax[0, 0].set_title('Control F0')
-                        # ax[0].set_xlabel('Time relative to word presentation (s)')
-
-
-                    ax[0].set_ylabel('trial')
-                    # ax[0].set_xlabel('Time relative to word presentation (s)')
-                    custom_xlim = (-0.1, 0.6)
-
-                    plt.setp(ax, xlim=custom_xlim)
-                    if pitchshift == False:
-                        pitchtext = 'Control F0'
+                    if pitchshift_option:
+                        rasterplot(spiketrains, c=color_option, histogram_bins=0, axes=ax[idx, 1], s=0.3)
+                        ax[idx, 1].set_xlim(custom_xlim)
                     else:
-                        pitchtext = 'Pitch-shifted F0'
-                    count += 1
-
-                except:
-                    print('no spikes')
+                        rasterplot(spiketrains, c=color_option, histogram_bins=0, axes=ax[idx, 0], s=0.3)
+                        ax[idx, 0].set_xlim(custom_xlim)
+                        ax[idx, 0].set_ylabel('trial')
+                        ax[idx, 0].text(-0.2, 0.5, probeword_text, horizontalalignment='center',
+                                        verticalalignment='center', rotation=90, transform=ax[idx, 0].transAxes)
+                except Exception as e:
+                    print(f"Error: {e}")
                     continue
 
-    # add labels beside the axes
 
-    plt.savefig(
-        str(saveDir) + f'/targdist_grid_clusterid_{cluster_id}_{stream}_pitchshift_{pitchshift}_' + str(
-            cluster_id) + '.png')
-            # plt.show()
+        ax[0, 1].set_title('Pitch-shifted F0')
+        ax[0, 0].set_title('Control F0')
+        plt.suptitle(f'Rasters for {animal}, unit id: {cluster_id}, stream: {stream}', fontsize=25)
+        plt.savefig(
+            str(saveDir) + f'/targdist_grid_clusterid_{cluster_id}_{stream}_' + str(
+                cluster_id) + '.png', bbox_inches='tight')
+                # plt.show()
 
 
 
@@ -205,7 +220,6 @@ def generate_rasters(dir):
     datapath_big = Path(f'D:/ms4output_16102023/F1815_Cruella/')
     animal = str(datapath_big).split('\\')[-1]
     datapaths = [x for x in datapath_big.glob('**/mountainsort4/phy//') if x.is_dir()]
-    datapaths = datapaths[5:]
     for datapath in datapaths:
         stream = str(datapath).split('\\')[-3]
         stream = stream[-4:]
@@ -238,6 +252,9 @@ def generate_rasters(dir):
         rec_name = repeating_substring
         high_units = high_units[(high_units['rec_name'] == rec_name) & (high_units['stream'] == stream)]
         clust_ids = high_units['ID'].to_list()
+        if clust_ids == []:
+            print('no units found')
+            continue
         for talker in [1]:
             target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal)
 
