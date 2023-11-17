@@ -2246,7 +2246,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
             #isolate the data for this animal
             df_full_pitchsplit_plot_animal = df_full_pitchsplit_plot[df_full_pitchsplit_plot['ID'].str.contains(animal)]
             #export the unit IDs for this animal
-            animal_dataframe = pd.DataFrame(columns = ['ID', 'rec_name', 'stream'])
+            animal_dataframe = pd.DataFrame(columns = ['ID', 'rec_name', 'stream', 'BrainArea'])
             for i in range(0,len(df_full_pitchsplit_plot_animal)):
                 full_id = df_full_pitchsplit_plot_animal.iloc[i]['ID']
                 components = full_id.split('_')
@@ -2256,8 +2256,10 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                 #concatenate the rec_name
                 rec_name = '_'.join(rec_name)
                 stream = full_id[-4:]
+                brainarea = df_full_pitchsplit_plot_animal.iloc[i]['BrainArea']
                 #append to a dataframe
-                animal_dataframe = animal_dataframe.append({'ID': unit_id, 'rec_name': rec_name, 'stream': stream}, ignore_index=True)
+                animal_dataframe = animal_dataframe.append({'ID': unit_id, 'rec_name': rec_name, 'stream': stream, 'BrainArea':brainarea},
+                                                           ignore_index=True)
             #export the dataframe to csv
             animal_dataframe.to_csv(f'G:/neural_chapter/figures/unit_ids_trained_highthreshold_{options}_{animal}.csv')
 
@@ -2265,7 +2267,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
             # isolate the data for this animal
             df_full_pitchsplit_plot_animal = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['ID'].str.contains(animal)]
             # export the unit IDs for this animal
-            animal_dataframe = pd.DataFrame(columns=['ID', 'rec_name', 'stream'])
+            animal_dataframe = pd.DataFrame(columns=['ID', 'rec_name', 'stream', 'BrainArea'])
             for i in range(0, len(df_full_pitchsplit_plot_animal)):
                 full_id = df_full_pitchsplit_plot_animal.iloc[i]['ID']
                 components = full_id.split('_')
@@ -2276,7 +2278,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                 rec_name = '_'.join(rec_name)
                 stream = full_id[-4:]
                 # append to a dataframe
-                animal_dataframe = animal_dataframe.append({'ID': unit_id, 'rec_name': rec_name, 'stream': stream},
+                animal_dataframe = animal_dataframe.append({'ID': unit_id, 'rec_name': rec_name, 'stream': stream, 'BrainArea':brainarea },
                                                            ignore_index=True)
             # export the dataframe to csv
             animal_dataframe.to_csv(f'G:/neural_chapter/figures/unit_ids_trained_highthreshold_{options}_{animal}.csv')

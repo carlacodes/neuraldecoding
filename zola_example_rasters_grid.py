@@ -64,7 +64,7 @@ def run_cleaning_of_rasters(blocks, datapath):
     with open(datapath / 'new_blocks.pkl', 'wb') as f:
         pickle.dump(new_blocks, f)
     return new_blocks
-def target_vs_probe_with_raster(blocks, talker=1, clust_ids = [], stream = 'BB_3', phydir = 'phy', animal = 'F1702_Zola', brain_area = []):
+def target_vs_probe_with_raster(blocks, talker=1, clust_ids = [], stream = 'BB_3', phydir = 'phy', animal = 'F1702_Zola'):
 
     tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_dist_and_targ_1711/{phydir}/{stream}/')
     #load the high generalizable clusters, csv file
@@ -77,7 +77,7 @@ def target_vs_probe_with_raster(blocks, talker=1, clust_ids = [], stream = 'BB_3
     probewords_list = [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10)]
 
 
-    for j, cluster_id in enumerate(clust_ids):
+    for cluster_id in clust_ids:
         #make a figure of 2 columns and 10 rows
         fig, ax = plt.subplots(len(probewords_list), 2, figsize=(10, 20))
         count = 0
@@ -203,7 +203,7 @@ def target_vs_probe_with_raster(blocks, talker=1, clust_ids = [], stream = 'BB_3
 
         ax[0, 1].set_title('Pitch-shifted F0')
         ax[0, 0].set_title('Control F0')
-        plt.suptitle(f'Rasters for {animal}, unit id: {cluster_id}, stream: {stream}, area: {brain_area[j]}', fontsize=25)
+        plt.suptitle(f'Rasters for {animal}, unit id: {cluster_id}, stream: {stream}', fontsize=25)
         plt.savefig(
             str(saveDir) + f'/targdist_grid_clusterid_{cluster_id}_{stream}_' + str(
                 cluster_id) + '.png', bbox_inches='tight')
@@ -217,7 +217,7 @@ def target_vs_probe_with_raster(blocks, talker=1, clust_ids = [], stream = 'BB_3
 
 def generate_rasters(dir):
 
-    datapath_big = Path(f'D:/ms4output_16102023/F1815_Cruella/')
+    datapath_big = Path(f'D:/ms4output_16102023/F1702_Zola/')
     animal = str(datapath_big).split('\\')[-1]
     datapaths = [x for x in datapath_big.glob('**/mountainsort4/phy//') if x.is_dir()]
     for datapath in datapaths:
@@ -252,13 +252,11 @@ def generate_rasters(dir):
         rec_name = repeating_substring
         high_units = high_units[(high_units['rec_name'] == rec_name) & (high_units['stream'] == stream)]
         clust_ids = high_units['ID'].to_list()
-        brain_area = high_units['BrainArea'].to_list()
-
         if clust_ids == []:
             print('no units found')
             continue
         for talker in [1]:
-            target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area)
+            target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal)
 
 
 

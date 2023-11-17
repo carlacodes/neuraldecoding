@@ -203,7 +203,7 @@ def target_vs_probe_with_raster(blocks, talker=1, clust_ids = [], stream = 'BB_3
 
         ax[0, 1].set_title('Pitch-shifted F0')
         ax[0, 0].set_title('Control F0')
-        plt.suptitle(f'Rasters for {animal}, unit id: {cluster_id}, stream: {stream}, area: {brain_area[j]}', fontsize=25)
+        plt.suptitle(f'Rasters for {animal}, unit id: {cluster_id}, stream: {stream}, region: {brain_area[j]}', fontsize=25)
         plt.savefig(
             str(saveDir) + f'/targdist_grid_clusterid_{cluster_id}_{stream}_' + str(
                 cluster_id) + '.png', bbox_inches='tight')
@@ -217,7 +217,7 @@ def target_vs_probe_with_raster(blocks, talker=1, clust_ids = [], stream = 'BB_3
 
 def generate_rasters(dir):
 
-    datapath_big = Path(f'D:/ms4output_16102023/F1815_Cruella/')
+    datapath_big = Path(f'D:/ms4output_16102023/F1702_Zola/')
     animal = str(datapath_big).split('\\')[-1]
     datapaths = [x for x in datapath_big.glob('**/mountainsort4/phy//') if x.is_dir()]
     for datapath in datapaths:
@@ -253,7 +253,6 @@ def generate_rasters(dir):
         high_units = high_units[(high_units['rec_name'] == rec_name) & (high_units['stream'] == stream)]
         clust_ids = high_units['ID'].to_list()
         brain_area = high_units['BrainArea'].to_list()
-
         if clust_ids == []:
             print('no units found')
             continue
