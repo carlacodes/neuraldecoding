@@ -117,13 +117,20 @@ def run_anova_on_dataframe(df_full_pitchsplit):
     return anova_table, model
 
 
-def create_gen_frac_variable(df_full_pitchsplit, high_score_threshold = False, index_or_frac = 'frac'):
+def create_gen_frac_variable(df_full_pitchsplit, high_score_threshold = False, index_or_frac = 'frac', need_ps = False):
     df_full_pitchsplit = df_full_pitchsplit[df_full_pitchsplit['Score'] >= 0.50]
     upper_quartile = np.percentile(df_full_pitchsplit['Score'], 75)
 
     for unit_id in df_full_pitchsplit['ID'].unique():
         # Check how many scores for that unit are above 60%
         df_full_pitchsplit_unit = df_full_pitchsplit[df_full_pitchsplit['ID'] == unit_id]
+        if need_ps == True:
+            #isolate the pitch shifted trials
+            df_full_pitchsplit_unit_ps = df_full_pitchsplit_unit[df_full_pitchsplit_unit['PitchShift'] == 1]
+            if len(df_full_pitchsplit_unit_ps) == 0:
+                df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'GenFrac'] = np.nan
+                continue
+
         #limit the scores to above 50%
 
         #filter for the above-chance scores

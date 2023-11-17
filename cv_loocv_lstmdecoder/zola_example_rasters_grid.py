@@ -66,7 +66,7 @@ def run_cleaning_of_rasters(blocks, datapath):
     return new_blocks
 def target_vs_probe_with_raster(blocks, talker=1, clust_ids = [], stream = 'BB_3', phydir = 'phy', animal = 'F1702_Zola', brain_area = []):
 
-    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_dist_and_targ_1711/{phydir}/{stream}/')
+    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_highgenindex_above60score_1711/{phydir}/{stream}/')
     #load the high generalizable clusters, csv file
 
     saveDir = tarDir
@@ -228,7 +228,7 @@ def generate_rasters(dir):
         with open(datapath / 'new_blocks.pkl', 'rb') as f:
             new_blocks = pickle.load(f)
 
-        high_units = pd.read_csv(f'G:/neural_chapter/figures/unit_ids_trained_highthreshold_index_{animal}.csv')
+        high_units = pd.read_csv(f'G:/neural_chapter/figures/unit_ids_trained_topgenindex_{animal}.csv')
         # remove trailing steam
         rec_name = folder[:-5]
         #find the unique string

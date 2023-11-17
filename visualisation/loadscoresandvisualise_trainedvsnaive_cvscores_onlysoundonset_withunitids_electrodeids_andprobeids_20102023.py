@@ -2229,6 +2229,68 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         if np.sum(df_full_unit['Below-chance']) == len(df_full_unit['Below-chance']):
             df_full_pitchsplit = df_full_pitchsplit[df_full_pitchsplit['ID'] != unit_id]
 
+    ##export the high genfrac units
+    df_full_pitchsplit_highsubset = create_gen_frac_variable(df_full_pitchsplit, high_score_threshold=False,
+                                                             index_or_frac='index',  need_ps=True)
+    # remove all rows where GenFrac is nan
+    df_full_pitchsplit_plot = df_full_pitchsplit_highsubset[df_full_pitchsplit_highsubset['GenFrac'].notna()]
+    df_full_pitchsplit_plot = df_full_pitchsplit_plot.drop_duplicates(subset=['ID'])
+    # export the unit ids of the units that are in the top 25% of genfrac scores
+    df_full_naive_pitchsplit_plot = create_gen_frac_variable(df_full_naive_pitchsplit, high_score_threshold=False,
+                                                             index_or_frac='index', need_ps=True)
+    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['GenFrac'].notna()]
+    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot.drop_duplicates(subset=['ID'])
+    #only include units with genfrac scores less than 0.33
+    df_full_pitchsplit_plot = df_full_pitchsplit_plot[df_full_pitchsplit_plot['GenFrac'] <= 0.2]
+    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['GenFrac'] <= 0.2]
+    #make sure the mean score is over 60%
+    df_full_pitchsplit_plot = df_full_pitchsplit_plot[df_full_pitchsplit_plot['Score'] >= 0.6]
+    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['Score'] >= 0.6]
+    for animal in ['F1815_Cruella', 'F1702_Zola', 'F1604_Squinty', 'F1606_Windolene']:
+        # isolate the data for this animal
+        df_full_pitchsplit_plot_animal = df_full_pitchsplit_plot[df_full_pitchsplit_plot['ID'].str.contains(animal)]
+        # export the unit IDs for this animal
+        animal_dataframe = pd.DataFrame(columns=['ID', 'rec_name', 'stream', 'BrainArea', 'GenScore', 'MeanScore'])
+        for i in range(0, len(df_full_pitchsplit_plot_animal)):
+            full_id = df_full_pitchsplit_plot_animal.iloc[i]['ID']
+            components = full_id.split('_')
+            unit_id = components[0]
+            # remove the unit id from the full_id for the rec_name
+            rec_name = components[3:-2]
+            # concatenate the rec_name
+            rec_name = '_'.join(rec_name)
+            stream = full_id[-4:]
+            genfrac = df_full_pitchsplit_plot_animal.iloc[i]['GenFrac']
+            brainarea = df_full_pitchsplit_plot_animal.iloc[i]['BrainArea']
+            # append to a dataframe
+            animal_dataframe = animal_dataframe.append(
+                {'ID': unit_id, 'rec_name': rec_name, 'stream': stream, 'BrainArea': brainarea, 'GenScore': genfrac, 'MeanScore': df_full_pitchsplit_plot_animal.iloc[i]['Score']},
+                ignore_index=True)
+        # export the dataframe to csv
+        animal_dataframe.to_csv(f'G:/neural_chapter/figures/unit_ids_trained_topgenindex_{animal}.csv')
+
+    for animal in ['F1902_Eclair', 'F1901_Crumble', 'F1812_Nala', 'F2003_Orecchiette']:
+        # isolate the data for this animal
+        df_full_pitchsplit_plot_animal = df_full_naive_pitchsplit_plot[
+            df_full_naive_pitchsplit_plot['ID'].str.contains(animal)]
+        # export the unit IDs for this animal
+        animal_dataframe = pd.DataFrame(columns=['ID', 'rec_name', 'stream', 'BrainArea', 'GenScore', 'MeanScore'])
+        for i in range(0, len(df_full_pitchsplit_plot_animal)):
+            full_id = df_full_pitchsplit_plot_animal.iloc[i]['ID']
+            components = full_id.split('_')
+            unit_id = components[0]
+            # remove the unit id from the full_id for the rec_name
+            rec_name = components[3:-2]
+            # concatenate the rec_name
+            rec_name = '_'.join(rec_name)
+            stream = full_id[-4:]
+            # append to a dataframe
+            genfrac = df_full_pitchsplit_plot_animal.iloc[i]['GenFrac']
+            animal_dataframe = animal_dataframe.append(
+                {'ID': unit_id, 'rec_name': rec_name, 'stream': stream, 'BrainArea': brainarea, 'GenScore': genfrac, 'MeanScore': df_full_pitchsplit_plot_animal.iloc[i]['Score']},
+                ignore_index=True)
+        # export the dataframe to csv
+        animal_dataframe.to_csv(f'G:/neural_chapter/figures/unit_ids_trained_topgenindex_{animal}.csv')
 
 
     for options in ['index', 'frac']:
