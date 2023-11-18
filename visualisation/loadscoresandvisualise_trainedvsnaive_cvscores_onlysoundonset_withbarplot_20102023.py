@@ -1534,10 +1534,10 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     plt.axvline(x=0, color='black')
     plt.xlim([0.35,1])
     #man whiteney test score
-    plt.title('Control F0 LSTM decoder scores between  \n trained and naive animals', fontsize = 18)
-    plt.xlabel('Control F0 LSTM decoder scores', fontsize = 20)
+    plt.title('Control F0 LSTM decoder scores between  \n trained and naive animals', fontsize = 30)
+    plt.xlabel('Control F0 LSTM decoder scores', fontsize = 30)
 
-    plt.ylabel('Density', fontsize = 20)
+    plt.ylabel('Density', fontsize = 30)
     manwhitscorecontrolf0 = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatenaive_nonps, alternative = 'greater')
 
     n1 = len(bigconcatenatetrained_nonps)

@@ -2360,6 +2360,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
             plt.xlabel('Generalizability Index of Top 25% of Units', fontsize = 20)
         elif options == 'frac':
             plt.xlabel('Generalizability Fraction of Top 25% of Units', fontsize = 20)
+            plt.xlim(0, 1)
 
         plt.ylabel('Count', fontsize = 20)
         plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_{options}.png')
@@ -2374,6 +2375,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
             plt.xlabel('Generalizability Index of Top 25% of Units', fontsize = 20)
         elif options == 'frac':
             plt.xlabel('Generalizability Fraction of Top 25% of Units', fontsize = 20)
+            plt.xlim(0, 1)
+
         plt.ylabel('Count', fontsize = 20)
         plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_violin_{options}.png')
         plt.show()
@@ -2411,8 +2414,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_violin_bybrainarea_{options}.png')
 
         fig, ax = plt.subplots(1, dpi=300)
-        sns.violinplot(x='BrainArea', y='MeanScore', data=df_full_pitchsplit_plot, ax=ax, inner=None, color='lightgray')
-        sns.stripplot(x='BrainArea', y='MeanScore', data=df_full_pitchsplit_plot, color = 'purple', ax=ax, dodge=False)
+        sns.violinplot(x='BrainArea', y='MeanScore', data=df_full_pitchsplit_plot, ax=ax, inner=None, label = None, color='lightgray')
+        sns.stripplot(x='BrainArea', y='MeanScore', data=df_full_pitchsplit_plot, color = 'purple',label = 'trained', ax=ax, dodge=False)
         # do a mann whitney u test between the meanscores for PEG and MEG
         stat_peg, p_peg = mannwhitneyu(df_full_pitchsplit_plot_peg['MeanScore'], df_full_pitchsplit_plot_meg['MeanScore'], alternative='greater')
         if options == 'index':
@@ -2420,17 +2423,24 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         elif options == 'frac':
             plt.xlabel(f'Mean Decoding Score of Top 25% of Units', fontsize=20)
         plt.ylabel('Mean Score', fontsize=20)
+        #get labels and handles for legeend
+        handles, labels = ax.get_legend_handles_labels()
+        ax.legend(handles=[handles[0]], labels=['trained'], title=None, fontsize=18)
+
+        #reinsert the handles and labeels:
+
         plt.savefig(f'G:/neural_chapter/figures/meanscore_highthreshold_violin_bybrainarea_{options}.png')
 
         fig, ax = plt.subplots(1, dpi=300)
         sns.violinplot(x='BrainArea', y='GenFrac', data=df_full_naive_pitchsplit_plot, ax=ax, inner=None, color='lightgray')
-        sns.stripplot(x='BrainArea', y='GenFrac', data=df_full_naive_pitchsplit_plot, ax=ax, color ='cyan', dodge=False)
+        sns.stripplot(x='BrainArea', y='GenFrac', data=df_full_naive_pitchsplit_plot, ax=ax, color ='cyan', label = 'naive', dodge=False)
         plt.title(f'Generalizability scores for the naive animals, upper quartile threshold, index or frac:{options}')
         if options == 'index':
             plt.xlabel('Generalizability Index of Top 25% of Units', fontsize = 20)
         elif options == 'frac':
             plt.xlabel('Generalizability Fraction of Top 25% of Units', fontsize = 20)
         plt.ylabel('GenFrac', fontsize = 20)
+
         plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_violin_naive_bybrainarea_{options}.png')
 
         stat_peg, p_peg = mannwhitneyu(df_full_naive_pitchsplit_plot_peg['GenFrac'], df_full_naive_pitchsplit_plot_meg['GenFrac'], alternative = 'less')
@@ -2439,11 +2449,15 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         #make the dataframe in the order of PEG, MEG, AEG
         df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot.sort_values(by=['BrainArea'])
 
-        sns.violinplot(x='BrainArea', y='MeanScore', data=df_full_naive_pitchsplit_plot, ax=ax, inner=None, color='lightgray', order = ['MEG', 'PEG', 'AEG'])
-        sns.stripplot(x='BrainArea', y='MeanScore', data=df_full_naive_pitchsplit_plot, ax=ax, color = 'cyan', dodge=False, order = ['MEG', 'PEG', 'AEG'])
+        sns.violinplot(x='BrainArea', y='MeanScore', data=df_full_naive_pitchsplit_plot, ax=ax, inner=None, label = None, color='lightgray', order = ['MEG', 'PEG', 'AEG'])
+        sns.stripplot(x='BrainArea', y='MeanScore', data=df_full_naive_pitchsplit_plot, ax=ax, label = 'naive', color = 'cyan', dodge=False, order = ['MEG', 'PEG', 'AEG'])
+        plt.xlim(-0.5, 1.5)
         # do a mann whitney u test between the meanscores for PEG and MEG
         stat_peg_naive, p_peg_naive = mannwhitneyu(df_full_naive_pitchsplit_plot_peg['MeanScore'], df_full_naive_pitchsplit_plot_meg['MeanScore'], alternative='less')
-        plt.xlabel(f'Mean Decoding Score of Top 25% of Unit', fontsize=20)
+        plt.xlabel(f'Mean Decoding Score of Top 25% of Units', fontsize=20)
+        handles, labels = ax.get_legend_handles_labels()
+        #reinsert the legend
+        ax.legend(handles=[handles[0]], labels=['naive'], title=None, fontsize=18)
         plt.ylabel('Mean Score', fontsize=20)
         plt.savefig(f'G:/neural_chapter/figures/meanscore_highthreshold_violin_naive_bybrainarea.png')
 
@@ -2707,13 +2721,13 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     sns.regplot(x=bigconcatenatenaive_nonps, y=bigconcatenatenaive_ps, scatter=False, color='darkcyan', label=' $y=%3.7s*x+%3.7s$' % (slope, intercept),
                 ax=ax, line_kws={'label': '$y=%3.7s*x+%3.7s$' % (slope, intercept)})
 
-    ax.set_ylabel('LSTM decoding score, F0 roved', fontsize=18)
-    ax.set_xlabel('LSTM decoding score, F0 control', fontsize=18)
+    ax.set_ylabel('LSTM decoding score, F0 roved', fontsize=30)
+    ax.set_xlabel('LSTM decoding score, F0 control', fontsize=30)
 
-    ax.set_title('LSTM decoder scores for' + ' F0 control vs. roved,\n ' + ' trained and naive animals', fontsize=20)
+    ax.set_title('LSTM decoder scores for' + ' F0 control vs. roved,\n ' + ' trained and naive animals', fontsize=30)
 
 
-    plt.legend( fontsize=12, ncol=2)
+    plt.legend( fontsize=25, ncol=2)
     fig.tight_layout()
     plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.png', dpi=1000)
     plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000)
@@ -2726,18 +2740,18 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_naive = pd.DataFrame({'F0_control': bigconcatenatenaive_nonps, 'F0_roved': bigconcatenatenaive_ps})
     fig, ax = plt.subplots(1, figsize=(9,9), dpi=300)
     sns.kdeplot(df_naive, x='F0_control', y ='F0_roved', shade=True, shade_lowest=False, ax=ax, label='naive')
-    plt.title('F0 control vs. roved, naive animals',fontsize = 20)
-    plt.ylabel('F0 roved score', fontsize = 20)
-    plt.xlabel('F0 control score',fontsize = 20)
+    plt.title('F0 control vs. roved, naive animals',fontsize = 30)
+    plt.ylabel('F0 roved score', fontsize = 30)
+    plt.xlabel('F0 control score',fontsize = 30)
     plt.savefig('G:/neural_chapter/figures/kdeplot_naiveanimals.png', dpi=300)
     plt.show()
 
     df_trained_kde = pd.DataFrame({'F0_control': bigconcatenatetrained_nonps, 'F0_roved': bigconcatenatetrained_ps})
     fig, ax = plt.subplots(1, figsize=(9,9), dpi=300)
     sns.kdeplot(df_trained_kde, x= 'F0_control', y = 'F0_roved', cmap="Reds", shade=True, shade_lowest=False, ax=ax, label='trained')
-    plt.title('F0 control vs. roved, trained animals', fontsize = 20)
-    plt.ylabel('F0 roved score',fontsize = 20)
-    plt.xlabel('F0 control score', fontsize = 20)
+    plt.title('F0 control vs. roved, trained animals', fontsize = 30)
+    plt.ylabel('F0 roved score',fontsize = 30)
+    plt.xlabel('F0 control score', fontsize = 30)
     plt.savefig('G:/neural_chapter/figures/kdeplot_trainedanimals.png', dpi=300)
     plt.show()
     manwhitscorecontrolf0 = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatenaive_nonps, alternative='greater')
@@ -2775,13 +2789,14 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     ax.set_xlim([0, 1])
     sns.distplot(bigconcatenatetrained_ps, label='trained roved', ax=ax, color='purple')
     sns.distplot(bigconcatenatetrained_nonps, label='trained control', ax=ax, color='magenta')
-    ax.legend(fontsize=18)
-    plt.title('Roved and Control F0 Distributions for the Trained Animals', fontsize=18)
-    plt.xlabel(' LSTM decoder scores', fontsize=20)
+    ax.legend(fontsize=25)
+    plt.title('Roved and Control F0 Distributions for the Trained Animals', fontsize=30)
+    plt.xlabel(' LSTM decoder scores', fontsize=30)
+    plt.ylabel('Density', fontsize=30)
     plt.xlim([0.35, 1])
 
     plt.savefig('G:/neural_chapter/figures/rovedF0vscontrolF0traineddistribution_20062023intertrialroving.png',
-                dpi=1000)
+                dpi=400)
     plt.show()
 
     fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
@@ -2790,10 +2805,10 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     sns.distplot(bigconcatenatenaive_nonps, label='naive control', ax=ax, color='cyan')
     plt.xlim([0.35, 1])
 
-    ax.legend(fontsize=18)
-    plt.xlabel(' LSTM decoder scores', fontsize=20)
-    plt.title('Roved and Control F0 Distributions for the Naive Animals', fontsize=18)
-
+    ax.legend(fontsize=25)
+    plt.xlabel(' LSTM decoder scores', fontsize=30)
+    plt.title('Roved and Control F0 Distributions for the Naive Animals', fontsize=30)
+    plt.ylabel('Density', fontsize=30)
     plt.savefig('G:/neural_chapter/figures/rovedF0vscontrolF0naivedistribution_20062023intertrialroving.png', dpi=1000)
     plt.show()
     kstestcontrolf0vsrovedtrained = scipy.stats.kstest(bigconcatenatetrained_nonps, bigconcatenatetrained_ps,

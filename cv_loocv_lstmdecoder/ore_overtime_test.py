@@ -331,42 +331,39 @@ def run_classification(datapath, ferretid, ferretid_fancy='F1902_Eclair', clust_
 
 
 def main():
-    datapath_big = Path(f'D:/ms4output_16102023/F1702_Zola/')
+    datapath_big = Path(f'G:/F2003_Orecchiette/')
     ferret_id_fancy = datapath_big.parts[-1]
     ferret_id = ferret_id_fancy.split('_')[1]
     ferret_id = ferret_id.lower()
-    datapaths = [x for x in datapath_big.glob('**/mountainsort4/phy//') if x.is_dir()]
+    datapaths = [x for x in datapath_big.glob('**/*kilosort//phy//') if x.is_dir()]
 
 
     for datapath in datapaths:
         stream = str(datapath).split('\\')[-3]
         stream = stream[-4:]
         print(stream)
-        folder = str(datapath).split('\\')[-3]
-        with open(datapath / 'new_blocks.pkl', 'rb') as f:
-            new_blocks = pickle.load(f)
+        folder = str(datapath).split('\\')[-4]
+
 
         high_units = pd.read_csv(f'G:/neural_chapter/figures/unit_ids_trained_topgenindex_{ferret_id_fancy}.csv')
         # remove trailing steam
-        rec_name = folder[:-5]
         # find the unique string
 
         # remove the repeating substring
 
         # find the units that have the phydir
 
-        max_length = len(rec_name) // 2
+        rec_name = folder
 
-        for length in range(1, max_length + 1):
-            for i in range(len(rec_name) - length):
-                substring = rec_name[i:i + length]
-                if rec_name.count(substring) > 1:
-                    repeating_substring = substring
-                    break
+        if folder.__contains__('s2'):
+            stream = 't_s2'
+        elif folder.__contains__('s3'):
+            stream = 't_s3'
+        elif folder.__contains__('mod'):
+            stream = 'g_mod'
 
-        print(repeating_substring)
-        rec_name = repeating_substring
-        high_units = high_units[(high_units['rec_name'] == rec_name) & (high_units['stream'] == stream)]
+
+        high_units = high_units[(high_units['stream'] == stream)]
         clust_ids = high_units['ID'].to_list()
         brain_area = high_units['BrainArea'].to_list()
 
