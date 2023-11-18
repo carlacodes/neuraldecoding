@@ -2304,7 +2304,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         df_full_unit_naive = df_full_naive_pitchsplit[df_full_naive_pitchsplit['ID'] == unit_id]
         # get all the scores where pitchshift is 1 for each probe word
         for probeword in df_full_unit_naive['ProbeWord'].unique():
-            # try:
+            try:
                 control_df = df_full_unit_naive[
                     (df_full_unit_naive['ProbeWord'] == probeword) & (df_full_unit_naive['PitchShift'] == 0) & (
                                 df_full_unit_naive['Below-chance'] == 0)]
@@ -2320,8 +2320,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                 pitchshift_score = df_full_unit_naive[
                     (df_full_unit_naive['ProbeWord'] == probeword) & (df_full_unit_naive['PitchShift'] == 1)][
                     'Score'].values[0]
-            # except:
-            #     continue
+            except:
+                continue
             if control_score is not None and pitchshift_score is not None:
                 rel_score = (pitchshift_score - control_score) / control_score
                 rel_frac_list_naive.append(rel_score)
@@ -2331,7 +2331,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         df_full_unit = df_full_pitchsplit[df_full_pitchsplit['ID'] == unit_id]
         # get all the scores where pitchshift is 1 for the each probe word
         for probeword in df_full_unit['ProbeWord'].unique():
-            # try:
+            try:
                 control_df = df_full_unit[
                     (df_full_unit['ProbeWord'] == probeword) & (df_full_unit['PitchShift'] == 0) & (
                             df_full_unit['Below-chance'] == 0)]
@@ -2346,8 +2346,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                 pitchshift_score = df_full_unit[
                     (df_full_unit['ProbeWord'] == probeword) & (df_full_unit['PitchShift'] == 1)][
                     'Score'].values[0]
-            # except:
-            #     continue
+            except:
+                continue
             if control_score is not None and pitchshift_score is not None:
                 rel_score = (pitchshift_score - control_score) / control_score
                 rel_frac_list_trained.append(rel_score)
