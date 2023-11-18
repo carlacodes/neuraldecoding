@@ -2647,37 +2647,37 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                 bigconcatenatenaive_ps.append(pitchshift_score)
                 bigconcatenatenaive_nonps.append(control_score)
     for unit_id in df_full_pitchsplit['ID']:
-            df_full_unit= df_full_pitchsplit[df_full_pitchsplit['ID'] == unit_id]
-            # get all the scores where pitchshift is 1 for the each probe word
-            for probeword in df_full_unit['ProbeWord'].unique():
-                try:
-                    control_df = df_full_unit_naive[
-                        (df_full_unit_naive['ProbeWord'] == probeword) & (df_full_unit_naive['PitchShift'] == 0) & (
-                                    df_full_unit_naive['Below-chance'] == 0)]
-                    roved_df = df_full_unit_naive[
-                        (df_full_unit_naive['ProbeWord'] == probeword) & (df_full_unit_naive['PitchShift'] == 1) & (
-                                    df_full_unit_naive['Below-chance'] == 0)]
-                    if len(control_df) == 0 and len(roved_df) == 0:
-                        continue
-                    control_score = df_full_unit[
-                        (df_full_unit['ProbeWord'] == probeword) & (df_full_unit['PitchShift'] == 0)][
-                        'Score'].values[0]
-                    pitchshift_score = df_full_unit[
-                        (df_full_unit['ProbeWord'] == probeword) & (df_full_unit['PitchShift'] == 1)][
-                        'Score'].values[0]
-                except:
-                    continue
-                if control_score is not None and pitchshift_score is not None:
-                    rel_score = (pitchshift_score - control_score) / control_score
-                    rel_frac_list_trained.append(rel_score)
-                    bigconcatenatetrained_nonps.append(control_score)
-                    bigconcatenatetrained_ps.append(pitchshift_score)
+        df_full_unit= df_full_pitchsplit[df_full_pitchsplit['ID'] == unit_id]
+        # get all the scores where pitchshift is 1 for the each probe word
+        for probeword in df_full_unit['ProbeWord'].unique():
+            # try:
+            control_df = df_full_unit[
+                (df_full_unit['ProbeWord'] == probeword) & (df_full_unit['PitchShift'] == 0) & (
+                            df_full_unit['Below-chance'] == 0)]
+            roved_df = df_full_unit[
+                (df_full_unit['ProbeWord'] == probeword) & (df_full_unit['PitchShift'] == 1) & (
+                            df_full_unit['Below-chance'] == 0)]
+            if len(control_df) == 0 or len(roved_df) == 0:
+                continue
+            control_score = df_full_unit[
+                (df_full_unit['ProbeWord'] == probeword) & (df_full_unit['PitchShift'] == 0)][
+                'Score'].values[0]
+            pitchshift_score = df_full_unit[
+                (df_full_unit['ProbeWord'] == probeword) & (df_full_unit['PitchShift'] == 1)][
+                'Score'].values[0]
+            # except:
+            #     continue
+            if control_score is not None and pitchshift_score is not None:
+                rel_score = (pitchshift_score - control_score) / control_score
+                rel_frac_list_trained.append(rel_score)
+                bigconcatenatetrained_nonps.append(control_score)
+                bigconcatenatetrained_ps.append(pitchshift_score)
         #check if all the probe words are below chance
     fig, ax = plt.subplots(1, figsize=(10, 10), dpi=300)
     # sns.distplot(rel_frac_list_trained, bins=20, label='trained', ax=ax, color='purple')
     # sns.distplot(rel_frac_list_naive, bins=20, label='naive', ax=ax, color='darkcyan')
-    sns.histplot(rel_frac_list_trained,  label='trained', color='purple', kde=True)
-    sns.histplot(rel_frac_list_naive, label='naive', color='darkcyan', kde=True)
+    sns.histplot(rel_frac_list_trained,  label='trained', color='purple', ax = ax, kde=True)
+    sns.histplot(rel_frac_list_naive, label='naive', color='darkcyan', ax= ax, kde=True)
 
     # get the peak of the distribution on the y axis
 
