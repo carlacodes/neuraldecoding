@@ -1534,17 +1534,19 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     plt.axvline(x=0, color='black')
     plt.xlim([0.35,1])
     #man whiteney test score
-    plt.title('Control F0 LSTM decoder scores between  \n trained and naive animals', fontsize = 30)
+    plt.title('Control F0 scores between  \n trained and naive animals', fontsize = 30)
     plt.xlabel('Control F0 LSTM decoder scores', fontsize = 30)
 
     plt.ylabel('Density', fontsize = 30)
+    ax.set_xticks([0.4,0.5, 0.6, 0.7, 0.8,0.9, 1], labels = [0.4,0.5, 0.6, 0.7, 0.8,0.9, 1], fontsize = 20)
+    ax.set_yticks([2,4,6,8,10,12], labels = [2,4,6,8,10,12], fontsize = 20)
     manwhitscorecontrolf0 = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatenaive_nonps, alternative = 'greater')
 
     n1 = len(bigconcatenatetrained_nonps)
     n2 = len(bigconcatenatenaive_nonps)
     r_controlf0 = 1 - (2 * manwhitscorecontrolf0.statistic) / (n1 * n2)
     #ax.legend()
-    plt.savefig('G:/neural_chapter/figures/controlF0distribution20062023intertrialroving.png', dpi=1000)
+    plt.savefig('G:/neural_chapter/figures/controlF0distribution20062023intertrialroving.png', dpi=1000, bbox_inches='tight')
     plt.show()
 
     fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
