@@ -2621,7 +2621,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
             plt.xlabel('Generalizability Index of Top 25% of Units', fontsize = 20)
         elif options == 'frac':
             plt.xlabel('Generalizability Fraction of Top 25% of Units', fontsize = 20)
-            plt.xlim(0, 1)
+            plt.xlim(0, 1.2)
+            plt.xticks([0, 0.2, 0.4, 0.6, 0.8, 1], labels=[0, 0.2, 0.4, 0.6, 0.8, 1])
 
         plt.ylabel('Count', fontsize = 20)
         plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_{options}.png')
