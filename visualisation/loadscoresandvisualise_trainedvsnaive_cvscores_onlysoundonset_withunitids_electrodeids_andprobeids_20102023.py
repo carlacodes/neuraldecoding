@@ -1,6 +1,7 @@
 import os
 
 import matplotlib.pyplot as plt
+import numpy as np
 import scipy.stats as stats
 import shap
 import statsmodels as sm
@@ -2291,7 +2292,263 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                 ignore_index=True)
         # export the dataframe to csv
         animal_dataframe.to_csv(f'G:/neural_chapter/figures/unit_ids_trained_topgenindex_{animal}.csv')
+        ##do the roved - control f0 score divided by the control f0 score plot
+        # first get the data into a format that can be analysed
+    rel_frac_list_naive = []
+    bigconcatenatenaive_ps = []
+    bigconcatenatenaive_nonps = []
+    bigconcatenatetrained_nonps = []
+    bigconcatenatetrained_ps = []
+    rel_frac_list_trained = []
+    for unit_id in df_full_naive_pitchsplit['ID']:
+        df_full_unit_naive = df_full_naive_pitchsplit[df_full_naive_pitchsplit['ID'] == unit_id]
+        # get all the scores where pitchshift is 1 for each probe word
+        for probeword in df_full_unit_naive['ProbeWord'].unique():
+            # try:
+                control_df = df_full_unit_naive[
+                    (df_full_unit_naive['ProbeWord'] == probeword) & (df_full_unit_naive['PitchShift'] == 0) & (
+                                df_full_unit_naive['Below-chance'] == 0)]
+                roved_df = df_full_unit_naive[
+                    (df_full_unit_naive['ProbeWord'] == probeword) & (df_full_unit_naive['PitchShift'] == 1) & (
+                                df_full_unit_naive['Below-chance'] == 0)]
+                if len(control_df) == 0 and len(roved_df) == 0:
+                    continue
 
+                control_score = df_full_unit_naive[
+                    (df_full_unit_naive['ProbeWord'] == probeword) & (df_full_unit_naive['PitchShift'] == 0)][
+                    'Score'].values[0]
+                pitchshift_score = df_full_unit_naive[
+                    (df_full_unit_naive['ProbeWord'] == probeword) & (df_full_unit_naive['PitchShift'] == 1)][
+                    'Score'].values[0]
+            # except:
+            #     continue
+            if control_score is not None and pitchshift_score is not None:
+                rel_score = (pitchshift_score - control_score) / control_score
+                rel_frac_list_naive.append(rel_score)
+                bigconcatenatenaive_ps.append(pitchshift_score)
+                bigconcatenatenaive_nonps.append(control_score)
+    for unit_id in df_full_pitchsplit['ID']:
+        df_full_unit = df_full_pitchsplit[df_full_pitchsplit['ID'] == unit_id]
+        # get all the scores where pitchshift is 1 for the each probe word
+        for probeword in df_full_unit['ProbeWord'].unique():
+            # try:
+                control_df = df_full_unit[
+                    (df_full_unit['ProbeWord'] == probeword) & (df_full_unit['PitchShift'] == 0) & (
+                            df_full_unit['Below-chance'] == 0)]
+                roved_df = df_full_unit[
+                    (df_full_unit['ProbeWord'] == probeword) & (df_full_unit['PitchShift'] == 1) & (
+                            df_full_unit['Below-chance'] == 0)]
+                if len(control_df) == 0 and len(roved_df) == 0:
+                    continue
+                control_score = df_full_unit[
+                    (df_full_unit['ProbeWord'] == probeword) & (df_full_unit['PitchShift'] == 0)][
+                    'Score'].values[0]
+                pitchshift_score = df_full_unit[
+                    (df_full_unit['ProbeWord'] == probeword) & (df_full_unit['PitchShift'] == 1)][
+                    'Score'].values[0]
+            # except:
+            #     continue
+            if control_score is not None and pitchshift_score is not None:
+                rel_score = (pitchshift_score - control_score) / control_score
+                rel_frac_list_trained.append(rel_score)
+                bigconcatenatetrained_nonps.append(control_score)
+                bigconcatenatetrained_ps.append(pitchshift_score)
+        # check if all the probe words are below chance
+    fig, ax = plt.subplots(1, figsize=(10, 10), dpi=300)
+    # sns.distplot(rel_frac_list_trained, bins=20, label='trained', ax=ax, color='purple')
+    # sns.distplot(rel_frac_list_naive, bins=20, label='naive', ax=ax, color='darkcyan')
+    sns.histplot(rel_frac_list_trained, label='trained', color='purple', ax=ax, kde=True)
+    sns.histplot(rel_frac_list_naive, label='naive', color='darkcyan', ax=ax, kde=True)
+
+    # get the peak of the distribution on the y axis
+
+    # get the peak of the distribution on the y axis
+    x2 = ax.lines[1].get_xdata()  # Get the x data of the distribution
+    y2 = ax.lines[1].get_ydata()  # Get the y data of the distribution
+    maxidnaive_idx = np.argmax(y2)  # The id of the peak (maximum of y data)
+    x_coord_naive = x2[maxidnaive_idx]
+
+    plt.axvline(x=0, color='black')
+
+    x1 = ax.lines[0].get_xdata()  # Get the x data of the distribution
+    y1 = ax.lines[0].get_ydata()  # Get the y data of the distribution
+    maxidtrained_idx = np.argmax(y1)  # The id of the peak (maximum of y data)
+    x_coord_trained = x1[maxidtrained_idx]
+
+    # Perform a t-test on the samples
+    t_stat, p_value = stats.ttest_ind(rel_frac_list_trained, rel_frac_list_naive, alternative='greater')
+
+    # Print the t-statistic and p-value
+    print(t_stat, p_value)
+    plt.title('Control - roved F0 \n LSTM decoder scores between trained and naive animals', fontsize=18)
+    plt.xlabel('Control - roved F0 \n LSTM decoder scores divided by Control F0', fontsize=20)
+    plt.ylabel('Count', fontsize=20)
+    # ax.legend()
+    plt.savefig('G:/neural_chapter/figures/diffF0distribution_20062023.png', dpi=1000)
+    plt.show()
+    fig, ax = plt.subplots(1, figsize=(9, 9), dpi=300)
+    ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.5,
+               label='trained')
+    ax.scatter(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, marker='P', color='darkcyan', alpha=0.5,
+               label='naive')
+    x = np.linspace(0.4, 1, 101)
+    ax.plot(x, x, color='black', linestyle='--')  # identity line
+
+    slope, intercept, r_value, pv, se = stats.linregress(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)
+
+    sns.regplot(x=bigconcatenatetrained_nonps, y=bigconcatenatetrained_ps, scatter=False, color='purple',
+                label=' $y=%3.7s*x+%3.7s$' % (slope, intercept), ax=ax,
+                line_kws={'label': ' $y=%3.7s*x+%3.7s$' % (slope, intercept)})
+    slope, intercept, r_value, pv, se = stats.linregress(bigconcatenatenaive_nonps, bigconcatenatenaive_ps)
+
+    sns.regplot(x=bigconcatenatenaive_nonps, y=bigconcatenatenaive_ps, scatter=False, color='darkcyan',
+                label=' $y=%3.7s*x+%3.7s$' % (slope, intercept),
+                ax=ax, line_kws={'label': '$y=%3.7s*x+%3.7s$' % (slope, intercept)})
+
+    ax.set_ylabel('LSTM decoding score, F0 roved', fontsize=30)
+    ax.set_xlabel('LSTM decoding score, F0 control', fontsize=30)
+
+    ax.set_title('LSTM decoder scores for' + ' F0 control vs. roved,\n ' + ' trained and naive animals', fontsize=30)
+
+    plt.legend(fontsize=15, ncol=2)
+    fig.tight_layout()
+    plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.png', dpi=1000)
+    plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000)
+    plt.show()
+
+    unique_unit_ids_naive = df_full_naive_pitchsplit['ID'].unique()
+    unique_unit_ids_trained = df_full_pitchsplit['ID'].unique()
+    # make a kde plot
+    # makea  dataframe
+    df_naive = pd.DataFrame({'F0_control': bigconcatenatenaive_nonps, 'F0_roved': bigconcatenatenaive_ps})
+    fig, ax = plt.subplots(1, figsize=(9, 9), dpi=300)
+    sns.kdeplot(df_naive, x='F0_control', y='F0_roved', shade=True, shade_lowest=False, ax=ax, label='naive')
+    plt.title('F0 control vs. roved, naive animals', fontsize=30)
+    plt.ylabel('F0 roved score', fontsize=30)
+    plt.xlabel('F0 control score', fontsize=30)
+    plt.savefig('G:/neural_chapter/figures/kdeplot_naiveanimals.png', dpi=300)
+    plt.show()
+
+    df_trained_kde = pd.DataFrame({'F0_control': bigconcatenatetrained_nonps, 'F0_roved': bigconcatenatetrained_ps})
+    fig, ax = plt.subplots(1, figsize=(9, 9), dpi=300)
+    sns.kdeplot(df_trained_kde, x='F0_control', y='F0_roved', cmap="Reds", shade=True, shade_lowest=False, ax=ax,
+                label='trained')
+    plt.title('F0 control vs. roved, trained animals', fontsize=30)
+    plt.ylabel('F0 roved score', fontsize=30)
+    plt.xlabel('F0 control score', fontsize=30)
+    plt.savefig('G:/neural_chapter/figures/kdeplot_trainedanimals.png', dpi=300)
+    plt.show()
+    manwhitscorecontrolf0 = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatenaive_nonps, alternative='greater')
+
+    n1 = len(bigconcatenatetrained_nonps)
+    n2 = len(bigconcatenatenaive_nonps)
+    r_controlf0 = 1 - (2 * manwhitscorecontrolf0.statistic) / (n1 * n2)
+    # ax.legend()
+    plt.savefig('G:/neural_chapter/figures/controlF0distribution20062023intertrialroving.png', dpi=1000)
+    plt.show()
+
+    fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
+    ax.set_xlim([0, 1])
+    sns.distplot(bigconcatenatetrained_ps, label='trained', ax=ax, color='purple')
+    sns.distplot(bigconcatenatenaive_ps, label='naive', ax=ax, color='darkcyan')
+    # man whiteney test score
+    # manwhitscore = mannwhitneyu(relativescoretrained, relativescorenaive, alternative = 'greater')
+    plt.title('Roved F0 LSTM decoder scores between  \n trained and naive animals', fontsize=18)
+    plt.xlabel('Roved F0 LSTM decoder scores', fontsize=20)
+    plt.ylabel('Density', fontsize=20)
+    manwhitscorerovedf0 = mannwhitneyu(bigconcatenatetrained_ps, bigconcatenatenaive_ps, alternative='greater')
+    plt.xlim([0.35, 1])
+
+    n1 = len(bigconcatenatetrained_ps)
+    n2 = len(bigconcatenatenaive_ps)
+    r_rovef0 = 1 - (2 * manwhitscorerovedf0.statistic) / (n1 * n2)
+
+    # ax.leg
+    ax.legend(fontsize=18)
+    plt.savefig('G:/neural_chapter/figures/rovedF0distribution_20062023intertrialroving.png', dpi=1000)
+
+    plt.show()
+
+    fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
+    sns.distplot(bigconcatenatetrained_ps, label='trained roved', ax=ax, color='purple')
+    sns.distplot(bigconcatenatetrained_nonps, label='trained control', ax=ax, color='magenta')
+    ax.legend(fontsize=25)
+    plt.title('Roved and Control F0 Distributions \n for the Trained Animals', fontsize=30)
+    plt.xlabel(' LSTM decoder scores', fontsize=30)
+    ax.set_xticks([0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], labels=[0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], fontsize=20)
+    ax.set_yticks([2, 4, 6, 8], labels=[2, 4, 6, 8], fontsize=20)
+    # ax.set_xticklabels(labels=ax.get_xticklabels(), fontsize=20)
+    # ax.set_yticklabels(labels = ax.get_yticklabels(), fontsize=20)
+    plt.ylabel('Density', fontsize=30)
+    plt.xlim([0.35, 1])
+
+    plt.savefig('G:/neural_chapter/figures/rovedF0vscontrolF0traineddistribution_20062023intertrialroving.png',
+                dpi=400, bbox_inches='tight')
+    plt.show()
+
+    fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
+    ax.set_xlim([0, 1])
+    sns.distplot(bigconcatenatenaive_ps, label='naive roved', ax=ax, color='darkcyan')
+    sns.distplot(bigconcatenatenaive_nonps, label='naive control', ax=ax, color='cyan')
+    plt.xlim([0.35, 1])
+
+    ax.legend(fontsize=25)
+    ax.set_xticks([0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], labels=[0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], fontsize=20)
+    ax.set_yticks([5, 10, 15, 20, 25], labels=[5, 10, 15, 20, 25], fontsize=20)
+    plt.xlabel(' LSTM decoder scores', fontsize=30)
+    plt.title('Roved and Control F0 Distributions \n for the Naive Animals', fontsize=30)
+    plt.ylabel('Density', fontsize=30)
+    plt.savefig('G:/neural_chapter/figures/rovedF0vscontrolF0naivedistribution_20062023intertrialroving.png', dpi=1000)
+    plt.show()
+    kstestcontrolf0vsrovedtrained = scipy.stats.kstest(bigconcatenatetrained_nonps, bigconcatenatetrained_ps,
+                                                       alternative='two-sided')
+
+    # do levene's test
+    leveneteststat = scipy.stats.levene(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)
+    kstestcontrolf0vsrovednaive = scipy.stats.kstest(bigconcatenatenaive_nonps, bigconcatenatenaive_ps,
+                                                     alternative='two-sided')
+
+    # Calculating Cramér's V for effect size
+    def cramers_v(n, ks_statistic):
+        return np.sqrt(ks_statistic / n)
+
+    n = len(bigconcatenatenaive_nonps) * len(bigconcatenatenaive_ps) / (
+            len(bigconcatenatenaive_nonps) + len(bigconcatenatenaive_ps))
+    effect_size_naive = cramers_v(n, kstestcontrolf0vsrovednaive.statistic)
+
+    n_trained = len(bigconcatenatetrained_nonps) * len(bigconcatenatetrained_ps) / (
+            len(bigconcatenatetrained_nonps) + len(bigconcatenatetrained_ps))
+    effect_size_trained = cramers_v(n_trained, kstestcontrolf0vsrovedtrained.statistic)
+
+    # run mann whitney u test
+    manwhitscore_stat, manwhitescore_pvalue = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatetrained_ps,
+                                                           alternative='two-sided')
+    manwhitscore_statnaive, manwhitescore_pvaluenaive = mannwhitneyu(bigconcatenatenaive_nonps, bigconcatenatenaive_ps,
+                                                                     alternative='two-sided')
+
+    # Calculate rank-biserial correlation coefficient
+
+    n1 = len(bigconcatenatetrained_nonps)
+    n2 = len(bigconcatenatetrained_ps)
+    r = 1 - (2 * manwhitscore_stat) / (n1 * n2)
+
+    n1 = len(bigconcatenatenaive_nonps)
+    n2 = len(bigconcatenatenaive_ps)
+    r_naive = 1 - (2 * manwhitscore_statnaive) / (n1 * n2)
+    # put these stats into a table and export to csv
+    # create a dataframe
+    dataframe_stats = pd.DataFrame({'effect sizes r value': [r_controlf0, r_rovef0, r, r_naive],
+                                    'trained animals p value': [manwhitscorecontrolf0.pvalue,
+                                                                manwhitscorerovedf0.pvalue, manwhitescore_pvalue,
+                                                                manwhitescore_pvaluenaive]},
+                                   index=['control naive vs. trained(alt = trained > naive) ',
+                                          'roved naive vs trained (alt = trained > naive)',
+                                          'control vs. roved trained (two sided)',
+                                          'control naive vs. roved naive (two sided)'])
+
+    # export to csv
+    dataframe_stats.to_csv(
+        'G:/neural_chapter/figures/stats_16112023_comparingdistributions_generalintertrialroving.csv')
 
     for options in ['index', 'frac']:
         df_full_pitchsplit_highsubset = create_gen_frac_variable(df_full_pitchsplit, high_score_threshold=True, index_or_frac = options)
@@ -2619,239 +2876,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     # export the dataframe
     df_kruskal.to_csv('G:/neural_chapter/figures/kruskal_pvalues_trained.csv')
 
-    ##do the roved - control f0 score divided by the control f0 score plot
-    #first get the data into a format that can be analysed
-    rel_frac_list_naive = []
-    bigconcatenatenaive_ps = []
-    bigconcatenatenaive_nonps = []
-    bigconcatenatetrained_nonps =[]
-    bigconcatenatetrained_ps = []
-    rel_frac_list_trained = []
-    for unit_id in df_full_naive_pitchsplit['ID']:
-        df_full_unit_naive = df_full_naive_pitchsplit[df_full_naive_pitchsplit['ID'] == unit_id]
-        #get all the scores where pitchshift is 1 for each probe word
-        for probeword in df_full_unit_naive['ProbeWord'].unique():
-            try:
-                control_df = df_full_unit_naive[(df_full_unit_naive['ProbeWord'] == probeword) & (df_full_unit_naive['PitchShift'] == 0) & (df_full_unit_naive['Below-chance'] == 0)]
-                roved_df = df_full_unit_naive[(df_full_unit_naive['ProbeWord'] == probeword) & (df_full_unit_naive['PitchShift'] == 1) & (df_full_unit_naive['Below-chance'] == 0)]
-                if len(control_df) == 0 and len(roved_df) == 0:
-                    continue
 
-                control_score = df_full_unit_naive[(df_full_unit_naive['ProbeWord'] == probeword) & (df_full_unit_naive['PitchShift'] == 0)]['Score'].values[0]
-                pitchshift_score = df_full_unit_naive[(df_full_unit_naive['ProbeWord'] == probeword) & (df_full_unit_naive['PitchShift'] == 1)]['Score'].values[0]
-            except:
-                continue
-            if control_score is not None and pitchshift_score is not None:
-                rel_score = (pitchshift_score-control_score)/control_score
-                rel_frac_list_naive.append(rel_score)
-                bigconcatenatenaive_ps.append(pitchshift_score)
-                bigconcatenatenaive_nonps.append(control_score)
-    for unit_id in df_full_pitchsplit['ID']:
-        df_full_unit= df_full_pitchsplit[df_full_pitchsplit['ID'] == unit_id]
-        # get all the scores where pitchshift is 1 for the each probe word
-        for probeword in df_full_unit['ProbeWord'].unique():
-            # try:
-            control_df = df_full_unit[
-                (df_full_unit['ProbeWord'] == probeword) & (df_full_unit['PitchShift'] == 0) & (
-                            df_full_unit['Below-chance'] == 0)]
-            roved_df = df_full_unit[
-                (df_full_unit['ProbeWord'] == probeword) & (df_full_unit['PitchShift'] == 1) & (
-                            df_full_unit['Below-chance'] == 0)]
-            if len(control_df) == 0 or len(roved_df) == 0:
-                continue
-            control_score = df_full_unit[
-                (df_full_unit['ProbeWord'] == probeword) & (df_full_unit['PitchShift'] == 0)][
-                'Score'].values[0]
-            pitchshift_score = df_full_unit[
-                (df_full_unit['ProbeWord'] == probeword) & (df_full_unit['PitchShift'] == 1)][
-                'Score'].values[0]
-            # except:
-            #     continue
-            if control_score is not None and pitchshift_score is not None:
-                rel_score = (pitchshift_score - control_score) / control_score
-                rel_frac_list_trained.append(rel_score)
-                bigconcatenatetrained_nonps.append(control_score)
-                bigconcatenatetrained_ps.append(pitchshift_score)
-        #check if all the probe words are below chance
-    fig, ax = plt.subplots(1, figsize=(10, 10), dpi=300)
-    # sns.distplot(rel_frac_list_trained, bins=20, label='trained', ax=ax, color='purple')
-    # sns.distplot(rel_frac_list_naive, bins=20, label='naive', ax=ax, color='darkcyan')
-    sns.histplot(rel_frac_list_trained,  label='trained', color='purple', ax = ax, kde=True)
-    sns.histplot(rel_frac_list_naive, label='naive', color='darkcyan', ax= ax, kde=True)
-
-    # get the peak of the distribution on the y axis
-
-    #get the peak of the distribution on the y axis
-    x2 = ax.lines[1].get_xdata()  # Get the x data of the distribution
-    y2 = ax.lines[1].get_ydata()  # Get the y data of the distribution
-    maxidnaive_idx = np.argmax(y2)  # The id of the peak (maximum of y data)
-    x_coord_naive = x2[maxidnaive_idx]
-
-    plt.axvline(x=0, color='black')
-
-    x1 = ax.lines[0].get_xdata()  # Get the x data of the distribution
-    y1 = ax.lines[0].get_ydata()  # Get the y data of the distribution
-    maxidtrained_idx = np.argmax(y1)  # The id of the peak (maximum of y data)
-    x_coord_trained = x1[maxidtrained_idx]
-
-
-    # Perform a t-test on the samples
-    t_stat, p_value = stats.ttest_ind(rel_frac_list_trained, rel_frac_list_naive, alternative='greater')
-
-    # Print the t-statistic and p-value
-    print(t_stat, p_value)
-    plt.title('Control - roved F0 \n LSTM decoder scores between trained and naive animals', fontsize=18)
-    plt.xlabel('Control - roved F0 \n LSTM decoder scores divided by Control F0', fontsize=20)
-    plt.ylabel('Count', fontsize=20)
-    # ax.legend()
-    plt.savefig('G:/neural_chapter/figures/diffF0distribution_20062023.png', dpi=1000)
-    plt.show()
-    fig, ax = plt.subplots(1, figsize=(9,9), dpi=300)
-    ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.5, label='trained')
-    ax.scatter(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, marker='P', color='darkcyan', alpha=0.5, label='naive')
-    x = np.linspace(0.4, 1, 101)
-    ax.plot(x, x, color='black', linestyle = '--')  # identity line
-
-    slope, intercept, r_value, pv, se = stats.linregress(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)
-
-    sns.regplot(x=bigconcatenatetrained_nonps, y=bigconcatenatetrained_ps, scatter=False, color='purple',
-                label=' $y=%3.7s*x+%3.7s$' % (slope, intercept), ax=ax, line_kws={'label': ' $y=%3.7s*x+%3.7s$' % (slope, intercept)})
-    slope, intercept, r_value, pv, se = stats.linregress(bigconcatenatenaive_nonps, bigconcatenatenaive_ps)
-
-    sns.regplot(x=bigconcatenatenaive_nonps, y=bigconcatenatenaive_ps, scatter=False, color='darkcyan', label=' $y=%3.7s*x+%3.7s$' % (slope, intercept),
-                ax=ax, line_kws={'label': '$y=%3.7s*x+%3.7s$' % (slope, intercept)})
-
-    ax.set_ylabel('LSTM decoding score, F0 roved', fontsize=30)
-    ax.set_xlabel('LSTM decoding score, F0 control', fontsize=30)
-
-    ax.set_title('LSTM decoder scores for' + ' F0 control vs. roved,\n ' + ' trained and naive animals', fontsize=30)
-
-
-    plt.legend( fontsize=25, ncol=2)
-    fig.tight_layout()
-    plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.png', dpi=1000)
-    plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000)
-    plt.show()
-
-    unique_unit_ids_naive = df_full_naive_pitchsplit['ID'].unique()
-    unique_unit_ids_trained = df_full_pitchsplit['ID'].unique()
-    #make a kde plot
-    #makea  dataframe
-    df_naive = pd.DataFrame({'F0_control': bigconcatenatenaive_nonps, 'F0_roved': bigconcatenatenaive_ps})
-    fig, ax = plt.subplots(1, figsize=(9,9), dpi=300)
-    sns.kdeplot(df_naive, x='F0_control', y ='F0_roved', shade=True, shade_lowest=False, ax=ax, label='naive')
-    plt.title('F0 control vs. roved, naive animals',fontsize = 30)
-    plt.ylabel('F0 roved score', fontsize = 30)
-    plt.xlabel('F0 control score',fontsize = 30)
-    plt.savefig('G:/neural_chapter/figures/kdeplot_naiveanimals.png', dpi=300)
-    plt.show()
-
-    df_trained_kde = pd.DataFrame({'F0_control': bigconcatenatetrained_nonps, 'F0_roved': bigconcatenatetrained_ps})
-    fig, ax = plt.subplots(1, figsize=(9,9), dpi=300)
-    sns.kdeplot(df_trained_kde, x= 'F0_control', y = 'F0_roved', cmap="Reds", shade=True, shade_lowest=False, ax=ax, label='trained')
-    plt.title('F0 control vs. roved, trained animals', fontsize = 30)
-    plt.ylabel('F0 roved score',fontsize = 30)
-    plt.xlabel('F0 control score', fontsize = 30)
-    plt.savefig('G:/neural_chapter/figures/kdeplot_trainedanimals.png', dpi=300)
-    plt.show()
-    manwhitscorecontrolf0 = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatenaive_nonps, alternative='greater')
-
-    n1 = len(bigconcatenatetrained_nonps)
-    n2 = len(bigconcatenatenaive_nonps)
-    r_controlf0 = 1 - (2 * manwhitscorecontrolf0.statistic) / (n1 * n2)
-    # ax.legend()
-    plt.savefig('G:/neural_chapter/figures/controlF0distribution20062023intertrialroving.png', dpi=1000)
-    plt.show()
-
-    fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
-    ax.set_xlim([0, 1])
-    sns.distplot(bigconcatenatetrained_ps, label='trained', ax=ax, color='purple')
-    sns.distplot(bigconcatenatenaive_ps, label='naive', ax=ax, color='darkcyan')
-    # man whiteney test score
-    # manwhitscore = mannwhitneyu(relativescoretrained, relativescorenaive, alternative = 'greater')
-    plt.title('Roved F0 LSTM decoder scores between  \n trained and naive animals', fontsize=18)
-    plt.xlabel('Roved F0 LSTM decoder scores', fontsize=20)
-    plt.ylabel('Density', fontsize=20)
-    manwhitscorerovedf0 = mannwhitneyu(bigconcatenatetrained_ps, bigconcatenatenaive_ps, alternative='greater')
-    plt.xlim([0.35, 1])
-
-    n1 = len(bigconcatenatetrained_ps)
-    n2 = len(bigconcatenatenaive_ps)
-    r_rovef0 = 1 - (2 * manwhitscorerovedf0.statistic) / (n1 * n2)
-
-    # ax.leg
-    ax.legend(fontsize=18)
-    plt.savefig('G:/neural_chapter/figures/rovedF0distribution_20062023intertrialroving.png', dpi=1000)
-
-    plt.show()
-
-    fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
-    ax.set_xlim([0, 1])
-    sns.distplot(bigconcatenatetrained_ps, label='trained roved', ax=ax, color='purple')
-    sns.distplot(bigconcatenatetrained_nonps, label='trained control', ax=ax, color='magenta')
-    ax.legend(fontsize=25)
-    plt.title('Roved and Control F0 Distributions for the Trained Animals', fontsize=30)
-    plt.xlabel(' LSTM decoder scores', fontsize=30)
-    plt.ylabel('Density', fontsize=30)
-    plt.xlim([0.35, 1])
-
-    plt.savefig('G:/neural_chapter/figures/rovedF0vscontrolF0traineddistribution_20062023intertrialroving.png',
-                dpi=400)
-    plt.show()
-
-    fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
-    ax.set_xlim([0, 1])
-    sns.distplot(bigconcatenatenaive_ps, label='naive roved', ax=ax, color='darkcyan')
-    sns.distplot(bigconcatenatenaive_nonps, label='naive control', ax=ax, color='cyan')
-    plt.xlim([0.35, 1])
-
-    ax.legend(fontsize=25)
-    plt.xlabel(' LSTM decoder scores', fontsize=30)
-    plt.title('Roved and Control F0 Distributions for the Naive Animals', fontsize=30)
-    plt.ylabel('Density', fontsize=30)
-    plt.savefig('G:/neural_chapter/figures/rovedF0vscontrolF0naivedistribution_20062023intertrialroving.png', dpi=1000)
-    plt.show()
-    kstestcontrolf0vsrovedtrained = scipy.stats.kstest(bigconcatenatetrained_nonps, bigconcatenatetrained_ps,
-                                                       alternative='two-sided')
-
-    # do levene's test
-    leveneteststat = scipy.stats.levene(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)
-    kstestcontrolf0vsrovednaive = scipy.stats.kstest(bigconcatenatenaive_nonps, bigconcatenatenaive_ps,
-                                                     alternative='two-sided')
-
-    # Calculating Cramér's V for effect size
-    def cramers_v(n, ks_statistic):
-        return np.sqrt(ks_statistic / n)
-
-    n = len(bigconcatenatenaive_nonps) * len(bigconcatenatenaive_ps) / (
-                len(bigconcatenatenaive_nonps) + len(bigconcatenatenaive_ps))
-    effect_size_naive = cramers_v(n, kstestcontrolf0vsrovednaive.statistic)
-
-    n_trained = len(bigconcatenatetrained_nonps) * len(bigconcatenatetrained_ps) / (
-                len(bigconcatenatetrained_nonps) + len(bigconcatenatetrained_ps))
-    effect_size_trained = cramers_v(n_trained, kstestcontrolf0vsrovedtrained.statistic)
-
-    # run mann whitney u test
-    manwhitscore_stat, manwhitescore_pvalue = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatetrained_ps,
-                                                           alternative='two-sided')
-    manwhitscore_statnaive, manwhitescore_pvaluenaive = mannwhitneyu(bigconcatenatenaive_nonps, bigconcatenatenaive_ps,
-                                                                     alternative='two-sided')
-
-    # Calculate rank-biserial correlation coefficient
-
-    n1 = len(bigconcatenatetrained_nonps)
-    n2 = len(bigconcatenatetrained_ps)
-    r = 1 - (2 * manwhitscore_stat) / (n1 * n2)
-
-    n1 = len(bigconcatenatenaive_nonps)
-    n2 = len(bigconcatenatenaive_ps)
-    r_naive = 1 - (2 * manwhitscore_statnaive) / (n1 * n2)
-    #put these stats into a table and export to csv
-    #create a dataframe
-    dataframe_stats = pd.DataFrame({'effect sizes r value': [r_controlf0, r_rovef0, r, r_naive], 'trained animals p value': [manwhitscorecontrolf0.pvalue, manwhitscorerovedf0.pvalue, manwhitescore_pvalue, manwhitescore_pvaluenaive]},  index = ['control naive vs. trained(alt = trained > naive) ', 'roved naive vs trained (alt = trained > naive)', 'control vs. roved trained (two sided)', 'control naive vs. roved naive (two sided)'])
-
-    #export to csv
-    dataframe_stats.to_csv('G:/neural_chapter/figures/stats_16112023_comparingdistributions_generalintertrialroving.csv')
     df_full_naive_pitchsplit_violinplot = df_full_naive_pitchsplit
     df_full_naive_pitchsplit_violinplot['ProbeWord'] = df_full_naive_pitchsplit_violinplot['ProbeWord'].replace({ '(2,2)': 'craft', '(3,3)': 'in contrast to', '(4,4)': 'when a', '(5,5)': 'accurate', '(6,6)': 'pink noise', '(7,7)': 'of science', '(8,8)': 'rev. instruments', '(9,9)': 'boats', '(10,10)': 'today',
         '(13,13)': 'sailor', '(15,15)': 'but', '(16,16)': 'researched', '(18,18)': 'took', '(19,19)': 'the vast', '(20,20)': 'today', '(21,21)': 'he takes', '(22,22)': 'becomes', '(23,23)': 'any', '(24,24)': 'more'})
