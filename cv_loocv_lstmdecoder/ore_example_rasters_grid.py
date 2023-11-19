@@ -27,7 +27,7 @@ import sklearn
 from instruments.helpers.util import simple_xy_axes, set_font_axes
 from instruments.helpers.neural_analysis_helpers import get_soundonset_alignedraster, split_cluster_base_on_segment_zola
 
-from helpers.neural_analysis_helpers_zolainter import get_word_aligned_raster, get_word_aligned_raster_zola_cruella
+from helpers.neural_analysis_helpers_zolainter import get_word_aligned_raster, get_word_aligned_raster_zola_cruella, get_word_aligned_raster_ore
 from instruments.helpers.euclidean_classification_minimal_function import classify_sweeps
 # Import standard packages
 import numpy as np
@@ -64,7 +64,7 @@ def run_cleaning_of_rasters(blocks, datapath):
     with open(datapath / 'new_blocks.pkl', 'wb') as f:
         pickle.dump(new_blocks, f)
     return new_blocks
-def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'phy', animal = 'F1702_Zola', brain_area = []):
+def target_vs_probe_with_raster(blocks, talker=1, clust_ids = [], stream = 'BB_3', phydir = 'phy', animal = 'F1702_Zola', brain_area = []):
 
     tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_highgenindex_above60score_1711/{phydir}/{stream}/')
     #load the high generalizable clusters, csv file
@@ -75,8 +75,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'ph
     binsize = 0.01
     window = [0, 0.6]
     probewords_list = [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10)]
-    clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
-                 st.annotations['group'] != 'noise']
+
 
     for j, cluster_id in enumerate(clust_ids):
         #make a figure of 2 columns and 10 rows
@@ -84,11 +83,17 @@ def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'ph
         count = 0
         for idx, probewords in enumerate(probewords_list):
             for pitchshift_option in [True, False]:
-
-                raster_target, raster_target_compare = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=probewords[0],
-                                                                                          pitchshift=pitchshift_option,
-                                                                                          correctresp=False,
-                                                                                          df_filter=['No Level Cue'], talker = 'female')
+                if stream == 'g_mod':
+                    raster_target, raster_target_compare = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=probewords[0],
+                                                                                              pitchshift=pitchshift_option,
+                                                                                              correctresp=False,
+                                                                                              df_filter=[], talker = 'female')
+                else:
+                    # try:
+                    raster_target, raster_targ_compare = get_word_aligned_raster_ore(blocks, cluster_id, word=probewords[0],
+                                                                                     pitchshift=pitchshift_option,
+                                                                                     correctresp=False,
+                                                                                     df_filter=[], talker='female')
                 raster_target = raster_target.reshape(raster_target.shape[0], )
                 if len(raster_target) == 0:
                     print('raster target empty:', cluster_id)
@@ -204,7 +209,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'ph
 
         ax[0, 1].set_title('Pitch-shifted F0')
         ax[0, 0].set_title('Control F0')
-        plt.suptitle(f'Rasters for {animal}, unit id: {cluster_id}, stream: {stream},', fontsize=25)
+        plt.suptitle(f'Rasters for {animal}, unit id: {cluster_id}, stream: {stream}, region: {brain_area[j]}', fontsize=25)
         plt.savefig(
             str(saveDir) + f'/targdist_grid_clusterid_{cluster_id}_{stream}_' + str(
                 cluster_id) + '.png', bbox_inches='tight')
@@ -218,20 +223,16 @@ def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'ph
 
 def generate_rasters(dir):
 
-    datapath_big = Path(f'D:/ms4output_16102023/F1901_Crumble/')
+    datapath_big = Path(f'G:/F2003_Orecchiette/')
     animal = str(datapath_big).split('\\')[-1]
-    datapaths = [x for x in datapath_big.glob('**/mountainsort4/phy//') if x.is_dir()]
+    datapaths = [x for x in datapath_big.glob('**/*kilosort//phy//') if x.is_dir()]
     for datapath in datapaths:
         stream = str(datapath).split('\\')[-3]
         stream = stream[-4:]
         print(stream)
-        folder = str(datapath).split('\\')[-3]
-        try:
-            with open(datapath / 'new_blocks.pkl', 'rb') as f:
-                new_blocks = pickle.load(f)
-        except:
-            with open(datapath / 'blocks.pkl', 'rb') as f:
-                new_blocks = pickle.load(f)
+        folder = str(datapath).split('\\')[-4]
+        with open(datapath / 'blocks.pkl', 'rb') as f:
+            new_blocks = pickle.load(f)
 
         high_units = pd.read_csv(f'G:/neural_chapter/figures/unit_ids_trained_topgenindex_{animal}.csv')
         # remove trailing steam
@@ -246,23 +247,23 @@ def generate_rasters(dir):
 
         max_length = len(rec_name) // 2
 
-        for length in range(1, max_length + 1):
-            for i in range(len(rec_name) - length):
-                substring = rec_name[i:i + length]
-                if rec_name.count(substring) > 1:
-                    repeating_substring = substring
-                    break
+        if folder.__contains__('s2'):
+            stream = 't_s2'
+        elif folder.__contains__('s3'):
+            stream = 't_s3'
+        elif folder.__contains__('mod'):
+            stream = 'g_mod'
 
-        print(repeating_substring)
-        rec_name = repeating_substring
-        high_units = high_units[(high_units['rec_name'] == rec_name) & (high_units['stream'] == stream)]
+
+        high_units = high_units[(high_units['stream'] == stream)]
         clust_ids = high_units['ID'].to_list()
         brain_area = high_units['BrainArea'].to_list()
-        # if clust_ids == []:
-        #     print('no units found')
-        #     continue
+
+        if clust_ids == []:
+            print('no units found')
+            continue
         for talker in [1]:
-            target_vs_probe_with_raster(new_blocks,talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area)
+            target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area)
 
 
 

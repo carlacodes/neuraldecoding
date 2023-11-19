@@ -598,6 +598,187 @@ def my_floor(a, precision=0):
     return np.true_divide(np.floor(a * 10 ** precision), 10 ** precision)
 
 
+def get_word_aligned_raster_zola_cruella2(blocks, clust_id, word=1, correctresp=True, pitchshift=True, df_filter=[]):
+    unit_aligned_time = np.array([])
+    for s, seg in enumerate(blocks[0].segments):
+        if seg.df_bhv is None:
+            continue
+        if 'PitchShiftMat' in seg.df_bhv:
+            print('This is an intra-trial pitch shift level, skipping...')
+            print(f"Block name: {seg.df_bhv['recBlock']}")
+            continue
+
+        pitchshiftlist = np.array([])
+        droplist = np.array([])
+        for k in range(0, len(seg.df_bhv)):
+            # if talker is not 1 then it is pitch shifted
+            if seg.df_bhv.talker.values[k] == 1 or seg.df_bhv.talker.values[k] == 2:
+                # if talker is only 1 or 2, it's not going to be pitch shifted
+                pitchshiftlist = np.append(pitchshiftlist, 0)
+            else:
+                pitchshiftlist = np.append(pitchshiftlist, 1)
+
+        seg.df_bhv = seg.df_bhv.drop(droplist)
+        seg.df_bhv['pitchshift'] = pitchshiftlist
+
+        if word is None:
+            word = seg.df_bhv.probes[0]
+        df_bhv = seg.df_bhv
+
+        if pitchshift:
+            df_bhv = df_bhv.loc[df_bhv.pitchshift == 1]
+        else:
+            df_bhv = df_bhv.loc[df_bhv.pitchshift == 0]
+
+        df_bhv['targTimes'] = df_bhv['timeToTarget'] / 24414.0625
+
+        df_bhv['centreRelease'] = df_bhv['lickRelease'] - df_bhv['startTrialLick']
+        df_bhv['relReleaseTimes'] = df_bhv['centreRelease'] - df_bhv['targTimes']
+        df_bhv['realRelReleaseTimes'] = df_bhv['relReleaseTimes'] - df_bhv['absentTime']
+
+        if correctresp:
+            df_bhv = df_bhv.loc[df_bhv['realRelReleaseTimes'].between(0, 2.3, inclusive=True)]
+
+        if len(df_filter) > 0:
+            for f in df_filter:
+                df_bhv = apply_filter(df_bhv, f)
+
+        df_bhv = df_bhv.reset_index(drop=True)
+
+        if len(df_bhv) == 0:
+            continue
+
+        unit = [st for st in seg.spiketrains if st.annotations.get('cluster_id') == clust_id][0]
+        unitcopy = copy.deepcopy(unit)
+        # unit = [st for st in seg.spiketrains if st.annotations['cluster_id'].get() == clust_id][0]
+        for st in seg.spiketrains:
+            print(f"st.annotations['cluster_id'] = {st.annotations['cluster_id']}, clust_id = {clust_id}")
+            if st.annotations['cluster_id'] == clust_id:
+                print("Matching cluster_id found!")
+                print(st.annotations['cluster_id'])
+                print('original cluster_id:' + str(clust_id))
+
+        if len(unit_aligned_time) == 0:
+            unit_aligned_time = return_word_aligned_array(unit, df_bhv, word)
+        else:
+            try:
+                seg_aligned_word = return_word_aligned_array(unit, df_bhv, word)
+                seg_aligned_word['trial_num'] = seg_aligned_word['trial_num'] + np.max(unit_aligned_time['trial_num'])
+                unit_aligned_time = np.concatenate((unit_aligned_time, seg_aligned_word))
+            except:
+                print("No instance of the word that the unit fired to found in this behavioral data file")
+                continue
+
+        # plot the distributions of unit aligned times
+
+    return unit_aligned_time, unitcopy
+
+
+def get_word_aligned_raster_ore(blocks, clust_id, word=None, pitchshift=True, correctresp=True, df_filter=[],
+                                talker='female'):
+    unit_aligned_time = np.array([])
+    unit_aligned_time_compare = np.array([])
+    for s, seg in enumerate(blocks[0].segments):
+        # print(f"Processing segment {s}...")
+
+        # check if pitchshiftmat is in annotations
+        if seg.annotations['bhv_data'] is None:
+            try:
+                print('Loading bhv data from annotations...')
+                seg.df_bhv = seg.load_bhv_data(seg.annotations['bhv_file'])
+            except:
+                print('Possibly corrupted or non-existent data file at iteration...' + str(s))
+                continue
+
+        if 'PitchShiftMat' in seg.annotations['bhv_data'] or 'level41' in seg.annotations['bhv_data']['fName'][
+            0] or 'level48' in seg.annotations['bhv_data']['fName'][0]:
+            print('This is an intra-trial pitch shift level, skipping iteration..' + str(s))
+            # print(f"Block name: {seg.df_bhv['recBlock']}, iteration:" + str(s))
+            continue
+        df_length = pd.DataFrame(seg.annotations['bhv_data'])
+
+        pitchshiftlist = []
+        for k in range(0, len(df_length)):
+            # if talker is not 1 then it is pitch shifted
+            if seg.annotations['bhv_data']['talker'][k] == 1 or seg.annotations['bhv_data']['talker'][k] == 2:
+                # if talker is only 1 or 2, it's not going to be pitch shifted
+                pitchshiftlist.append(0)
+            else:
+                pitchshiftlist.append(1)
+
+        seg.annotations['bhv_data']['pitchshift'] = pitchshiftlist
+
+        # if word is None:
+        #     word = seg.annotations['bhv_data'].probes[0]
+        df_bhv = seg.annotations['bhv_data']
+        df_bhv = pd.DataFrame(df_bhv)
+
+        if pitchshift:
+            # df_bhv = df_bhv[df_bhv['pitchshift'].apply(lambda x: (x == 1).all())]
+            df_bhv = df_bhv[(df_bhv['pitchshift'] == 1)]
+        else:
+            df_bhv = df_bhv[(df_bhv['pitchshift'] == 0)]
+
+        if talker == 'female':
+            # any talker that is not 2, 13 or 8
+            df_bhv = df_bhv[(df_bhv['talker'] == 1) | (df_bhv['talker'] == 3) | (df_bhv['talker'] == 5)]
+        else:
+            df_bhv = df_bhv[(df_bhv['talker'] == 2) | (df_bhv['talker'] == 13) | (df_bhv['talker'] == 8)]
+        df_bhv['targTimes'] = df_bhv['timeToTarget'] / 24414.0625
+
+        df_bhv['centreRelease'] = df_bhv['lickRelease'] - df_bhv['startTrialLick']
+        df_bhv['relReleaseTimes'] = df_bhv['centreRelease'] - df_bhv['targTimes']
+        df_bhv['realRelReleaseTimes'] = df_bhv['relReleaseTimes'] - df_bhv['absentTime']
+
+        if correctresp:
+            df_bhv = df_bhv.loc[df_bhv['realRelReleaseTimes'].between(0, 2.3, inclusive=True)]
+
+        if len(df_filter) > 0:
+            for f in df_filter:
+                df_bhv = apply_filter(df_bhv, f)
+
+        df_bhv = df_bhv.reset_index(drop=True)
+        if len(df_bhv) == 0:
+            print('no applicable trials found for segment:' + str(s))
+            continue
+
+        unit = [st for st in seg.spiketrains if st.annotations['cluster_id'] == clust_id][0]
+
+        clust_id_first_digit = int(str(clust_id)[0])
+        if (clust_id_first_digit == 1 or clust_id_first_digit == 2 or clust_id_first_digit == 3) and len(
+                str(clust_id)) > 2:
+            clust_id_compare = int(str(clust_id)[1:])
+        else:
+            clust_id_compare = clust_id
+
+        unit_compare = [st for st in seg.spiketrains if st.annotations['cluster_id'] == clust_id_compare][0]
+
+        # compare the raw spike times of unit and unit_compare
+        if len(unit_aligned_time) == 0:
+            unit_aligned_time = return_word_aligned_array(unit, df_bhv, word)
+        else:
+            seg_aligned_word = return_word_aligned_array(unit, df_bhv, word)
+            seg_aligned_word['trial_num'] = seg_aligned_word['trial_num'] + np.max(unit_aligned_time['trial_num'])
+            unit_aligned_time = np.concatenate((unit_aligned_time, seg_aligned_word))
+            # print("no instance of word found in this behavioural data file ")
+
+        if len(unit_aligned_time_compare) == 0:
+            unit_aligned_time_compare = return_word_aligned_array(unit_compare, df_bhv, word)
+        else:
+            seg_aligned_word_compare = return_word_aligned_array(unit_compare, df_bhv, word)
+            seg_aligned_word_compare['trial_num'] = seg_aligned_word_compare['trial_num'] + np.max(
+                unit_aligned_time_compare['trial_num'])
+            unit_aligned_time_compare = np.concatenate((unit_aligned_time_compare, seg_aligned_word_compare))
+            # print("no instance of word found in this behavioural data file ")
+            # if np.array_equal(seg_aligned_word_compare, seg_aligned_word):
+            #     print('same seg extracted at iteration:'+ str(s))
+
+        # if np.array_equal(unit_aligned_time_compare, unit_aligned_time):
+        #     print('same times extracted at iteration:' + str(s))
+
+    return unit_aligned_time, unit_aligned_time_compare
+
+
 def get_word_aligned_raster_zola_cruella(blocks, clust_id, word=None, pitchshift=True, correctresp=True, df_filter=[],
                                          talker='female'):
     unit_aligned_time = np.array([])
@@ -817,7 +998,7 @@ def get_soundonset_alignedraster_squinty(blocks, clust_id, df_filter=[], fra=Tru
         droplist = np.array([])
         for k in range(0, len(seg.df_bhv)):
             # if talker is not 1 then it is pitch shifted
-            if seg.df_bhv.talker.values[k] == 1:
+            if seg.df_bhv.talker.values[k] == 3:
                 # if talker is only 1 or 2 not going to be pitch shifted for cruella and zola
                 pitchshiftlist = np.append(pitchshiftlist, 0)
             else:
@@ -878,7 +1059,7 @@ def get_word_aligned_raster_squinty(blocks, clust_id, word=None, pitchshift=True
         droplist = np.array([])
         for k in range(0, len(seg.df_bhv)):
             # if talker is not 1 then it is pitch shifted
-            if seg.df_bhv.talker.values[k] == 1:
+            if seg.df_bhv.talker.values[k] == 3:
                 # if talker is only 1 or 2 not going to be pitch shifted for cruella and zola
                 pitchshiftlist = np.append(pitchshiftlist, 0)
             else:
@@ -942,7 +1123,11 @@ def get_word_aligned_raster(blocks, clust_id, word=None, pitchshift=True, correc
         droplist = np.array([])
         for k in range(0, len(seg.df_bhv)):
             try:
-                if all([v == 0 for v in seg.df_bhv.PitchShiftMat.values[k]]):
+                if hasattr(seg.df_bhv, 'PitchShiftMat') == True and all(
+                        [v == 0 for v in seg.df_bhv.PitchShiftMat.values[k]]):
+                    pitchshiftlist = np.append(pitchshiftlist, 0)
+                # also if PitchShiftMat does not exist
+                elif hasattr(seg.df_bhv, 'PitchShiftMat') == False:
                     pitchshiftlist = np.append(pitchshiftlist, 0)
                 else:
                     pitchshiftlist = np.append(pitchshiftlist, 1)
@@ -975,6 +1160,7 @@ def get_word_aligned_raster(blocks, clust_id, word=None, pitchshift=True, correc
         else:
             df_bhv = df_bhv.loc[df_bhv.pitchshift == 0]
         df_bhv = df_bhv.loc[df_bhv.talker == talker]
+
         df_bhv['targTimes'] = df_bhv['timeToTarget'] / 24414.0625
 
         df_bhv['centreRelease'] = df_bhv['lickRelease'] - df_bhv['startTrialLick']
@@ -1011,19 +1197,19 @@ def get_word_aligned_raster(blocks, clust_id, word=None, pitchshift=True, correc
     time_window = 1.0
 
     # Calculate firing rates for each neuron
-    firing_rates = []
-    for neuron_spike_times in unit_aligned_time:
-        num_spikes = len(neuron_spike_times)
-        firing_rate = num_spikes / time_window
-        firing_rates.append(firing_rate)
+    # firing_rates = []
+    # for neuron_spike_times in unit_aligned_time:
+    #     num_spikes = len(neuron_spike_times)
+    #     firing_rate = num_spikes / time_window
+    #     firing_rates.append(firing_rate)
 
-    # Create a histogram of firing rates
-    plt.hist(firing_rates, bins=20, edgecolor='k')  # Adjust the number of bins as needed
-    plt.xlabel('Firing Rate (spikes per second)')
-    plt.ylabel('Frequency')
-    plt.title('Distribution of Firing Rates')
-    plt.grid(True)
-    plt.show()
+    # # Create a histogram of firing rates
+    # plt.hist(firing_rates, bins=20, edgecolor='k')  # Adjust the number of bins as needed
+    # plt.xlabel('Firing Rate (spikes per second)')
+    # plt.ylabel('Frequency')
+    # plt.title('Distribution of Firing Rates')
+    # plt.grid(True)
+    # plt.show()
 
     return unit_aligned_time
 
