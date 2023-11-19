@@ -2243,10 +2243,10 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot.drop_duplicates(subset=['ID'])
     #only include units with genfrac scores less than 0.33
     df_full_pitchsplit_plot = df_full_pitchsplit_plot[df_full_pitchsplit_plot['GenFrac'] <= 0.2]
-    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['GenFrac'] <= 0.2]
+    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['GenFrac'] <= 0.33]
     #make sure the mean score is over 60%
     df_full_pitchsplit_plot = df_full_pitchsplit_plot[df_full_pitchsplit_plot['Score'] >= 0.6]
-    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['Score'] >= 0.6]
+    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['Score'] >= 0.5]
     for animal in ['F1815_Cruella', 'F1702_Zola', 'F1604_Squinty', 'F1606_Windolene']:
         # isolate the data for this animal
         df_full_pitchsplit_plot_animal = df_full_pitchsplit_plot[df_full_pitchsplit_plot['ID'].str.contains(animal)]

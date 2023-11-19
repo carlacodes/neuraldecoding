@@ -66,7 +66,7 @@ def run_cleaning_of_rasters(blocks, datapath):
     return new_blocks
 def target_vs_probe_with_raster(blocks, talker=1, clust_ids = [], stream = 'BB_3', phydir = 'phy', animal = 'F1702_Zola', brain_area = []):
 
-    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_highgenindex_above60score_1711/{phydir}/{stream}/')
+    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_highgenindex_above50score_1911/{phydir}/{stream}/')
     #load the high generalizable clusters, csv file
 
     saveDir = tarDir
@@ -213,6 +213,9 @@ def target_vs_probe_with_raster(blocks, talker=1, clust_ids = [], stream = 'BB_3
         plt.savefig(
             str(saveDir) + f'/targdist_grid_clusterid_{cluster_id}_{stream}_' + str(
                 cluster_id) + '.png', bbox_inches='tight')
+        plt.savefig(
+            str(saveDir) + f'/targdist_grid_clusterid_{cluster_id}_{stream}_' + str(
+                cluster_id) + '.svg', bbox_inches='tight')
                 # plt.show()
 
 
@@ -247,12 +250,12 @@ def generate_rasters(dir):
 
         max_length = len(rec_name) // 2
 
-        if folder.__contains__('s2'):
+        if folder.__contains__('s2') and not folder.__contains__('mod'):
             stream = 't_s2'
         elif folder.__contains__('s3'):
             stream = 't_s3'
         elif folder.__contains__('mod'):
-            stream = 'g_mod'
+            stream = ' g_mod'
 
 
         high_units = high_units[(high_units['stream'] == stream)]
