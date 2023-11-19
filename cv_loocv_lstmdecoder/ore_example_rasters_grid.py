@@ -229,7 +229,8 @@ def generate_rasters(dir):
     datapath_big = Path(f'G:/F2003_Orecchiette/')
     animal = str(datapath_big).split('\\')[-1]
     datapaths = [x for x in datapath_big.glob('**/*kilosort//phy//') if x.is_dir()]
-    for datapath in datapaths:
+    datapaths = datapaths[-1]
+    for datapath in [datapaths]:
         stream = str(datapath).split('\\')[-3]
         stream = stream[-4:]
         print(stream)
@@ -254,10 +255,11 @@ def generate_rasters(dir):
             stream = 't_s2'
         elif folder.__contains__('s3'):
             stream = 't_s3'
-        elif folder.__contains__('mod'):
-            stream = ' g_mod'
+        elif folder.__contains__('gmod'):
+            stream = 'gmod'
 
-
+        #print out the unique streams
+        unique_streams = high_units['stream'].unique()
         high_units = high_units[(high_units['stream'] == stream)]
         clust_ids = high_units['ID'].to_list()
         brain_area = high_units['BrainArea'].to_list()
