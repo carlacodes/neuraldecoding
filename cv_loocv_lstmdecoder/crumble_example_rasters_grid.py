@@ -208,6 +208,9 @@ def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'ph
         plt.savefig(
             str(saveDir) + f'/targdist_grid_clusterid_{cluster_id}_{stream}_' + str(
                 cluster_id) + '.png', bbox_inches='tight')
+        plt.savefig(
+            str(saveDir) + f'/targdist_grid_clusterid_{cluster_id}_{stream}_' + str(
+                cluster_id) + '.svg', bbox_inches='tight')
                 # plt.show()
 
 

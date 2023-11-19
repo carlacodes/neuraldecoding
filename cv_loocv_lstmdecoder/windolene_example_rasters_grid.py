@@ -81,7 +81,7 @@ def target_vs_probe_with_raster(blocks, talker=1, clust_ids = [], stream = 'BB_3
 
     for j, cluster_id in enumerate(clust_ids):
         #make a figure of 2 columns and 10 rows
-        fig, ax = plt.subplots(len(probewords_list), 2, figsize=(10, 20))
+        fig, ax = plt.subplots(len(probewords_list), 2, figsize=(10, 30))
         count = 0
         for idx, probewords in enumerate(probewords_list):
             for pitchshift_option in [True, False]:
