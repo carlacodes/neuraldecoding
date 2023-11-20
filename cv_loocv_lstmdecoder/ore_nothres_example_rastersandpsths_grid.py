@@ -80,7 +80,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'ph
 
     for j, cluster_id in enumerate(clust_ids):
         #make a figure of 2 columns and 10 rows
-        fig, ax = plt.subplots(len(probewords_list), 2, figsize=(10, 20))
+        fig, ax = plt.subplots(len(probewords_list), 2, figsize=(10, 30))
         count = 0
         for idx, probewords in enumerate(probewords_list):
             for pitchshift_option in [True, False]:
@@ -198,7 +198,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'ph
                         ax[idx, 1].set_xlim(custom_xlim)
                         ax[idx, 1].set_title(f'Unit: {cluster_id}_{stream}, animal: {animal}')
                         ax[idx, 1].text(-0.2, 0.5, probeword_text, horizontalalignment='center',
-                                        verticalalignment='center', rotation=90, transform=ax[idx, 0].transAxes)
+                                        verticalalignment='center', rotation=90, transform=ax[idx, 1].transAxes)
                     else:
                         if gen_psth:
                             psth = np.histogram(spiketrains, bins=100)
@@ -220,9 +220,9 @@ def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'ph
 
         # ax[0, 1].set_title('Pitch-shifted F0')
         # ax[0, 0].set_title('Control F0')
-        plt.subplots_adjust(wspace=0.01, hspace=1.0)
+        plt.subplots_adjust(wspace=0.2, hspace=1.0)
 
-        plt.suptitle(f'Rasters for {animal}, unit id: {cluster_id}, stream: {stream},', fontsize=25)
+        plt.suptitle(f'Rasters for {animal}, unit id: {cluster_id}, stream: {stream},', fontsize=15)
         plt.savefig(
             str(saveDir) + f'/targdist_grid_clusterid_{cluster_id}_{stream}_' + str(
                 cluster_id) + '.png', bbox_inches='tight')
