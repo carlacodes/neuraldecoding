@@ -195,6 +195,8 @@ def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'ph
                             ax[idx, 1].set_ylabel('spikes/s')
                         else:
                             rasterplot(spiketrains, c=color_option, histogram_bins=0, axes=ax[idx, 1], s=0.3)
+                            ax[idx, 1].set_ylabel('trial number')
+
                         ax[idx, 1].set_xlim(custom_xlim)
                         ax[idx, 1].set_title(f'Unit: {cluster_id}_{stream}, animal: {animal}')
                         ax[idx, 1].text(-0.2, 0.5, probeword_text, horizontalalignment='center',
@@ -207,8 +209,9 @@ def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'ph
 
                         else:
                             rasterplot(spiketrains, c=color_option, histogram_bins=0, axes=ax[idx, 0], s=0.3)
+                            ax[idx, 0].set_ylabel('trial number')
+
                         ax[idx, 0].set_xlim(custom_xlim)
-                        ax[idx, 0].set_ylabel('trial')
                         ax[idx, 0].set_title(f'Unit: {cluster_id}_{stream}, animal: {animal}')
 
                         ax[idx, 0].text(-0.2, 0.5, probeword_text, horizontalalignment='center',
@@ -220,7 +223,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'ph
 
         # ax[0, 1].set_title('Pitch-shifted F0')
         # ax[0, 0].set_title('Control F0')
-        plt.subplots_adjust(wspace=0.2, hspace=1.0)
+        plt.subplots_adjust(wspace=0.3, hspace=1.0)
 
         plt.suptitle(f'Rasters for {animal}, unit id: {cluster_id}, stream: {stream},', fontsize=15)
         plt.savefig(
