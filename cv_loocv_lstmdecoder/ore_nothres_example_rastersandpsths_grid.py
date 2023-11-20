@@ -13,6 +13,8 @@ import numpy as np
 from sklearn.model_selection import train_test_split, StratifiedKFold
 from tqdm import tqdm
 from keras import backend as K
+from elephant import statistics
+import quantities as pq
 from viziphant.rasterplot import rasterplot
 
 from sklearn.utils import resample
@@ -191,21 +193,25 @@ def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'ph
                     if pitchshift_option:
                         if gen_psth:
                             psth = np.histogram(spiketrains, bins=100)
+                            psth = np.convolve(psth[0], np.ones(5), 'same') / 5
+
                             ax[idx, 1].plot(psth[1][:-1], psth[0], color=color_option)
                             ax[idx, 1].set_ylabel('spikes/s')
                         else:
                             rasterplot(spiketrains, c=color_option, histogram_bins=0, axes=ax[idx, 1], s=0.3)
                             ax[idx, 1].set_ylabel('trial number')
+                            ax[idx, 1].set_xlim(custom_xlim)
 
-                        ax[idx, 1].set_xlim(custom_xlim)
                         ax[idx, 1].set_title(f'Unit: {cluster_id}_{stream}, animal: {animal_id_num}')
-                        ax[idx, 1].text(-0.15, 0.5, probeword_text, horizontalalignment='center',
+                        ax[idx, 1].text(-0.2, 0.5, probeword_text, horizontalalignment='center',
                                         verticalalignment='center', rotation=90, transform=ax[idx, 1].transAxes)
                     else:
                         if gen_psth:
+                            #get the array of spiketimes
                             psth = np.histogram(spiketrains, bins=100)
+                            psth = np.convolve(psth[0], np.ones(5), 'same') / 5
                             ax[idx, 0].plot(psth[1][:-1], psth[0], color=color_option)
-                            ax[idx, 1].set_ylabel('spikes/s')
+                            ax[idx, 0].set_ylabel('spikes/s')
 
                         else:
                             rasterplot(spiketrains, c=color_option, histogram_bins=0, axes=ax[idx, 0], s=0.3)
@@ -214,7 +220,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'ph
                         ax[idx, 0].set_xlim(custom_xlim)
                         ax[idx, 0].set_title(f'Unit: {cluster_id}_{stream}, animal: {animal_id_num}')
 
-                        ax[idx, 0].text(-0.15, 0.5, probeword_text, horizontalalignment='center',
+                        ax[idx, 0].text(-0.2, 0.5, probeword_text, horizontalalignment='center',
                                         verticalalignment='center', rotation=90, transform=ax[idx, 0].transAxes)
                 except Exception as e:
                     print(f"Error: {e}")
