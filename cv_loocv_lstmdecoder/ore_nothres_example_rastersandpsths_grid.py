@@ -30,7 +30,7 @@ import sklearn
 from instruments.helpers.util import simple_xy_axes, set_font_axes
 from instruments.helpers.neural_analysis_helpers import get_soundonset_alignedraster, split_cluster_base_on_segment_zola
 
-from helpers.neural_analysis_helpers_zolainter import get_word_aligned_raster, get_word_aligned_raster_zola_cruella
+from helpers.neural_analysis_helpers_zolainter import get_word_aligned_raster, get_word_aligned_raster_ore, get_word_aligned_raster_zola_cruella
 from instruments.helpers.euclidean_classification_minimal_function import classify_sweeps
 # Import standard packages
 import numpy as np
@@ -88,10 +88,19 @@ def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'ph
         for idx, probewords in enumerate(probewords_list):
             for pitchshift_option in [True, False]:
 
-                raster_target, raster_target_compare = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=probewords[0],
-                                                                                          pitchshift=pitchshift_option,
-                                                                                          correctresp=False,
-                                                                                          df_filter=['No Level Cue'], talker = 'female')
+                if stream == 'g_mod':
+                    raster_target, raster_targ_compare = get_word_aligned_raster_zola_cruella(blocks, cluster_id,
+                                                                                              word=probewords[0],
+                                                                                              pitchshift=pitchshift_option,
+                                                                                              correctresp=False,
+                                                                                              df_filter=[
+                                                                                                  'No Level Cue'],
+                                                                                              talker='female')
+                else:
+                    raster_target, raster_targ_compare = get_word_aligned_raster_ore(blocks, cluster_id, word=probewords[0],
+                                                                                     pitchshift=pitchshift_option,
+                                                                                     correctresp=False,
+                                                                                     df_filter=[], talker='female')
                 raster_target = raster_target.reshape(raster_target.shape[0], )
                 if len(raster_target) == 0:
                     print('raster target empty:', cluster_id)
@@ -227,7 +236,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'ph
                         ax[idx, 1].set_ylabel('trial number')
                         ax[idx, 1].set_xlim(custom_xlim)
 
-                    ax[idx, 1].set_title(f'Unit: {cluster_id}_{stream}, animal: {animal_id_num}')
+                    ax[idx, 1].set_title(f'Unit: {cluster_id}_{stream}, {animal_id_num}')
                     ax[idx, 1].text(-0.2, 0.5, probeword_text, horizontalalignment='center',
                                     verticalalignment='center', rotation=90, transform=ax[idx, 1].transAxes)
                 else:
@@ -268,7 +277,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'ph
                         ax[idx, 0].set_ylabel('trial number')
 
                     ax[idx, 0].set_xlim(custom_xlim)
-                    ax[idx, 0].set_title(f'Unit: {cluster_id}_{stream}, animal: {animal_id_num}')
+                    ax[idx, 0].set_title(f'Unit: {cluster_id}_{stream}, {animal_id_num}')
 
                     ax[idx, 0].text(-0.2, 0.5, probeword_text, horizontalalignment='center',
                                     verticalalignment='center', rotation=90, transform=ax[idx, 0].transAxes)

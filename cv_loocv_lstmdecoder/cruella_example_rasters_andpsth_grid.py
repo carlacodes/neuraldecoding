@@ -225,7 +225,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
                             ax[idx, 1].set_ylabel('trial number')
                             ax[idx, 1].set_xlim(custom_xlim)
 
-                        ax[idx, 1].set_title(f'Unit: {cluster_id}_{stream}, animal: {animal_id_num}')
+                        ax[idx, 1].set_title(f'Unit: {cluster_id}_{phydir}, \n {animal_id_num}')
                         ax[idx, 1].text(-0.2, 0.5, probeword_text, horizontalalignment='center',
                                         verticalalignment='center', rotation=90, transform=ax[idx, 1].transAxes)
                     else:
@@ -266,7 +266,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
                             ax[idx, 0].set_ylabel('trial number')
 
                         ax[idx, 0].set_xlim(custom_xlim)
-                        ax[idx, 0].set_title(f'Unit: {cluster_id}_{stream}, animal: {animal_id_num}')
+                        ax[idx, 0].set_title(f'Unit: {cluster_id}_{phydir}, \n {animal_id_num}')
 
                         ax[idx, 0].text(-0.2, 0.5, probeword_text, horizontalalignment='center',
                                         verticalalignment='center', rotation=90, transform=ax[idx, 0].transAxes)
