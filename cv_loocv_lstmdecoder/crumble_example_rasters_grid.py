@@ -88,7 +88,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'ph
                 raster_target, raster_target_compare = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=probewords[0],
                                                                                           pitchshift=pitchshift_option,
                                                                                           correctresp=False,
-                                                                                          df_filter=['No Level Cue'], talker = 'female')
+                                                                                          df_filter=[], talker = 'female')
                 raster_target = raster_target.reshape(raster_target.shape[0], )
                 if len(raster_target) == 0:
                     print('raster target empty:', cluster_id)
