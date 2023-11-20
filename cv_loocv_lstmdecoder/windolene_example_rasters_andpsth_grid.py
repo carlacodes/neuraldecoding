@@ -25,7 +25,7 @@ from datetime import datetime
 from astropy.stats import bootstrap
 import sklearn
 from instruments.helpers.util import simple_xy_axes, set_font_axes
-from instruments.helpers.neural_analysis_helpers import get_soundonset_alignedraster, split_cluster_base_on_segment_zola
+from instruments.helpers.neural_analysis_helpers import get_word_aligned_raster_squinty, split_cluster_base_on_segment_zola
 
 from helpers.neural_analysis_helpers_zolainter import get_word_aligned_raster, get_word_aligned_raster_zola_cruella
 from instruments.helpers.euclidean_classification_minimal_function import classify_sweeps
@@ -64,19 +64,19 @@ def run_cleaning_of_rasters(blocks, datapath):
     with open(datapath / 'new_blocks.pkl', 'wb') as f:
         pickle.dump(new_blocks, f)
     return new_blocks
-def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'phy', animal = 'F1702_Zola', brain_area = [], gen_psth = False):
+def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_3', phydir = 'phy', animal = 'F1702_Zola', brain_area = [], gen_psth = False):
 
     tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_nothreshold_ANDPSTH_2011/{phydir}/{stream}/')
     #load the high generalizable clusters, csv file
 
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
-    animal_id_num = animal.split('_')[0]
+
     binsize = 0.01
     window = [0, 0.6]
     probewords_list = [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10)]
-    clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
-                 st.annotations['group'] != 'noise']
+
+    animal_id_num = animal.split('_')[0]
 
     for j, cluster_id in enumerate(clust_ids):
         #make a figure of 2 columns and 10 rows
@@ -198,7 +198,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'ph
                             ax[idx, 1].set_ylabel('trial number')
 
                         ax[idx, 1].set_xlim(custom_xlim)
-                        ax[idx, 1].set_title(f'Unit: {cluster_id}_{stream}, animal: {animal_id_num}')
+                        ax[idx, 1].set_title(f'Unit: {cluster_id}_{phydir}_{stream}, animal: {animal_id_num}')
                         ax[idx, 1].text(-0.15, 0.5, probeword_text, horizontalalignment='center',
                                         verticalalignment='center', rotation=90, transform=ax[idx, 1].transAxes)
                     else:
@@ -212,7 +212,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'ph
                             ax[idx, 0].set_ylabel('trial number')
 
                         ax[idx, 0].set_xlim(custom_xlim)
-                        ax[idx, 0].set_title(f'Unit: {cluster_id}_{stream}, animal: {animal_id_num}')
+                        ax[idx, 0].set_title(f'Unit: {cluster_id}_{phydir}_{stream}, animal: {animal_id_num}')
 
                         ax[idx, 0].text(-0.15, 0.5, probeword_text, horizontalalignment='center',
                                         verticalalignment='center', rotation=90, transform=ax[idx, 0].transAxes)
@@ -253,18 +253,17 @@ def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'ph
 
 def generate_rasters(dir):
 
-
-    datapath_big = Path(f'G:/F2003_Orecchiette/')
+    datapath_big = Path(f'D:/ms4output_16102023/F1606_Windolene/')
     animal = str(datapath_big).split('\\')[-1]
-    datapaths = [x for x in datapath_big.glob('**/*kilosort//phy//') if x.is_dir()]
-    datapaths = datapaths[-1]
-    for datapath in [datapaths]:
+    datapaths = [x for x in datapath_big.glob('**/mountainsort4/phy//') if x.is_dir()]
+    for datapath in datapaths:
         stream = str(datapath).split('\\')[-3]
         stream = stream[-4:]
         print(stream)
-        folder = str(datapath).split('\\')[-4]
-        with open(datapath / 'blocks.pkl', 'rb') as f:
+        folder = str(datapath).split('\\')[-3]
+        with open(datapath / 'new_blocks.pkl', 'rb') as f:
             new_blocks = pickle.load(f)
+
 
         high_units = pd.read_csv(f'G:/neural_chapter/figures/unit_ids_trained_topgenindex_{animal}.csv')
         # remove trailing steam
@@ -279,24 +278,25 @@ def generate_rasters(dir):
 
         max_length = len(rec_name) // 2
 
-        if folder.__contains__('s2') and not folder.__contains__('mod'):
-            stream = 't_s2'
-        elif folder.__contains__('s3'):
-            stream = 't_s3'
-        elif folder.__contains__('gmod'):
-            stream = 'gmod'
+        for length in range(1, max_length + 1):
+            for i in range(len(rec_name) - length):
+                substring = rec_name[i:i + length]
+                if rec_name.count(substring) > 1:
+                    repeating_substring = substring
+                    break
 
-        #print out the unique streams
-        unique_streams = high_units['stream'].unique()
-        high_units = high_units[(high_units['stream'] == stream)]
+        print(repeating_substring)
+        rec_name = repeating_substring
+        high_units = high_units[(high_units['rec_name'] == rec_name) & (high_units['stream'] == stream)]
         clust_ids = high_units['ID'].to_list()
         brain_area = high_units['BrainArea'].to_list()
 
-
+        if clust_ids == []:
+            print('no units found')
+            continue
         for talker in [1]:
-            target_vs_probe_with_raster(new_blocks,talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, gen_psth=True)
-            target_vs_probe_with_raster(new_blocks,talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area)
-
+            target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area)
+            target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, gen_psth=True)
 
 
 
