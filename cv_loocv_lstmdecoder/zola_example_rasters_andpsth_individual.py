@@ -78,6 +78,8 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
     probewords_list = [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10)]
 
     animal_id_num = animal.split('_')[0]
+    clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
+                 st.annotations['group'] != 'noise']
 
     for j, cluster_id in enumerate(clust_ids):
         #make a figure of 2 columns and 10 rows
@@ -341,12 +343,12 @@ def generate_rasters(dir):
         clust_ids = high_units['ID'].to_list()
         brain_area = high_units['BrainArea'].to_list()
 
-        if clust_ids == []:
-            print('no units found')
-            continue
+        # if clust_ids == []:
+        #     print('no units found')
+        #     continue
         for talker in [1]:
             target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area)
-            target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, gen_psth=True)
+            # target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, gen_psth=True)
 
 
 
