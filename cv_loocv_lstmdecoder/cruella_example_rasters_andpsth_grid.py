@@ -86,10 +86,10 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
         for idx, probewords in enumerate(probewords_list):
             for pitchshift_option in [True, False]:
 
-                raster_target = get_word_aligned_raster_squinty(blocks, cluster_id, word=probewords[0],
-                                                                pitchshift=pitchshift_option,
-                                                                correctresp=True,
-                                                                df_filter=['No Level Cue'])
+                raster_target, raster_target_compare = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=probewords[0],
+                                                                                          pitchshift=pitchshift_option,
+                                                                                          correctresp=True,
+                                                                                          df_filter=['No Level Cue'], talker = 'female')
                 raster_target = raster_target.reshape(raster_target.shape[0], )
                 if len(raster_target) == 0:
                     print('raster target empty:', cluster_id)
@@ -114,10 +114,10 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
 
                 try:
                     if probewords[0] == 4 and pitchshift_option == False:
-                        probeword_text = 'but'
+                        probeword_text = 'when a'
                         color_option = 'green'
                     elif probewords[0] == 4 and pitchshift_option == True:
-                        probeword_text = 'but'
+                        probeword_text = 'when a'
                         color_option = 'lightgreen'
 
                     elif probewords[0] == 1 and pitchshift_option == False:
@@ -129,86 +129,60 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
 
 
                     elif probewords[0] == 2 and pitchshift_option == False:
-                        probeword_text = 'sailor'
+                        probeword_text = 'craft'
                         color_option = 'deeppink'
                     elif probewords[0] == 2 and pitchshift_option == True:
-                        probeword_text = 'sailor'
+                        probeword_text = 'craft'
                         color_option = 'pink'
 
                     elif probewords[0] == 3 and pitchshift_option == False:
-                        probeword_text = 'accurate'
+                        probeword_text = 'in contrast'
                         color_option = 'mediumpurple'
                     elif probewords[0] == 3 and pitchshift_option == True:
-                        probeword_text = 'accurate'
+                        probeword_text = 'in contrast'
                         color_option = 'purple'
 
                     elif probewords[0] == 5 and pitchshift_option == False:
-                        probeword_text = 'researched'
+                        probeword_text = 'accurate'
                         color_option = 'black'
 
                     elif probewords[0] == 5 and pitchshift_option == True:
-                        probeword_text = 'researched'
+                        probeword_text = 'accurate'
                         color_option = 'grey'
                     elif probewords[0] == 6 and pitchshift_option == False:
-                        probeword_text = 'when a'
+                        probeword_text = 'pink noise'
                         color_option = 'navy'
                     elif probewords[0] == 6 and pitchshift_option == True:
-                        probeword_text = 'when a'
+                        probeword_text = 'pink noise'
                         color_option = 'lightblue'
 
                     elif probewords[0] == 7 and pitchshift_option == False:
-                        probeword_text = 'took'
+                        probeword_text = 'of science'
                         color_option = 'coral'
                     elif probewords[0] == 7 and pitchshift_option == True:
-                        probeword_text = 'took'
+                        probeword_text = 'of science'
                         color_option = 'orange'
 
 
                     elif probewords[0] == 8 and pitchshift_option == False:
-                        probeword_text = 'the vast'
+                        probeword_text = 'rev. instruments'
                         color_option = 'plum'
                     elif probewords[0] == 8 and pitchshift_option == True:
-                        probeword_text = 'the vast'
+                        probeword_text = 'rev. instruments'
                         color_option = 'darkorchid'
                     elif probewords[0] == 9 and pitchshift_option == False:
-                        probeword_text = 'today'
+                        probeword_text = 'boats'
                         color_option = 'slategrey'
                     elif probewords[0] == 9 and pitchshift_option == True:
-                        probeword_text = 'today'
+                        probeword_text = 'boats'
                         color_option = 'royalblue'
 
                     elif probewords[0] == 10 and pitchshift_option == False:
-                        probeword_text = 'he takes'
+                        probeword_text = 'today'
                         color_option = 'gold'
                     elif probewords[0] == 10 and pitchshift_option == True:
-                        probeword_text = 'he takes'
+                        probeword_text = 'today'
                         color_option = 'yellow'
-                    elif probewords[0] == 11 and pitchshift_option == False:
-                        probeword_text = 'becomes'
-                        color_option = 'green'
-                    elif probewords[0] == 11 and pitchshift_option == True:
-                        probeword_text = 'becomes'
-                        color_option = 'lightgreen'
-                    elif probewords[0] == 12 and pitchshift_option == False:
-                        probeword_text = 'any'
-                        color_option = 'deeppink'
-                    elif probewords[0] == 12 and pitchshift_option == True:
-                        probeword_text = 'any'
-                        color_option = 'pink'
-                    elif probewords[0] == 13 and pitchshift_option == False:
-                        probeword_text = 'more'
-                        color_option = 'plum'
-
-                    elif probewords[0] == 13 and pitchshift_option == True:
-                        probeword_text = 'more'
-                        color_option = 'darkorchid'
-                    elif probewords[0] == 14 and pitchshift_option == False:
-                        probeword_text = 'boats'
-                        color_option = 'slategrey'
-                    elif probewords[0] == 14 and pitchshift_option == True:
-                        probeword_text = 'boats'
-                        color_option = 'royalblue'
-
                     else:
                         probeword_text = 'error'
                         color_option = 'red'
@@ -283,7 +257,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
                             smoothed_hist = gaussian_filter1d(hist / (bin_width * len(spiketrains)), sigma=sigma)
 
                             # Plot smoothed PSTH within the specified time range
-                            ax[idx, 0].plot(time_axis, smoothed_hist,color=color_option, linewidth=2)
+                            ax[idx, 0].plot(time_axis, smoothed_hist, color=color_option, linewidth=2)
 
                             ax[idx, 0].set_ylabel('spikes/s')
 
@@ -332,7 +306,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
 
 def generate_rasters(dir):
 
-    datapath_big = Path(f'D:/ms4output_16102023/F1606_Windolene/')
+    datapath_big = Path(f'D:/ms4output_16102023/F1815_Cruella/')
     animal = str(datapath_big).split('\\')[-1]
     datapaths = [x for x in datapath_big.glob('**/mountainsort4/phy//') if x.is_dir()]
     for datapath in datapaths:

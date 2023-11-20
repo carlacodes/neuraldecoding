@@ -16,6 +16,7 @@ from keras import backend as K
 from elephant import statistics
 import quantities as pq
 from viziphant.rasterplot import rasterplot
+from scipy.ndimage import gaussian_filter1d  # Import Gaussian filter for smoothing
 
 from sklearn.utils import resample
 import astropy
@@ -113,118 +114,167 @@ def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'ph
                     spiketrain = neo.SpikeTrain(selected_trials['spike_time'], units='s', t_start=min(selected_trials['spike_time']), t_stop=max(selected_trials['spike_time']))
                     spiketrains.append(spiketrain)
 
-                try:
-                    if probewords[0] == 4 and pitchshift_option == False:
-                        probeword_text = 'when a'
-                        color_option = 'green'
-                    elif probewords[0] == 4 and pitchshift_option == True:
-                        probeword_text = 'when a'
-                        color_option = 'lightgreen'
+                # try:
+                if probewords[0] == 4 and pitchshift_option == False:
+                    probeword_text = 'when a'
+                    color_option = 'green'
+                elif probewords[0] == 4 and pitchshift_option == True:
+                    probeword_text = 'when a'
+                    color_option = 'lightgreen'
 
-                    elif probewords[0] == 1 and pitchshift_option == False:
-                        probeword_text = 'instruments'
-                        color_option = 'blue'
-                    elif probewords[0] == 1 and pitchshift_option == True:
-                        probeword_text = 'instruments'
-                        color_option = 'skyblue'
-
-
-                    elif probewords[0] == 2 and pitchshift_option == False:
-                        probeword_text = 'craft'
-                        color_option = 'deeppink'
-                    elif probewords[0] == 2 and pitchshift_option == True:
-                        probeword_text = 'craft'
-                        color_option = 'pink'
-
-                    elif probewords[0] == 3 and pitchshift_option == False:
-                        probeword_text = 'in contrast'
-                        color_option = 'mediumpurple'
-                    elif probewords[0] == 3 and pitchshift_option == True:
-                        probeword_text = 'in contrast'
-                        color_option = 'purple'
-
-                    elif probewords[0] == 5 and pitchshift_option == False:
-                        probeword_text = 'accurate'
-                        color_option = 'black'
-
-                    elif probewords[0] == 5 and pitchshift_option == True:
-                        probeword_text = 'accurate'
-                        color_option = 'grey'
-                    elif probewords[0] == 6 and pitchshift_option == False:
-                        probeword_text = 'pink noise'
-                        color_option = 'navy'
-                    elif probewords[0] == 6 and pitchshift_option == True:
-                        probeword_text = 'pink noise'
-                        color_option = 'lightblue'
-
-                    elif probewords[0] == 7 and pitchshift_option == False:
-                        probeword_text = 'of science'
-                        color_option = 'coral'
-                    elif probewords[0] == 7 and pitchshift_option == True:
-                        probeword_text = 'of science'
-                        color_option = 'orange'
+                elif probewords[0] == 1 and pitchshift_option == False:
+                    probeword_text = 'instruments'
+                    color_option = 'blue'
+                elif probewords[0] == 1 and pitchshift_option == True:
+                    probeword_text = 'instruments'
+                    color_option = 'skyblue'
 
 
-                    elif probewords[0] == 8 and pitchshift_option == False:
-                        probeword_text = 'rev. instruments'
-                        color_option = 'plum'
-                    elif probewords[0] == 8 and pitchshift_option == True:
-                        probeword_text = 'rev. instruments'
-                        color_option = 'darkorchid'
-                    elif probewords[0] == 9 and pitchshift_option == False:
-                        probeword_text = 'boats'
-                        color_option = 'slategrey'
-                    elif probewords[0] == 9 and pitchshift_option == True:
-                        probeword_text = 'boats'
-                        color_option = 'royalblue'
+                elif probewords[0] == 2 and pitchshift_option == False:
+                    probeword_text = 'craft'
+                    color_option = 'deeppink'
+                elif probewords[0] == 2 and pitchshift_option == True:
+                    probeword_text = 'craft'
+                    color_option = 'pink'
 
-                    elif probewords[0] == 10 and pitchshift_option == False:
-                        probeword_text = 'today'
-                        color_option = 'gold'
-                    elif probewords[0] == 10 and pitchshift_option == True:
-                        probeword_text = 'today'
-                        color_option = 'yellow'
+                elif probewords[0] == 3 and pitchshift_option == False:
+                    probeword_text = 'in contrast'
+                    color_option = 'mediumpurple'
+                elif probewords[0] == 3 and pitchshift_option == True:
+                    probeword_text = 'in contrast'
+                    color_option = 'purple'
+
+                elif probewords[0] == 5 and pitchshift_option == False:
+                    probeword_text = 'accurate'
+                    color_option = 'black'
+
+                elif probewords[0] == 5 and pitchshift_option == True:
+                    probeword_text = 'accurate'
+                    color_option = 'grey'
+                elif probewords[0] == 6 and pitchshift_option == False:
+                    probeword_text = 'pink noise'
+                    color_option = 'navy'
+                elif probewords[0] == 6 and pitchshift_option == True:
+                    probeword_text = 'pink noise'
+                    color_option = 'lightblue'
+
+                elif probewords[0] == 7 and pitchshift_option == False:
+                    probeword_text = 'of science'
+                    color_option = 'coral'
+                elif probewords[0] == 7 and pitchshift_option == True:
+                    probeword_text = 'of science'
+                    color_option = 'orange'
+
+
+                elif probewords[0] == 8 and pitchshift_option == False:
+                    probeword_text = 'rev. instruments'
+                    color_option = 'plum'
+                elif probewords[0] == 8 and pitchshift_option == True:
+                    probeword_text = 'rev. instruments'
+                    color_option = 'darkorchid'
+                elif probewords[0] == 9 and pitchshift_option == False:
+                    probeword_text = 'boats'
+                    color_option = 'slategrey'
+                elif probewords[0] == 9 and pitchshift_option == True:
+                    probeword_text = 'boats'
+                    color_option = 'royalblue'
+
+                elif probewords[0] == 10 and pitchshift_option == False:
+                    probeword_text = 'today'
+                    color_option = 'gold'
+                elif probewords[0] == 10 and pitchshift_option == True:
+                    probeword_text = 'today'
+                    color_option = 'yellow'
+                else:
+                    probeword_text = 'error'
+                    color_option = 'red'
+                #if pitchshift plot on the second column
+                custom_xlim = (-0.1, 0.6)
+
+                if pitchshift_option:
+                    if gen_psth:
+                        bin_width = 0.01  # Width of the time bins in seconds
+                        time_start = -0.1  # Start time for the PSTH (in seconds)
+                        time_end = 0.6  # End time for the PSTH (in seconds)
+                        stimulus_onset = 0.0  # Time of the stimulus onset (relative to the PSTH window)
+
+                        # Calculate PSTH within the specified time range
+                        num_bins = int((time_end - time_start) / bin_width) + 1
+                        bins = np.linspace(time_start, time_end, num_bins + 1)
+                        spike_times = [st.times.magnitude for st in spiketrains]
+
+                        # Flatten spike times and filter within the specified time range
+                        spike_times_flat = np.concatenate(spike_times)
+                        spike_times_filtered = spike_times_flat[
+                            (spike_times_flat >= time_start) & (spike_times_flat <= time_end)]
+
+                        # Compute the histogram within the specified time range
+                        hist, _ = np.histogram(spike_times_filtered, bins=bins)
+
+                        # Calculate time axis for plotting within the specified time range
+                        time_axis = np.linspace(time_start, time_end, num_bins) + bin_width / 2
+
+                        # Apply smoothing using Gaussian filter
+                        sigma = 2  # Smoothing parameter (adjust as needed)
+                        smoothed_hist = gaussian_filter1d(hist / (bin_width * len(spiketrains)), sigma=sigma)
+
+                        # Plot smoothed PSTH within the specified time range
+                        ax[idx, 1].plot(time_axis, smoothed_hist, color=color_option, linewidth=2)
+
+                        ax[idx, 1].set_ylabel('spikes/s')
                     else:
-                        probeword_text = 'error'
-                        color_option = 'red'
-                    #if pitchshift plot on the second column
-                    custom_xlim = (-0.1, 0.6)
+                        rasterplot(spiketrains, c=color_option, histogram_bins=0, axes=ax[idx, 1], s=0.3)
+                        ax[idx, 1].set_ylabel('trial number')
+                        ax[idx, 1].set_xlim(custom_xlim)
 
-                    if pitchshift_option:
-                        if gen_psth:
-                            psth = np.histogram(spiketrains, bins=100)
-                            psth = np.convolve(psth[0], np.ones(5), 'same') / 5
+                    ax[idx, 1].set_title(f'Unit: {cluster_id}_{stream}, animal: {animal_id_num}')
+                    ax[idx, 1].text(-0.2, 0.5, probeword_text, horizontalalignment='center',
+                                    verticalalignment='center', rotation=90, transform=ax[idx, 1].transAxes)
+                else:
+                    if gen_psth:
+                        #get the array of spiketimes
+                        bin_width = 0.01  # Width of the time bins in seconds
+                        time_start = -0.1  # Start time for the PSTH (in seconds)
+                        time_end = 0.6  # End time for the PSTH (in seconds)
+                        stimulus_onset = 0.0  # Time of the stimulus onset (relative to the PSTH window)
 
-                            ax[idx, 1].plot(psth[1][:-1], psth[0], color=color_option)
-                            ax[idx, 1].set_ylabel('spikes/s')
-                        else:
-                            rasterplot(spiketrains, c=color_option, histogram_bins=0, axes=ax[idx, 1], s=0.3)
-                            ax[idx, 1].set_ylabel('trial number')
-                            ax[idx, 1].set_xlim(custom_xlim)
+                        # Calculate PSTH within the specified time range
+                        num_bins = int((time_end - time_start) / bin_width) + 1
+                        bins = np.linspace(time_start, time_end, num_bins + 1)
+                        spike_times = [st.times.magnitude for st in spiketrains]
 
-                        ax[idx, 1].set_title(f'Unit: {cluster_id}_{stream}, animal: {animal_id_num}')
-                        ax[idx, 1].text(-0.2, 0.5, probeword_text, horizontalalignment='center',
-                                        verticalalignment='center', rotation=90, transform=ax[idx, 1].transAxes)
+                        # Flatten spike times and filter within the specified time range
+                        spike_times_flat = np.concatenate(spike_times)
+                        spike_times_filtered = spike_times_flat[
+                            (spike_times_flat >= time_start) & (spike_times_flat <= time_end)]
+
+                        # Compute the histogram within the specified time range
+                        hist, _ = np.histogram(spike_times_filtered, bins=bins)
+
+                        # Calculate time axis for plotting within the specified time range
+                        time_axis = np.linspace(time_start, time_end, num_bins) + bin_width / 2
+
+                        # Apply smoothing using Gaussian filter
+                        sigma = 2  # Smoothing parameter (adjust as needed)
+                        smoothed_hist = gaussian_filter1d(hist / (bin_width * len(spiketrains)), sigma=sigma)
+
+                        # Plot smoothed PSTH within the specified time range
+                        ax[idx, 0].plot(time_axis, smoothed_hist, color=color_option, linewidth=2)
+
+                        ax[idx, 0].set_ylabel('spikes/s')
+
                     else:
-                        if gen_psth:
-                            #get the array of spiketimes
-                            psth = np.histogram(spiketrains, bins=100)
-                            psth = np.convolve(psth[0], np.ones(5), 'same') / 5
-                            ax[idx, 0].plot(psth[1][:-1], psth[0], color=color_option)
-                            ax[idx, 0].set_ylabel('spikes/s')
+                        rasterplot(spiketrains, c=color_option, histogram_bins=0, axes=ax[idx, 0], s=0.3)
+                        ax[idx, 0].set_ylabel('trial number')
 
-                        else:
-                            rasterplot(spiketrains, c=color_option, histogram_bins=0, axes=ax[idx, 0], s=0.3)
-                            ax[idx, 0].set_ylabel('trial number')
+                    ax[idx, 0].set_xlim(custom_xlim)
+                    ax[idx, 0].set_title(f'Unit: {cluster_id}_{stream}, animal: {animal_id_num}')
 
-                        ax[idx, 0].set_xlim(custom_xlim)
-                        ax[idx, 0].set_title(f'Unit: {cluster_id}_{stream}, animal: {animal_id_num}')
-
-                        ax[idx, 0].text(-0.2, 0.5, probeword_text, horizontalalignment='center',
-                                        verticalalignment='center', rotation=90, transform=ax[idx, 0].transAxes)
-                except Exception as e:
-                    print(f"Error: {e}")
-                    continue
+                    ax[idx, 0].text(-0.2, 0.5, probeword_text, horizontalalignment='center',
+                                    verticalalignment='center', rotation=90, transform=ax[idx, 0].transAxes)
+                # except Exception as e:
+                #     print(f"Error: {e}")
+                #     continue
 
 
         # ax[0, 1].set_title('Pitch-shifted F0')

@@ -283,7 +283,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
                             smoothed_hist = gaussian_filter1d(hist / (bin_width * len(spiketrains)), sigma=sigma)
 
                             # Plot smoothed PSTH within the specified time range
-                            ax[idx, 0].plot(time_axis, smoothed_hist,color=color_option, linewidth=2)
+                            ax[idx, 0].plot(time_axis, smoothed_hist, color=color_option, linewidth=2)
 
                             ax[idx, 0].set_ylabel('spikes/s')
 
@@ -332,7 +332,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
 
 def generate_rasters(dir):
 
-    datapath_big = Path(f'D:/ms4output_16102023/F1606_Windolene/')
+    datapath_big = Path(f'D:/ms4output_16102023/F1604_Squinty/')
     animal = str(datapath_big).split('\\')[-1]
     datapaths = [x for x in datapath_big.glob('**/mountainsort4/phy//') if x.is_dir()]
     for datapath in datapaths:
