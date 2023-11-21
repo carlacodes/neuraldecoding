@@ -384,7 +384,7 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
         custom_xlim = (-0.1, 0.6)
         ax2.set_xlim(custom_xlim)
         ax2.set_title(
-            f'{cluster_id}_{rec_name}_{stream},\n {animal_id_num}, probeword: {probeword_text}, {pitchshift_text}')
+            f'{cluster_id}_{rec_name}_{stream},\n {animal_id_num}, probe word: {probeword_text}, {pitchshift_text}')
         plt.savefig(saveDir / f'{cluster_id}_{ids_to_plot["Folder"][i]}_{animal_id_num}_{probeword_text}_PS{pitchshift_text}_{talker}.png')
 
 

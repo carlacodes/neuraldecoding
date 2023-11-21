@@ -29,7 +29,7 @@ from instruments.helpers.util import simple_xy_axes, set_font_axes
 from instruments.helpers.neural_analysis_helpers import get_word_aligned_raster_squinty, split_cluster_base_on_segment_zola
 import sys
 sys.path.append('../')
-from helpers.neural_analysis_helpers_zolainter import get_word_aligned_raster, get_word_aligned_raster_zola_cruella
+from helpers.neural_analysis_helpers_zolainter import get_word_aligned_raster, get_word_aligned_raster_zola_cruella, get_word_aligned_raster_ore
 from instruments.helpers.euclidean_classification_minimal_function import classify_sweeps
 # Import standard packages
 import numpy as np
@@ -73,10 +73,18 @@ def run_cleaning_of_rasters(blocks, datapath):
 def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
     #load the blocks
     blocks = {}
+    ids_to_plot = pd.read_csv(f'G:\plotting_csvs\{animal}_overlaid_IDS.csv')
+
+
     for datapath in datapaths:
-        with open(datapath / 'new_blocks.pkl', 'rb') as f:
-            dir = str(datapath).split('\\')[-3]
-            blocks[dir] = pickle.load(f)
+        try:
+            with open(datapath / 'blocks.pkl', 'rb') as f:
+                dir = str(datapath).split('\\')[-4]
+                blocks[dir] = pickle.load(f)
+        except:
+            with open(datapath / 'blocks.pkl', 'rb') as f:
+                dir = str(datapath).split('\\')[-4]
+                blocks[dir] = pickle.load(f)
 
     # clust_id_dict = {}
     # clust_id_dict['BB2BB3_zola_intertrialroving_26092023_BB2BB3_zola_intertrialroving_26092023_BB_2'] = [0,2,4, 6]
@@ -86,7 +94,6 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
     # df = pd.DataFrame.from_dict(clust_id_dict, orient='index')
 
     #read the dataframe
-    ids_to_plot = pd.read_csv('G:\plotting_csvs\F1702_zola_overlaid_IDS.csv')
 
 
     tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_overlaid/{dir}/')
@@ -116,10 +123,15 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
 
 
 
-        raster_target, raster_target_compare = get_word_aligned_raster_zola_cruella(blocks_cluster, cluster_id, word=probeword,
-                                                                                  pitchshift=pitchshift_option,
-                                                                                  correctresp=True,
-                                                                                  df_filter=['No Level Cue'], talker = 'female')
+        # raster_target, raster_target_compare = get_word_aligned_raster_zola_cruella(blocks_cluster, cluster_id, word=probeword,
+        #                                                                           pitchshift=pitchshift_option,
+        #                                                                           correctresp=False,
+        #                                                                           df_filter=['No Level Cue'], talker = 'female')
+
+        raster_target, raster_targ_compare = get_word_aligned_raster_ore(blocks_cluster, cluster_id, word=probeword,
+                                                                         pitchshift=pitchshift_option,
+                                                                         correctresp=False,
+                                                                         df_filter=[], talker='female')
         raster_target = raster_target.reshape(raster_target.shape[0], )
         if len(raster_target) == 0:
             print('raster target empty:', cluster_id)
@@ -142,7 +154,7 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
             spiketrain = neo.SpikeTrain(selected_trials['spike_time'], units='s', t_start=min(selected_trials['spike_time']), t_stop=max(selected_trials['spike_time']))
             spiketrains.append(spiketrain)
 
-        dict_key = f'{cluster_id}_{ids_to_plot["Folder"][j]}'
+        dict_key = f'{cluster_id}_{ids_to_plot["Folder"][j]}_{probeword}'
         spiketraindict[dict_key] = spiketrains
         unique_trials_dict[dict_key] = np.unique(raster_target['trial_num'])
     fig, ax = plt.subplots()
@@ -153,8 +165,10 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
         time_start = -0.1  # Start time for the PSTH (in seconds)
         time_end = 0.6  # End time for the PSTH (in seconds)
         stimulus_onset = 0.0  # Time of the stimulus onset (relative to the PSTH window)
-        spiketrains = spiketraindict[f'{cluster_id}_{ids_to_plot["Folder"][i]}']
-        unique_trials = unique_trials_dict[f'{cluster_id}_{ids_to_plot["Folder"][i]}']
+        probeword = ids_to_plot['Probe_index'][i]
+
+        spiketrains = spiketraindict[f'{cluster_id}_{ids_to_plot["Folder"][i]}_{probeword}']
+        unique_trials = unique_trials_dict[f'{cluster_id}_{ids_to_plot["Folder"][i]}_{probeword}']
 
         probeword = ids_to_plot['Probe_index'][i]
         pitchshift_option = ids_to_plot['Pitchshift'][i]
@@ -260,9 +274,9 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
 
         # Plot smoothed PSTH within the specified time range
         if probeword_text == 'instruments':
-            ax.plot(time_axis, smoothed_hist, color='black', linewidth=3, label = probeword_text)
+            ax.plot(time_axis, hist_rate, color=color_option, linewidth=3, label=probeword_text)
         else:
-            ax.plot(time_axis, smoothed_hist, color=color_option, linewidth=2, label = probeword_text)
+            ax.plot(time_axis, hist_rate, color=color_option, linewidth=2, label = probeword_text)
 
         # rasterplot(spiketrains, c=color_option, histogram_bins=0, axes=ax2, s=0.3)
         # ax2.set_ylabel('trial number')
@@ -280,11 +294,13 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
         # now plot the rasters
         count = 0
         fig2, ax2 = plt.subplots()
-        spiketrains = spiketraindict[f'{cluster_id}_{ids_to_plot["Folder"][i]}']
+        probeword = ids_to_plot['Probe_index'][i]
+
+        spiketrains = spiketraindict[f'{cluster_id}_{ids_to_plot["Folder"][i]}_{probeword}']
         probeword = ids_to_plot['Probe_index'][i]
         pitchshift_option = ids_to_plot['Pitchshift'][i]
         pitchshift_text = 'inter-roved F0' if pitchshift_option else 'control F0'
-        unique_trials = unique_trials_dict[f'{cluster_id}_{ids_to_plot["Folder"][i]}']
+        unique_trials = unique_trials_dict[f'{cluster_id}_{ids_to_plot["Folder"][i]}_{probeword}']
 
         if probeword == 4 and pitchshift_option == False:
             probeword_text = 'when a'
@@ -360,27 +376,25 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
         rec_name = str(ids_to_plot['Folder'][i])
         max_length = len(rec_name) // 2
 
-        for length in range(1, max_length + 1):
-            for k in range(len(rec_name) - length):
-                substring = rec_name[k:k + length]
-                if rec_name.count(substring) > 1:
-                    repeating_substring = substring
-                    break
+        # for length in range(1, max_length + 1):
+        #     for k in range(len(rec_name) - length):
+        #         substring = rec_name[k:k + length]
+        #         if rec_name.count(substring) > 1:
+        #             repeating_substring = substring
+        #             break
+        #
+        # print(repeating_substring)
+        # rec_name = repeating_substring
+        # rec_name = rec_name[:-1]
+        # stream = str(ids_to_plot['Folder'][i])[-4:]
 
-        print(repeating_substring)
-        rec_name = repeating_substring
-        rec_name = rec_name[:-1]
-        stream = str(ids_to_plot['Folder'][i])[-4:]
 
-        if probeword_text == 'instruments':
-            rasterplot(spiketrains, c='black', histogram_bins=0, axes=ax2, s=0.3)
-        else:
-            rasterplot(spiketrains, c=color_option, histogram_bins=0, axes=ax2, s=0.3)
+        rasterplot(spiketrains, c=color_option, histogram_bins=0, axes=ax2, s=0.3)
         ax2.set_ylabel('trial number')
         custom_xlim = (-0.1, 0.6)
         ax2.set_xlim(custom_xlim)
         ax2.set_title(
-            f'{cluster_id}_{rec_name}_{stream},\n {animal_id_num}, probe word: {probeword_text}, {pitchshift_text}')
+            f'{cluster_id}_{rec_name},\n {animal_id_num}, probe word: {probeword_text}, {pitchshift_text}')
         plt.savefig(saveDir / f'{cluster_id}_{ids_to_plot["Folder"][i]}_{animal_id_num}_{probeword_text}_PS{pitchshift_text}_{talker}.png')
 
 
@@ -390,14 +404,11 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
 
 def generate_rasters(dir):
 
-    datapath_big = Path(f'D:/ms4output_16102023/F1702_Zola/')
-    animal = str(datapath_big).split('\\')[-1]
+    animal = 'F2003_Orecchiette'
 
 
-    datapaths = [Path('D:\ms4output_16102023\F1702_Zola\BB2BB3_zola_intertrialroving_26092023\BB2BB3_zola_intertrialroving_26092023_BB2BB3_zola_intertrialroving_26092023_BB_2\mountainsort4\phy'),
-                      Path('D:\ms4output_16102023\F1702_Zola\BB2BB3_zola_intertrialroving_26092023\BB2BB3_zola_intertrialroving_26092023_BB2BB3_zola_intertrialroving_26092023_BB_3\mountainsort4\phy')]
-    #check if dataptahs contain a string
-    datapaths = [datapath for datapath in datapaths if 'BB2BB3_zola_intertrialroving_26092023_BB2BB3_zola_intertrialroving_26092023_BB_2' in str(datapath)]
+    datapaths = [Path('G:\F2003_Orecchiette/results_ore_pykilosort_s2/recording_0\pykilosort\phy'),
+                 Path('G:\F2003_Orecchiette/results_ore_pykilosort_s3/recording_0\pykilosort\phy')]
     for talker in [1]:
         target_vs_probe_with_raster(datapaths,talker=talker, animal = animal)
         # target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, gen_psth=True)
