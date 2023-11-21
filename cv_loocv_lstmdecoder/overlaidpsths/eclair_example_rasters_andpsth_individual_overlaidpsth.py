@@ -399,12 +399,12 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
 
 def generate_rasters(dir):
 
-    datapath_big = Path(f'D:/ms4output_16102023/F1901_Crumble/')
+    datapath_big = Path(f'D:/ms4output_16102023/F1902_Eclair/')
     animal = str(datapath_big).split('\\')[-1]
 
 
-    datapaths = [Path('D:\ms4output_16102023\F1901_Crumble\BB4BB5_crumble_01102023\BB4BB5_crumble_01102023_BB4BB5_crumble_01102023_BB_5\mountainsort4\phy'),
-                 Path('D:\ms4output_16102023\F1901_Crumble\BB2BB3_crumble_29092023_2\BB2BB3_crumble_29092023_BB2BB3_crumble_29092023_BB_3\mountainsort4\phy')]
+    datapaths = [Path('D:\ms4output_16102023\F1902_Eclair\Eclair_allblocks_29092023\Eclair_allblocks_29092023_Eclair_allblocks_29092023_BB_2\mountainsort4\phy'),
+                 Path('D:\ms4output_16102023\F1902_Eclair\Eclair_allblocks_29092023\Eclair_allblocks_29092023_Eclair_allblocks_29092023_BB_3\mountainsort4\phy')]
     for talker in [1]:
         target_vs_probe_with_raster(datapaths,talker=talker, animal = animal)
         # target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, gen_psth=True)
