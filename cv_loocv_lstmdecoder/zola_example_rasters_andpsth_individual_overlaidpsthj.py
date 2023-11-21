@@ -73,7 +73,7 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
     #load the blocks
     blocks = {}
     for datapath in datapaths:
-        with open(datapath / 'blocks.pkl', 'rb') as f:
+        with open(datapath / 'new_blocks.pkl', 'rb') as f:
             dir = str(datapath).split('\\')[-3]
             blocks[dir] = pickle.load(f)
 
@@ -85,7 +85,7 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
     # df = pd.DataFrame.from_dict(clust_id_dict, orient='index')
 
     #read the dataframe
-    ids_to_plot = pd.read_excel('G:\plotting_csvs\F1702_zola_overlaid_IDS.csv')
+    ids_to_plot = pd.read_csv('G:\plotting_csvs\F1702_zola_overlaid_IDS.csv')
 
 
     tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_overlaid/{dir}/')
@@ -98,8 +98,7 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
     probewords_list = [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10)]
 
     animal_id_num = animal.split('_')[0]
-    clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
-                 st.annotations['group'] != 'noise']
+
 
     spiketraindict = {}
 
@@ -111,10 +110,7 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
 
         probeword = ids_to_plot['Probe_index'][j]
         pitchshift_option = ids_to_plot['Pitchshift'][j]
-        if pitchshift_option == 'TRUE':
-            pitchshift_option = True
-        else:
-            pitchshift_option = False
+
 
 
 
@@ -144,15 +140,227 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
             spiketrain = neo.SpikeTrain(selected_trials['spike_time'], units='s', t_start=min(selected_trials['spike_time']), t_stop=max(selected_trials['spike_time']))
             spiketrains.append(spiketrain)
 
+        dict_key = f'{cluster_id}_{ids_to_plot["Folder"][j]}'
+        spiketraindict[dict_key] = spiketrains
+    fig, ax = plt.subplots()
+    for i, cluster_id in enumerate(ids_to_plot['ID']):
+        #now plot the rasters
 
-        spiketraindict[cluster_id] = spiketrains
+        bin_width = 0.01  # Width of the time bins in seconds
+        time_start = -0.1  # Start time for the PSTH (in seconds)
+        time_end = 0.6  # End time for the PSTH (in seconds)
+        stimulus_onset = 0.0  # Time of the stimulus onset (relative to the PSTH window)
+        spiketrains = spiketraindict[f'{cluster_id}_{ids_to_plot["Folder"][i]}']
+        probeword = ids_to_plot['Probe_index'][i]
+        pitchshift_option = ids_to_plot['Pitchshift'][i]
+        pitchshift_text = 'inter-roved F0' if pitchshift_option else 'control F0'
+        if probeword == 4 and pitchshift_option == False:
+            probeword_text = 'when a'
+            color_option = 'green'
+        elif probeword == 4 and pitchshift_option == True:
+            probeword_text = 'when a'
+            color_option = 'lightgreen'
+
+        elif probeword == 1 and pitchshift_option == False:
+            probeword_text = 'instruments'
+            color_option = 'blue'
+        elif probeword == 1 and pitchshift_option == True:
+            probeword_text = 'instruments'
+            color_option = 'skyblue'
 
 
+        elif probeword == 2 and pitchshift_option == False:
+            probeword_text = 'craft'
+            color_option = 'deeppink'
+        elif probeword == 2 and pitchshift_option == True:
+            probeword_text = 'craft'
+            color_option = 'pink'
+
+        elif probeword == 3 and pitchshift_option == False:
+            probeword_text = 'in contrast'
+            color_option = 'mediumpurple'
+        elif probeword == 3 and pitchshift_option == True:
+            probeword_text = 'in contrast'
+            color_option = 'purple'
+
+        elif probeword == 5 and pitchshift_option == False:
+            probeword_text = 'accurate'
+            color_option = 'black'
+
+        elif probeword == 5 and pitchshift_option == True:
+            probeword_text = 'accurate'
+            color_option = 'grey'
+        elif probeword == 6 and pitchshift_option == False:
+            probeword_text = 'pink noise'
+            color_option = 'navy'
+        elif probeword == 6 and pitchshift_option == True:
+            probeword_text = 'pink noise'
+            color_option = 'lightblue'
+        elif probeword == 7 and pitchshift_option == False:
+            probeword_text = 'of science'
+            color_option = 'coral'
+        elif probeword == 7 and pitchshift_option == True:
+            probeword_text = 'of science'
+            color_option = 'orange'
+        elif probeword == 8 and pitchshift_option == False:
+            probeword_text = 'rev. instruments'
+            color_option = 'plum'
+        elif probeword == 8 and pitchshift_option == True:
+            probeword_text = 'rev. instruments'
+            color_option = 'darkorchid'
+        elif probeword == 9 and pitchshift_option == False:
+            probeword_text = 'boats'
+            color_option = 'cornflowerblue'
+        elif probeword == 9 and pitchshift_option == True:
+            probeword_text = 'boats'
+            color_option = 'royalblue'
+
+        elif probeword == 10 and pitchshift_option == False:
+            probeword_text = 'today'
+            color_option = 'gold'
+        elif probeword == 10 and pitchshift_option == True:
+            probeword_text = 'today'
+            color_option = 'yellow'
+        else:
+            probeword_text = 'error'
+            color_option = 'red'
+        # Calculate PSTH within the specified time range
+        num_bins = int((time_end - time_start) / bin_width) + 1
+        bins = np.linspace(time_start, time_end, num_bins + 1)
+        spike_times = [st.times.magnitude for st in spiketrains]
+
+        # Flatten spike times and filter within the specified time range
+        spike_times_flat = np.concatenate(spike_times)
+        spike_times_filtered = spike_times_flat[
+            (spike_times_flat >= time_start) & (spike_times_flat <= time_end)]
+
+        # Compute the histogram within the specified time range
+        hist, _ = np.histogram(spike_times_filtered, bins=bins)
+
+        # Calculate time axis for plotting within the specified time range
+        time_axis = np.linspace(time_start, time_end, num_bins) + bin_width / 2
+
+        # Apply smoothing using Gaussian filter
+        sigma = 2  # Smoothing parameter (adjust as needed)
+        smoothed_hist = gaussian_filter1d(hist / (bin_width * len(spiketrains)), sigma=sigma)
+
+        # Plot smoothed PSTH within the specified time range
+        ax.plot(time_axis, smoothed_hist, color=color_option, linewidth=2, label = probeword_text)
+
+        # rasterplot(spiketrains, c=color_option, histogram_bins=0, axes=ax2, s=0.3)
+        # ax2.set_ylabel('trial number')
+        # custom_xlim = (-0.1, 0.6)
+        # ax2.set_xlim(custom_xlim)
+        # ax2.set_title(f'{cluster_id}_{ids_to_plot["Folder"][i]},\n {animal_id_num}, probeword: {probeword_text}, {pitchshift_text}')
+
+    ax.legend()
+    ax.set_ylabel('spikes/s')
+    ax.set_xlabel('time (s)')
+    plt.savefig(saveDir / f'overlaid_psths_{animal_id_num}_{talker}.png')
 
 
+    for i, cluster_id in enumerate(ids_to_plot['ID']):
+        # now plot the rasters
+        count = 0
+        fig2, ax2 = plt.subplots()
+        spiketrains = spiketraindict[f'{cluster_id}_{ids_to_plot["Folder"][i]}']
+        probeword = ids_to_plot['Probe_index'][i]
+        pitchshift_option = ids_to_plot['Pitchshift'][i]
+        pitchshift_text = 'inter-roved F0' if pitchshift_option else 'control F0'
+        if probeword == 4 and pitchshift_option == False:
+            probeword_text = 'when a'
+            color_option = 'green'
+        elif probeword == 4 and pitchshift_option == True:
+            probeword_text = 'when a'
+            color_option = 'lightgreen'
+
+        elif probeword == 1 and pitchshift_option == False:
+            probeword_text = 'instruments'
+            color_option = 'blue'
+        elif probeword == 1 and pitchshift_option == True:
+            probeword_text = 'instruments'
+            color_option = 'skyblue'
 
 
+        elif probeword == 2 and pitchshift_option == False:
+            probeword_text = 'craft'
+            color_option = 'deeppink'
+        elif probeword == 2 and pitchshift_option == True:
+            probeword_text = 'craft'
+            color_option = 'pink'
 
+        elif probeword == 3 and pitchshift_option == False:
+            probeword_text = 'in contrast'
+            color_option = 'mediumpurple'
+        elif probeword == 3 and pitchshift_option == True:
+            probeword_text = 'in contrast'
+            color_option = 'purple'
+
+        elif probeword == 5 and pitchshift_option == False:
+            probeword_text = 'accurate'
+            color_option = 'black'
+
+        elif probeword == 5 and pitchshift_option == True:
+            probeword_text = 'accurate'
+            color_option = 'grey'
+        elif probeword == 6 and pitchshift_option == False:
+            probeword_text = 'pink noise'
+            color_option = 'navy'
+        elif probeword == 6 and pitchshift_option == True:
+            probeword_text = 'pink noise'
+            color_option = 'lightblue'
+        elif probeword == 7 and pitchshift_option == False:
+            probeword_text = 'of science'
+            color_option = 'coral'
+        elif probeword == 7 and pitchshift_option == True:
+            probeword_text = 'of science'
+            color_option = 'orange'
+        elif probeword == 8 and pitchshift_option == False:
+            probeword_text = 'rev. instruments'
+            color_option = 'plum'
+        elif probeword == 8 and pitchshift_option == True:
+            probeword_text = 'rev. instruments'
+            color_option = 'darkorchid'
+        elif probeword == 9 and pitchshift_option == False:
+            probeword_text = 'boats'
+            color_option = 'cornflowerblue'
+        elif probeword == 9 and pitchshift_option == True:
+            probeword_text = 'boats'
+            color_option = 'royalblue'
+
+        elif probeword == 10 and pitchshift_option == False:
+            probeword_text = 'today'
+            color_option = 'gold'
+        elif probeword == 10 and pitchshift_option == True:
+            probeword_text = 'today'
+            color_option = 'yellow'
+        else:
+            probeword_text = 'error'
+            color_option = 'red'
+
+        rec_name = str(ids_to_plot['Folder'][i])
+        max_length = len(rec_name) // 2
+
+        for length in range(1, max_length + 1):
+            for k in range(len(rec_name) - length):
+                substring = rec_name[k:k + length]
+                if rec_name.count(substring) > 1:
+                    repeating_substring = substring
+                    break
+
+        print(repeating_substring)
+        rec_name = repeating_substring
+        rec_name = rec_name[:-1]
+        stream = str(ids_to_plot['Folder'][i])[-4:]
+
+
+        rasterplot(spiketrains, c=color_option, histogram_bins=0, axes=ax2, s=0.3)
+        ax2.set_ylabel('trial number')
+        custom_xlim = (-0.1, 0.6)
+        ax2.set_xlim(custom_xlim)
+        ax2.set_title(
+            f'{cluster_id}_{rec_name}_{stream},\n {animal_id_num}, probeword: {probeword_text}, {pitchshift_text}')
+        plt.savefig(saveDir / f'{cluster_id}_{ids_to_plot["Folder"][i]}_{animal_id_num}_{probeword_text}_PS{pitchshift_text}_{talker}.png')
 
 
     return
