@@ -101,6 +101,7 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
 
 
     spiketraindict = {}
+    unique_trials_dict = {}
 
     for j, cluster_id in enumerate(ids_to_plot['ID']):
         #make a figure of 2 columns and 10 rows
@@ -142,6 +143,7 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
 
         dict_key = f'{cluster_id}_{ids_to_plot["Folder"][j]}'
         spiketraindict[dict_key] = spiketrains
+        unique_trials_dict[dict_key] = np.unique(raster_target['trial_num'])
     fig, ax = plt.subplots()
     for i, cluster_id in enumerate(ids_to_plot['ID']):
         #now plot the rasters
@@ -151,6 +153,8 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
         time_end = 0.6  # End time for the PSTH (in seconds)
         stimulus_onset = 0.0  # Time of the stimulus onset (relative to the PSTH window)
         spiketrains = spiketraindict[f'{cluster_id}_{ids_to_plot["Folder"][i]}']
+        unique_trials = unique_trials_dict[f'{cluster_id}_{ids_to_plot["Folder"][i]}']
+
         probeword = ids_to_plot['Probe_index'][i]
         pitchshift_option = ids_to_plot['Pitchshift'][i]
         pitchshift_text = 'inter-roved F0' if pitchshift_option else 'control F0'
@@ -233,19 +237,28 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
         spike_times_flat = np.concatenate(spike_times)
         spike_times_filtered = spike_times_flat[
             (spike_times_flat >= time_start) & (spike_times_flat <= time_end)]
-
+        #histogram is dividded by the number of trials to get the mean count per bin and not the total count per bin as
+        # otherwise the spike counts will be higher per time bin in stimuli that have more repetitions.
+        # Then you can convert to spikes/s and smooth.
         # Compute the histogram within the specified time range
         hist, _ = np.histogram(spike_times_filtered, bins=bins)
+        #get the number of trials
+        num_trials = len(unique_trials)
+        #divide the histogram by the number of trials
+        hist_divided_bytrial_num = hist/num_trials
+        #convert to spikes/s
+        hist_rate = hist_divided_bytrial_num/bin_width
+
 
         # Calculate time axis for plotting within the specified time range
         time_axis = np.linspace(time_start, time_end, num_bins) + bin_width / 2
 
         # Apply smoothing using Gaussian filter
-        sigma = 2  # Smoothing parameter (adjust as needed)
-        smoothed_hist = gaussian_filter1d(hist / (bin_width * len(spiketrains)), sigma=sigma)
+        sigma = 0.5  # Smoothing parameter (adjust as needed)
+        smoothed_hist = gaussian_filter1d(hist_rate, sigma=sigma)
 
         # Plot smoothed PSTH within the specified time range
-        ax.plot(time_axis, smoothed_hist, color=color_option, linewidth=2, label = probeword_text)
+        ax.plot(time_axis, hist_rate, color=color_option, linewidth=2, label = probeword_text)
 
         # rasterplot(spiketrains, c=color_option, histogram_bins=0, axes=ax2, s=0.3)
         # ax2.set_ylabel('trial number')
@@ -267,6 +280,8 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
         probeword = ids_to_plot['Probe_index'][i]
         pitchshift_option = ids_to_plot['Pitchshift'][i]
         pitchshift_text = 'inter-roved F0' if pitchshift_option else 'control F0'
+        unique_trials = unique_trials_dict[f'{cluster_id}_{ids_to_plot["Folder"][i]}']
+
         if probeword == 4 and pitchshift_option == False:
             probeword_text = 'when a'
             color_option = 'green'
