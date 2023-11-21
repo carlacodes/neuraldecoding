@@ -263,7 +263,10 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
         smoothed_hist = gaussian_filter1d(hist_rate, sigma=sigma)
 
         # Plot smoothed PSTH within the specified time range
-        ax.plot(time_axis, hist_rate, color=color_option, linewidth=2, label = probeword_text)
+        if probeword_text == 'instruments':
+            ax.plot(time_axis, hist_rate, color=color_option, linewidth=3, label=probeword_text)
+        else:
+            ax.plot(time_axis, hist_rate, color=color_option, linewidth=2, label = probeword_text)
 
         # rasterplot(spiketrains, c=color_option, histogram_bins=0, axes=ax2, s=0.3)
         # ax2.set_ylabel('trial number')

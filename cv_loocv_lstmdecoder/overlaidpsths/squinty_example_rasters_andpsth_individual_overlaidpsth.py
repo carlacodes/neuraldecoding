@@ -29,6 +29,8 @@ from instruments.helpers.util import simple_xy_axes, set_font_axes
 from instruments.helpers.neural_analysis_helpers import get_word_aligned_raster_squinty, split_cluster_base_on_segment_zola
 import sys
 sys.path.append('../')
+from instruments.helpers.neural_analysis_helpers import get_word_aligned_raster_squinty, split_cluster_base_on_segment_zola
+
 from helpers.neural_analysis_helpers_zolainter import get_word_aligned_raster, get_word_aligned_raster_zola_cruella
 from instruments.helpers.euclidean_classification_minimal_function import classify_sweeps
 # Import standard packages
@@ -118,10 +120,14 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
 
 
 
-        raster_target, raster_target_compare = get_word_aligned_raster_zola_cruella(blocks_cluster, cluster_id, word=probeword,
-                                                                                  pitchshift=pitchshift_option,
-                                                                                  correctresp=True,
-                                                                                  df_filter=['No Level Cue'], talker = 'female')
+        # raster_target, raster_target_compare = get_word_aligned_raster_zola_cruella(blocks_cluster, cluster_id, word=probeword,
+        #                                                                           pitchshift=pitchshift_option,
+        #                                                                           correctresp=True,
+        #                                                                           df_filter=['No Level Cue'], talker = 'female')
+        raster_target = get_word_aligned_raster_squinty(blocks_cluster, cluster_id, word=probeword,
+                                                        pitchshift=pitchshift_option,
+                                                        correctresp=True,
+                                                        df_filter=['No Level Cue'])
         raster_target = raster_target.reshape(raster_target.shape[0], )
         if len(raster_target) == 0:
             print('raster target empty:', cluster_id)
@@ -172,10 +178,10 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
 
         elif probeword == 1 and pitchshift_option == False:
             probeword_text = 'instruments'
-            color_option = 'blue'
+            color_option = 'black'
         elif probeword == 1 and pitchshift_option == True:
             probeword_text = 'instruments'
-            color_option = 'skyblue'
+            color_option = 'black'
 
 
         elif probeword == 2 and pitchshift_option == False:
@@ -194,7 +200,7 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
 
         elif probeword == 5 and pitchshift_option == False:
             probeword_text = 'researched'
-            color_option = 'black'
+            color_option = 'limegreen'
 
         elif probeword == 5 and pitchshift_option == True:
             probeword_text = 'researched'
@@ -292,7 +298,10 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
         smoothed_hist = gaussian_filter1d(hist_rate, sigma=sigma)
 
         # Plot smoothed PSTH within the specified time range
-        ax.plot(time_axis, hist_rate, color=color_option, linewidth=2, label = probeword_text)
+        if probeword_text == 'instruments':
+            ax.plot(time_axis, hist_rate, color=color_option, linewidth=3, label=probeword_text)
+        else:
+            ax.plot(time_axis, hist_rate, color=color_option, linewidth=2, label = probeword_text)
 
         # rasterplot(spiketrains, c=color_option, histogram_bins=0, axes=ax2, s=0.3)
         # ax2.set_ylabel('trial number')
