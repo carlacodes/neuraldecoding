@@ -42,8 +42,8 @@ def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferret
         for key1 in score_dict_cluster.keys():
             for key2 in score_dict_cluster.keys():
                 if key1 != key2 and (key2, key1) not in correlations[cluster].keys():
-                    correlations[cluster][(key1, key2)] = scipy.stats.spearmanr(score_dict_cluster[key1], score_dict_cluster[key2])[0]
-                    # correlations[cluster][(key1, key2)] = np.corrcoef(score_dict_cluster[key1], score_dict_cluster[key2])[0, 1]
+                    # correlations[cluster][(key1, key2)] = scipy.stats.spearmanr(score_dict_cluster[key1], score_dict_cluster[key2])[0]
+                    correlations[cluster][(key1, key2)] = np.corrcoef(score_dict_cluster[key1], score_dict_cluster[key2])[0, 1]
 
 
 
