@@ -4,6 +4,65 @@ import os
 from pathlib import Path
 
 
+def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferretname, talkerinput = 'talker1'):
+    probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+    score_dict = {}
+    correlations = {}
+    avg_correlations = {}
+
+    scores = np.load(
+                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_bs.npy',
+                    allow_pickle=True)[()]
+    #create a dictionary of scores for each cluster
+    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+        score_dict[cluster] = {}
+        correlations[cluster] = {}
+        avg_correlations[cluster] = {}
+
+    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+        for probeword in probewordslist:
+            try:
+                scores = np.load(
+                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(probeword) + '_' + ferretname + '_probe_bs.npy',
+                    allow_pickle=True)[()]
+                #find the index of the cluster
+                index = scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id'].index(cluster)
+
+                score_dict[cluster][probeword] = scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index]
+
+            except:
+                print('error loading scores: ' + str(
+                    file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(probeword) + '_' + ferretname + '_probe_bs.npy')
+                continue
+    #compute the cross correlation coefficient
+
+    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+        score_dict_cluster = score_dict[cluster]
+        for key1 in score_dict_cluster.keys():
+            for key2 in score_dict_cluster.keys():
+                if key1 != key2:
+                    correlations[cluster][(key1, key2)] = np.corrcoef(score_dict_cluster[key1], score_dict_cluster[key2])[0, 1]
+
+    # Calculate the average correlation for each combination of words
+    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+        for probeword in probewordslist:
+            total_corr = 0.0
+            count = 0
+            for key_pair, correlation in correlations[cluster].items():
+                if probeword in key_pair:
+                    total_corr += correlation
+                    count += 1
+            if count > 0:
+                avg_correlations[cluster][probeword] = total_corr / count
+            else:
+                avg_correlations[cluster][probeword] = 0.0  # If no correlation found for the probeword
+
+    return avg_correlations
+
+
+
+
+
 def run_scores_and_plot(file_path, pitchshift, output_folder, ferretname,  stringprobewordindex=str(2), talker='female', totalcount = 0):
     if talker == 'female':
         talker_string = 'onlyfemaletalker'
