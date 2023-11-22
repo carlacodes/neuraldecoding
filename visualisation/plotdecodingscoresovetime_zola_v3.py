@@ -2,10 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 from pathlib import Path
+import pandas as pd
 import scipy
 
 
-def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, talkerinput = 'talker1', animal_id = 'F1702'):
+def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high_units, talkerinput = 'talker1', animal_id = 'F1702'):
     probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
     score_dict = {}
     correlations = {}
@@ -58,12 +59,17 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, talk
 
         avg_scores[cluster]['std'] = np.std(score_dict_cluster_list)
     #plot the average over time
-    fig, ax = plt.subplots(1, len(score_dict.keys()), figsize=(20, 10))
+    fig, ax = plt.subplots(2, len(score_dict.keys()), figsize=(20, 20))
     for i, cluster in enumerate(score_dict.keys()):
+        brain_id = high_units[high_units['ID'] == cluster]['BrainArea'].to_list()[0]
+
         if len(score_dict.keys())==1:
             axs = ax
+        elif brain_id == 'PEG':
+            axs = ax[1,i]
         else:
-            axs = ax[i]
+            axs = ax[0,i]
+        #get the brain ID
         avg_score = avg_scores[cluster]['avg_score']
         timepoints = np.arange(0, (len(avg_score) / 100)*4, 0.04)
         std_dev = avg_scores[cluster]['std']
@@ -83,6 +89,20 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, talk
     elif pitchshift == 'pitchshift':
         pitchshift_option = True
         pitchshift_text = 'inter-roved F0'
+    #add text for PEG in the top right
+    # ax[1,0].text(0.5, 0.5, 'PEG', horizontalalignment='center', verticalalignment='center', transform=ax[0,0].transAxes, fontsize=20)
+    # ax[1,0].axis('off')
+    # ax[0,0].text(0.5, 0.5, 'MEG', horizontalalignment='center', verticalalignment='center', transform=ax[0,1].transAxes, fontsize=20)
+    # ax[0,0].axis('off')
+    #add text to the side of the y axis on the first row for the brain area
+    # for i, cluster in enumerate(score_dict.keys()):
+    #     brain_id = high_units[high_units['ID'] == cluster]['BrainArea'].to_list()[0]
+    #     if brain_id == 'PEG':
+    #         ax[1,i].text(-0.2, 0.5, 'PEG', horizontalalignment='center', verticalalignment='center', transform=ax[1,i].transAxes, fontsize=20)
+    #         ax[1,i].axis('off')
+    #     else:
+    #         ax[0,i].text(-0.2, 0.5, 'MEG', horizontalalignment='center', verticalalignment='center', transform=ax[0,i].transAxes, fontsize=20)
+    #         ax[0,i].axis('off')
     plt.suptitle(f'LSTM balanced accuracy over time for {animal_id},  {pitchshift_text}, {rec_name}_{stream}',  fontsize=20)
     plt.savefig(outputfolder + '/' + ferretname+'_'+rec_name+'_'+stream + '_' + pitchshift_text + '_averageovertime.png', bbox_inches='tight')
     plt.show()
@@ -310,14 +330,15 @@ def run_scores_and_plot(file_path, pitchshift, output_folder, ferretname,  strin
 if __name__ == '__main__':
     print('hello')
 
-    big_folder = Path('G:/results_decodingovertime_17112023/F1815_Cruella/')
+    big_folder = Path('G:/results_decodingovertime_17112023/F1702_Zola/')
     animal = big_folder.parts[-1]
     # file_path = 'D:\decodingresults_overtime\F1815_Cruella\lstm_kfold_balac_01092023_cruella/'
     output_folder = f'G:/decodingovertime_figures/{animal}/'
     #make the output folder if it doesn't exist
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
-    ferretname = 'cruella'
+    ferretname = animal.split('_')[1]
+    ferretname = ferretname.lower()
     #typo in my myriad code, this should really be relabelled as nopitchshift
     pitchshift = 'nopitchshiftvspitchshift'
     stringprobewordlist = [2,3,4,5,6,7,8,9,10]
@@ -326,7 +347,7 @@ if __name__ == '__main__':
     talkerlist = ['female']
     #find all the subfolders, all the folders that contain the data
 
-    subfolders = [f for f in big_folder.glob('**/BB*/') if f.is_dir()]
+    subfolders = [f for f in big_folder.glob('**/BB_*/') if f.is_dir()]
 
 
 
@@ -354,7 +375,36 @@ if __name__ == '__main__':
 
     for file_path in subfolders:
         for talker in talkerlist:
-            plot_average_over_time(file_path, pitchshift, output_folder, ferretname, talkerinput = 'talker1', animal_id = animal)
+            stream = str(file_path).split('\\')[-1]
+            stream = stream[-4:]
+            print(stream)
+            folder = str(file_path).split('\\')[-2]
+
+            high_units = pd.read_csv(f'G:/neural_chapter/figures/unit_ids_trained_topgenindex_{animal}.csv')
+            # remove trailing steam
+            rec_name = folder[:-5]
+            # find the unique string
+
+            # remove the repeating substring
+
+            # find the units that have the phydir
+
+            # max_length = len(rec_name) // 2
+            #
+            # for length in range(1, max_length + 1):
+            #     for i in range(len(rec_name) - length):
+            #         substring = rec_name[i:i + length]
+            #         if rec_name.count(substring) > 1:
+            #             repeating_substring = substring
+            #             break
+            #
+            # print(repeating_substring)
+            rec_name = folder
+            high_units = high_units[(high_units['rec_name'] == rec_name) & (high_units['stream'] == stream)]
+            clust_ids = high_units['ID'].to_list()
+            brain_area = high_units['BrainArea'].to_list()
+
+            plot_average_over_time(file_path, pitchshift, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal)
 
 
 
