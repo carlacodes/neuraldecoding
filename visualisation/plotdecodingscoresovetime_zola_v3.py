@@ -81,7 +81,12 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
                 title=f'unit: {cluster}')
         axs.set_ylim([0, 1])
         axs.grid()
-
+    # ax[0,0].set_title('MEG')
+    ax[0, 0].text(-0.2, 0.5, 'MEG', horizontalalignment='center',
+                    verticalalignment='center', rotation=90, transform=ax[0,0].transAxes)
+    ax[1, 0].text(-0.2, 0.5, 'PEG', horizontalalignment='center',
+                    verticalalignment='center', rotation=90, transform=ax[0,0].transAxes)
+    # ax[1,0].set_title('PEG')
 
     if pitchshift == 'nopitchshiftvspitchshift':
         pitchshift_option = False
