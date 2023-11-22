@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 from pathlib import Path
+import scipy
 
 
 def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferretname, talkerinput = 'talker1'):
@@ -40,22 +41,35 @@ def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferret
         score_dict_cluster = score_dict[cluster]
         for key1 in score_dict_cluster.keys():
             for key2 in score_dict_cluster.keys():
-                if key1 != key2:
-                    correlations[cluster][(key1, key2)] = np.corrcoef(score_dict_cluster[key1], score_dict_cluster[key2])[0, 1]
+                if key1 != key2 and (key2, key1) not in correlations[cluster].keys():
+                    correlations[cluster][(key1, key2)] = scipy.stats.spearmanr(score_dict_cluster[key1], score_dict_cluster[key2])[0]
+                    # correlations[cluster][(key1, key2)] = np.corrcoef(score_dict_cluster[key1], score_dict_cluster[key2])[0, 1]
 
-    # Calculate the average correlation for each combination of words
+
+
+    # for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+    #     for probeword in probewordslist:
+    #         total_corr = 0.0
+    #         count = 0
+    #         for key_pair, correlation in correlations[cluster].items():
+    #             if probeword in key_pair:
+    #                 total_corr += correlation
+    #                 count += 1
+    #         if count > 0:
+    #             avg_correlations[cluster][probeword] = total_corr / count
+    #         else:
+    #             avg_correlations[cluster][probeword] = 0.0  # If no correlation found for the probeword
+    #do the entire average
     for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
-        for probeword in probewordslist:
-            total_corr = 0.0
-            count = 0
-            for key_pair, correlation in correlations[cluster].items():
-                if probeword in key_pair:
-                    total_corr += correlation
-                    count += 1
-            if count > 0:
-                avg_correlations[cluster][probeword] = total_corr / count
-            else:
-                avg_correlations[cluster][probeword] = 0.0  # If no correlation found for the probeword
+        total_corr = 0.0
+        count = 0
+        for key_pair, correlation in correlations[cluster].items():
+            total_corr += correlation
+            count += 1
+        if count > 0:
+            avg_correlations[cluster]['all'] = total_corr / count
+        else:
+            avg_correlations[cluster]['all'] = 0.0
 
     return avg_correlations
 
@@ -234,14 +248,26 @@ if __name__ == '__main__':
 
 
 
+    # for file_path in subfolders:
+    #     #get the subfolders
+    #     print(file_path)
+    #     #get the talke
+    #     for talker in talkerlist:
+    #         for probeword in stringprobewordlist:
+    #
+    #             print(probeword)
+    #             run_scores_and_plot(file_path, pitchshift, output_folder, ferretname, stringprobewordindex=str(probeword), talker = talker, totalcount = totalcount )
+    #             totalcount = totalcount + 1
+    big_correlation_dict = {}
     for file_path in subfolders:
-        #get the subfolders
-        print(file_path)
-        #get the talke
         for talker in talkerlist:
-            for probeword in stringprobewordlist:
+            # for probeword in stringprobewordlist:
+            #     print(probeword)
+            big_correlation_dict[file_path.parts[-2]] = {}
+            avg_correlations = calculate_correlation_coefficient(file_path, pitchshift, output_folder, ferretname, talkerinput = 'talker1')
+            totalcount = totalcount + 1
+            big_correlation_dict[file_path.parts[-2]][file_path.parts[-1]] = avg_correlations
+    print('done')
 
-                print(probeword)
-                run_scores_and_plot(file_path, pitchshift, output_folder, ferretname, stringprobewordindex=str(probeword), talker = talker, totalcount = totalcount )
-                totalcount = totalcount + 1
+
 
