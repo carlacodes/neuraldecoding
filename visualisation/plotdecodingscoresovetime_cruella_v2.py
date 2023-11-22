@@ -5,6 +5,74 @@ from pathlib import Path
 import scipy
 
 
+def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, talkerinput = 'talker1'):
+    probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+    score_dict = {}
+    correlations = {}
+    avg_scores = {}
+    rec_name = file_path.parts[-2]
+    stream = file_path.parts[-1]
+    scores = np.load(
+                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_bs.npy',
+                    allow_pickle=True)[()]
+    #create a dictionary of scores for each cluster
+    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+        score_dict[cluster] = {}
+        correlations[cluster] = {}
+        avg_scores[cluster] = {}
+
+    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+        for probeword in probewordslist:
+            try:
+                scores = np.load(
+                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(probeword) + '_' + ferretname + '_probe_bs.npy',
+                    allow_pickle=True)[()]
+                #find the index of the cluster
+                index = scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id'].index(cluster)
+
+                score_dict[cluster][probeword] = scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index]
+
+            except:
+                print('error loading scores: ' + str(
+                    file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(probeword) + '_' + ferretname + '_probe_bs.npy')
+                continue
+    #compute the average over time with the standard deviation
+    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+        score_dict_cluster = score_dict[cluster]
+        score_dict_cluster_list = []
+        for probeword in probewordslist:
+            score_dict_cluster_list.append(score_dict_cluster[probeword])
+        #convert to numpy array
+        score_dict_cluster_list = np.array(score_dict_cluster_list)
+
+        #plot this array over time
+
+        #take the mean over the rows
+
+        avg_scores[cluster]['avg_score'] = np.mean(score_dict_cluster_list, axis = 0)
+        avg_scores[cluster]['std'] = np.std(score_dict_cluster_list, axis=0)
+
+        avg_scores[cluster]['std'] = np.std(score_dict_cluster_list)
+    #plot the average over time
+    fig, ax = plt.subplots(1, len(scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']), figsize=(20, 10))
+    for i, cluster in enumerate(scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']):
+        axs = ax[i]
+        avg_score = avg_scores[cluster]['avg_score']
+        timepoints = np.arange(0, (len(avg_score) / 100)*4, 0.04)
+        std_dev = avg_scores[cluster]['std']
+
+        axs.plot(timepoints, avg_score, c='black')
+        axs.fill_between(timepoints, avg_score - std_dev, avg_score + std_dev, alpha=0.3)
+
+        axs.set(xlabel='probe word', ylabel='balanced accuracy',
+                title=f'unit: {cluster}_{rec_name}_{stream}')
+        axs.set_ylim([0, 1])
+        axs.grid()
+
+
+    plt.savefig(outputfolder + '/' + ferretname+'_'+rec_name+'_'+stream + '_' + pitchshift + '_averageovertime.png', bbox_inches='tight')
+    plt.show()
+
 def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferretname, talkerinput = 'talker1'):
     probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
     score_dict = {}
@@ -42,8 +110,8 @@ def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferret
         for key1 in score_dict_cluster.keys():
             for key2 in score_dict_cluster.keys():
                 if key1 != key2 and (key2, key1) not in correlations[cluster].keys():
-                    correlations[cluster][(key1, key2)] = scipy.stats.spearmanr(score_dict_cluster[key1], score_dict_cluster[key2])[0]
-                    # correlations[cluster][(key1, key2)] = np.corrcoef(score_dict_cluster[key1], score_dict_cluster[key2])[0, 1]
+                    # correlations[cluster][(key1, key2)] = scipy.stats.spearmanr(score_dict_cluster[key1], score_dict_cluster[key2])[0]
+                    correlations[cluster][(key1, key2)] = np.corrcoef(score_dict_cluster[key1], score_dict_cluster[key2])[0, 1]
 
 
 
@@ -260,14 +328,19 @@ if __name__ == '__main__':
     #             totalcount = totalcount + 1
     big_correlation_dict = {}
     for file_path in subfolders:
+        big_correlation_dict[file_path.parts[-2]] = {}
+    for file_path in subfolders:
         for talker in talkerlist:
             # for probeword in stringprobewordlist:
             #     print(probeword)
-            big_correlation_dict[file_path.parts[-2]] = {}
             avg_correlations = calculate_correlation_coefficient(file_path, pitchshift, output_folder, ferretname, talkerinput = 'talker1')
             totalcount = totalcount + 1
             big_correlation_dict[file_path.parts[-2]][file_path.parts[-1]] = avg_correlations
     print('done')
+
+    for file_path in subfolders:
+        for talker in talkerlist:
+            plot_average_over_time(file_path, pitchshift, output_folder, ferretname, talkerinput = 'talker1')
 
 
 
