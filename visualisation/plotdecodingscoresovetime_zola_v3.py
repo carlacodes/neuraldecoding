@@ -7,7 +7,7 @@ import scipy
 from itertools import combinations, permutations
 
 
-def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high_units, talkerinput = 'talker1', animal_id = 'F1702'):
+def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high_units, talkerinput = 'talker1', animal_id = 'F1702', smooth_option = True):
     probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
     score_dict = {}
     correlations = {}
@@ -88,6 +88,10 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
             continue
         timepoints = np.arange(0, (len(avg_score) / 100)*4, 0.04)
         std_dev = avg_scores[cluster]['std']
+        if smooth_option == True:
+            avg_score = scipy.signal.savgol_filter(avg_score, 5, 3, mode='interp')
+            # avg_score = scipy.ndimage.gaussian_filter1d(avg_score, sigma = 1.5)
+
 
         axs.plot(timepoints, avg_score, c='black')
         axs.fill_between(timepoints, avg_score - std_dev, avg_score + std_dev, alpha=0.3)
@@ -151,7 +155,9 @@ def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferret
                 #find the index of the cluster
                 index = scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id'].index(cluster)
                 if smooth_option == True:
+
                     score_dict[cluster][probeword] = scipy.signal.savgol_filter(scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index], 5,3)
+                    # score_dict[cluster][probeword] = scipy.ndimage.gaussian_filter1d(scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index], sigma = 1.5)
                 else:
                     score_dict[cluster][probeword] = scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index]
 
@@ -230,6 +236,7 @@ def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname
                 index = scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id'].index(cluster)
                 if smooth_option == True:
                     score_dict[cluster][probeword] = scipy.signal.savgol_filter(scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index], 5, 3)
+                    # score_dict[cluster][probeword]= scipy.ndimage.gaussian_filter1d(scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index], sigma = 1.5)
                 else:
                     score_dict[cluster][probeword] = scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index]
 
@@ -399,6 +406,7 @@ def run_scores_and_plot(file_path, pitchshift, output_folder, ferretname,  strin
             ax = axs[row, col]
         if smooth_option == True:
             cluster_scores = scipy.signal.savgol_filter(cluster_scores, 5, 3, mode='interp')
+            # cluster_scores = scipy.ndimage.gaussian_filter1d(cluster_scores, sigma = 1.5)
         ax.plot(timepoints, cluster_scores, c = color_option)
         # ax.set(xlabel='time since target word (s)', ylabel='balanced accuracy',
         #     title=f'unit: {cluster}_{rec_name}_{stream}')
