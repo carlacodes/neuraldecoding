@@ -126,7 +126,7 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
     plt.savefig(outputfolder + '/' + ferretname+'_'+rec_name+'_'+stream + '_' + pitchshift_text + '_averageovertime.png', bbox_inches='tight')
     plt.show()
 
-def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferretname, talkerinput = 'talker1'):
+def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferretname, talkerinput = 'talker1', smooth_option = True):
     probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
     score_dict = {}
     correlations = {}
@@ -149,8 +149,10 @@ def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferret
                     allow_pickle=True)[()]
                 #find the index of the cluster
                 index = scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id'].index(cluster)
-
-                score_dict[cluster][probeword] = scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index]
+                if smooth_option == True:
+                    score_dict[cluster][probeword] = scipy.signal.savgol_filter(scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index], 5,3)
+                else:
+                    score_dict[cluster][probeword] = scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index]
 
             except:
                 print('error loading scores: ' + str(
@@ -195,10 +197,74 @@ def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferret
     return avg_correlations
 
 
+def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname, talkerinput = 'talker1', smooth_option = True):
+    probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+    score_dict = {}
+    correlations = {}
+    peak_dict = {}
+    avg_correlations = {}
+
+    scores = np.load(
+                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_bs.npy',
+                    allow_pickle=True)[()]
+    #create a dictionary of scores for each cluster
+    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+        score_dict[cluster] = {}
+        peak_dict[cluster] = {}
+
+
+    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+        for probeword in probewordslist:
+            try:
+                scores = np.load(
+                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(probeword) + '_' + ferretname + '_probe_bs.npy',
+                    allow_pickle=True)[()]
+                #find the index of the cluster
+                index = scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id'].index(cluster)
+                if smooth_option == True:
+                    score_dict[cluster][probeword] = scipy.signal.savgol_filter(scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index], 5, 3)
+                else:
+                    score_dict[cluster][probeword] = scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index]
+
+            except:
+                print('error loading scores: ' + str(
+                    file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(probeword) + '_' + ferretname + '_probe_bs.npy')
+                continue
+
+    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+        score_dict_cluster = score_dict[cluster]
+        for key1 in score_dict_cluster.keys():
+            #now compute the peak of the score timeseries
+            peak = np.max(score_dict_cluster[key1])
+            #find the index of the peak
+            peak_index = np.where(score_dict_cluster[key1] == peak)
+            #convert to a list
+            peak_index = peak_index[0].tolist()
+            #convert that to seconds
+            peak_index = peak_index[0] * 0.04
+            #add to the dictionary
+            peak_dict[cluster][key1] = peak_index
+        #calculate the euclidean distance between the peaks
+
+    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+        peak_dict_unit = peak_dict[cluster]
+        total_distance = 0
+        previous_key = None
+
+        for key in sorted(peak_dict_unit.keys()):
+            if previous_key is not None:
+                total_distance += abs(peak_dict_unit[key] - peak_dict_unit[previous_key])
+            previous_key = key
+    #add the total distance to the dictionary
+        peak_dict[cluster]['total_distance'] = total_distance
+
+    return peak_dict
 
 
 
-def run_scores_and_plot(file_path, pitchshift, output_folder, ferretname,  stringprobewordindex=str(2), talker='female', totalcount = 0):
+
+
+def run_scores_and_plot(file_path, pitchshift, output_folder, ferretname,  stringprobewordindex=str(2), talker='female', totalcount = 0, smooth_option = True):
     if talker == 'female':
         talker_string = 'onlyfemaletalker'
         talkerinput = 'talker1'
@@ -313,7 +379,8 @@ def run_scores_and_plot(file_path, pitchshift, output_folder, ferretname,  strin
             col = index % num_cols
             # Assign ax based on row and column
             ax = axs[row, col]
-
+        if smooth_option == True:
+            cluster_scores = scipy.signal.savgol_filter(cluster_scores, 5, 3, mode='interp')
         ax.plot(timepoints, cluster_scores, c = color_option)
         # ax.set(xlabel='time since target word (s)', ylabel='balanced accuracy',
         #     title=f'unit: {cluster}_{rec_name}_{stream}')
@@ -370,19 +437,21 @@ if __name__ == '__main__':
 
 
 
-    # for file_path in subfolders:
-    #     #get the subfolders
-    #     print(file_path)
-    #     #get the talke
-    #     for talker in talkerlist:
-    #         for probeword in stringprobewordlist:
-    #
-    #             print(probeword)
-    #             run_scores_and_plot(file_path, pitchshift, output_folder, ferretname, stringprobewordindex=str(probeword), talker = talker, totalcount = totalcount )
-    #             totalcount = totalcount + 1
+    for file_path in subfolders:
+        #get the subfolders
+        print(file_path)
+        #get the talke
+        for talker in talkerlist:
+            for probeword in stringprobewordlist:
+
+                print(probeword)
+                run_scores_and_plot(file_path, pitchshift, output_folder, ferretname, stringprobewordindex=str(probeword), talker = talker, totalcount = totalcount )
+                totalcount = totalcount + 1
     big_correlation_dict = {}
+    big_peak_dict = {}
     for file_path in subfolders:
         big_correlation_dict[file_path.parts[-2]] = {}
+        big_peak_dict[file_path.parts[-2]] = {}
     for file_path in subfolders:
         for talker in talkerlist:
             # for probeword in stringprobewordlist:
@@ -390,6 +459,11 @@ if __name__ == '__main__':
             avg_correlations = calculate_correlation_coefficient(file_path, pitchshift, output_folder, ferretname, talkerinput = 'talker1')
             totalcount = totalcount + 1
             big_correlation_dict[file_path.parts[-2]][file_path.parts[-1]] = avg_correlations
+            #find the peak of the score timeseries
+            peak_dict = find_peak_of_score_timeseries(file_path, pitchshift, output_folder, ferretname, talkerinput = 'talker1')
+            big_peak_dict[file_path.parts[-2]][file_path.parts[-1]] = peak_dict
+
+
     print('done')
 
     for file_path in subfolders:

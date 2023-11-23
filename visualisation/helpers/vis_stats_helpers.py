@@ -116,7 +116,79 @@ def run_anova_on_dataframe(df_full_pitchsplit):
     print(anova_table)
     return anova_table, model
 
+def create_gen_frac_and_index_variable(df_full_pitchsplit, high_score_threshold = False, need_ps = False, sixty_score_threshold = False):
+    df_full_pitchsplit = df_full_pitchsplit[df_full_pitchsplit['Score'] >= 0.50]
+    upper_quartile = np.percentile(df_full_pitchsplit['Score'], 75)
 
+    for unit_id in df_full_pitchsplit['ID'].unique():
+        # Check how many scores for that unit are above 60%
+        df_full_pitchsplit_unit = df_full_pitchsplit[df_full_pitchsplit['ID'] == unit_id]
+        if need_ps == True:
+            #isolate the pitch shifted trials
+            df_full_pitchsplit_unit_ps = df_full_pitchsplit_unit[df_full_pitchsplit_unit['PitchShift'] == 1]
+            df_full_pitchsplit_unit_ns = df_full_pitchsplit_unit[df_full_pitchsplit_unit['PitchShift'] == 0]
+            if len(df_full_pitchsplit_unit_ps) == 0 or len(df_full_pitchsplit_unit_ns) == 0:
+                df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'GenFrac'] = np.nan
+                continue
+
+        #limit the scores to above 50%
+
+        #filter for the above-chance scores
+        mean_scores = df_full_pitchsplit_unit['Score'].mean()
+
+        #add the mean score to the dataframe
+        df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'MeanScore'] = mean_scores
+        #if the mean score is below 0.75, then we can't calculate the gen frac
+        all_scores = df_full_pitchsplit_unit['Score'].to_numpy()
+        #figure out if any of the scores are above 0.75
+        skip_param = False
+        skip_param_60   = False
+        for score in all_scores:
+            if score < upper_quartile:
+                skip_param = True
+                break
+        for score in all_scores:
+            if score < 0.60:
+                skip_param_60 = True
+                break
+
+        if high_score_threshold == True:
+            if len(df_full_pitchsplit_unit) == 0 or skip_param == True:
+                df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'GenFrac'] = np.nan
+                continue
+        elif sixty_score_threshold == True:
+            if len(df_full_pitchsplit_unit) == 0 or skip_param_60 == True:
+                df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'GenFrac'] = np.nan
+                continue
+        else:
+            if len(df_full_pitchsplit_unit) == 0 :
+                df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'GenFrac'] = np.nan
+                continue
+        above_60_scores = df_full_pitchsplit_unit[
+            df_full_pitchsplit_unit['Score'] >= 0.60 ]  # Replace 'score_column' with the actual column name
+
+        # Check how many probe words are below 60%
+
+        below_60_probe_words = df_full_pitchsplit_unit[df_full_pitchsplit_unit[
+                                                           'Score'] < 0.60]  # Replace 'probe_words_column' with the actual column name
+        max_score = df_full_pitchsplit_unit.max()['Score']
+        min_score = df_full_pitchsplit_unit.min()['Score']
+
+        gen_index = (max_score - min_score) / (max_score+min_score)
+
+        gen_frac = len(above_60_scores) / (len(above_60_scores) + len(below_60_probe_words))
+
+
+        df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'GenFrac'] = gen_frac
+        df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'GenIndex'] = gen_index
+        df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'MaxScore'] = max_score
+
+        # Now you can do something with the counts, for example, print them
+        # print(f"Unit ID: {unit_id}")
+        # print(f"Number of scores above 60%: {len(above_60_scores)}")
+        # print(f"Number of probe words below 60%: {len(below_60_probe_words)}")
+        # print("-------------------")
+    return df_full_pitchsplit
 def create_gen_frac_variable(df_full_pitchsplit, high_score_threshold = False, index_or_frac = 'frac', need_ps = False, sixty_score_threshold = False):
     df_full_pitchsplit = df_full_pitchsplit[df_full_pitchsplit['Score'] >= 0.50]
     upper_quartile = np.percentile(df_full_pitchsplit['Score'], 75)
