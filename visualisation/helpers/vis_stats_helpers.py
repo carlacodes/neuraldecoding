@@ -117,7 +117,7 @@ def run_anova_on_dataframe(df_full_pitchsplit):
     return anova_table, model
 
 
-def create_gen_frac_variable(df_full_pitchsplit, high_score_threshold = False, index_or_frac = 'frac', need_ps = False):
+def create_gen_frac_variable(df_full_pitchsplit, high_score_threshold = False, index_or_frac = 'frac', need_ps = False, sixty_score_threshold = False):
     df_full_pitchsplit = df_full_pitchsplit[df_full_pitchsplit['Score'] >= 0.50]
     upper_quartile = np.percentile(df_full_pitchsplit['Score'], 75)
 
@@ -143,13 +143,22 @@ def create_gen_frac_variable(df_full_pitchsplit, high_score_threshold = False, i
         all_scores = df_full_pitchsplit_unit['Score'].to_numpy()
         #figure out if any of the scores are above 0.75
         skip_param = False
+        skip_param_60   = False
         for score in all_scores:
             if score < upper_quartile:
                 skip_param = True
                 break
+        for score in all_scores:
+            if score < 0.60:
+                skip_param_60 = True
+                break
 
         if high_score_threshold == True:
             if len(df_full_pitchsplit_unit) == 0 or skip_param == True:
+                df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'GenFrac'] = np.nan
+                continue
+        elif sixty_score_threshold == True:
+            if len(df_full_pitchsplit_unit) == 0 or skip_param_60 == True:
                 df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'GenFrac'] = np.nan
                 continue
         else:
