@@ -2240,6 +2240,24 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_full_pitchsplit_plot = df_full_pitchsplit_plot.drop_duplicates(subset=['ID'])
 
     # decoding score over all words vs generalisability
+
+
+    # export the unit ids of the units that are in the top 25% of genfrac scores
+    df_full_naive_pitchsplit_plot = create_gen_frac_variable(df_full_naive_pitchsplit, high_score_threshold=False, sixty_score_threshold = False,
+                                                             index_or_frac='index', need_ps=True)
+    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['GenFrac'].notna()]
+    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot.drop_duplicates(subset=['ID'])
+
+
+
+    #only include units with genfrac scores less than 0.33
+    df_full_pitchsplit_plot = df_full_pitchsplit_plot[df_full_pitchsplit_plot['GenFrac'] <= 0.2]
+    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['GenFrac'] <= 0.2]
+    #make sure the mean score is over 60%
+    df_full_pitchsplit_plot = df_full_pitchsplit_plot[df_full_pitchsplit_plot['MeanScore'] >= 0.60]
+    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['MeanScore'] >= 0.60]
+
+
     fig, ax = plt.subplots(figsize=(10, 6))
     sns.scatterplot(x='GenFrac', y='MaxScore', data=df_full_pitchsplit_plot, ax=ax, color = 'purple')
     sns.regplot(x='GenFrac', y='MaxScore', data=df_full_pitchsplit_plot, ax=ax, color = 'purple')
@@ -2252,12 +2270,6 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     plt.title('Trained animals'' max score over generalization  index')
     plt.xlabel('Generalization index')
     plt.show()
-
-    # export the unit ids of the units that are in the top 25% of genfrac scores
-    df_full_naive_pitchsplit_plot = create_gen_frac_variable(df_full_naive_pitchsplit, high_score_threshold=False, sixty_score_threshold = False,
-                                                             index_or_frac='index', need_ps=True)
-    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['GenFrac'].notna()]
-    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot.drop_duplicates(subset=['ID'])
 
     # decoding score over all words vs generalisability
     fig2, ax2 = plt.subplots(figsize=(10, 6))
@@ -2272,12 +2284,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     plt.xlabel('Generalization index')
     plt.show()
 
-    #only include units with genfrac scores less than 0.33
-    df_full_pitchsplit_plot = df_full_pitchsplit_plot[df_full_pitchsplit_plot['GenFrac'] <= 0.2]
-    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['GenFrac'] <= 0.2]
-    #make sure the mean score is over 60%
-    df_full_pitchsplit_plot = df_full_pitchsplit_plot[df_full_pitchsplit_plot['MeanScore'] >= 0.60]
-    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['MeanScore'] >= 0.60]
+
     for animal in ['F1815_Cruella', 'F1702_Zola', 'F1604_Squinty', 'F1606_Windolene']:
         # isolate the data for this animal
         df_full_pitchsplit_plot_animal = df_full_pitchsplit_plot[df_full_pitchsplit_plot['ID'].str.contains(animal)]
