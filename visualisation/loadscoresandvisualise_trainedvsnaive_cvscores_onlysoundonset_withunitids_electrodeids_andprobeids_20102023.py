@@ -2233,14 +2233,45 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     ##export the high genfrac units
     df_full_pitchsplit_highsubset = create_gen_frac_variable(df_full_pitchsplit, high_score_threshold=False, sixty_score_threshold = False,
                                                              index_or_frac='index',  need_ps=True)
-    # remove all rows where GenFrac is nan
+
+
+
     df_full_pitchsplit_plot = df_full_pitchsplit_highsubset[df_full_pitchsplit_highsubset['GenFrac'].notna()]
     df_full_pitchsplit_plot = df_full_pitchsplit_plot.drop_duplicates(subset=['ID'])
+
+    # decoding score over all words vs generalisability
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.scatterplot(x='GenFrac', y='MaxScore', data=df_full_pitchsplit_plot, ax=ax, color = 'purple')
+    sns.regplot(x='GenFrac', y='MaxScore', data=df_full_pitchsplit_plot, ax=ax, color = 'purple')
+    #get the r2 value
+    x = df_full_pitchsplit_plot['GenFrac']
+    y = df_full_pitchsplit_plot['MaxScore']
+    r2 = stats.pearsonr(x, y)[0] ** 2
+    #put it on the plot
+    plt.text(0.05, 0.95, f'r2 = {r2}', transform=ax.transAxes)
+    plt.title('Trained animals'' max score over generalization  index')
+    plt.xlabel('Generalization index')
+    plt.show()
+
     # export the unit ids of the units that are in the top 25% of genfrac scores
     df_full_naive_pitchsplit_plot = create_gen_frac_variable(df_full_naive_pitchsplit, high_score_threshold=False, sixty_score_threshold = False,
                                                              index_or_frac='index', need_ps=True)
     df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['GenFrac'].notna()]
     df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot.drop_duplicates(subset=['ID'])
+
+    # decoding score over all words vs generalisability
+    fig2, ax2 = plt.subplots(figsize=(10, 6))
+    sns.scatterplot(x='GenFrac', y='MaxScore', data=df_full_naive_pitchsplit_plot, ax=ax2, color = 'darkcyan')
+    sns.regplot(x='GenFrac', y='MaxScore', data=df_full_naive_pitchsplit_plot, ax=ax2, color = 'darkcyan')
+    #get the r2 value
+    x = df_full_naive_pitchsplit_plot['GenFrac']
+    y = df_full_naive_pitchsplit_plot['MaxScore']
+    r2 = stats.pearsonr(x, y)[0] ** 2
+    plt.text(0.05, 0.95, f'r2 = {r2}', transform=ax2.transAxes)
+    plt.title('Naive animals'' max score over generalization  index')
+    plt.xlabel('Generalization index')
+    plt.show()
+
     #only include units with genfrac scores less than 0.33
     df_full_pitchsplit_plot = df_full_pitchsplit_plot[df_full_pitchsplit_plot['GenFrac'] <= 0.2]
     df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['GenFrac'] <= 0.2]
@@ -2265,7 +2296,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
             brainarea = df_full_pitchsplit_plot_animal.iloc[i]['BrainArea']
             # append to a dataframe
             animal_dataframe = animal_dataframe.append(
-                {'ID': unit_id, 'rec_name': rec_name, 'stream': stream, 'BrainArea': brainarea, 'GenScore': genfrac, 'MeanScore': df_full_pitchsplit_plot_animal.iloc[i]['Score']},
+                {'ID': unit_id, 'rec_name': rec_name, 'stream': stream, 'BrainArea': brainarea, 'GenScore': genfrac, 'MeanScore': df_full_pitchsplit_plot_animal.iloc[i]['MeanScore']},
                 ignore_index=True)
         # export the dataframe to csv
         animal_dataframe.to_csv(f'G:/neural_chapter/figures/unit_ids_trained_topgenindex_{animal}.csv')

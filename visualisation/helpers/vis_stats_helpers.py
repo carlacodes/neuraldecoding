@@ -181,6 +181,8 @@ def create_gen_frac_variable(df_full_pitchsplit, high_score_threshold = False, i
 
 
         df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'GenFrac'] = gen_frac
+        df_full_pitchsplit.loc[df_full_pitchsplit['ID'] == unit_id, 'MaxScore'] = max_score
+
         # Now you can do something with the counts, for example, print them
         # print(f"Unit ID: {unit_id}")
         # print(f"Number of scores above 60%: {len(above_60_scores)}")

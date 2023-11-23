@@ -66,6 +66,8 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
 
     num_cols = max(len(meg_clusters), len(peg_clusters))
     num_rows = 2
+    if num_cols == 0:
+        return
 
     fig, ax = plt.subplots(num_rows, num_cols, figsize=(30, 15))
     ax = ax.flatten()
@@ -349,7 +351,7 @@ def run_scores_and_plot(file_path, pitchshift, output_folder, ferretname,  strin
 if __name__ == '__main__':
     print('hello')
 
-    big_folder = Path('G:/results_decodingovertime_17112023/F1702_Zola/')
+    big_folder = Path('G:/results_decodingovertime_17112023/F1815_Cruella/')
     animal = big_folder.parts[-1]
     # file_path = 'D:\decodingresults_overtime\F1815_Cruella\lstm_kfold_balac_01092023_cruella/'
     output_folder = f'G:/decodingovertime_figures/{animal}/'
