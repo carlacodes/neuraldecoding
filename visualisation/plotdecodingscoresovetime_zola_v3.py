@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import pandas as pd
 import scipy
+from itertools import combinations, permutations
 
 
 def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high_units, talkerinput = 'talker1', animal_id = 'F1702'):
@@ -197,6 +198,12 @@ def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferret
     return avg_correlations
 
 
+def calculate_total_distance(permutation):
+    total_distance = 0
+    for i in range(len(permutation) - 1):
+        total_distance += abs(permutation[i][1] - permutation[i + 1][1])
+    return total_distance
+
 def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname, talkerinput = 'talker1', smooth_option = True):
     probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
     score_dict = {}
@@ -248,15 +255,26 @@ def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname
 
     for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
         peak_dict_unit = peak_dict[cluster]
-        total_distance = 0
-        previous_key = None
 
-        for key in sorted(peak_dict_unit.keys()):
-            if previous_key is not None:
-                total_distance += abs(peak_dict_unit[key] - peak_dict_unit[previous_key])
-            previous_key = key
-    #add the total distance to the dictionary
-        peak_dict[cluster]['total_distance'] = total_distance
+        point_values = [(point, value) for point, value in peak_dict_unit.items()]
+
+        # Generate all permutations of the points
+        point_permutations = permutations(point_values)
+
+        # Function to calculate total distance for a given permutation
+
+
+        # Calculate total distances for all permutations and find the minimum
+        min_total_distance = float('inf')
+        min_distance_permutation = None
+
+        for perm in point_permutations:
+            total_distance = calculate_total_distance(perm)
+            if total_distance < min_total_distance:
+                min_total_distance = total_distance
+                min_distance_permutation = perm
+        #add the total distance to the dictionary
+        peak_dict[cluster]['min_distance'] = min_total_distance
 
     return peak_dict
 
