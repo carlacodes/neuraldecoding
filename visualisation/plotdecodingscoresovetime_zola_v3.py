@@ -59,8 +59,8 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
 
         avg_scores[cluster]['std'] = np.std(score_dict_cluster_list)
     #plot the average over time
-    fig, ax = plt.subplots(2, len(score_dict.keys()), figsize=(20, 20))
-    for i, cluster in enumerate(score_dict.keys()):
+    fig, ax = plt.subplots(2, len(high_units['ID'].to_list()), figsize=(20, 20))
+    for i, cluster in enumerate(high_units['ID'].to_list()):
         brain_id = high_units[high_units['ID'] == cluster]['BrainArea'].to_list()[0]
 
         if len(score_dict.keys())==1:
@@ -70,7 +70,10 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
         else:
             axs = ax[0,i]
         #get the brain ID
-        avg_score = avg_scores[cluster]['avg_score']
+        try:
+            avg_score = avg_scores[cluster]['avg_score']
+        except:
+            continue
         timepoints = np.arange(0, (len(avg_score) / 100)*4, 0.04)
         std_dev = avg_scores[cluster]['std']
 

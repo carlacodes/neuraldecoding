@@ -2231,13 +2231,13 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
             df_full_pitchsplit = df_full_pitchsplit[df_full_pitchsplit['ID'] != unit_id]
 
     ##export the high genfrac units
-    df_full_pitchsplit_highsubset = create_gen_frac_variable(df_full_pitchsplit, high_score_threshold=False, sixty_score_threshold = True,
+    df_full_pitchsplit_highsubset = create_gen_frac_variable(df_full_pitchsplit, high_score_threshold=False, sixty_score_threshold = False,
                                                              index_or_frac='index',  need_ps=True)
     # remove all rows where GenFrac is nan
     df_full_pitchsplit_plot = df_full_pitchsplit_highsubset[df_full_pitchsplit_highsubset['GenFrac'].notna()]
     df_full_pitchsplit_plot = df_full_pitchsplit_plot.drop_duplicates(subset=['ID'])
     # export the unit ids of the units that are in the top 25% of genfrac scores
-    df_full_naive_pitchsplit_plot = create_gen_frac_variable(df_full_naive_pitchsplit, high_score_threshold=False, sixty_score_threshold = True,
+    df_full_naive_pitchsplit_plot = create_gen_frac_variable(df_full_naive_pitchsplit, high_score_threshold=False, sixty_score_threshold = False,
                                                              index_or_frac='index', need_ps=True)
     df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['GenFrac'].notna()]
     df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot.drop_duplicates(subset=['ID'])
@@ -2245,8 +2245,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_full_pitchsplit_plot = df_full_pitchsplit_plot[df_full_pitchsplit_plot['GenFrac'] <= 0.2]
     df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['GenFrac'] <= 0.2]
     #make sure the mean score is over 60%
-    # df_full_pitchsplit_plot = df_full_pitchsplit_plot[df_full_pitchsplit_plot['Score'] >= 0.6]
-    # df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['Score'] >= 0.5]
+    df_full_pitchsplit_plot = df_full_pitchsplit_plot[df_full_pitchsplit_plot['MeanScore'] >= 0.60]
+    df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['MeanScore'] >= 0.60]
     for animal in ['F1815_Cruella', 'F1702_Zola', 'F1604_Squinty', 'F1606_Windolene']:
         # isolate the data for this animal
         df_full_pitchsplit_plot_animal = df_full_pitchsplit_plot[df_full_pitchsplit_plot['ID'].str.contains(animal)]
@@ -2288,7 +2288,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
             # append to a dataframe
             genfrac = df_full_pitchsplit_plot_animal.iloc[i]['GenFrac']
             animal_dataframe = animal_dataframe.append(
-                {'ID': unit_id, 'rec_name': rec_name, 'stream': stream, 'BrainArea': brainarea, 'GenScore': genfrac, 'MeanScore': df_full_pitchsplit_plot_animal.iloc[i]['Score']},
+                {'ID': unit_id, 'rec_name': rec_name, 'stream': stream, 'BrainArea': brainarea, 'GenScore': genfrac, 'MeanScore': df_full_pitchsplit_plot_animal.iloc[i]['MeanScore']},
                 ignore_index=True)
         # export the dataframe to csv
         animal_dataframe.to_csv(f'G:/neural_chapter/figures/unit_ids_trained_topgenindex_{animal}.csv')
