@@ -113,22 +113,12 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
     elif pitchshift == 'pitchshift':
         pitchshift_option = True
         pitchshift_text = 'inter-roved F0'
-    #add text for PEG in the top right
-    # ax[1,0].text(0.5, 0.5, 'PEG', horizontalalignment='center', verticalalignment='center', transform=ax[0,0].transAxes, fontsize=20)
-    # ax[1,0].axis('off')
-    # ax[0,0].text(0.5, 0.5, 'MEG', horizontalalignment='center', verticalalignment='center', transform=ax[0,1].transAxes, fontsize=20)
-    # ax[0,0].axis('off')
-    #add text to the side of the y axis on the first row for the brain area
-    # for i, cluster in enumerate(score_dict.keys()):
-    #     brain_id = high_units[high_units['ID'] == cluster]['BrainArea'].to_list()[0]
-    #     if brain_id == 'PEG':
-    #         ax[1,i].text(-0.2, 0.5, 'PEG', horizontalalignment='center', verticalalignment='center', transform=ax[1,i].transAxes, fontsize=20)
-    #         ax[1,i].axis('off')
-    #     else:
-    #         ax[0,i].text(-0.2, 0.5, 'MEG', horizontalalignment='center', verticalalignment='center', transform=ax[0,i].transAxes, fontsize=20)
-    #         ax[0,i].axis('off')
+
     plt.suptitle(f'LSTM balanced accuracy over time for {animal_id},  {pitchshift_text}, {rec_name}_{stream}',  fontsize=20)
-    plt.savefig(outputfolder + '/' + ferretname+'_'+rec_name+'_'+stream + '_' + pitchshift_text + '_averageovertime.png', bbox_inches='tight')
+    if smooth_option == True:
+        plt.savefig(outputfolder + '/' + ferretname+'_'+rec_name+'_'+stream + '_' + pitchshift_text + '_averageovertime_smooth.png', bbox_inches='tight')
+    else:
+        plt.savefig(outputfolder + '/' + ferretname+'_'+rec_name+'_'+stream + '_' + pitchshift_text + '_averageovertime.png', bbox_inches='tight')
     plt.show()
 
 def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferretname, talkerinput = 'talker1', smooth_option = True):
@@ -281,7 +271,10 @@ def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname
                 min_total_distance = total_distance
                 min_distance_permutation = perm
         #add the total distance to the dictionary
+        #calculate the standard deviation in the series
+        peak_dict_unit_std = np.std(list(peak_dict_unit.values()))
         peak_dict[cluster]['min_distance'] = min_total_distance
+        peak_dict[cluster]['std_dev'] = peak_dict_unit_std
 
     return peak_dict
 
@@ -523,7 +516,7 @@ if __name__ == '__main__':
             clust_ids = high_units['ID'].to_list()
             brain_area = high_units['BrainArea'].to_list()
 
-            plot_average_over_time(file_path, pitchshift, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal)
+            plot_average_over_time(file_path, pitchshift, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=False)
 
 
 
