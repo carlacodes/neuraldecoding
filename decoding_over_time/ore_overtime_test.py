@@ -16,7 +16,7 @@ from datetime import datetime
 from astropy.stats import bootstrap
 import sklearn
 from instruments.helpers.util import simple_xy_axes, set_font_axes
-from helpers.neural_analysis_helpers import get_word_aligned_raster_zola_cruella
+from helpers.neural_analysis_helpers_zolainter import get_word_aligned_raster_ore
 from instruments.helpers.euclidean_classification_minimal_function import classify_sweeps
 # Import standard packages
 import numpy as np
@@ -78,10 +78,12 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
         target_filter = ['Target trials', 'No Level Cue']  # , 'Non Correction Trials']
 
         # try:
-        raster_target, raster_targ_compare = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=1,
+        # def get_word_aligned_raster_ore(blocks, clust_id, word=None, pitchshift=True, correctresp=True, df_filter=[],
+        #                                 talker='female'):
+        raster_target, raster_targ_compare = get_word_aligned_raster_ore(blocks, cluster_id, word=1,
                                                                                   pitchshift=pitchshift,
-                                                                                  correctresp=True,
-                                                                                  df_filter=['No Level Cue'],
+                                                                                  correctresp=False,
+                                                                                  df_filter=[],
                                                                                   talker=talker_text)
         raster_target = raster_target.reshape(raster_target.shape[0], )
         if len(raster_target) == 0:
@@ -90,10 +92,10 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
 
         probe_filter = ['No Level Cue']  # , 'Non Correction Trials']
         # try:
-        raster_probe, raster_probe_compare = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=probeword,
+        raster_probe, raster_probe_compare = get_word_aligned_raster_ore(blocks, cluster_id, word=probeword,
                                                                                   pitchshift=pitchshift,
-                                                                                  correctresp=True,
-                                                                                  df_filter=['No Level Cue'],
+                                                                                  correctresp=False,
+                                                                                  df_filter=[],
                                                                                   talker=talker_text)
         # raster_probe = raster_probe[raster_probe['talker'] == talker]
         raster_probe = raster_probe.reshape(raster_probe.shape[0], )
