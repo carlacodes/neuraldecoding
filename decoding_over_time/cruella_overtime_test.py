@@ -303,7 +303,7 @@ def run_classification(datapath, ferretid, ferretid_fancy='F1902_Eclair', clust_
     #check if the directory exists
     if tarDir.exists():
         #check how many probewords completed
-        files = tarDir.glob('*.npy')
+        files = tarDir.glob('*nopitchshift_bs.npy')
         files = [x for x in files]
         #check the numbers in the files
         numbers = [int(str(x).split('_')[-5]) for x in files]
