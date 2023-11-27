@@ -171,7 +171,7 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
         raster = np.concatenate((raster_target, raster_probe))
         raster_lstm = np.concatenate((raster_targ_reshaped, raster_probe_reshaped))
 
-        score, d, bootScore, bootClass, cm = classify_sweeps(raster, stim, binsize=binsize, window=window, genFig=False)
+        # score, d, bootScore, bootClass, cm = classify_sweeps(raster, stim, binsize=binsize, window=window, genFig=False)
         # fit LSTM model to the same data
 
         newraster = raster.tolist()
@@ -258,10 +258,10 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
 
         # Update the scores dictionary
         scores['cluster_id'].append(cluster_id)  # Assuming cluster_id is defined somewhere
-        scores['score'].append(score)  # Assuming score is defined somewhere
+        # scores['score'].append(score)  # Assuming score is defined somewhere
         scores['lstm_score'].append(np.mean(outsideloopacclist[-1]))
         scores['lstm_balanced_avg'].append(np.mean(outsideloopbalacclist[-1]))
-        scores['bootScore'].append(bootScore)  # Assuming bootScore is defined somewhere
+        # scores['bootScore'].append(bootScore)  # Assuming bootScore is defined somewhere
         scores['lstm_accuracylist'].append(outsideloopacclist)
         scores['lstm_balancedaccuracylist'].append(outsideloopbalacclist)
         scores['perm_bal_ac'].append(np.mean(perm_outsideloopbalacclist))

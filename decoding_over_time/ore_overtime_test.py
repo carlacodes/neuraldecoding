@@ -302,7 +302,7 @@ def run_classification(datapath, ferretid, ferretid_fancy='F1902_Eclair', clust_
 
 
     tarDir = Path(
-        f'/home/zceccgr/Scratch/zceccgr/lstmdecodingproject/leavepoutcrossvalidationlstmdecoder/results_decodingoverimte_17112023/{ferretid_fancy}/{recname}/{stream_used}/')
+        f'G:/results_decodingovertime_24112023/{ferretid_fancy}/{recname}/{stream_used}/')
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
     for probeword in probewords_list:
@@ -319,13 +319,13 @@ def run_classification(datapath, ferretid, ferretid_fancy='F1902_Eclair', clust_
 
             scores[f'talker{talker}']['target_vs_probe'] = {}
 
-            scores[f'talker{talker}']['target_vs_probe']['nopitchshiftvspitchshift'] = target_vs_probe(blocks, talker=talker,
+            scores[f'talker{talker}']['target_vs_probe']['nopitchshift'] = target_vs_probe(blocks, talker=talker,
                                                                                            probewords=probeword,
                                                                                            pitchshift=False,
                                                                                            window=window, clust_ids=clust_ids, brain_area=brain_area)
 
 
-            np.save(saveDir / f'scores_2022_{ferretid}_{probeword[0]}_{ferretid}_probe_bs.npy',
+            np.save(saveDir / f'scores_2022_{ferretid}_{probeword[0]}_{ferretid}_nopitchshift_probe_bs.npy',
                     scores)
 
 
