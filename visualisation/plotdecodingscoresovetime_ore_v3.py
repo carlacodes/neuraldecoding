@@ -523,8 +523,8 @@ if __name__ == '__main__':
             big_peak_dict[file_path.parts[-2]][file_path.parts[-1]] = peak_dict
 
     #save the big_peak_dict
-    np.save(output_folder + '/' + ferretname + '_peak_dict.npy', big_peak_dict)
-    np.save(output_folder + '/' + ferretname + '_correlation_dict.npy', big_correlation_dict)
+    np.save(output_folder + '/' + ferretname + '_' + pitchshift + '_peak_dict.npy', big_peak_dict)
+    np.save(output_folder + '/' + ferretname + '_' + pitchshift + '_correlation_dict.npy', big_correlation_dict)
     print('done')
 
     for file_path in subfolders:

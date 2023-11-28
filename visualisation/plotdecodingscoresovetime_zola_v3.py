@@ -526,8 +526,8 @@ if __name__ == '__main__':
             peak_dict = find_peak_of_score_timeseries(file_path, pitchshift, output_folder, ferretname, talkerinput = 'talker1')
             big_peak_dict[file_path.parts[-2]][file_path.parts[-1]] = peak_dict
 
-    np.save(output_folder + '/' + ferretname + '_peak_dict.npy', big_peak_dict)
-    np.save(output_folder + '/' + ferretname + '_correlation_dict.npy', big_correlation_dict)
+    np.save(output_folder + '/' + ferretname + '_'+ pitchshift+ '_peak_dict.npy', big_peak_dict)
+    np.save(output_folder + '/' + ferretname + '_'+ pitchshift + '_correlation_dict.npy', big_correlation_dict)
     print('done')
 
     for file_path in subfolders:

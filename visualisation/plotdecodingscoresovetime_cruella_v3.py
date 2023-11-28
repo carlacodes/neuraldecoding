@@ -135,28 +135,28 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
         plt.savefig(outputfolder + '/' + ferretname+'_'+rec_name+'_'+stream + '_' + pitchshift_text + '_averageovertime.png', bbox_inches='tight')
     plt.show()
 
-def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferretname, talkerinput = 'talker1', smooth_option = True):
+def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferretname, talkerinput = 'talker1', smooth_option = True, clust_ids = []):
     probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
     score_dict = {}
     correlations = {}
     avg_correlations = {}
     if pitchshift == 'nopitchshift':
         scores = np.load(
-                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(5) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
                     allow_pickle=True)[()]
     else:
         scores = np.load(
-            str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_pitchshift_bs.npy',
+            str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(5) + '_' + ferretname + '_probe_pitchshift_bs.npy',
             allow_pickle=True)[()]
 
 
     #create a dictionary of scores for each cluster
-    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+    for cluster in clust_ids:
         score_dict[cluster] = {}
         correlations[cluster] = {}
         avg_correlations[cluster] = {}
 
-    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+    for cluster in clust_ids:
         for probeword in probewordslist:
             try:
                 if pitchshift == 'nopitchshift':
@@ -184,7 +184,7 @@ def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferret
                 continue
     #compute the cross correlation coefficient
 
-    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+    for cluster in clust_ids:
         score_dict_cluster = score_dict[cluster]
         for key1 in score_dict_cluster.keys():
             for key2 in score_dict_cluster.keys():
@@ -207,7 +207,7 @@ def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferret
     #         else:
     #             avg_correlations[cluster][probeword] = 0.0  # If no correlation found for the probeword
     #do the entire average
-    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+    for cluster in clust_ids:
         total_corr = 0.0
         count = 0
         for key_pair, correlation in correlations[cluster].items():
@@ -227,7 +227,7 @@ def calculate_total_distance(permutation):
         total_distance += abs(permutation[i][1] - permutation[i + 1][1])
     return total_distance
 
-def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname, talkerinput = 'talker1', smooth_option = True):
+def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname, talkerinput = 'talker1', smooth_option = True, clust_ids = []):
     probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
     score_dict = {}
     correlations = {}
@@ -243,12 +243,12 @@ def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname
             str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_pitchshift_bs.npy',
             allow_pickle=True)[()]
     #create a dictionary of scores for each cluster
-    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+    for cluster in clust_ids:
         score_dict[cluster] = {}
         peak_dict[cluster] = {}
 
 
-    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+    for cluster in clust_ids:
         for probeword in probewordslist:
             try:
                 if pitchshift == 'nopitchshift':
@@ -274,7 +274,7 @@ def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname
                     file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(probeword) + '_' + ferretname + '_probe_bs.npy')
                 continue
 
-    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+    for cluster in clust_ids:
         score_dict_cluster = score_dict[cluster]
         for key1 in score_dict_cluster.keys():
             #now compute the peak of the score timeseries
@@ -289,7 +289,7 @@ def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname
             peak_dict[cluster][key1] = peak_index
         #calculate the euclidean distance between the peaks
 
-    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+    for cluster in clust_ids:
         peak_dict_unit = peak_dict[cluster]
 
         point_values = [(point, value) for point, value in peak_dict_unit.items()]
@@ -519,11 +519,25 @@ if __name__ == '__main__':
         for talker in talkerlist:
             # for probeword in stringprobewordlist:
             #     print(probeword)
-            avg_correlations = calculate_correlation_coefficient(file_path, pitchshift, output_folder, ferretname, talkerinput = 'talker1')
+            stream = str(file_path).split('\\')[-1]
+            stream = stream[-4:]
+            print(stream)
+            folder = str(file_path).split('\\')[-2]
+
+            high_units = pd.read_csv(f'G:/neural_chapter/figures/unit_ids_trained_topgenindex_{animal}.csv')
+            # remove trailing steam
+            rec_name = folder[:-5]
+
+            rec_name = folder
+            high_units = high_units[(high_units['rec_name'] == rec_name) & (high_units['stream'] == stream)]
+            clust_ids = high_units['ID'].to_list()
+            brain_area = high_units['BrainArea'].to_list()
+
+            avg_correlations = calculate_correlation_coefficient(file_path, pitchshift, output_folder, ferretname, talkerinput = 'talker1', clust_ids = clust_ids)
             totalcount = totalcount + 1
             big_correlation_dict[file_path.parts[-2]][file_path.parts[-1]] = avg_correlations
             #find the peak of the score timeseries
-            peak_dict = find_peak_of_score_timeseries(file_path, pitchshift, output_folder, ferretname, talkerinput = 'talker1')
+            peak_dict = find_peak_of_score_timeseries(file_path, pitchshift, output_folder, ferretname, talkerinput = 'talker1', clust_ids = clust_ids)
             big_peak_dict[file_path.parts[-2]][file_path.parts[-1]] = peak_dict
 
     np.save(output_folder + '/' + ferretname + '_'+ pitchshift+ '_peak_dict.npy', big_peak_dict)
@@ -540,22 +554,7 @@ if __name__ == '__main__':
             high_units = pd.read_csv(f'G:/neural_chapter/figures/unit_ids_trained_topgenindex_{animal}.csv')
             # remove trailing steam
             rec_name = folder[:-5]
-            # find the unique string
 
-            # remove the repeating substring
-
-            # find the units that have the phydir
-
-            # max_length = len(rec_name) // 2
-            #
-            # for length in range(1, max_length + 1):
-            #     for i in range(len(rec_name) - length):
-            #         substring = rec_name[i:i + length]
-            #         if rec_name.count(substring) > 1:
-            #             repeating_substring = substring
-            #             break
-            #
-            # print(repeating_substring)
             rec_name = folder
             high_units = high_units[(high_units['rec_name'] == rec_name) & (high_units['stream'] == stream)]
             clust_ids = high_units['ID'].to_list()
