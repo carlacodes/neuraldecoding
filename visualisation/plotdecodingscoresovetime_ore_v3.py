@@ -100,6 +100,8 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
         try:
             avg_score = avg_scores[cluster]['avg_score']
         except:
+            #remove the axis
+            axs.axis('off')
             continue
         timepoints = np.arange(0, (len(avg_score) / 100)*4, 0.04)
         std_dev = avg_scores[cluster]['std']
@@ -116,14 +118,11 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
             axs.set_xlabel('time (s)', fontsize=20)
             axs.set_ylabel('balanced accuracy', fontsize=20)
             axs.set_title(f'unit:{cluster}', fontsize = 20)
-            plt.xticks(fontsize=20)
-            plt.yticks(fontsize=20)
+
         else:
             axs.set_xlabel('time (s)', fontsize=20)
             axs.set_title(f'unit:{cluster}', fontsize = 20)
 
-            plt.xticks(fontsize=20)
-            plt.yticks(fontsize=20)
         axs.set_ylim([0, 1])
         axs.grid()
     # ax[0,0].set_title('MEG')
