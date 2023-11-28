@@ -123,6 +123,12 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
             axs.set_title(f'unit:{cluster}', fontsize = 20)
             axs.set_yticks(ticks = [0, 0.2, 0.4, 0.6, 0.8, 1.0], labels = [0, 0.2, 0.4, 0.6, 0.8, 1.0], fontsize=15)
             axs.set_xticks(ticks =[0, 0.2, 0.4, 0.6], labels = [0, 0.2, 0.4, 0.6], fontsize=15)
+        elif num_rows == 2 and i == num_cols:
+            axs.set_xlabel('time (s)', fontsize=20)
+            axs.set_ylabel('balanced accuracy', fontsize=20)
+            axs.set_title(f'unit:{cluster}', fontsize=20)
+            axs.set_yticks(ticks=[0, 0.2, 0.4, 0.6, 0.8, 1.0], labels=[0, 0.2, 0.4, 0.6, 0.8, 1.0], fontsize=15)
+            axs.set_xticks(ticks=[0, 0.2, 0.4, 0.6], labels=[0, 0.2, 0.4, 0.6], fontsize=15)
 
         else:
             axs.set_xlabel('time (s)', fontsize=20)
@@ -137,16 +143,16 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
     # ax[0,0].set_title('MEG')
 
     if num_rows == 2:
-        ax[0].text(-0.8, 0.5, 'MEG', horizontalalignment='center',
+        ax[0].text(-0.2, 0.5, 'MEG', horizontalalignment='center',
                    verticalalignment='center', rotation=90, transform=ax[0].transAxes, fontsize = 20)
-        ax[num_cols].text(-0.8, 0.5, 'PEG', horizontalalignment='center',
+        ax[num_cols].text(-0.2, 0.5, 'PEG', horizontalalignment='center',
                         verticalalignment='center', rotation=90, transform=ax[num_cols].transAxes, fontsize = 20)
     else:
         if len(meg_clusters) == 0:
-            ax[0].text(-0.8, 0.5, 'PEG', horizontalalignment='center',
+            ax[0].text(-0.2, 0.5, 'PEG', horizontalalignment='center',
                        verticalalignment='center', rotation=90, transform=ax[0].transAxes, fontsize = 20)
         elif len(peg_clusters) == 0:
-            ax[0].text(-0.8, 0.5, 'MEG', horizontalalignment='center',
+            ax[0].text(-0.2, 0.5, 'MEG', horizontalalignment='center',
                        verticalalignment='center', rotation=90, transform=ax[0].transAxes, fontsize = 20)
 
     # ax[1,0].set_title('PEG')
@@ -158,7 +164,7 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
         pitchshift_option = True
         pitchshift_text = 'inter-roved F0'
 
-    plt.suptitle(f'LSTM balanced accuracy over time for {animal_id},  {pitchshift_text}, {rec_name}_{stream}',  fontsize=30)
+    plt.suptitle(f'balanced accuracy over time for {animal_id},  {pitchshift_text}, {rec_name}_{stream}',  fontsize=30)
     if smooth_option == True:
         plt.savefig(outputfolder + '/' + ferretname+'_'+rec_name+'_'+stream + '_' + pitchshift_text + '_averageovertime_smooth.png', bbox_inches='tight')
     else:
@@ -476,7 +482,7 @@ def run_scores_and_plot(file_path, pitchshift, output_folder, ferretname,  strin
         pitchshift_text = 'inter-roved F0'
     else:
         pitchshift_text = 'control F0'
-    plt.suptitle('LSTM balanced accuracy for ' + ferretname + ' ' + pitchshift_text + ' ' + talker+ ' target vs. ' + probeword_text, fontsize = 30)
+    plt.suptitle('balanced accuracy for ' + ferretname + ' ' + pitchshift_text + ' ' + talker+ ' target vs. ' + probeword_text, fontsize = 30)
     output_folder2 = output_folder + '/' + rec_name + '/' + stream + '/'
     if not os.path.exists(output_folder2):
         os.makedirs(output_folder2)

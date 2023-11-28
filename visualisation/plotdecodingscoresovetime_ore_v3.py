@@ -155,7 +155,7 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
         pitchshift_option = True
         pitchshift_text = 'inter-roved F0'
 
-    plt.suptitle(f'LSTM balanced accuracy over time for {animal_id},  {pitchshift_text}, {rec_name}_{stream}',  fontsize=30)
+    plt.suptitle(f'balanced accuracy over time for {animal_id},  {pitchshift_text}, {rec_name}_{stream}',  fontsize=30)
     if smooth_option == True:
         plt.savefig(outputfolder + '/' + ferretname+'_'+rec_name+'_'+stream + '_' + pitchshift_text + '_averageovertime_smooth.png', bbox_inches='tight')
     else:
@@ -487,7 +487,7 @@ def run_scores_and_plot(file_path, pitchshift, output_folder, ferretname,  strin
         pitchshift_text = 'inter-roved F0'
     else:
         pitchshift_text = 'control F0'
-    plt.suptitle('LSTM balanced accuracy for ' + ferretname + ' ' + pitchshift_text + ' ' + talker+ ' target vs. ' + probeword_text, fontsize = 30)
+    plt.suptitle('balanced accuracy for ' + ferretname + ' ' + pitchshift_text + ' ' + talker+ ' target vs. ' + probeword_text, fontsize = 30)
     output_folder2 = output_folder + '/' + rec_name + '/' + stream + '/'
     if not os.path.exists(output_folder2):
         os.makedirs(output_folder2)
