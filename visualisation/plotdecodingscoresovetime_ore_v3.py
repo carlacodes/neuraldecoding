@@ -113,14 +113,14 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
 
 
         if i == 0:
-            ax.set_xlabel('time (s)', fontsize=20)
-            ax.set_ylabel('balanced accuracy', fontsize=20)
-            ax.set_title(f'unit:{cluster}', fontsize = 20)
+            axs.set_xlabel('time (s)', fontsize=20)
+            axs.set_ylabel('balanced accuracy', fontsize=20)
+            axs.set_title(f'unit:{cluster}', fontsize = 20)
             plt.xticks(fontsize=20)
             plt.yticks(fontsize=20)
         else:
-            ax.set_xlabel('time (s)', fontsize=20)
-            ax.set_title(f'unit:{cluster}', fontsize = 20)
+            axs.set_xlabel('time (s)', fontsize=20)
+            axs.set_title(f'unit:{cluster}', fontsize = 20)
 
             plt.xticks(fontsize=20)
             plt.yticks(fontsize=20)
