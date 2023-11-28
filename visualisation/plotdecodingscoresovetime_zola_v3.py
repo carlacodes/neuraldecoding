@@ -15,9 +15,16 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
     animal_id = animal_id.split('_')[0]
     rec_name = file_path.parts[-2]
     stream = file_path.parts[-1]
-    scores = np.load(
-                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_bs.npy',
+    if pitchshift == 'nopitchshift':
+        scores = np.load(
+                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
                     allow_pickle=True)[()]
+    else:
+        scores = np.load(
+                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_pitchshift_bs.npy',
+                    allow_pickle=True)[()]
+
+
     #create a dictionary of scores for each cluster
     for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
         score_dict[cluster] = {}
@@ -27,9 +34,16 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
     for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
         for probeword in probewordslist:
             try:
-                scores = np.load(
-                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(probeword) + '_' + ferretname + '_probe_bs.npy',
-                    allow_pickle=True)[()]
+                if pitchshift == 'nopitchshift':
+                    scores = np.load(
+                        str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
+                            probeword) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+                        allow_pickle=True)[()]
+                else:
+                    scores = np.load(
+                        str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
+                            probeword) + '_' + ferretname + '_probe_pitchshift_bs.npy',
+                        allow_pickle=True)[()]
                 #find the index of the cluster
                 index = scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id'].index(cluster)
 
@@ -107,7 +121,7 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
                     verticalalignment='center', rotation=90, transform=ax[num_cols].transAxes)
     # ax[1,0].set_title('PEG')
 
-    if pitchshift == 'nopitchshiftvspitchshift':
+    if pitchshift == 'nopitchshiftvspitchshift' or pitchshift == 'nopitchshift':
         pitchshift_option = False
         pitchshift_text = 'control F0'
     elif pitchshift == 'pitchshift':
@@ -145,9 +159,16 @@ def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferret
     for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
         for probeword in probewordslist:
             try:
-                scores = np.load(
-                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(probeword) + '_' + ferretname + '_probe_bs.npy',
-                    allow_pickle=True)[()]
+                if pitchshift == 'nopitchshift':
+                    scores = np.load(
+                        str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
+                            probeword) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+                        allow_pickle=True)[()]
+                else:
+                    scores = np.load(
+                        str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
+                            probeword) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+                        allow_pickle=True)[()]
                 #find the index of the cluster
                 index = scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id'].index(cluster)
                 if smooth_option == True:
@@ -233,12 +254,12 @@ def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname
                 if pitchshift == 'nopitchshift':
                     scores = np.load(
                         str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
-                            2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+                            probeword) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
                         allow_pickle=True)[()]
                 else:
                     scores = np.load(
                         str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
-                            2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+                            probeword) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
                         allow_pickle=True)[()]
                 #find the index of the cluster
                 index = scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id'].index(cluster)
