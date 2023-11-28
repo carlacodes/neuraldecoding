@@ -80,6 +80,10 @@ if __name__ == '__main__':
                         continue
     all_peak_dict_naive = []
     animal_list_naive = ['F2003_Orecchiette']
+    if pitchshift == 'pitchshift':
+        pitchshifttext = 'inter-roved F0'
+    elif pitchshift == 'nopitchshift':
+        pitchshifttext = 'control F0'
     for animal in animal_list_naive:
         output_folder = f'G:/decodingovertime_figures/{animal}/'
         animal_text = animal.split('_')[1]
@@ -107,7 +111,7 @@ if __name__ == '__main__':
     ax.set_xlabel('standard deviation of peak time of decoding scores', fontsize = 15)
     ax.set_ylabel('count', fontsize = 15)
     ax.legend()
-    plt.title('Distribution of standard deviation of peak times', fontsize = 15)
+    plt.title(f'Distribution of standard deviation of peak times, {pitchshifttext}', fontsize = 15)
     fig.savefig('G:/decodingovertime_figures/peak_time_std_dev.png')
 
     plt.show()

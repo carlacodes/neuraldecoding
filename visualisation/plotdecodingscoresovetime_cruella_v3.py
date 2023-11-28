@@ -7,7 +7,7 @@ import scipy
 from itertools import combinations, permutations
 
 
-def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high_units, talkerinput = 'talker1', animal_id = 'F1702', smooth_option = True):
+def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high_units, talkerinput = 'talker1', animal_id = 'F1702', smooth_option = True, clust_ids = []):
     probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
     score_dict = {}
     correlations = {}
@@ -15,23 +15,16 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
     animal_id = animal_id.split('_')[0]
     rec_name = file_path.parts[-2]
     stream = file_path.parts[-1]
-    if pitchshift == 'nopitchshift':
-        scores = np.load(
-                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
-                    allow_pickle=True)[()]
-    else:
-        scores = np.load(
-                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_pitchshift_bs.npy',
-                    allow_pickle=True)[()]
+
 
 
     #create a dictionary of scores for each cluster
-    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+    for cluster in clust_ids:
         score_dict[cluster] = {}
         correlations[cluster] = {}
         avg_scores[cluster] = {}
 
-    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+    for cluster in clust_ids:
         for probeword in probewordslist:
             try:
                 if pitchshift == 'nopitchshift':
@@ -140,14 +133,7 @@ def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferret
     score_dict = {}
     correlations = {}
     avg_correlations = {}
-    if pitchshift == 'nopitchshift':
-        scores = np.load(
-                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(5) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
-                    allow_pickle=True)[()]
-    else:
-        scores = np.load(
-            str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(5) + '_' + ferretname + '_probe_pitchshift_bs.npy',
-            allow_pickle=True)[()]
+
 
 
     #create a dictionary of scores for each cluster
@@ -234,14 +220,7 @@ def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname
     peak_dict = {}
     avg_correlations = {}
 
-    if pitchshift == 'nopitchshift':
-        scores = np.load(
-                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
-                    allow_pickle=True)[()]
-    else:
-        scores = np.load(
-            str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_pitchshift_bs.npy',
-            allow_pickle=True)[()]
+
     #create a dictionary of scores for each cluster
     for cluster in clust_ids:
         score_dict[cluster] = {}
@@ -560,7 +539,7 @@ if __name__ == '__main__':
             clust_ids = high_units['ID'].to_list()
             brain_area = high_units['BrainArea'].to_list()
 
-            plot_average_over_time(file_path, pitchshift, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=False)
+            plot_average_over_time(file_path, pitchshift, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=False, clust_ids = clust_ids)
 
 
 
