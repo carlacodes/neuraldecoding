@@ -111,15 +111,36 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
         axs.plot(timepoints, avg_score, c='black')
         axs.fill_between(timepoints, avg_score - std_dev, avg_score + std_dev, alpha=0.3)
 
-        axs.set(xlabel='time (s)', ylabel='balanced accuracy',
-                title=f'unit: {cluster}')
+
+        if i == 0:
+            ax.set_xlabel('time (s)', fontsize=20)
+            ax.set_ylabel('balanced accuracy', fontsize=20)
+            ax.set_title(f'unit:{cluster}', fontsize = 20)
+            plt.xticks(fontsize=20)
+            plt.yticks(fontsize=20)
+        else:
+            ax.set_xlabel('time (s)', fontsize=20)
+            ax.set_title(f'unit:{cluster}', fontsize = 20)
+
+            plt.xticks(fontsize=20)
+            plt.yticks(fontsize=20)
         axs.set_ylim([0, 1])
         axs.grid()
     # ax[0,0].set_title('MEG')
-    ax[0].text(-0.4, 0.5, 'MEG', horizontalalignment='center',
-                    verticalalignment='center', rotation=90, transform=ax[0].transAxes)
-    ax[num_cols].text(-0.4, 0.5, 'PEG', horizontalalignment='center',
-                    verticalalignment='center', rotation=90, transform=ax[num_cols].transAxes)
+
+    if num_rows == 2:
+        ax[0].text(-0.8, 0.5, 'MEG', horizontalalignment='center',
+                   verticalalignment='center', rotation=90, transform=ax[0].transAxes)
+        ax[num_cols].text(-0.8, 0.5, 'PEG', horizontalalignment='center',
+                        verticalalignment='center', rotation=90, transform=ax[num_cols].transAxes)
+    else:
+        if len(meg_clusters) == 0:
+            ax[0].text(-0.8, 0.5, 'PEG', horizontalalignment='center',
+                       verticalalignment='center', rotation=90, transform=ax[0].transAxes)
+        elif len(peg_clusters) == 0:
+            ax[0].text(-0.8, 0.5, 'MEG', horizontalalignment='center',
+                       verticalalignment='center', rotation=90, transform=ax[0].transAxes)
+
     # ax[1,0].set_title('PEG')
 
     if pitchshift == 'nopitchshiftvspitchshift' or pitchshift == 'nopitchshift':
