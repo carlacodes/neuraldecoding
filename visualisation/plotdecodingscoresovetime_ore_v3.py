@@ -107,7 +107,7 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
                     verticalalignment='center', rotation=90, transform=ax[num_cols].transAxes)
     # ax[1,0].set_title('PEG')
 
-    if pitchshift == 'nopitchshiftvspitchshift':
+    if pitchshift == 'nopitchshiftvspitchshift' or pitchshift == 'nopitchshift':
         pitchshift_option = False
         pitchshift_text = 'control F0'
     elif pitchshift == 'pitchshift':
@@ -128,11 +128,11 @@ def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferret
     avg_correlations = {}
     if pitchshift == 'nopitchshift':
         scores = np.load(
-                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_nopitchshift_probe_bs.npy',
                     allow_pickle=True)[()]
     else:
         scores = np.load(
-            str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+            str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_pitchshift_bs.npy',
             allow_pickle=True)[()]
 
 
@@ -215,11 +215,11 @@ def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname
 
     if pitchshift == 'nopitchshift':
         scores = np.load(
-                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_nopitchshift_probe_bs.npy',
                     allow_pickle=True)[()]
     else:
         scores = np.load(
-            str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+            str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_pitchshift_bs.npy',
             allow_pickle=True)[()]
     #create a dictionary of scores for each cluster
     for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
@@ -233,12 +233,12 @@ def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname
                 if pitchshift == 'nopitchshift':
                     scores = np.load(
                         str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
-                            2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+                            2) + '_' + ferretname + '_nopitchshift_probe_bs.npy',
                         allow_pickle=True)[()]
                 else:
                     scores = np.load(
                         str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
-                            2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+                            2) + '_' + ferretname + '_probe_pitchshift_bs.npy',
                         allow_pickle=True)[()]
                 #find the index of the cluster
                 index = scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id'].index(cluster)
@@ -312,12 +312,12 @@ def run_scores_and_plot(file_path, pitchshift, output_folder, ferretname,  strin
         if pitchshift == 'nopitchshift':
             scores = np.load(
                 str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
-                    2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+                    2) + '_' + ferretname + '_nopitchshift_probe_bs.npy',
                 allow_pickle=True)[()]
         else:
             scores = np.load(
                 str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
-                    2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+                    2) + '_' + ferretname + '_probe_pitchshift_bs.npy',
                 allow_pickle=True)[()]
     except:
         print('error loading scores: ' + str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + stringprobewordindex + '_' + ferretname + '_probe_bs.npy')
@@ -460,7 +460,7 @@ def run_scores_and_plot(file_path, pitchshift, output_folder, ferretname,  strin
 if __name__ == '__main__':
     print('hello')
 
-    big_folder = Path('G:/results_decodingovertime_28112023/F1702_Zola/')
+    big_folder = Path('G:/results_decodingovertime_28112023/F2003_Orecchiette/')
     animal = big_folder.parts[-1]
     # file_path = 'D:\decodingresults_overtime\F1815_Cruella\lstm_kfold_balac_01092023_cruella/'
     output_folder = f'G:/decodingovertime_figures/{animal}/'
@@ -477,7 +477,7 @@ if __name__ == '__main__':
     talkerlist = ['female']
     #find all the subfolders, all the folders that contain the data
 
-    subfolders = [f for f in big_folder.glob('**/BB_*/') if f.is_dir()]
+    subfolders = [f for f in big_folder.glob('**/ng_0*/') if f.is_dir()]
 
 
 
