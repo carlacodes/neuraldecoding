@@ -102,6 +102,8 @@ if __name__ == '__main__':
                         all_peak_dict_naive.append(big_peak_dict[key][key2][key3]['std_dev'])
                     except:
                         continue
+    #remove the nan values
+    all_peak_dict = [x for x in all_peak_dict if str(x) != 'nan']
     fig, ax = plt.subplots()
     sns.histplot(all_peak_dict, kde = True,  alpha = 0.5, label = 'trained', color = 'purple')
 
@@ -117,7 +119,7 @@ if __name__ == '__main__':
     plt.show()
 
     #calculate a mann whitney u test
-    print(scipy.stats.mannwhitneyu(all_peak_dict, all_peak_dict_naive))
+    print(scipy.stats.mannwhitneyu(all_peak_dict, all_peak_dict_naive, alternative = 'less'))
 
 
 

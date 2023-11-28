@@ -513,7 +513,7 @@ if __name__ == '__main__':
     ferretname = animal.split('_')[1]
     ferretname = ferretname.lower()
     #typo in my myriad code, this should really be relabelled as nopitchshift
-    pitchshift = 'nopitchshift'
+    pitchshift = 'pitchshift'
     stringprobewordlist = [2,3,4,5,6,7,8,9,10]
     # probewordlist = [ (5, 6),(2, 2), (42, 49), (32, 38), (20, 22)]
     totalcount = 0
