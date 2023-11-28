@@ -57,7 +57,7 @@ if __name__ == '__main__':
 
     # np.save(output_folder + '/' + ferretname + '_ '+ pitchshift + '_peak_dict.npy', big_peak_dict)
     # np.save(output_folder + '/' + ferretname + '_ '+ pitchshift + '_correlation_dict.npy', big_correlation_dict)
-    animal_list_trained = ['F1702_Zola']
+    animal_list_trained = ['F1702_Zola', 'F1815_Cruella']
     all_peak_dict = []
     all_correlation_dict = []
     for animal in animal_list_trained:

@@ -77,9 +77,10 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
         num_rows = 1
     else:
         num_rows = 2
-
-    fig, ax = plt.subplots(num_rows, num_cols, figsize=(30, 15))
-    if num_rows != 1:
+    fig, ax = plt.subplots(num_rows, num_cols, figsize=(40, 15))
+    if num_rows == 1 and num_cols == 1:
+        ax = np.array([ax])
+    else:
         ax = ax.flatten()
     # fig, ax = plt.subplots(2, int(len(high_units['ID'].to_list())/2), figsize=(20, 20))
     for i, cluster in enumerate(meg_clusters + peg_clusters):
@@ -99,8 +100,9 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
         try:
             avg_score = avg_scores[cluster]['avg_score']
         except:
+            #remove the axis
+            axs.axis('off')
             continue
-        #generate the timepoints based on the bin width of 4ms
         try:
             timepoints = np.arange(0, (len(avg_score) / 100)*4, 0.04)
         except:
@@ -112,17 +114,41 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
 
 
         axs.plot(timepoints, avg_score, c='black')
-        axs.fill_between(timepoints, avg_score - std_dev, avg_score + std_dev, alpha=0.3)
+        axs.fill_between(timepoints, avg_score - std_dev, avg_score + std_dev, alpha=0.3, color ='purple')
 
-        axs.set(xlabel='time (s)', ylabel='balanced accuracy',
-                title=f'unit: {cluster}')
+
+        if i == 0:
+            axs.set_xlabel('time (s)', fontsize=20)
+            axs.set_ylabel('balanced accuracy', fontsize=20)
+            axs.set_title(f'unit:{cluster}', fontsize = 20)
+            axs.set_yticks(ticks = [0, 0.2, 0.4, 0.6, 0.8, 1.0], labels = [0, 0.2, 0.4, 0.6, 0.8, 1.0], fontsize=15)
+            axs.set_xticks(ticks =[0, 0.2, 0.4, 0.6], labels = [0, 0.2, 0.4, 0.6], fontsize=15)
+
+        else:
+            axs.set_xlabel('time (s)', fontsize=20)
+            axs.set_title(f'unit:{cluster}', fontsize = 20)
+            axs.set_yticks(ticks = [0, 0.2, 0.4, 0.6, 0.8, 1.0], labels = [0, 0.2, 0.4, 0.6, 0.8, 1.0], fontsize=15)
+            axs.set_xticks(ticks =[0, 0.2, 0.4, 0.6], labels = [0, 0.2, 0.4, 0.6], fontsize=15)
+
+
+
         axs.set_ylim([0, 1])
         axs.grid()
     # ax[0,0].set_title('MEG')
-    ax[0].text(-0.4, 0.5, 'MEG', horizontalalignment='center',
-                    verticalalignment='center', rotation=90, transform=ax[0].transAxes)
-    ax[num_cols].text(-0.4, 0.5, 'PEG', horizontalalignment='center',
-                    verticalalignment='center', rotation=90, transform=ax[num_cols].transAxes)
+
+    if num_rows == 2:
+        ax[0].text(-0.8, 0.5, 'MEG', horizontalalignment='center',
+                   verticalalignment='center', rotation=90, transform=ax[0].transAxes, fontsize = 20)
+        ax[num_cols].text(-0.8, 0.5, 'PEG', horizontalalignment='center',
+                        verticalalignment='center', rotation=90, transform=ax[num_cols].transAxes, fontsize = 20)
+    else:
+        if len(meg_clusters) == 0:
+            ax[0].text(-0.8, 0.5, 'PEG', horizontalalignment='center',
+                       verticalalignment='center', rotation=90, transform=ax[0].transAxes, fontsize = 20)
+        elif len(peg_clusters) == 0:
+            ax[0].text(-0.8, 0.5, 'MEG', horizontalalignment='center',
+                       verticalalignment='center', rotation=90, transform=ax[0].transAxes, fontsize = 20)
+
     # ax[1,0].set_title('PEG')
 
     if pitchshift == 'nopitchshiftvspitchshift' or pitchshift == 'nopitchshift':
@@ -132,7 +158,7 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
         pitchshift_option = True
         pitchshift_text = 'inter-roved F0'
 
-    plt.suptitle(f'LSTM balanced accuracy over time for {animal_id},  {pitchshift_text}, {rec_name}_{stream}',  fontsize=20)
+    plt.suptitle(f'LSTM balanced accuracy over time for {animal_id},  {pitchshift_text}, {rec_name}_{stream}',  fontsize=30)
     if smooth_option == True:
         plt.savefig(outputfolder + '/' + ferretname+'_'+rec_name+'_'+stream + '_' + pitchshift_text + '_averageovertime_smooth.png', bbox_inches='tight')
     else:
