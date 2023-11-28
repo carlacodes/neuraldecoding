@@ -155,7 +155,7 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
         pitchshift_option = True
         pitchshift_text = 'inter-roved F0'
 
-    plt.suptitle(f'LSTM balanced accuracy over time for {animal_id},  {pitchshift_text}, {rec_name}_{stream}',  fontsize=20)
+    plt.suptitle(f'LSTM balanced accuracy over time for {animal_id},  {pitchshift_text}, {rec_name}_{stream}',  fontsize=30)
     if smooth_option == True:
         plt.savefig(outputfolder + '/' + ferretname+'_'+rec_name+'_'+stream + '_' + pitchshift_text + '_averageovertime_smooth.png', bbox_inches='tight')
     else:
