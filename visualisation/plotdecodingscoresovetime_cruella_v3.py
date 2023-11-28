@@ -123,12 +123,12 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
             axs.set_title(f'unit:{cluster}', fontsize = 20)
             axs.set_yticks(ticks = [0, 0.2, 0.4, 0.6, 0.8, 1.0], labels = [0, 0.2, 0.4, 0.6, 0.8, 1.0], fontsize=15)
             axs.set_xticks(ticks =[0, 0.2, 0.4, 0.6], labels = [0, 0.2, 0.4, 0.6], fontsize=15)
-        elif num_rows == 2 and i == num_cols:
-            axs.set_xlabel('time (s)', fontsize=20)
-            axs.set_ylabel('balanced accuracy', fontsize=20)
-            axs.set_title(f'unit:{cluster}', fontsize=20)
-            axs.set_yticks(ticks=[0, 0.2, 0.4, 0.6, 0.8, 1.0], labels=[0, 0.2, 0.4, 0.6, 0.8, 1.0], fontsize=15)
-            axs.set_xticks(ticks=[0, 0.2, 0.4, 0.6], labels=[0, 0.2, 0.4, 0.6], fontsize=15)
+        # elif num_rows == 2 and i == int(num_cols/2):
+        #     axs.set_xlabel('time (s)', fontsize=20)
+        #     axs.set_ylabel('balanced accuracy', fontsize=20)
+        #     axs.set_title(f'unit:{cluster}', fontsize=20)
+        #     axs.set_yticks(ticks=[0, 0.2, 0.4, 0.6, 0.8, 1.0], labels=[0, 0.2, 0.4, 0.6, 0.8, 1.0], fontsize=15)
+        #     axs.set_xticks(ticks=[0, 0.2, 0.4, 0.6], labels=[0, 0.2, 0.4, 0.6], fontsize=15)
 
         else:
             axs.set_xlabel('time (s)', fontsize=20)
@@ -145,6 +145,8 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
     if num_rows == 2:
         ax[0].text(-0.2, 0.5, 'MEG', horizontalalignment='center',
                    verticalalignment='center', rotation=90, transform=ax[0].transAxes, fontsize = 20)
+        ax[num_cols].set_ylabel('balanced accuracy', fontsize=20)
+
         ax[num_cols].text(-0.2, 0.5, 'PEG', horizontalalignment='center',
                         verticalalignment='center', rotation=90, transform=ax[num_cols].transAxes, fontsize = 20)
     else:
