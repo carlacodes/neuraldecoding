@@ -68,7 +68,7 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
     peg_clusters = high_units[high_units['BrainArea'] == 'PEG']['ID'].to_list()
 
     num_cols = max(len(meg_clusters), len(peg_clusters))
-    num_rows = 2
+    num_rows = len(meg_clusters) + len(peg_clusters)
 
     fig, ax = plt.subplots(num_rows, num_cols, figsize=(30, 15))
     ax = ax.flatten()
@@ -79,7 +79,10 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
             row = 0
             col = meg_clusters.index(cluster)
         else:
-            row = 1
+            if num_rows == 1:
+                row = 0
+            else:
+                row = 1
             col = peg_clusters.index(cluster)
 
         axs = ax[col + row * num_cols]

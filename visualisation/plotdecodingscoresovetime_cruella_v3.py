@@ -73,10 +73,14 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
     peg_clusters = high_units[high_units['BrainArea'] == 'PEG']['ID'].to_list()
 
     num_cols = max(len(meg_clusters), len(peg_clusters))
-    num_rows = 2
+    if len(meg_clusters) == 0 or len(peg_clusters) == 0:
+        num_rows = 1
+    else:
+        num_rows = 2
 
     fig, ax = plt.subplots(num_rows, num_cols, figsize=(30, 15))
-    ax = ax.flatten()
+    if num_rows != 1:
+        ax = ax.flatten()
     # fig, ax = plt.subplots(2, int(len(high_units['ID'].to_list())/2), figsize=(20, 20))
     for i, cluster in enumerate(meg_clusters + peg_clusters):
         brain_id = high_units[high_units['ID'] == cluster]['BrainArea'].to_list()[0]
@@ -84,7 +88,10 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
             row = 0
             col = meg_clusters.index(cluster)
         else:
-            row = 1
+            if num_rows == 1:
+                row = 0
+            else:
+                row = 1
             col = peg_clusters.index(cluster)
 
         axs = ax[col + row * num_cols]
@@ -93,7 +100,11 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
             avg_score = avg_scores[cluster]['avg_score']
         except:
             continue
-        timepoints = np.arange(0, (len(avg_score) / 100)*4, 0.04)
+        #generate the timepoints based on the bin width of 4ms
+        try:
+            timepoints = np.arange(0, (len(avg_score) / 100)*4, 0.04)
+        except:
+            continue
         std_dev = avg_scores[cluster]['std']
         if smooth_option == True:
             avg_score = scipy.signal.savgol_filter(avg_score, 5, 3, mode='interp')
