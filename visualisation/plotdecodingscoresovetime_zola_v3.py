@@ -311,13 +311,11 @@ def run_scores_and_plot(file_path, pitchshift, output_folder, ferretname,  strin
     try:
         if pitchshift == 'nopitchshift':
             scores = np.load(
-                str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
-                    2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+                str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + stringprobewordindex + '_' + ferretname + '_probe_nopitchshift_bs.npy',
                 allow_pickle=True)[()]
         else:
             scores = np.load(
-                str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
-                    2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+                str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + stringprobewordindex + '_' + ferretname + '_probe_nopitchshift_bs.npy',
                 allow_pickle=True)[()]
     except:
         print('error loading scores: ' + str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + stringprobewordindex + '_' + ferretname + '_probe_bs.npy')

@@ -15,9 +15,14 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
     animal_id = animal_id.split('_')[0]
     rec_name = file_path.parts[-2]
     stream = file_path.parts[-1]
-    scores = np.load(
-                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_bs.npy',
+    if pitchshift == 'nopitchshift':
+        scores = np.load(
+                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_nopitchshift_probe_bs.npy',
                     allow_pickle=True)[()]
+    else:
+        scores = np.load(
+            str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_pitchshift_bs.npy',
+            allow_pickle=True)[()]
     #create a dictionary of scores for each cluster
     for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
         score_dict[cluster] = {}
@@ -27,9 +32,14 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
     for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
         for probeword in probewordslist:
             try:
-                scores = np.load(
-                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(probeword) + '_' + ferretname + '_probe_bs.npy',
-                    allow_pickle=True)[()]
+                if pitchshift == 'nopitchshift':
+                    scores = np.load(
+                        str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(probeword) + '_' + ferretname + '_nopitchshift_probe_bs.npy',
+                        allow_pickle=True)[()]
+                else:
+                    scores = np.load(
+                        str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(probeword) + '_' + ferretname + '_probe_pitchshift_bs.npy',
+                        allow_pickle=True)[()]
                 #find the index of the cluster
                 index = scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id'].index(cluster)
 
@@ -145,9 +155,17 @@ def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferret
     for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
         for probeword in probewordslist:
             try:
-                scores = np.load(
-                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(probeword) + '_' + ferretname + '_probe_bs.npy',
-                    allow_pickle=True)[()]
+                if pitchshift == 'nopitchshift':
+                    scores = np.load(
+                        str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
+                            probeword) + '_' + ferretname + '_nopitchshift_probe_bs.npy',
+                        allow_pickle=True)[()]
+                else:
+                    scores = np.load(
+                        str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
+                            probeword) + '_' + ferretname + '_probe_pitchshift_bs.npy',
+                        allow_pickle=True)[()]
+
                 #find the index of the cluster
                 index = scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id'].index(cluster)
                 if smooth_option == True:
@@ -232,13 +250,12 @@ def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname
             try:
                 if pitchshift == 'nopitchshift':
                     scores = np.load(
-                        str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
-                            2) + '_' + ferretname + '_nopitchshift_probe_bs.npy',
+                        str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(probeword) + '_' + ferretname + '_nopitchshift_probe_bs.npy',
                         allow_pickle=True)[()]
                 else:
                     scores = np.load(
-                        str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
-                            2) + '_' + ferretname + '_probe_pitchshift_bs.npy',
+                        str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(probeword)
+                        + '_' + ferretname + '_probe_pitchshift_bs.npy',
                         allow_pickle=True)[()]
                 #find the index of the cluster
                 index = scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id'].index(cluster)
@@ -311,13 +328,11 @@ def run_scores_and_plot(file_path, pitchshift, output_folder, ferretname,  strin
     try:
         if pitchshift == 'nopitchshift':
             scores = np.load(
-                str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
-                    2) + '_' + ferretname + '_nopitchshift_probe_bs.npy',
+                str(file_path) + '/' + r'scores_2022_' + ferretname + '_' +stringprobewordindex+ '_' + ferretname + '_nopitchshift_probe_bs.npy',
                 allow_pickle=True)[()]
         else:
             scores = np.load(
-                str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
-                    2) + '_' + ferretname + '_probe_pitchshift_bs.npy',
+                str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + stringprobewordindex + '_' + ferretname + '_probe_pitchshift_bs.npy',
                 allow_pickle=True)[()]
     except:
         print('error loading scores: ' + str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + stringprobewordindex + '_' + ferretname + '_probe_bs.npy')
@@ -537,7 +552,12 @@ if __name__ == '__main__':
             #
             # print(repeating_substring)
             rec_name = folder
-            high_units = high_units[(high_units['rec_name'] == rec_name) & (high_units['stream'] == stream)]
+            if rec_name.__contains__('s2'):
+                stream = 't_s2'
+            elif rec_name.__contains__('s3'):
+                stream = 't_s3'
+
+            high_units = high_units[(high_units['stream'] == stream) ]
             clust_ids = high_units['ID'].to_list()
             brain_area = high_units['BrainArea'].to_list()
 
