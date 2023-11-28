@@ -300,6 +300,17 @@ def run_classification(datapath, ferretid, ferretid_fancy='F1902_Eclair', clust_
 
     tarDir = Path(
         f'G:/results_decodingovertime_24112023/{ferretid_fancy}/{recname}/{stream_used}/')
+    if tarDir.exists():
+        #check how many probewords completed
+        files = tarDir.glob('*pitchshift*.npy')
+        files = [x for x in files]
+        #check the numbers in the files
+        numbers = [int(str(x).split('_')[-5]) for x in files]
+        #check which probewords are missing
+        probewords_list = [x for x in probewords_list if x[0] not in numbers]
+        if probewords_list == []:
+            print('directory already exists AND ALL PROBEWORDS COMPLETED')
+            return
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
     for probeword in probewords_list:

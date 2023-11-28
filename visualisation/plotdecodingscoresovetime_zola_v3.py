@@ -126,10 +126,16 @@ def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferret
     score_dict = {}
     correlations = {}
     avg_correlations = {}
-
-    scores = np.load(
-                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_bs.npy',
+    if pitchshift == 'nopitchshift':
+        scores = np.load(
+                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
                     allow_pickle=True)[()]
+    else:
+        scores = np.load(
+            str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+            allow_pickle=True)[()]
+
+
     #create a dictionary of scores for each cluster
     for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
         score_dict[cluster] = {}
@@ -207,9 +213,14 @@ def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname
     peak_dict = {}
     avg_correlations = {}
 
-    scores = np.load(
-                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_bs.npy',
+    if pitchshift == 'nopitchshift':
+        scores = np.load(
+                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
                     allow_pickle=True)[()]
+    else:
+        scores = np.load(
+            str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+            allow_pickle=True)[()]
     #create a dictionary of scores for each cluster
     for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
         score_dict[cluster] = {}
@@ -219,9 +230,16 @@ def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname
     for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
         for probeword in probewordslist:
             try:
-                scores = np.load(
-                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(probeword) + '_' + ferretname + '_probe_bs.npy',
-                    allow_pickle=True)[()]
+                if pitchshift == 'nopitchshift':
+                    scores = np.load(
+                        str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
+                            2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+                        allow_pickle=True)[()]
+                else:
+                    scores = np.load(
+                        str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
+                            2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+                        allow_pickle=True)[()]
                 #find the index of the cluster
                 index = scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id'].index(cluster)
                 if smooth_option == True:
@@ -300,7 +318,7 @@ def run_scores_and_plot(file_path, pitchshift, output_folder, ferretname,  strin
     rec_name = file_path.parts[-2]
     stream = file_path.parts[-1]
     probeword = int(stringprobewordindex)
-    if pitchshift == 'nopitchshiftvspitchshift':
+    if pitchshift == 'nopitchshiftvspitchshift' or pitchshift == 'nopitchshift':
         pitchshift_option = False
     elif pitchshift == 'pitchshift':
         pitchshift_option = True
@@ -435,7 +453,7 @@ def run_scores_and_plot(file_path, pitchshift, output_folder, ferretname,  strin
 if __name__ == '__main__':
     print('hello')
 
-    big_folder = Path('G:/results_decodingovertime_17112023/F1702_Zola/')
+    big_folder = Path('G:/results_decodingovertime_28112023/F1702_Zola/')
     animal = big_folder.parts[-1]
     # file_path = 'D:\decodingresults_overtime\F1815_Cruella\lstm_kfold_balac_01092023_cruella/'
     output_folder = f'G:/decodingovertime_figures/{animal}/'
@@ -445,7 +463,7 @@ if __name__ == '__main__':
     ferretname = animal.split('_')[1]
     ferretname = ferretname.lower()
     #typo in my myriad code, this should really be relabelled as nopitchshift
-    pitchshift = 'nopitchshiftvspitchshift'
+    pitchshift = 'nopitchshift'
     stringprobewordlist = [2,3,4,5,6,7,8,9,10]
     # probewordlist = [ (5, 6),(2, 2), (42, 49), (32, 38), (20, 22)]
     totalcount = 0

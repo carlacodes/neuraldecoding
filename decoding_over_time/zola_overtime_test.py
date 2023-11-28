@@ -302,7 +302,7 @@ def run_classification(datapath, ferretid, ferretid_fancy='F1902_Eclair', clust_
         f'G:/results_decodingovertime_24112023/{ferretid_fancy}/{recname}/{stream_used}/')
     if tarDir.exists():
         #check how many probewords completed
-        files = tarDir.glob('*nopitchshift_bs.npy')
+        files = tarDir.glob('*pitchshift*.npy')
         files = [x for x in files]
         #check the numbers in the files
         numbers = [int(str(x).split('_')[-5]) for x in files]
