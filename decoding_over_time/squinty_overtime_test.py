@@ -305,7 +305,7 @@ def run_classification(datapath, ferretid, ferretid_fancy='F1902_Eclair', clust_
     for probeword in probewords_list:
         print('now starting to decode the probeword:')
         print(probeword)
-        for talker in [1,2]:
+        for talker in [1]:
             if talker == 1:
                 window = [0, 0.6]
             else:
