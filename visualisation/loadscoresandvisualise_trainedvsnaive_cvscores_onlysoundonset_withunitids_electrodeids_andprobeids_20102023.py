@@ -2717,7 +2717,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         sns.violinplot(x='BrainArea', y='MeanScore', data=df_full_pitchsplit_plot, ax=ax, inner=None, label = None, color='lightgray')
         sns.stripplot(x='BrainArea', y='MeanScore', data=df_full_pitchsplit_plot, color = 'purple',label = 'trained', ax=ax, dodge=False)
         # do a mann whitney u test between the meanscores for PEG and MEG
-        stat_peg, p_peg = mannwhitneyu(df_full_pitchsplit_plot_peg['MeanScore'], df_full_pitchsplit_plot_meg['MeanScore'], alternative='greater')
+        stat_peg, p_peg = mannwhitneyu(df_full_pitchsplit_plot_peg['MeanScore'], df_full_pitchsplit_plot_meg['MeanScore'], alternative='two-sided')
         if options == 'index':
             plt.xlabel(f'Mean Decoding Score of Top 25% of Units', fontsize=20)
         elif options == 'frac':
@@ -2743,7 +2743,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
         plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_violin_naive_bybrainarea_{options}.png')
 
-        stat_peg, p_peg = mannwhitneyu(df_full_naive_pitchsplit_plot_peg['GenFrac'], df_full_naive_pitchsplit_plot_meg['GenFrac'], alternative = 'less')
+        # stat_peg, p_peg = mannwhitneyu(df_full_naive_pitchsplit_plot_peg['GenFrac'], df_full_naive_pitchsplit_plot_meg['GenFrac'], alternative = 'less')
         #plot the brain area loation of the units that are significantly different
         fig, ax = plt.subplots(1, dpi=300)
         #make the dataframe in the order of PEG, MEG, AEG
@@ -3024,7 +3024,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_full_pitchsplit['Naive'] = 0
     combined_df = df_full_naive_pitchsplit.append(df_full_pitchsplit)
     #now run the lightgbm function
-    # runlgbmmodel_score(combined_df, optimization=False)
+    runlgbmmodel_score(combined_df, optimization=True)
 
 
     #now plot by animal:

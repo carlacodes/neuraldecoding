@@ -584,7 +584,7 @@ if __name__ == '__main__':
             clust_ids = high_units['ID'].to_list()
             brain_area = high_units['BrainArea'].to_list()
 
-            plot_average_over_time(file_path, pitchshift, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=False, clust_ids = clust_ids)
+            plot_average_over_time(file_path, pitchshift, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=True, clust_ids = clust_ids)
 
 
 

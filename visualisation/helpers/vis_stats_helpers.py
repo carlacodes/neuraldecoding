@@ -321,9 +321,9 @@ def runlgbmmodel_score(df_use, optimization = False):
     if optimization == True:
         params = run_optuna_study_score(dfx.to_numpy(), df_use['Score'].to_numpy())
         #save as npy file
-        np.save('params.npy', params)
+        np.save('params2811.npy', params)
     else:
-        params = np.load('params.npy', allow_pickle='TRUE').item()
+        params = np.load('params2811.npy', allow_pickle='TRUE').item()
 
     X_train, X_test, y_train, y_test = train_test_split(dfx.to_numpy(), df_use['Score'].to_numpy(), test_size=0.2,
                                                         random_state=42, shuffle=True)
