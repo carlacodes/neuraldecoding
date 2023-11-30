@@ -332,13 +332,13 @@ def run_classification(datapath, ferretid, ferretid_fancy='F1902_Eclair', clust_
 
             scores[f'talker{talker}']['target_vs_probe'] = {}
 
-            scores[f'talker{talker}']['target_vs_probe']['nopitchshift'] = target_vs_probe(blocks, talker=talker,
+            scores[f'talker{talker}']['target_vs_probe']['pitchshift'] = target_vs_probe(blocks, talker=talker,
                                                                                            probewords=probeword,
-                                                                                           pitchshift=False,
+                                                                                           pitchshift=True,
                                                                                            window=window, clust_ids=clust_ids, brain_area=brain_area)
 
 
-            np.save(saveDir / f'scores_2022_{ferretid}_{probeword[0]}_{ferretid}_nopitchshift_probe_bs.npy',
+            np.save(saveDir / f'scores_2022_{ferretid}_{probeword[0]}_{ferretid}_pitchshift_probe_bs.npy',
                     scores)
 
 
