@@ -368,7 +368,7 @@ def main():
 
         rec_name = folder
 
-        if folder.__contains__('s2'):
+        if folder.__contains__('s2') and not folder.__contains__('mod'):
             stream = 't_s2'
         elif folder.__contains__('s3'):
             stream = 't_s3'
