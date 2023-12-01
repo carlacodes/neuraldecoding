@@ -1666,6 +1666,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
             df_full = df_full[df_full['ID'] != unit_id]
 
 
+
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
     sns.stripplot(x='BrainArea', y='Score', hue='Below-chance', data=df_full, ax=ax, alpha=0.5)
     sns.violinplot(x='BrainArea', y='Score', data=df_full, ax=ax, inner=None, color='lightgray')
@@ -2216,6 +2217,27 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
 
 
+    #export to csv the amount of units per animal
+    df_of_neural_yield = pd.DataFrame(columns=['Animal', 'Number of single units', 'Number of multi units'])
+    for animal in [ 'F1901_Crumble', 'F1902_Eclair', 'F1812_Nala', 'F2003_Orecchiette']:
+        animal_units = df_full_naive_pitchsplit[df_full_naive_pitchsplit['ID'].str.contains(animal)]
+        print(animal, len(animal_units))
+        df_of_neural_yield = df_of_neural_yield.append(
+            {'Animal': animal, 'Number of single units': np.sum(animal_units['SingleUnit']),
+             'Number of multi units': len(animal_units) - np.sum(animal_units['SingleUnit'])}, ignore_index=True)
+    df_of_neural_yield.to_csv('G:/neural_chapter/neural_yield_naive.csv')
+
+    #export to csv the amount of units per animal
+    df_of_neural_yield = pd.DataFrame(columns=['Animal', 'Number of single units', 'Number of multi units'])
+    for animal in ['F1604_Squinty', 'F1606_Windolene', 'F1702_Zola', 'F1815_Cruella',]:
+        animal_units = df_full_pitchsplit[df_full_pitchsplit['ID'].str.contains(animal)]
+        print(animal, len(animal_units))
+        df_of_neural_yield = df_of_neural_yield.append(
+            {'Animal': animal, 'Number of single units': np.sum(animal_units['SingleUnit']),
+             'Number of multi units': len(animal_units) - np.sum(animal_units['SingleUnit'])}, ignore_index=True)
+    df_of_neural_yield.to_csv('G:/neural_chapter/neural_yield_trained.csv')
+
+
 
 
     for unit_id in df_full_naive_pitchsplit['ID']:
@@ -2229,6 +2251,22 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         #check if all the probe words are below chance
         if np.sum(df_full_unit['Below-chance']) == len(df_full_unit['Below-chance']):
             df_full_pitchsplit = df_full_pitchsplit[df_full_pitchsplit['ID'] != unit_id]
+
+    df_of_neural_yield = pd.DataFrame(columns=['Animal', 'Number of single units', 'Number of multi units'])
+    for animal in [ 'F1901_Crumble', 'F1902_Eclair', 'F1812_Nala', 'F2003_Orecchiette']:
+        animal_units = df_full_naive[df_full_naive['ID'].str.contains(animal)]
+        print(animal, len(animal_units))
+        df_of_neural_yield = df_of_neural_yield.append({'Animal': animal, 'Number of single units': np.sum(animal_units['SingleUnit']),
+                                                        'Number of multi units': len(animal_units) - np.sum(animal_units['SingleUnit'])}, ignore_index=True)
+    df_of_neural_yield.to_csv('G:/neural_chapter/neural_yield_naive_after_pruning.csv')
+
+    df_of_neural_yield = pd.DataFrame(columns=['Animal', 'Number of single units', 'Number of multi units'])
+    for animal in ['F1604_Squinty', 'F1606_Windolene', 'F1702_Zola', 'F1815_Cruella',]:
+        animal_units = df_full[df_full['ID'].str.contains(animal)]
+        print(animal, len(animal_units))
+        df_of_neural_yield = df_of_neural_yield.append({'Animal': animal, 'Number of single units': np.sum(animal_units['SingleUnit']),
+                                                        'Number of multi units': len(animal_units) - np.sum(animal_units['SingleUnit'])}, ignore_index=True)
+    df_of_neural_yield.to_csv('G:/neural_chapter/neural_yield_trained_after_pruning.csv')
 
     ##export the high genfrac units
     df_full_pitchsplit_highsubset = create_gen_frac_and_index_variable(df_full_pitchsplit, high_score_threshold=False, sixty_score_threshold = False,
@@ -2567,6 +2605,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                                                            alternative='two-sided')
     manwhitscore_statnaive, manwhitescore_pvaluenaive = mannwhitneyu(bigconcatenatenaive_nonps, bigconcatenatenaive_ps,
                                                                      alternative='two-sided')
+    manwhitscore_statnaive2, manwhitescore_pvaluenaive2 = mannwhitneyu(bigconcatenatenaive_nonps, bigconcatenatenaive_ps,
+                                                                     alternative='greater')
 
     # Calculate rank-biserial correlation coefficient
 
