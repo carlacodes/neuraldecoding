@@ -74,6 +74,7 @@ def generate_matrix_image(dir):
                 unit_ID_target = np.mean(units_with_instruments_in_ID[unit_id], axis=0)
                 try:
                     length = len(unit_ID_mean)
+                    length_target = len(unit_ID_target)
                     units_with_distractors_in_ID.append(unit_ID_mean)
                     units_with_targ_in_ID.append(unit_ID_target)
 
