@@ -94,7 +94,7 @@ def generate_matrix_image(dir):
         big_matrix_list.append(big_matrix_animal)
     #now plot the big matrix
     #first concatenate the big matrices
-    big_matrix = np.array(big_matrix_list, axis=0)
+    big_matrix = np.concatenate(big_matrix_list, axis=0)
     #now plot the big matrix
     fig, ax = plt.subplots(figsize=(10, 10))
     ax.imshow(big_matrix, cmap='viridis')
