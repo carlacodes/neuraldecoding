@@ -51,17 +51,24 @@ def generate_matrix_image(dir):
         units_with_instruments_in_ID = []
         units_with_distractors_in_ID = []
         for individual_dict in all_mean_units_for_animal:
-            unit_ID_dict = {}
+            unit_ID_dict_dist ={}
+            #predefine the keys
+            for unit in individual_dict:
+                unit_ID_number = unit.split('_')[0]
+                unit_ID_dict_dist[unit_ID_number] = []
+
+
             for unit in individual_dict:
                 if 'instrument' in unit:
                     units_with_instruments_in_ID.append(individual_dict[unit])
                 else:
                     unit_ID_number = unit.split('_')[0]
-                    unit_ID_dict[unit_ID_number] = individual_dict[unit]
+                    unit_ID_dict_dist[unit_ID_number].append(individual_dict[unit])
             #now take the average of the units with the same ID
-            for unit_ID in unit_ID_dict:
-                unit_ID_dict[unit_ID] = np.mean(unit_ID_dict[unit_ID], axis=0)
-                units_with_distractors_in_ID.append(unit_ID_dict)
+            for unit_id in unit_ID_dict_dist:
+                unit_ID_mean = np.mean(unit_ID_dict_dist[unit_id], axis=0)
+                units_with_distractors_in_ID.append(unit_ID_mean)
+
         #now make a big matrix of all the units, subtract the mean of the units with instruments in the ID
         #and then plot the matrix
         #make a big matrix of all the units
