@@ -48,39 +48,52 @@ def generate_matrix_image(dir):
             all_mean_units_for_animal = pickle.load(f)
         #now sort units with instruments in the ID
         #get the units with instruments in the ID
-        units_with_instruments_in_ID = []
+        units_with_targ_in_ID = []
         units_with_distractors_in_ID = []
         for individual_dict in all_mean_units_for_animal:
             unit_ID_dict_dist ={}
+            units_with_instruments_in_ID = {}
             #predefine the keys
             for unit in individual_dict:
                 unit_ID_number = unit.split('_')[0]
                 unit_ID_dict_dist[unit_ID_number] = []
+                units_with_instruments_in_ID[unit_ID_number] = []
 
 
             for unit in individual_dict:
                 if 'instrument' in unit:
-                    units_with_instruments_in_ID.append(individual_dict[unit])
+                    unit_ID_number = unit.split('_')[0]
+
+                    units_with_instruments_in_ID[unit_ID_number].append(individual_dict[unit])
                 else:
                     unit_ID_number = unit.split('_')[0]
                     unit_ID_dict_dist[unit_ID_number].append(individual_dict[unit])
             #now take the average of the units with the same ID
             for unit_id in unit_ID_dict_dist:
                 unit_ID_mean = np.mean(unit_ID_dict_dist[unit_id], axis=0)
-                units_with_distractors_in_ID.append(unit_ID_mean)
+                unit_ID_target = np.mean(units_with_instruments_in_ID[unit_id], axis=0)
+                try:
+                    length = len(unit_ID_mean)
+                    units_with_distractors_in_ID.append(unit_ID_mean)
+                    units_with_targ_in_ID.append(unit_ID_target)
+
+                except:
+                    continue
+
 
         #now make a big matrix of all the units, subtract the mean of the units with instruments in the ID
         #and then plot the matrix
-        #make a big matrix of all the units
-        big_matrix_dist = np.concatenate(units_with_distractors_in_ID, axis=0)
-        big_matrix_inst = np.concatenate(units_with_instruments_in_ID, axis=0)
+        #make a big matrix of all the units, first make the list into a numpy array
+        big_matrix_inst = np.array(units_with_targ_in_ID)
+        #remove any nans from big_matrix_dist
+        big_matrix_dist = np.array(units_with_distractors_in_ID)
 
-        big_matrix_animal = big_matrix_inst - big_matrix_dist
+        big_matrix_animal =big_matrix_inst - big_matrix_dist
         #now append the big matrix to the list of big matrices
         big_matrix_list.append(big_matrix_animal)
     #now plot the big matrix
     #first concatenate the big matrices
-    big_matrix = np.concatenate(big_matrix_list, axis=0)
+    big_matrix = np.array(big_matrix_list, axis=0)
     #now plot the big matrix
     fig, ax = plt.subplots(figsize=(10, 10))
     ax.imshow(big_matrix, cmap='viridis')
