@@ -110,6 +110,8 @@ def run_mixed_effects_on_dataframe(combined_df):
     # Fit the model
     result = mixed_model.fit()
 
+     #order the result.tables[1] by the p value
+    result.summary().tables[1] =  result.summary().tables[1].sort_values(by=['P>|z|'])
     # Print model summary
     print(result.summary())
     var_resid = result.scale
