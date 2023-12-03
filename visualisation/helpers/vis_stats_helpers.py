@@ -78,30 +78,43 @@ def run_optuna_study(dfx, df_use):
     print(params)
     return params
 
-def run_mixed_effects_on_dataframe(dataframe_input):
+def run_mixed_effects_on_dataframe(combined_df):
     #first remove all the below chance scores
-    dataframe_input = dataframe_input[dataframe_input['Below-chance'] == 0]
     #now run the mixed effects model
-    md = smf.mixedlm("Score ~ C(ProbeWord) + C(PitchShift) +C(BrainArea)+C(SingleUnit)", dataframe_input, groups=dataframe_input["ID"])
-    # - trained / naive
-    # - F0
-    # control / roved
-    #
-    # - training
-    # x
-    # pitch
-    # roving
-    # interaction
-    #
-    # - probe
-    # word
-    #
-    # - ferret as random
-    # effect(?
-    #
-    mdf = md.fit()
-    print(mdf.summary())
-    return mdf
+    for unit_id in combined_df['ID']:
+        #get the ferret ID
+        if 'zola' in unit_id:
+            ferret_id = 1
+        elif 'cruella' in unit_id:
+            ferret_id = 2
+        elif 'windolene' in unit_id:
+            ferret_id = 3
+        elif 'squinty' in unit_id:
+            ferret_id = 4
+        elif 'Crumble' in unit_id:
+            ferret_id = 5
+        elif 'Eclair' in unit_id:
+            ferret_id = 6
+        elif 'ore' in unit_id:
+            ferret_id = 7
+        elif 'nala' in unit_id:
+            ferret_id = 8
+        #add the ferret ID to the dataframe
+        combined_df.loc[combined_df['ID'] == unit_id, 'FerretID'] = ferret_id
+
+
+    model_formula = "Score ~ Naive +  Pitch-shifted+ (Naive * Pitch-shifted )+ Probeword"
+
+    mixed_model = sm.MixedLM.from_formula(model_formula, data=combined_df, groups=combined_df['FerretID'])
+
+    # Fit the model
+    result = mixed_model.fit()
+
+    # Print model summary
+    print(result.summary())
+
+
+    return result
 def run_anova_on_dataframe(df_full_pitchsplit):
     df_full_pitchsplit_anova = df_full_pitchsplit.copy()
 
