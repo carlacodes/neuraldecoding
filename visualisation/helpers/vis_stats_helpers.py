@@ -95,7 +95,7 @@ def run_mixed_effects_on_dataframe(combined_df):
             ferret_id = 5
         elif 'Eclair' in unit_id:
             ferret_id = 6
-        elif 'ore' in unit_id:
+        elif 'Ore' in unit_id:
             ferret_id = 7
         elif 'nala' in unit_id:
             ferret_id = 8
@@ -103,15 +103,30 @@ def run_mixed_effects_on_dataframe(combined_df):
         combined_df.loc[combined_df['ID'] == unit_id, 'FerretID'] = ferret_id
 
 
-    model_formula = "Score ~ Naive +  Pitch-shifted+ (Naive * Pitch-shifted )+ Probeword"
+    model_formula = "Score ~ Naive +  PitchShift + (Naive * PitchShift )+ ProbeWord"
 
-    mixed_model = sm.MixedLM.from_formula(model_formula, data=combined_df, groups=combined_df['FerretID'])
+    mixed_model = smf.mixedlm(model_formula, data=combined_df, groups=combined_df['FerretID'])
 
     # Fit the model
     result = mixed_model.fit()
 
     # Print model summary
     print(result.summary())
+    var_resid = result.scale
+    var_random_effect = float(result.cov_re.iloc[0])
+    var_fixed_effect = result.predict(combined_df).var()
+
+    total_var = var_fixed_effect + var_random_effect + var_resid
+    marginal_r2 = var_fixed_effect / total_var
+    conditional_r2 = (var_fixed_effect + var_random_effect) / total_var
+
+    #export the results to a csv file
+    result.summary().tables[0].to_csv('G:/neural_chapter/figures/mixed_effects_model_pg1.csv')
+    result.summary().tables[1].to_csv('G:/neural_chapter/figures/mixed_effects_model_pg2.csv')
+    #export the marginal and conditional r2 to a csv file
+    marginal_and_conditional_r2 = pd.DataFrame([marginal_r2, conditional_r2], columns = ['R2'], index = ['Marginal', 'Conditional'])
+    marginal_and_conditional_r2.to_csv('G:/neural_chapter/figures/marginal_and_conditional_r2.csv')
+
 
 
     return result
