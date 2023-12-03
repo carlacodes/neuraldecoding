@@ -37,10 +37,13 @@ from scipy import io
 from scipy import stats
 import pickle
 
-def generate_matrix_image(dir):
-
+def generate_matrix_image(dir, trained = True):
+    if trained == True:
+        animal_list = ['F1702_Zola', 'F1815_Cruella', 'F1604_Squinty', 'F1606_Windolene']
+    else:
+        animal_list = ['F2003_Orecchiette']
     big_matrix_list = []
-    for animal in ['F1702_Zola', 'F1815_Cruella', 'F1604_Squinty', 'F1606_Windolene']:
+    for animal in animal_list:
         print(animal)
         pkl_path = Path(f'E:/rastersms4spikesortinginter/{animal}/npyfiles_dict')
         #load the pkl file
@@ -95,14 +98,26 @@ def generate_matrix_image(dir):
     #now plot the big matrix
     #first concatenate the big matrices
     big_matrix = np.concatenate(big_matrix_list, axis=0)
-    #now plot the big matrix
-    fig, ax = plt.subplots(figsize=(10, 10))
-    ax.imshow(big_matrix, cmap='viridis')
-    ax.set_xlabel('Time (ms)')
-    ax.set_ylabel('Units')
-    ax.set_title('Big matrix of all units')
-    fig.savefig('G:/neural_chapter/figures/big_matrix_all_units.png')
 
+    #now plot the big matrix
+    fig, ax = plt.subplots(figsize=(10, 10))  # Adjust the figsize to increase width
+    im = ax.imshow(big_matrix, cmap='viridis', aspect='auto')  # Set aspect='auto' to adjust aspect ratio
+    ax.set_xticks([0, 10, 20, 30, 40, 50])
+    ax.set_xticklabels([0,0.1,0.2,0.3,0.4,0.5], fontsize = 15)
+    ax.set_xlabel('Time (s)', fontsize=20)
+    ax.set_ylabel('Unit number', fontsize = 20)
+    plt.yticks(fontsize=15)
+    im.set_clim(-50, 100)
+
+    if trained == True:
+        ax.set_title('Mean target - mean distractor firing rates, trained', fontsize=20)
+    else:
+        ax.set_title('Mean target - mean distractor firing rates, naive', fontsize=20)
+    cbar = plt.colorbar(im, ax=ax)
+    cbar.ax.tick_params(labelsize=15)  # Adjust the font size (change 12 to your desired size)
+
+    fig.savefig(f'G:/neural_chapter/figures/big_matrix_all_units_trained_{trained}.png')
+    plt.show()
 
 
 
@@ -115,7 +130,7 @@ def main():
 
     directories = ['zola_2022']  # , 'Trifle_July_2022']
     for dir in directories:
-        generate_matrix_image(dir)
+        generate_matrix_image(dir, trained = False)
 
 
 if __name__ == '__main__':
