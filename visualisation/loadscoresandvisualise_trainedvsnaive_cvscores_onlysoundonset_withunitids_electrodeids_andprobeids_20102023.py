@@ -16,7 +16,7 @@ from sklearn.model_selection import cross_val_score
 from sklearn.metrics import mean_squared_error
 import json
 from scipy.stats import mannwhitneyu
-from helpers.vis_stats_helpers import run_anova_on_dataframe, create_gen_frac_variable, runlgbmmodel_score, create_gen_frac_and_index_variable
+from helpers.vis_stats_helpers import run_mixed_effects_on_dataframe, run_anova_on_dataframe, create_gen_frac_variable, runlgbmmodel_score, create_gen_frac_and_index_variable
 
 def find_repeating_substring(text):
     text_length = len(text)
@@ -3064,7 +3064,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_full_pitchsplit['Naive'] = 0
     combined_df = df_full_naive_pitchsplit.append(df_full_pitchsplit)
     #now run the lightgbm function
-    runlgbmmodel_score(combined_df, optimization=True)
+    run_mixed_effects_on_dataframe(combined_df)
+    # runlgbmmodel_score(combined_df, optimization=False)
 
 
     #now plot by animal:

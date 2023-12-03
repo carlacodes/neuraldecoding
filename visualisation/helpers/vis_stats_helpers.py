@@ -78,7 +78,30 @@ def run_optuna_study(dfx, df_use):
     print(params)
     return params
 
-
+def run_mixed_effects_on_dataframe(dataframe_input):
+    #first remove all the below chance scores
+    dataframe_input = dataframe_input[dataframe_input['Below-chance'] == 0]
+    #now run the mixed effects model
+    md = smf.mixedlm("Score ~ C(ProbeWord) + C(PitchShift) +C(BrainArea)+C(SingleUnit)", dataframe_input, groups=dataframe_input["ID"])
+    # - trained / naive
+    # - F0
+    # control / roved
+    #
+    # - training
+    # x
+    # pitch
+    # roving
+    # interaction
+    #
+    # - probe
+    # word
+    #
+    # - ferret as random
+    # effect(?
+    #
+    mdf = md.fit()
+    print(mdf.summary())
+    return mdf
 def run_anova_on_dataframe(df_full_pitchsplit):
     df_full_pitchsplit_anova = df_full_pitchsplit.copy()
 
