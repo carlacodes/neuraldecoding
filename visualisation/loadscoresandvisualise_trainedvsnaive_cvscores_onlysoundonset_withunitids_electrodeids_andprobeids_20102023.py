@@ -2909,28 +2909,66 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_full_pitchsplit_violinplot = df_full_pitchsplit
     df_full_pitchsplit_violinplot['ProbeWord'] = df_full_pitchsplit_violinplot['ProbeWord'].replace({ '(2,2)': 'craft', '(3,3)': 'in contrast to', '(4,4)': 'when a', '(5,5)': 'accurate', '(6,6)': 'pink noise', '(7,7)': 'of science', '(8,8)': 'rev. instruments', '(9,9)': 'boats', '(10,10)': 'today',
         '(13,13)': 'sailor', '(15,15)': 'but', '(16,16)': 'researched', '(18,18)': 'took', '(19,19)': 'the vast', '(20,20)': 'today', '(21,21)': 'he takes', '(22,22)': 'becomes', '(23,23)': 'any', '(24,24)': 'more'})
+    upper_quartile = np.percentile(df_full_pitchsplit_violinplot['Score'], 75)
+
+    df_full_pitchsplit_violinplot['MeanScore'] = df_full_pitchsplit_violinplot.groupby('ID')[
+        'Score'].transform('mean')
+    # get the top quartile of units
+    df_full_pitchsplit_violinplot_highsubset = df_full_pitchsplit_violinplot[
+        df_full_pitchsplit_violinplot['MeanScore'] > upper_quartile]
 
     #create a custom palette`
     custom_colors = ["#0d0887","#7e03a8","#cc4778","#f89540","#f0f921"]
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
-    df_above_chance_ps = df_full_pitchsplit[df_full_pitchsplit['Below-chance'] == 0]
-    df_below_chance_ps = df_full_pitchsplit[df_full_pitchsplit['Below-chance'] == 1]
+    df_above_chance_ps = df_full_pitchsplit_violinplot[df_full_pitchsplit_violinplot['Below-chance'] == 0]
+    df_below_chance_ps = df_full_pitchsplit_violinplot[df_full_pitchsplit_violinplot['Below-chance'] == 1]
 
     sns.stripplot(x='ProbeWord', y='Score', data=df_above_chance_ps, ax=ax, size=3, dodge=True, palette=custom_colors, edgecolor = 'k', linewidth=0.2, hue='PitchShift', jitter = True)
     sns.stripplot(x='ProbeWord', y='Score', data=df_below_chance_ps, ax=ax, size=3, dodge=True, edgecolor = 'k', linewidth=0.2,
                   alpha=0.25, jitter=False,  hue = 'PitchShift', palette=custom_colors)
 
-    sns.violinplot(x='ProbeWord', y='Score', data=df_full_pitchsplit, ax=ax, hue = 'PitchShift', palette=custom_colors)
+    sns.violinplot(x='ProbeWord', y='Score', data=df_full_pitchsplit_violinplot, ax=ax, color = 'white', hue = 'PitchShift')
+    ax.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1])
     ax.set_xticklabels(ax.get_xticklabels(), rotation=45, horizontalalignment='right', fontsize = 30)
     ax.set_yticklabels(ax.get_yticklabels(), fontsize = 30)
     # ax.set_ylim([0, 1])
     #get legend
     handles, labels = ax.get_legend_handles_labels()
     ax.legend(handles=handles[0:2], labels=['Control', 'Pitch-shifted'], title=None, fontsize = 18)
+    plt.ylim([0,1])
+
     plt.ylabel('Decoding Score', fontsize = 40)
     plt.xlabel(None)
-    plt.title('Trained animals'' scores over probe word', fontsize = 40 )
+
+    plt.title("Trained animals' scores over probe word", fontsize = 40 )
     plt.savefig(f'G:/neural_chapter/figures/trained_animals_overdistractor_dividedbypitchshift.png', dpi = 300, bbox_inches = 'tight')
+    plt.show()
+
+    fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
+    df_above_chance_ps = df_full_pitchsplit_violinplot_highsubset[df_full_pitchsplit_violinplot_highsubset['Below-chance'] == 0]
+
+    sns.stripplot(x='ProbeWord', y='Score', data=df_above_chance_ps, ax=ax, size=3, dodge=True, palette=custom_colors,
+                  edgecolor='k', linewidth=0.2, hue='PitchShift', jitter=True)
+    # sns.stripplot(x='ProbeWord', y='Score', data=df_below_chance_ps, ax=ax, size=3, dodge=True, edgecolor='k',
+    #               linewidth=0.2,
+    #               alpha=0.25, jitter=False, hue='PitchShift', palette=custom_colors)
+
+    sns.violinplot(x='ProbeWord', y='Score', data=df_above_chance_ps, ax=ax, color='white', hue='PitchShift')
+    ax.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1])
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, horizontalalignment='right', fontsize=30)
+    ax.set_yticklabels(ax.get_yticklabels(), fontsize=30)
+    # ax.set_ylim([0, 1])
+    # get legend
+    handles, labels = ax.get_legend_handles_labels()
+    ax.legend(handles=handles[0:2], labels=['Control', 'Pitch-shifted'], title=None, fontsize=18)
+    plt.ylim([0, 1])
+
+    plt.ylabel('Decoding Score', fontsize=40)
+    plt.xlabel(None)
+
+    plt.title("Trained animals' scores, \n top performing units, over probe word", fontsize=40)
+    plt.savefig(f'G:/neural_chapter/figures/trained_animals_topunits_overdistractor_dividedbypitchshift.png', dpi=300,
+                bbox_inches='tight')
     plt.show()
 
     df_kruskal = pd.DataFrame(columns=['ProbeWord', 'Kruskal_pvalue_trained', 'less than 0.05', 'epsilon_squared'])
@@ -2965,8 +3003,15 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_full_naive_pitchsplit_violinplot = df_full_naive_pitchsplit
     df_full_naive_pitchsplit_violinplot['ProbeWord'] = df_full_naive_pitchsplit_violinplot['ProbeWord'].replace({ '(2,2)': 'craft', '(3,3)': 'in contrast to', '(4,4)': 'when a', '(5,5)': 'accurate', '(6,6)': 'pink noise', '(7,7)': 'of science', '(8,8)': 'rev. instruments', '(9,9)': 'boats', '(10,10)': 'today',
         '(13,13)': 'sailor', '(15,15)': 'but', '(16,16)': 'researched', '(18,18)': 'took', '(19,19)': 'the vast', '(20,20)': 'today', '(21,21)': 'he takes', '(22,22)': 'becomes', '(23,23)': 'any', '(24,24)': 'more'})
+    #calculate the top quartile mean
+    upper_quartile = np.percentile(df_full_naive_pitchsplit_violinplot['Score'], 75)
+
+    df_full_naive_pitchsplit_violinplot['MeanScore'] = df_full_naive_pitchsplit_violinplot.groupby('ID')['Score'].transform('mean')
+    #get the top quartile of units
+    df_full_naive_pitchsplit_violinplot_highsubset = df_full_naive_pitchsplit_violinplot[df_full_naive_pitchsplit_violinplot['MeanScore'] >upper_quartile]
 
     #now plot by the probe word for the naive animals
+
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
     df_above_chance = df_full_naive_pitchsplit_violinplot[df_full_naive_pitchsplit_violinplot['Below-chance'] == 0]
     df_below_chance = df_full_naive_pitchsplit_violinplot[df_full_naive_pitchsplit_violinplot['Below-chance'] == 1]
@@ -2976,16 +3021,40 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     sns.stripplot(x='ProbeWord', y='Score', data=df_below_chance, ax=ax, size=3, dodge=True, color='lightgray',
                   alpha=0.1, jitter=True, hue='PitchShift', palette=custom_colors_naive, edgecolor='k', linewidth=0.2)
 
-    sns.violinplot(x='ProbeWord', y='Score', data=df_full_naive_pitchsplit, ax=ax, palette= custom_colors_naive, hue = 'PitchShift')
+    sns.violinplot(x='ProbeWord', y='Score', data=df_full_naive_pitchsplit, ax=ax, color = 'white', hue = 'PitchShift')
     #get the legend handles
     plt.ylabel('Decoding Score', fontsize = 40)
     plt.xlabel(None)
     handles, labels = ax.get_legend_handles_labels()
     ax.set_xticklabels(ax.get_xticklabels(), rotation=45, horizontalalignment='right', fontsize = 30)
+    ax.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1])
     ax.set_yticklabels(ax.get_yticklabels(), fontsize = 30)
+
     ax.legend(handles=handles[0:2], labels=['Control', 'Pitch-shifted'], title=None, fontsize = 18)
-    plt.title('Naive animals'' scores over distractor word', fontsize = 40)
+    plt.title("Naive animals' scores over distractor word", fontsize = 40)
     plt.savefig(f'G:/neural_chapter/figures/naive_animals_overdistractor_dividedbypitchshift.png', dpi = 300, bbox_inches='tight')
+    plt.show()
+
+    fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
+    df_above_chance = df_full_naive_pitchsplit_violinplot_highsubset[df_full_naive_pitchsplit_violinplot['Below-chance'] == 0]
+    custom_colors_naive = ["#5ec962","#fde725"]
+    sns.stripplot(x='ProbeWord', y='Score', data=df_above_chance, ax=ax, size=3, dodge=True, palette=custom_colors_naive,
+                  hue='PitchShift', edgecolor='k', linewidth=0.2, jitter=True)
+    # sns.stripplot(x='ProbeWord', y='Score', data=df_below_chance, ax=ax, size=3, dodge=True, color='lightgray',
+    #               alpha=0.1, jitter=True, hue='PitchShift', palette=custom_colors_naive, edgecolor='k', linewidth=0.2)
+
+    sns.violinplot(x='ProbeWord', y='Score', data=df_above_chance, ax=ax, color = 'white', hue = 'PitchShift')
+    #get the legend handles
+    plt.ylabel('Decoding Score', fontsize = 40)
+    plt.xlabel(None)
+    handles, labels = ax.get_legend_handles_labels()
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, horizontalalignment='right', fontsize = 30)
+    ax.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1])
+    ax.set_yticklabels(ax.get_yticklabels(), fontsize = 30)
+
+    ax.legend(handles=handles[0:2], labels=['Control', 'Pitch-shifted'], title=None, fontsize = 18)
+    plt.title("Naive animals' scores, \n top performing units, over distractor word",fontsize = 40)
+    plt.savefig(f'G:/neural_chapter/figures/naive_animals_topunits_overdistractor_dividedbypitchshift.png', dpi = 300, bbox_inches='tight')
     plt.show()
 
     df_kruskal = pd.DataFrame(columns=['ProbeWord', 'Kruskal_pvalue', 'less than 0.05', 'epsilon_squared'])
@@ -3067,7 +3136,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     combined_df = df_full_naive_pitchsplit.append(df_full_pitchsplit)
     #now run the lightgbm function
     run_mixed_effects_on_dataframe(combined_df)
-    # runlgbmmodel_score(combined_df, optimization=False)
+    runlgbmmodel_score(combined_df, optimization=True)
 
 
     #now plot by animal:
