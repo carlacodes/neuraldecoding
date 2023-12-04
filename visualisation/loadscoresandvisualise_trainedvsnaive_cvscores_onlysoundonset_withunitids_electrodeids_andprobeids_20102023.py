@@ -2758,6 +2758,26 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         fig, ax = plt.subplots(1, dpi=300)
         sns.violinplot(x='BrainArea', y='MeanScore', data=df_full_pitchsplit_plot, ax=ax, inner=None, label = None, color='lightgray')
         sns.stripplot(x='BrainArea', y='MeanScore', data=df_full_pitchsplit_plot, color = 'purple',label = 'trained', ax=ax, dodge=False)
+        #plot the naive data adjacent, shift the x axis by 0.2
+        x_shift = 4
+        #remove AEG values from df_full_naive_pitchsplit_plot
+        df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['BrainArea'] != 'AEG']
+        sns.violinplot(x='BrainArea', y='MeanScore', data=df_full_naive_pitchsplit_plot, ax=ax, inner=None, label=None,
+                       color='lightgray',
+                       position=[p + x_shift for p in range(len(df_full_naive_pitchsplit_plot['BrainArea'].unique()))])
+        # Apply the x-shift manually to the strip plot points for the second set of data
+        sns.stripplot(x='BrainArea', y='MeanScore', data=df_full_naive_pitchsplit_plot, ax=ax, color='cyan',
+                      label='naive', dodge=False, jitter=True, linewidth=1, edgecolor='gray', marker='o', size=5,
+                      alpha=0.7)
+
+        num_categories = len(df_full_naive_pitchsplit_plot['BrainArea'].unique())
+        for stripplot in ax.collections[num_categories:]:
+            stripplot.set_offsets(stripplot.get_offsets() + [x_shift, 0])
+
+        # plt.xlim(-0.5, 1.5)
+
+
+
         # do a mann whitney u test between the meanscores for PEG and MEG
         stat_peg, p_peg = mannwhitneyu(df_full_pitchsplit_plot_peg['MeanScore'], df_full_pitchsplit_plot_meg['MeanScore'], alternative='two-sided')
         if options == 'index':
@@ -2772,6 +2792,28 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         #reinsert the handles and labeels:
 
         plt.savefig(f'G:/neural_chapter/figures/meanscore_highthreshold_violin_bybrainarea_{options}.png')
+
+        df_full_pitchsplit_plot['Group'] = 'Trained'
+        df_full_naive_pitchsplit_plot['Group'] = 'Naive'
+        combined_df = pd.concat([df_full_pitchsplit_plot, df_full_naive_pitchsplit_plot])
+
+        # Create the plot
+        fig, ax = plt.subplots(figsize=(8, 6), dpi=300)
+        sns.violinplot(x='BrainArea', y='MeanScore', hue='Group', data=combined_df, ax=ax, split=True,
+                       inner='quartiles', palette={"Trained": "purple", "Naive": "cyan"})
+        sns.stripplot(x='BrainArea', y='MeanScore', hue='Group', data=combined_df, ax=ax, dodge=True, jitter=True,
+                      linewidth=1, edgecolor='gray', palette={"Trained": "purple", "Naive": "cyan"})
+        if options == 'index':
+            plt.xlabel(f'Mean Decoding Score of Top 25% of Units', fontsize=20)
+        elif options == 'frac':
+            plt.xlabel(f'Mean Decoding Score of Top 25% of Units', fontsize=20)
+        plt.ylabel('Mean Score', fontsize=20)
+
+        handles, labels = ax.get_legend_handles_labels()
+        ax.legend(handles=[handles[0], handles[1]], labels=['trained', 'naive'], title=None, fontsize=18)
+        plt.savefig(f'G:/neural_chapter/figures/meanscore_highthreshold_naive_trained_violin_bybrainarea_{options}.png')
+
+        plt.show()
 
         fig, ax = plt.subplots(1, dpi=300)
         sns.violinplot(x='BrainArea', y='GenFrac', data=df_full_naive_pitchsplit_plot, ax=ax, inner=None, color='lightgray')
@@ -3136,7 +3178,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     combined_df = df_full_naive_pitchsplit.append(df_full_pitchsplit)
     #now run the lightgbm function
     run_mixed_effects_on_dataframe(combined_df)
-    runlgbmmodel_score(combined_df, optimization=True)
+    # runlgbmmodel_score(combined_df, optimization=False)
 
 
     #now plot by animal:

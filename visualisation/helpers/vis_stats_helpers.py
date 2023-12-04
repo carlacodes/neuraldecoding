@@ -464,7 +464,7 @@ def runlgbmmodel_score(df_use, optimization = False):
         "naive": naive,
         "SHAP value": shap_values
     })
-    custom_colors = ['cyan', 'hotpink', "purple"]  # Add more colors as needed
+    custom_colors = ['hotpink', 'cyan',]  # Add more colors as needed
 
     fig, ax = plt.subplots(figsize=(10, 7))
     sns.violinplot(x="naive", y="SHAP value", hue="pitchshift", data=data_df, split=True, inner="quart",
@@ -492,7 +492,6 @@ def runlgbmmodel_score(df_use, optimization = False):
         "naive": naive_values,
         "SHAP value": shap_values
     })
-    custom_colors = ['cyan', 'hotpink', "purple"]  # Add more colors as needed
 
     fig, ax = plt.subplots(figsize=(10, 6))
     sns.violinplot(x="pitchshift", y="SHAP value", hue="naive", data=data_df, split=True, inner="quart",
@@ -512,25 +511,25 @@ def runlgbmmodel_score(df_use, optimization = False):
     fig, ax = plt.subplots(dpi = 300)
     BrainArea = shap_values2[:, "BrainArea"].data
     naive_values = shap_values2[:, "Naive"].data
-    shap_values = shap_values2[:, "BrainArea"].values
+    shap_values = shap_values2[:, "Naive"].values
     data_df = pd.DataFrame({
         "BrainArea": BrainArea,
         "naive": naive_values,
         "SHAP value": shap_values
     })
-    sns.violinplot(x="BrainArea", y="SHAP value", hue="naive", data=data_df, split=True, inner="quart",
-                     palette=custom_colors, ax=ax, order = [0,2, 1])
-    ax.set_xlim(-0.5, 1.5)
-    ax.set_ylim(-0.02, 0.02)
-    ax.set_xticks([0, 1])
-    ax.set_xticklabels(['MEG', 'PEG'], fontsize=18, rotation=45)
+    sns.violinplot(x="naive", y="SHAP value", hue="BrainArea", data=data_df, split=True, inner="quart",
+                     palette=custom_colors, ax=ax,)
+    # ax.set_xlim(-0.5, 1.5)
+    # ax.set_ylim(-0.02, 0.02)
+    # ax.set_xticks([0, 1])
+    ax.set_xticklabels(['Trained', 'Naive'], fontsize=18, rotation=45)
     plt.xlabel('Brain Area', fontsize=18)
     ax.set_ylabel('Impact on decoding score', fontsize=18)
     legend_handles, legend_labels = ax.get_legend_handles_labels()
     #reinsert the legend_hanldes and labels
-    ax.legend(legend_handles, ['Trained', 'Naive'], loc='upper right', fontsize=13)
+    ax.legend(legend_handles, ['PEG', 'MEG'], loc='upper right', fontsize=13)
     plt.xlabel('Brain Area', fontsize=18)
-    plt.savefig(f'G:/neural_chapter/figures/lightgbm_violinplot_brainarea.png', dpi = 300, bbox_inches='tight')
+    plt.savefig(f'G:/neural_chapter/figures/lightgbm_violinplot_naive_brainarea.png', dpi = 300, bbox_inches='tight')
     plt.show()
 
 
@@ -580,6 +579,7 @@ def runlgbmmodel_score(df_use, optimization = False):
     features, importance = zip(*sorted_feature_importance)
     fig, ax = plt.subplots(dpi = 300, figsize=(10, 3))
     plt.barh(features, importance, color = 'skyblue', edgecolor = 'black')
+    ax.set_xticks(np.arange(0, 0.22, 0.02))
     ax.set_xticklabels(ax.get_xticks(), fontsize=16)
     ax.set_yticklabels(features, fontsize=20, rotation = 45)
     plt.xlabel('Permutation Importance', fontsize = 20)
