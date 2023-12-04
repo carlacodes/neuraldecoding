@@ -79,8 +79,8 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
                        (12, 12), (13, 13), (14, 14)]
 
     animal_id_num = animal.split('_')[0]
-    clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
-                 st.annotations['group'] != 'noise']
+    # clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
+    #              st.annotations['group'] != 'noise']
     spiketraindict_means = {}
     for j, cluster_id in enumerate(clust_ids):
         #make a figure of 2 columns and 10 rows
@@ -327,7 +327,7 @@ def generate_rasters(dir):
     datapath_big = Path(f'D:/ms4output_16102023/F1606_Windolene/')
     animal = str(datapath_big).split('\\')[-1]
     datapaths = [x for x in datapath_big.glob('**/mountainsort4/phy//') if x.is_dir()]
-    bigoutputfolder = Path(f'E:/rastersms4spikesortinginter/{animal}/npyfiles_dict')
+    bigoutputfolder = Path(f'E:/rastersms4spikesortinginter/{animal}/npyfiles_dict_highperforming')
     bigoutputfolder.mkdir(exist_ok=True, parents=True)
     all_mean_units_for_animal = []
     for datapath in datapaths:
