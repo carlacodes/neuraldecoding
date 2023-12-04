@@ -124,10 +124,43 @@ def run_mixed_effects_on_dataframe(combined_df):
 
     #export the results to a csv file
     result.summary().tables[0].to_csv('G:/neural_chapter/figures/mixed_effects_model_pg1.csv')
-    result.summary().tables[1].to_csv('G:/neural_chapter/figures/mixed_effects_model_pg2.csv')
+    result.summary().tables[1].sort_values(by=['P>|z|']).to_csv('G:/neural_chapter/figures/mixed_effects_model_pg2.csv')
     #export the marginal and conditional r2 to a csv file
     marginal_and_conditional_r2 = pd.DataFrame([marginal_r2, conditional_r2], columns = ['R2'], index = ['Marginal', 'Conditional'])
     marginal_and_conditional_r2.to_csv('G:/neural_chapter/figures/marginal_and_conditional_r2.csv')
+
+    #make a barplot of the coefficients and their confidence intervals
+    #first get the coefficients
+
+    coefficients = result.params
+    #sort the coefficients by ascending coefficient value
+    coefficients = coefficients.sort_values()
+    #get the confidence intervals
+    ci = result.conf_int()
+    p_values = result.pvalues
+    #get the standard errors
+    se = result.bse
+    #reorganise the confidence intervals
+    ci = ci.reindex(coefficients.index)
+    #reorganise the standard errors
+    se = se.reindex(coefficients.index)
+    #reorganise the p values
+    p_values = p_values.reindex(coefficients.index)
+    #now plot the coefficients
+    fig, ax = plt.subplots(dpi = 300, figsize=(20, 10))
+    #sort coefficients index by ascending coefficient value
+    ax.bar(coefficients.index, coefficients, yerr = se, color = 'forestgreen', edgecolor = 'black')
+    #if the p value is less than 0.05, then add a star
+    for i, p in enumerate(coefficients.index):
+        if p_values[i] < 0.05:
+            ax.text(i, coefficients[i] + 0.01, '*', fontsize = 20)
+    ax.set_xticks(np.arange(0, len(coefficients.index), 1))
+    ax.set_xticklabels(coefficients.index, rotation = 90, fontsize = 16)
+    ax.set_ylabel('Coefficient value', fontsize = 20)
+    ax.set_xlabel('Feature', fontsize = 20)
+    ax.set_title('Coefficients of the mixed effects model predicting decoding score', fontsize = 25)
+    plt.savefig(f'G:/neural_chapter/figures/mixed_effects_model_coefficients.png', dpi = 300, bbox_inches = 'tight')
+    plt.show()
 
 
 
