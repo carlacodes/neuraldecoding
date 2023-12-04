@@ -2462,7 +2462,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     # ax.legend()
     plt.savefig('G:/neural_chapter/figures/diffF0distribution_20062023.png', dpi=1000)
     plt.show()
-    fig, ax = plt.subplots(1, figsize=(9, 9), dpi=300)
+    fig, ax = plt.subplots(1, figsize=(8, 8), dpi=300)
     ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.5,
                label='trained')
     ax.scatter(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, marker='P', color='darkcyan', alpha=0.5,
@@ -2485,11 +2485,13 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     ax.set_xlabel('LSTM decoding score, F0 control', fontsize=30)
 
     ax.set_title('LSTM decoder scores for' + ' F0 control vs. roved,\n ' + ' trained and naive animals', fontsize=30)
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=20)
 
     plt.legend(fontsize=15, ncol=2)
     fig.tight_layout()
-    plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.png', dpi=1000)
-    plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000)
+    plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.png', dpi=1000, bbox_inches = 'tight')
+    plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000, bbox_inches = 'tight')
     plt.show()
 
     unique_unit_ids_naive = df_full_naive_pitchsplit['ID'].unique()
@@ -2497,18 +2499,18 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     # make a kde plot
     # makea  dataframe
     df_naive = pd.DataFrame({'F0_control': bigconcatenatenaive_nonps, 'F0_roved': bigconcatenatenaive_ps})
-    fig, ax = plt.subplots(1, figsize=(9, 9), dpi=300)
+    fig, ax = plt.subplots(1, figsize=(8, 8), dpi=300)
     sns.kdeplot(df_naive, x='F0_control', y='F0_roved', shade=True, shade_lowest=False, ax=ax, label='naive')
     plt.xticks(fontsize=20)
     plt.yticks(fontsize=20)
     plt.title('F0 control vs. roved, naive animals', fontsize=30)
     plt.ylabel('F0 roved score', fontsize=30)
     plt.xlabel('F0 control score', fontsize=30)
-    plt.savefig('G:/neural_chapter/figures/kdeplot_naiveanimals.png', dpi=300)
+    plt.savefig('G:/neural_chapter/figures/kdeplot_naiveanimals.png', dpi=300, bbox_inches = 'tight')
     plt.show()
 
     df_trained_kde = pd.DataFrame({'F0_control': bigconcatenatetrained_nonps, 'F0_roved': bigconcatenatetrained_ps})
-    fig, ax = plt.subplots(1, figsize=(9, 9), dpi=300)
+    fig, ax = plt.subplots(1, figsize=(8, 8), dpi=300)
     sns.kdeplot(df_trained_kde, x='F0_control', y='F0_roved', cmap="Reds", shade=True, shade_lowest=False, ax=ax,
                 label='trained')
     plt.xticks(fontsize=20)
@@ -2516,7 +2518,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     plt.title('F0 control vs. roved, trained animals', fontsize=30)
     plt.ylabel('F0 roved score', fontsize=30)
     plt.xlabel('F0 control score', fontsize=30)
-    plt.savefig('G:/neural_chapter/figures/kdeplot_trainedanimals.png', dpi=300)
+    plt.savefig('G:/neural_chapter/figures/kdeplot_trainedanimals.png', dpi=300, bbox_inches = 'tight')
     plt.show()
     manwhitscorecontrolf0 = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatenaive_nonps, alternative='greater')
 
@@ -3176,7 +3178,7 @@ def plot_general_distributions(dictlist, dictlist_naive, dictlist_trained):
 
     ax.set_ylabel('LSTM decoding score, F0 roved', fontsize=18)
     ax.set_xlabel('LSTM decoding score, F0 control', fontsize=18)
-    ax.set_title('LSTM decoder scores for' + ' F0 control vs. roved,\n ' + ' trained and naive animals', fontsize=20)
+    ax.set_title('LSTM decoder scores for' + ' F0 control vs. roved,\n ' + ' trained and naive animals', fontsize=30)
     plt.legend( fontsize=12, ncol=2)
     fig.tight_layout()
     plt.show()
