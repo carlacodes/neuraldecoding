@@ -45,7 +45,7 @@ def generate_matrix_image(dir, trained = True):
     big_matrix_list = []
     for animal in animal_list:
         print(animal)
-        pkl_path = Path(f'E:/rastersms4spikesortinginter/{animal}/npyfiles_dict')
+        pkl_path = Path(f'E:/rastersms4spikesortinginter/{animal}/npyfiles_dict_highperforming')
         #load the pkl file
         with open(pkl_path / 'spiketraindict_means.pkl', 'rb') as f:
             all_mean_units_for_animal = pickle.load(f)
@@ -116,7 +116,7 @@ def generate_matrix_image(dir, trained = True):
     cbar = plt.colorbar(im, ax=ax)
     cbar.ax.tick_params(labelsize=15)  # Adjust the font size (change 12 to your desired size)
 
-    fig.savefig(f'G:/neural_chapter/figures/big_matrix_all_units_trained_{trained}.png')
+    fig.savefig(f'G:/neural_chapter/figures/big_matrix_highperforming_units_trained_{trained}.png')
     plt.show()
 
 
@@ -130,7 +130,7 @@ def main():
 
     directories = ['zola_2022']  # , 'Trifle_July_2022']
     for dir in directories:
-        generate_matrix_image(dir, trained = False)
+        generate_matrix_image(dir, trained = True)
 
 
 if __name__ == '__main__':
