@@ -2808,6 +2808,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         elif options == 'frac':
             plt.xlabel(f'Mean Decoding Score of Top 25% of Units', fontsize=20)
         plt.ylabel('Mean Score', fontsize=20)
+        plt.yticks(fontsize=15)
+        plt.xticks(fontsize=15)
 
         handles, labels = ax.get_legend_handles_labels()
         ax.legend(handles=[handles[0], handles[1]], labels=['trained', 'naive'], title=None, fontsize=18)
@@ -3178,7 +3180,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     combined_df = df_full_naive_pitchsplit.append(df_full_pitchsplit)
     #now run the lightgbm function
     run_mixed_effects_on_dataframe(combined_df)
-    # runlgbmmodel_score(combined_df, optimization=False)
+    runlgbmmodel_score(combined_df, optimization=False)
 
 
     #now plot by animal:
