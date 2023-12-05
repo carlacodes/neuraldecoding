@@ -353,7 +353,6 @@ def create_gen_frac_variable(df_full_pitchsplit, high_score_threshold = False, i
 def runlgbmmodel_score(df_use, optimization = False):
     col = 'Score'
 
-    unique_probe_words = df_use['ProbeWord'].unique()
     unique_IDs = df_use['ID'].unique()
     df_use = df_use.reset_index(drop=True)
     df_use['ID'] = pd.Categorical(df_use['ID'],categories=unique_IDs, ordered=True)
@@ -368,6 +367,7 @@ def runlgbmmodel_score(df_use, optimization = False):
     unique_probe_words = sorted(unique_probe_words, key=len)
     for i, probe in enumerate(unique_probe_words):
         df_use['ProbeWord'] = df_use['ProbeWord'].replace({probe: i})
+
 
     df_use['BrainArea'] = df_use['BrainArea'] .replace({'PEG': 2, 'AEG': 1, 'MEG': 0})
     #remove all AEG units
@@ -544,17 +544,61 @@ def runlgbmmodel_score(df_use, optimization = False):
         "naive": naive_values,
         "SHAP value": shap_values
     })
-    fig, ax = plt.subplots(figsize=(10, 6), dpi = 300)
+    fig, ax = plt.subplots(figsize=(13, 6), dpi = 300)
+
+
+    #convert back to the original labels based on the length
+    for i, probe in enumerate(unique_probe_words):
+        print(i, probe)
+        data_df['ProbeWord'] = data_df['ProbeWord'].replace({i: probe})
+
     sns.violinplot(x="ProbeWord", y="SHAP value", hue="naive", data=data_df, split=True, inner="quart",
                         palette=custom_colors, ax=ax)
 
-    xticks = np.arange(0, 17, 1)
-    plt.xticks( xticks,labels = unique_probe_words, rotation=45)
-    ax.set_xticklabels(unique_probe_words, rotation=45, fontsize=16)
+    # xticks = np.arange(0, 17, 1)
+    # plt.xticks( xticks,labels = unique_probe_words, rotation=45)
+    # ax.set_xticklabels(unique_probe_words, rotation=45, fontsize=16)
+    plt.xticks(rotation = 45, fontsize = 16)
     ax.legend(legend_handles, ['Trained', 'Naive'], loc='upper right', fontsize=13)
     plt.xlabel('Probe Word', fontsize=20)
     plt.ylabel('Impact on decoding score', fontsize=20)
     plt.savefig(f'G:/neural_chapter/figures/lightgbm_violinplot_probeword.png', dpi = 300, bbox_inches='tight')
+    plt.show()
+
+    #make a bar plot of the probe word importance
+    probe_word = shap_values2[:, "ProbeWord"].data
+    naive_values = shap_values2[:, "Naive"].data
+    shap_values = shap_values2[:, "ProbeWord"].values
+    data_df = pd.DataFrame({
+        "ProbeWord": probe_word,
+        "naive": naive_values,
+        "SHAP value": shap_values
+    })
+    fig, ax = plt.subplots(figsize=(10, 6), dpi=300)
+    data_df_naive = data_df[data_df['naive'] == 1]
+    data_df_trained = data_df[data_df['naive'] == 0]
+    # data_df_trained['ProbeWord'] = data_df_trained['ProbeWord'].replace({ 2: 'craft', 3: 'in contrast to', 4: 'when a', 5: 'accurate', 6: 'pink noise', 7: 'of science', 8: 'rev. instruments', 9: 'boats', 10: 'today',
+    #     13: 'sailor', 15: 'but', 16: 'researched', 18: 'took',19: 'the vast', 20: 'today', 21: 'he takes',22: 'becomes', 23: 'any', 24: 'more'})
+    #reverse convert the probe word to the original labels
+    #convert back to the original labels based on the length
+    for i, probe in enumerate(unique_probe_words):
+        print(i, probe)
+        data_df['ProbeWord'] = data_df['ProbeWord'].replace({i: probe})
+    #plot by ascending order
+    data_df_trained = data_df_trained.sort_values(by=['SHAP value'])
+    #get the average SHAp value for each probe word
+    data_df_trained = data_df_trained.groupby('ProbeWord').mean().reset_index()
+    data_df_trained = data_df_trained.sort_values(by=['SHAP value'])
+    ax.barh(np.arange(0,len(data_df_trained['SHAP value']), 1), data_df_trained['SHAP value'], color='hotpink', label='Trained')
+    #get the matching index for the probe words
+    plt.yticks(np.arange(0, len(data_df_trained['SHAP value']), 1), data_df_trained['ProbeWord'], fontsize=16, rotation = 45)
+
+    # ax.legend(legend_handles, ['Trained', 'Naive'], loc='upper right', fontsize=13)
+    plt.xlabel('Mean impact on decoding score, trained units', fontsize=20)
+    plt.ylabel('Probe Word', fontsize=20)
+
+    plt.savefig('G:/neural_chapter/figures/lightgbm_barplot_probeword.png',
+                dpi=300, bbox_inches='tight')
     plt.show()
 
 
@@ -581,7 +625,7 @@ def runlgbmmodel_score(df_use, optimization = False):
     features, importance = zip(*sorted_feature_importance)
     fig, ax = plt.subplots(dpi = 300, figsize=(10, 3))
     plt.barh(features, importance, color = 'skyblue', edgecolor = 'black')
-    ax.set_xticks(np.arange(0, 0.22, 0.02))
+    ax.set_xticks(np.arange(0, 0.12, 0.02))
     ax.set_xticklabels(ax.get_xticks(), fontsize=16)
     ax.set_yticklabels(features, fontsize=20, rotation = 45)
     plt.xlabel('Permutation Importance', fontsize = 20)
