@@ -2956,6 +2956,9 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_full_pitchsplit_violinplot['ProbeWord'] = df_full_pitchsplit_violinplot['ProbeWord'].replace({ '(2,2)': 'craft', '(3,3)': 'in contrast to', '(4,4)': 'when a', '(5,5)': 'accurate', '(6,6)': 'pink noise', '(7,7)': 'of science', '(8,8)': 'rev. instruments', '(9,9)': 'boats', '(10,10)': 'today',
         '(13,13)': 'sailor', '(15,15)': 'but', '(16,16)': 'researched', '(18,18)': 'took', '(19,19)': 'the vast', '(20,20)': 'today', '(21,21)': 'he takes', '(22,22)': 'becomes', '(23,23)': 'any', '(24,24)': 'more'})
     upper_quartile = np.percentile(df_full_pitchsplit_violinplot['Score'], 75)
+    df_full_pitchsplit_violinplot = df_full_pitchsplit_violinplot[df_full_pitchsplit_violinplot['ProbeWord'] != 'he takes']
+    df_full_pitchsplit_violinplot = df_full_pitchsplit_violinplot[df_full_pitchsplit_violinplot['ProbeWord'] != 'becomes']
+
 
     df_full_pitchsplit_violinplot['MeanScore'] = df_full_pitchsplit_violinplot.groupby('ID')[
         'Score'].transform('mean')
@@ -2966,6 +2969,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     #create a custom palette`
     custom_colors = ["#0d0887","#7e03a8","#cc4778","#f89540","#f0f921"]
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
+    #remove he takes and becomes from the plot
+
     df_above_chance_ps = df_full_pitchsplit_violinplot[df_full_pitchsplit_violinplot['Below-chance'] == 0]
     df_below_chance_ps = df_full_pitchsplit_violinplot[df_full_pitchsplit_violinplot['Below-chance'] == 1]
 

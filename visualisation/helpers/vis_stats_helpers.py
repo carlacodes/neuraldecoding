@@ -406,6 +406,8 @@ def runlgbmmodel_score(df_use, optimization = False):
     dfx = dfx.loc[:, dfx.columns != col5]
     col6 = 'Below_chance'
     dfx = dfx.loc[:, dfx.columns != col6]
+    col7 = 'FerretID'
+    dfx = dfx.loc[:, dfx.columns != col7]
 
     #remove any rows
     if optimization == True:
@@ -528,7 +530,7 @@ def runlgbmmodel_score(df_use, optimization = False):
     legend_handles, legend_labels = ax.get_legend_handles_labels()
     #reinsert the legend_hanldes and labels
     ax.legend(legend_handles, ['MEG', 'PEG'], loc='upper right', fontsize=13)
-    plt.xlabel('Brain Area', fontsize=18)
+    plt.xlabel(None, fontsize=18)
     plt.savefig(f'G:/neural_chapter/figures/lightgbm_violinplot_naive_brainarea.png', dpi = 300, bbox_inches='tight')
     plt.show()
 
