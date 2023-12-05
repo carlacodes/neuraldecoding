@@ -369,7 +369,7 @@ def runlgbmmodel_score(df_use, optimization = False):
     for i, probe in enumerate(unique_probe_words):
         df_use['ProbeWord'] = df_use['ProbeWord'].replace({probe: i})
 
-    df_use['BrainArea'] = df_use['BrainArea'] .replace({'PEG': 0, 'AEG': 1, 'MEG': 2})
+    df_use['BrainArea'] = df_use['BrainArea'] .replace({'PEG': 2, 'AEG': 1, 'MEG': 0})
     #remove all AEG units
     df_use = df_use[df_use['BrainArea'] != 1]
 
@@ -527,7 +527,7 @@ def runlgbmmodel_score(df_use, optimization = False):
     ax.set_ylabel('Impact on decoding score', fontsize=18)
     legend_handles, legend_labels = ax.get_legend_handles_labels()
     #reinsert the legend_hanldes and labels
-    ax.legend(legend_handles, ['PEG', 'MEG'], loc='upper right', fontsize=13)
+    ax.legend(legend_handles, ['MEG', 'PEG'], loc='upper right', fontsize=13)
     plt.xlabel('Brain Area', fontsize=18)
     plt.savefig(f'G:/neural_chapter/figures/lightgbm_violinplot_naive_brainarea.png', dpi = 300, bbox_inches='tight')
     plt.show()
