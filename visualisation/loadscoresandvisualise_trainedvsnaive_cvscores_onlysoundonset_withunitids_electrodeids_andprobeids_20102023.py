@@ -2780,6 +2780,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
         # do a mann whitney u test between the meanscores for PEG and MEG
         stat_peg, p_peg = mannwhitneyu(df_full_pitchsplit_plot_peg['MeanScore'], df_full_pitchsplit_plot_meg['MeanScore'], alternative='two-sided')
+        stat_peg_index, p_peg_index = mannwhitneyu(df_full_pitchsplit_plot_peg['GenFrac'], df_full_pitchsplit_plot_meg['GenFrac'], alternative='two-sided')
+
         if options == 'index':
             plt.xlabel(f'Mean Decoding Score of Top 25% of Units', fontsize=20)
         elif options == 'frac':
