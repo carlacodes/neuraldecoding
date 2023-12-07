@@ -89,7 +89,7 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
     ids_to_plot = pd.read_csv('G:\plotting_csvs\F1702_zola_overlaid_IDS.csv')
 
 
-    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_overlaid/{dir}/')
+    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_overlaid0712/{dir}/')
 
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
@@ -142,7 +142,7 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
             spiketrain = neo.SpikeTrain(selected_trials['spike_time'], units='s', t_start=min(selected_trials['spike_time']), t_stop=max(selected_trials['spike_time']))
             spiketrains.append(spiketrain)
 
-        dict_key = f'{cluster_id}_{ids_to_plot["Folder"][j]}'
+        dict_key = f'{cluster_id}_{ids_to_plot["Folder"][j]}_{probeword}'
         spiketraindict[dict_key] = spiketrains
         unique_trials_dict[dict_key] = np.unique(raster_target['trial_num'])
     fig, ax = plt.subplots()
@@ -153,8 +153,8 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
         time_start = -0.1  # Start time for the PSTH (in seconds)
         time_end = 0.6  # End time for the PSTH (in seconds)
         stimulus_onset = 0.0  # Time of the stimulus onset (relative to the PSTH window)
-        spiketrains = spiketraindict[f'{cluster_id}_{ids_to_plot["Folder"][i]}']
-        unique_trials = unique_trials_dict[f'{cluster_id}_{ids_to_plot["Folder"][i]}']
+        spiketrains = spiketraindict[f'{cluster_id}_{ids_to_plot["Folder"][i]}_{probeword}']
+        unique_trials = unique_trials_dict[f'{cluster_id}_{ids_to_plot["Folder"][i]}_{probeword}']
 
         probeword = ids_to_plot['Probe_index'][i]
         pitchshift_option = ids_to_plot['Pitchshift'][i]
@@ -280,11 +280,11 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
         # now plot the rasters
         count = 0
         fig2, ax2 = plt.subplots()
-        spiketrains = spiketraindict[f'{cluster_id}_{ids_to_plot["Folder"][i]}']
+        spiketrains = spiketraindict[f'{cluster_id}_{ids_to_plot["Folder"][i]}_{probeword}']
         probeword = ids_to_plot['Probe_index'][i]
         pitchshift_option = ids_to_plot['Pitchshift'][i]
         pitchshift_text = 'inter-roved F0' if pitchshift_option else 'control F0'
-        unique_trials = unique_trials_dict[f'{cluster_id}_{ids_to_plot["Folder"][i]}']
+        unique_trials = unique_trials_dict[f'{cluster_id}_{ids_to_plot["Folder"][i]}_{probeword}']
 
         if probeword == 4 and pitchshift_option == False:
             probeword_text = 'when a'

@@ -69,7 +69,7 @@ def run_cleaning_of_rasters(blocks, datapath):
     return new_blocks
 def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'phy', animal = 'F1702_Zola', brain_area = [], gen_psth = False):
 
-    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_nothreshold_ANDPSTH_2011/{phydir}/{stream}/')
+    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_nothreshold_ANDPSTH_0712/{phydir}/{stream}/')
     #load the high generalizable clusters, csv file
 
     saveDir = tarDir
@@ -233,7 +233,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'ph
                         ax[idx, 1].set_ylabel('spikes/s')
                     else:
                         rasterplot(spiketrains, c=color_option, histogram_bins=0, axes=ax[idx, 1], s=0.3)
-                        ax[idx, 1].set_ylabel('trial number')
+                        ax[idx, 1].set_ylabel('trial')
                         ax[idx, 1].set_xlim(custom_xlim)
 
                     ax[idx, 1].set_title(f'Unit: {cluster_id}_{stream}, {animal_id_num}')
@@ -322,8 +322,8 @@ def generate_rasters(dir):
     datapath_big = Path(f'G:/F2003_Orecchiette/')
     animal = str(datapath_big).split('\\')[-1]
     datapaths = [x for x in datapath_big.glob('**/*kilosort//phy//') if x.is_dir()]
-    datapaths = datapaths[-1]
-    for datapath in [datapaths]:
+    datapaths = datapaths[0:2]
+    for datapath in datapaths:
         stream = str(datapath).split('\\')[-3]
         stream = stream[-4:]
         print(stream)
@@ -359,7 +359,7 @@ def generate_rasters(dir):
 
 
         for talker in [1]:
-            target_vs_probe_with_raster(new_blocks,talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, gen_psth=True)
+            # target_vs_probe_with_raster(new_blocks,talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, gen_psth=True)
             target_vs_probe_with_raster(new_blocks,talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area)
 
 

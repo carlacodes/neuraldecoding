@@ -29,8 +29,6 @@ from instruments.helpers.util import simple_xy_axes, set_font_axes
 from instruments.helpers.neural_analysis_helpers import get_word_aligned_raster_squinty, split_cluster_base_on_segment_zola
 import sys
 sys.path.append('../')
-from instruments.helpers.neural_analysis_helpers import get_word_aligned_raster_squinty, split_cluster_base_on_segment_zola
-
 from helpers.neural_analysis_helpers_zolainter import get_word_aligned_raster, get_word_aligned_raster_zola_cruella
 from instruments.helpers.euclidean_classification_minimal_function import classify_sweeps
 # Import standard packages
@@ -79,9 +77,14 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
 
 
     for datapath in datapaths:
-        with open(datapath / 'new_blocks.pkl', 'rb') as f:
-            dir = str(datapath).split('\\')[-3]
-            blocks[dir] = pickle.load(f)
+        try:
+            with open(datapath / 'new_blocks.pkl', 'rb') as f:
+                dir = str(datapath).split('\\')[-3]
+                blocks[dir] = pickle.load(f)
+        except:
+            with open(datapath / 'blocks.pkl', 'rb') as f:
+                dir = str(datapath).split('\\')[-3]
+                blocks[dir] = pickle.load(f)
 
     # clust_id_dict = {}
     # clust_id_dict['BB2BB3_zola_intertrialroving_26092023_BB2BB3_zola_intertrialroving_26092023_BB_2'] = [0,2,4, 6]
@@ -120,14 +123,10 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
 
 
 
-        # raster_target, raster_target_compare = get_word_aligned_raster_zola_cruella(blocks_cluster, cluster_id, word=probeword,
-        #                                                                           pitchshift=pitchshift_option,
-        #                                                                           correctresp=True,
-        #                                                                           df_filter=['No Level Cue'], talker = 'female')
-        raster_target = get_word_aligned_raster_squinty(blocks_cluster, cluster_id, word=probeword,
-                                                        pitchshift=pitchshift_option,
-                                                        correctresp=True,
-                                                        df_filter=['No Level Cue'])
+        raster_target, raster_target_compare = get_word_aligned_raster_zola_cruella(blocks_cluster, cluster_id, word=probeword,
+                                                                                  pitchshift=pitchshift_option,
+                                                                                  correctresp=True,
+                                                                                  df_filter=['No Level Cue'], talker = 'female')
         raster_target = raster_target.reshape(raster_target.shape[0], )
         if len(raster_target) == 0:
             print('raster target empty:', cluster_id)
@@ -170,10 +169,10 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
         pitchshift_option = ids_to_plot['Pitchshift'][i]
         pitchshift_text = 'inter-roved F0' if pitchshift_option else 'control F0'
         if probeword == 4 and pitchshift_option == False:
-            probeword_text = 'but'
+            probeword_text = 'when a'
             color_option = 'green'
         elif probeword == 4 and pitchshift_option == True:
-            probeword_text = 'but'
+            probeword_text = 'when a'
             color_option = 'lightgreen'
 
         elif probeword == 1 and pitchshift_option == False:
@@ -185,86 +184,57 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
 
 
         elif probeword == 2 and pitchshift_option == False:
-            probeword_text = 'sailor'
+            probeword_text = 'craft'
             color_option = 'deeppink'
         elif probeword == 2 and pitchshift_option == True:
-            probeword_text = 'sailor'
+            probeword_text = 'craft'
             color_option = 'pink'
 
         elif probeword == 3 and pitchshift_option == False:
-            probeword_text = 'accurate'
+            probeword_text = 'in contrast'
             color_option = 'mediumpurple'
         elif probeword == 3 and pitchshift_option == True:
-            probeword_text = 'accurate'
+            probeword_text = 'in contrast'
             color_option = 'purple'
 
         elif probeword == 5 and pitchshift_option == False:
-            probeword_text = 'researched'
-            color_option = 'limegreen'
+            probeword_text = 'accurate'
+            color_option = 'olivedrab'
 
         elif probeword == 5 and pitchshift_option == True:
-            probeword_text = 'researched'
-            color_option = 'grey'
+            probeword_text = 'accurate'
+            color_option = 'limegreen'
         elif probeword == 6 and pitchshift_option == False:
-            probeword_text = 'when a'
+            probeword_text = 'pink noise'
             color_option = 'navy'
         elif probeword == 6 and pitchshift_option == True:
-            probeword_text = 'when a'
+            probeword_text = 'pink noise'
             color_option = 'lightblue'
-
         elif probeword == 7 and pitchshift_option == False:
-            probeword_text = 'took'
+            probeword_text = 'of science'
             color_option = 'coral'
         elif probeword == 7 and pitchshift_option == True:
-            probeword_text = 'took'
+            probeword_text = 'of science'
             color_option = 'orange'
-
-
         elif probeword == 8 and pitchshift_option == False:
-            probeword_text = 'the vast'
+            probeword_text = 'rev. instruments'
             color_option = 'plum'
         elif probeword == 8 and pitchshift_option == True:
-            probeword_text = 'the vast'
+            probeword_text = 'rev. instruments'
             color_option = 'darkorchid'
         elif probeword == 9 and pitchshift_option == False:
-            probeword_text = 'today'
-            color_option = 'slategrey'
+            probeword_text = 'boats'
+            color_option = 'cornflowerblue'
         elif probeword == 9 and pitchshift_option == True:
-            probeword_text = 'today'
+            probeword_text = 'boats'
             color_option = 'royalblue'
 
         elif probeword == 10 and pitchshift_option == False:
-            probeword_text = 'he takes'
+            probeword_text = 'today'
             color_option = 'gold'
         elif probeword == 10 and pitchshift_option == True:
-            probeword_text = 'he takes'
+            probeword_text = 'today'
             color_option = 'yellow'
-        elif probeword == 11 and pitchshift_option == False:
-            probeword_text = 'becomes'
-            color_option = 'green'
-        elif probeword == 11 and pitchshift_option == True:
-            probeword_text = 'becomes'
-            color_option = 'lightgreen'
-        elif probeword == 12 and pitchshift_option == False:
-            probeword_text = 'any'
-            color_option = 'deeppink'
-        elif probeword == 12 and pitchshift_option == True:
-            probeword_text = 'any'
-            color_option = 'pink'
-        elif probeword == 13 and pitchshift_option == False:
-            probeword_text = 'more'
-            color_option = 'plum'
-
-        elif probeword == 13 and pitchshift_option == True:
-            probeword_text = 'more'
-            color_option = 'darkorchid'
-        elif probeword == 14 and pitchshift_option == False:
-            probeword_text = 'boats'
-            color_option = 'slategrey'
-        elif probeword == 14 and pitchshift_option == True:
-            probeword_text = 'boats'
-            color_option = 'royalblue'
-
         else:
             probeword_text = 'error'
             color_option = 'red'
@@ -328,10 +298,10 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
         unique_trials = unique_trials_dict[f'{cluster_id}_{ids_to_plot["Folder"][i]}_{probeword}']
 
         if probeword == 4 and pitchshift_option == False:
-            probeword_text = 'but'
+            probeword_text = 'when a'
             color_option = 'green'
         elif probeword == 4 and pitchshift_option == True:
-            probeword_text = 'but'
+            probeword_text = 'when a'
             color_option = 'lightgreen'
 
         elif probeword == 1 and pitchshift_option == False:
@@ -343,86 +313,57 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
 
 
         elif probeword == 2 and pitchshift_option == False:
-            probeword_text = 'sailor'
+            probeword_text = 'craft'
             color_option = 'deeppink'
         elif probeword == 2 and pitchshift_option == True:
-            probeword_text = 'sailor'
+            probeword_text = 'craft'
             color_option = 'pink'
 
         elif probeword == 3 and pitchshift_option == False:
-            probeword_text = 'accurate'
+            probeword_text = 'in contrast'
             color_option = 'mediumpurple'
         elif probeword == 3 and pitchshift_option == True:
-            probeword_text = 'accurate'
+            probeword_text = 'in contrast'
             color_option = 'purple'
 
         elif probeword == 5 and pitchshift_option == False:
-            probeword_text = 'researched'
-            color_option = 'black'
+            probeword_text = 'accurate'
+            color_option = 'olivedrab'
 
         elif probeword == 5 and pitchshift_option == True:
-            probeword_text = 'researched'
+            probeword_text = 'accurate'
             color_option = 'limegreen'
         elif probeword == 6 and pitchshift_option == False:
-            probeword_text = 'when a'
+            probeword_text = 'pink noise'
             color_option = 'navy'
         elif probeword == 6 and pitchshift_option == True:
-            probeword_text = 'when a'
+            probeword_text = 'pink noise'
             color_option = 'lightblue'
-
         elif probeword == 7 and pitchshift_option == False:
-            probeword_text = 'took'
+            probeword_text = 'of science'
             color_option = 'coral'
         elif probeword == 7 and pitchshift_option == True:
-            probeword_text = 'took'
+            probeword_text = 'of science'
             color_option = 'orange'
-
-
         elif probeword == 8 and pitchshift_option == False:
-            probeword_text = 'the vast'
+            probeword_text = 'rev. instruments'
             color_option = 'plum'
         elif probeword == 8 and pitchshift_option == True:
-            probeword_text = 'the vast'
+            probeword_text = 'rev. instruments'
             color_option = 'darkorchid'
         elif probeword == 9 and pitchshift_option == False:
-            probeword_text = 'today'
-            color_option = 'slategrey'
+            probeword_text = 'boats'
+            color_option = 'cornflowerblue'
         elif probeword == 9 and pitchshift_option == True:
-            probeword_text = 'today'
+            probeword_text = 'boats'
             color_option = 'royalblue'
 
         elif probeword == 10 and pitchshift_option == False:
-            probeword_text = 'he takes'
+            probeword_text = 'today'
             color_option = 'gold'
         elif probeword == 10 and pitchshift_option == True:
-            probeword_text = 'he takes'
+            probeword_text = 'today'
             color_option = 'yellow'
-        elif probeword == 11 and pitchshift_option == False:
-            probeword_text = 'becomes'
-            color_option = 'green'
-        elif probeword == 11 and pitchshift_option == True:
-            probeword_text = 'becomes'
-            color_option = 'lightgreen'
-        elif probeword == 12 and pitchshift_option == False:
-            probeword_text = 'any'
-            color_option = 'deeppink'
-        elif probeword == 12 and pitchshift_option == True:
-            probeword_text = 'any'
-            color_option = 'pink'
-        elif probeword == 13 and pitchshift_option == False:
-            probeword_text = 'more'
-            color_option = 'plum'
-
-        elif probeword == 13 and pitchshift_option == True:
-            probeword_text = 'more'
-            color_option = 'darkorchid'
-        elif probeword == 14 and pitchshift_option == False:
-            probeword_text = 'boats'
-            color_option = 'slategrey'
-        elif probeword == 14 and pitchshift_option == True:
-            probeword_text = 'boats'
-            color_option = 'royalblue'
-
         else:
             probeword_text = 'error'
             color_option = 'red'
@@ -449,6 +390,8 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
         ax2.set_xlim(custom_xlim)
         ax2.set_title(
             f'{cluster_id}_{rec_name}_{stream},\n {animal_id_num}, probe word: {probeword_text}, {pitchshift_text}')
+        plt.savefig(saveDir / f'clust_{cluster_id}_probeword_{probeword}.jpg', dpi = 300)
+
         plt.savefig(saveDir / f'{cluster_id}_{ids_to_plot["Folder"][i]}_{animal_id_num}_{probeword_text}_PS{pitchshift_text}_{talker}.png')
 
 
@@ -458,13 +401,12 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
 
 def generate_rasters(dir):
 
-    datapath_big = Path(f'D:/ms4output_16102023/F1604_Squinty/')
+    datapath_big = Path(f'D:/ms4output_16102023/F1702_Zola/')
     animal = str(datapath_big).split('\\')[-1]
 
-
-
-    datapaths = [Path('D:\ms4output_16102023\F1604_Squinty\BB2BB3_squinty_MYRIAD2\BB2BB3_squinty_MYRIAD2_BB2BB3_squinty_MYRIAD2_BB_2\mountainsort4\phy'),
-                 Path('D:\ms4output_16102023\F1604_Squinty\BB2BB3_squinty_MYRIAD1\BB2BB3_squinty_MYRIAD1_BB2BB3_squinty_MYRIAD1_BB_3\mountainsort4\phy')]
+    datapaths = [Path(
+        'D:\ms4output_16102023\F1702_Zola\BB2BB3_zola_intertrialroving_26092023\BB2BB3_zola_intertrialroving_26092023_BB2BB3_zola_intertrialroving_26092023_BB_2\mountainsort4\phy'),
+                ]
     for talker in [1]:
         target_vs_probe_with_raster(datapaths,talker=talker, animal = animal)
         # target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, gen_psth=True)

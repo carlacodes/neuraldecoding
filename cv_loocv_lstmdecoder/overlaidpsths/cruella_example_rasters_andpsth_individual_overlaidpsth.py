@@ -91,7 +91,7 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
     #read the dataframe
 
 
-    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_overlaid/{dir}/')
+    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_overlaid_0712/{dir}/')
 
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
@@ -398,9 +398,7 @@ def generate_rasters(dir):
     animal = str(datapath_big).split('\\')[-1]
 
 
-    datapaths = [Path('D:\ms4output_16102023\F1815_Cruella/16_09_2022_cruella/16_09_2022_cruella_16_09_2022_cruella_BB_4\mountainsort4\phy'),
-                 Path('D:\ms4output_16102023\F1815_Cruella/25_01_2023_cruellabb4bb5/25_01_2023_cruellabb4bb5_25_01_2023_cruellabb4bb5_BB_4\mountainsort4\phy'),
-                 Path('D:\ms4output_16102023\F1815_Cruella/01_03_2022_cruellabb4bb5/01_03_2022_cruellabb4bb5_01_03_2022_cruellabb4bb5_BB_4\mountainsort4\phy')]
+    datapaths = [Path('D:\ms4output_16102023\F1815_Cruella/01_03_2022_cruella/01_03_2022_cruella_01_03_2022_cruella_BB_2\mountainsort4\phy')]
     for talker in [1]:
         target_vs_probe_with_raster(datapaths,talker=talker, animal = animal)
         # target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, gen_psth=True)

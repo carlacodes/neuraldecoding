@@ -478,6 +478,7 @@ def runlgbmmodel_score(df_use, optimization = False):
     legend_handles, legend_labels = ax.get_legend_handles_labels()
     ax.set_xlabel(None)
     #reinsert the legend_hanldes and labels
+    # ax.legend()
     ax.legend(legend_handles, ['Control', 'Pitch-shifted'], loc='upper right', fontsize=13)
     plt.savefig(f'G:/neural_chapter/figures/violinplot_naive.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
@@ -544,21 +545,23 @@ def runlgbmmodel_score(df_use, optimization = False):
         "naive": naive_values,
         "SHAP value": shap_values
     })
-    fig, ax = plt.subplots(figsize=(13, 6), dpi = 300)
+    fig, ax = plt.subplots(figsize=(10, 6), dpi = 300)
 
 
-    #convert back to the original labels based on the length
-    for i, probe in enumerate(unique_probe_words):
-        print(i, probe)
-        data_df['ProbeWord'] = data_df['ProbeWord'].replace({i: probe})
+    # #convert back to the original labels based on the length
+    # for i, probe in enumerate(unique_probe_words):
+    #     print(i, probe)
+    #     data_df['ProbeWord'] = data_df['ProbeWord'].replace({i: probe})
+    #find all becomes
+    data_df2 = data_df[data_df['ProbeWord'] == 'becomes']
 
     sns.violinplot(x="ProbeWord", y="SHAP value", hue="naive", data=data_df, split=True, inner="quart",
                         palette=custom_colors, ax=ax)
 
     # xticks = np.arange(0, 17, 1)
     # plt.xticks( xticks,labels = unique_probe_words, rotation=45)
-    # ax.set_xticklabels(unique_probe_words, rotation=45, fontsize=16)
-    plt.xticks(rotation = 45, fontsize = 16)
+    ax.set_xticklabels(unique_probe_words, rotation=45, fontsize=16)
+    # plt.xticks(rotation = 90, fontsize = 16)
     ax.legend(legend_handles, ['Trained', 'Naive'], loc='upper right', fontsize=13)
     plt.xlabel('Probe Word', fontsize=20)
     plt.ylabel('Impact on decoding score', fontsize=20)
@@ -581,13 +584,14 @@ def runlgbmmodel_score(df_use, optimization = False):
     #     13: 'sailor', 15: 'but', 16: 'researched', 18: 'took',19: 'the vast', 20: 'today', 21: 'he takes',22: 'becomes', 23: 'any', 24: 'more'})
     #reverse convert the probe word to the original labels
     #convert back to the original labels based on the length
+    data_df_trained = data_df_trained.groupby('ProbeWord').mean().reset_index()
+
     for i, probe in enumerate(unique_probe_words):
         print(i, probe)
-        data_df['ProbeWord'] = data_df['ProbeWord'].replace({i: probe})
+        data_df_trained['ProbeWord'] = data_df_trained['ProbeWord'].replace({i: probe})
     #plot by ascending order
     data_df_trained = data_df_trained.sort_values(by=['SHAP value'])
     #get the average SHAp value for each probe word
-    data_df_trained = data_df_trained.groupby('ProbeWord').mean().reset_index()
     data_df_trained = data_df_trained.sort_values(by=['SHAP value'])
     ax.barh(np.arange(0,len(data_df_trained['SHAP value']), 1), data_df_trained['SHAP value'], color='hotpink', label='Trained')
     #get the matching index for the probe words

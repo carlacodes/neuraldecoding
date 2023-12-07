@@ -96,7 +96,7 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
     #read the dataframe
 
 
-    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_overlaid/{dir}/')
+    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_overlaid0712/{dir}/')
 
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)

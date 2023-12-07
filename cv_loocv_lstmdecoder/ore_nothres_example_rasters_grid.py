@@ -66,7 +66,7 @@ def run_cleaning_of_rasters(blocks, datapath):
     return new_blocks
 def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'phy', animal = 'F1702_Zola', brain_area = []):
 
-    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_nothreshold_2011/{phydir}/{stream}/')
+    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_nothreshold_0712/{phydir}/{stream}/')
     #load the high generalizable clusters, csv file
 
     saveDir = tarDir
@@ -225,8 +225,8 @@ def generate_rasters(dir):
     datapath_big = Path(f'G:/F2003_Orecchiette/')
     animal = str(datapath_big).split('\\')[-1]
     datapaths = [x for x in datapath_big.glob('**/*kilosort//phy//') if x.is_dir()]
-    datapaths = datapaths[-1]
-    for datapath in [datapaths]:
+    datapaths = datapaths[0:2]
+    for datapath in datapaths:
         stream = str(datapath).split('\\')[-3]
         stream = stream[-4:]
         print(stream)
