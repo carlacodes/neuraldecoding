@@ -308,7 +308,7 @@ def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname
                     allow_pickle=True)[()]
     else:
         scores = np.load(
-            str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+            str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_pitchshift_bs.npy',
             allow_pickle=True)[()]
     #create a dictionary of scores for each cluster
     for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
@@ -327,7 +327,7 @@ def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname
                 else:
                     scores = np.load(
                         str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
-                            probeword) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+                            probeword) + '_' + ferretname + '_probe_pitchshift_bs.npy',
                         allow_pickle=True)[()]
                 #find the index of the cluster
                 index = scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id'].index(cluster)
@@ -337,7 +337,10 @@ def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname
                 else:
                     score_dict[cluster][probeword] = scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index]
 
-            except:
+            except Exception as exception:
+                #print exception
+                print(exception)
+
                 print('error loading scores: ' + str(
                     file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(probeword) + '_' + ferretname + '_probe_bs.npy')
                 continue

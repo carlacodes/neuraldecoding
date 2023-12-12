@@ -7,7 +7,7 @@ import scipy
 from itertools import combinations, permutations
 
 
-def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high_units, talkerinput = 'talker1', animal_id = 'F1702', smooth_option = True, clust_ids = []):
+def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high_units, talkerinput = 'talker1', animal_id = 'F1702', smooth_option = True, plot_on_one_figure = False):
     probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
     score_dict = {}
     correlations = {}
@@ -15,16 +15,23 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
     animal_id = animal_id.split('_')[0]
     rec_name = file_path.parts[-2]
     stream = file_path.parts[-1]
-
+    if pitchshift == 'nopitchshift':
+        scores = np.load(
+                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+                    allow_pickle=True)[()]
+    else:
+        scores = np.load(
+                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_pitchshift_bs.npy',
+                    allow_pickle=True)[()]
 
 
     #create a dictionary of scores for each cluster
-    for cluster in clust_ids:
+    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
         score_dict[cluster] = {}
         correlations[cluster] = {}
         avg_scores[cluster] = {}
 
-    for cluster in clust_ids:
+    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
         for probeword in probewordslist:
             try:
                 if pitchshift == 'nopitchshift':
@@ -78,116 +85,146 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
     else:
         num_rows = 2
     fig, ax = plt.subplots(num_rows, num_cols, figsize=(40, 15))
-    if num_rows == 1 and num_cols == 1:
-        ax = np.array([ax])
-    else:
-        ax = ax.flatten()
+    ax = ax.flatten()
     # fig, ax = plt.subplots(2, int(len(high_units['ID'].to_list())/2), figsize=(20, 20))
-    for i, cluster in enumerate(meg_clusters + peg_clusters):
-        brain_id = high_units[high_units['ID'] == cluster]['BrainArea'].to_list()[0]
-        if cluster in meg_clusters:
-            row = 0
-            col = meg_clusters.index(cluster)
-        else:
-            if num_rows == 1:
+    if plot_on_one_figure == True:
+        for i, cluster in enumerate(meg_clusters + peg_clusters):
+            brain_id = high_units[high_units['ID'] == cluster]['BrainArea'].to_list()[0]
+            if cluster in meg_clusters:
                 row = 0
+                col = meg_clusters.index(cluster)
             else:
-                row = 1
-            col = peg_clusters.index(cluster)
+                if num_rows == 1:
+                    row = 0
+                else:
+                    row = 1
+                col = peg_clusters.index(cluster)
 
-        axs = ax[col + row * num_cols]
-        #get the brain ID
-        try:
-            avg_score = avg_scores[cluster]['avg_score']
-        except:
-            #remove the axis
-            axs.axis('off')
-            continue
-        try:
+            axs = ax[col + row * num_cols]
+            #get the brain ID
+            try:
+                avg_score = avg_scores[cluster]['avg_score']
+            except:
+                #remove the axis
+                axs.axis('off')
+                continue
             timepoints = np.arange(0, (len(avg_score) / 100)*4, 0.04)
-        except:
-            continue
-        std_dev = avg_scores[cluster]['std']
+            std_dev = avg_scores[cluster]['std']
+            if smooth_option == True:
+                avg_score = scipy.signal.savgol_filter(avg_score, 5, 3, mode='interp')
+                # avg_score = scipy.ndimage.gaussian_filter1d(avg_score, sigma = 1.5)
+
+
+            axs.plot(timepoints, avg_score, c='black')
+            axs.fill_between(timepoints, avg_score - std_dev, avg_score + std_dev, alpha=0.3, color ='purple')
+
+
+            if i == 0:
+                axs.set_xlabel('time (s)', fontsize=20)
+                axs.set_ylabel('balanced accuracy', fontsize=20)
+                axs.set_title(f'unit:{cluster}', fontsize = 20)
+                axs.set_yticks(ticks = [0, 0.2, 0.4, 0.6, 0.8, 1.0], labels = [0, 0.2, 0.4, 0.6, 0.8, 1.0], fontsize=15)
+                axs.set_xticks(ticks =[0, 0.2, 0.4, 0.6], labels = [0, 0.2, 0.4, 0.6], fontsize=15)
+
+
+            else:
+                axs.set_xlabel('time (s)', fontsize=20)
+                axs.set_title(f'unit:{cluster}', fontsize = 20)
+                axs.set_yticks(ticks = [0, 0.2, 0.4, 0.6, 0.8, 1.0], labels = [0, 0.2, 0.4, 0.6, 0.8, 1.0], fontsize=15)
+                axs.set_xticks(ticks =[0, 0.2, 0.4, 0.6], labels = [0, 0.2, 0.4, 0.6], fontsize=15)
+
+
+
+            axs.set_ylim([0, 1])
+            axs.grid()
+        # ax[0,0].set_title('MEG')
+
+        if num_rows == 2:
+            ax[0].text(-0.4, 0.5, 'MEG', horizontalalignment='center',
+                       verticalalignment='center', rotation=90, transform=ax[0].transAxes, fontsize = 20)
+            ax[num_cols].set_ylabel('balanced accuracy', fontsize=20)
+            ax[num_cols].text(-0.4, 0.5, 'PEG', horizontalalignment='center',
+                            verticalalignment='center', rotation=90, transform=ax[num_cols].transAxes, fontsize = 20)
+        else:
+            if len(meg_clusters) == 0:
+                ax[0].text(-0.4, 0.5, 'PEG', horizontalalignment='center',
+                           verticalalignment='center', rotation=90, transform=ax[0].transAxes, fontsize = 20)
+            elif len(peg_clusters) == 0:
+                ax[0].text(-0.4, 0.5, 'MEG', horizontalalignment='center',
+                           verticalalignment='center', rotation=90, transform=ax[0].transAxes, fontsize = 20)
+
+        # ax[1,0].set_title('PEG')
+
+        if pitchshift == 'nopitchshiftvspitchshift' or pitchshift == 'nopitchshift':
+            pitchshift_option = False
+            pitchshift_text = 'control F0'
+        elif pitchshift == 'pitchshift':
+            pitchshift_option = True
+            pitchshift_text = 'inter-roved F0'
+
+        plt.suptitle(f'balanced accuracy over time for {animal_id},  {pitchshift_text}, {rec_name}_{stream}',  fontsize=30)
         if smooth_option == True:
-            avg_score = scipy.signal.savgol_filter(avg_score, 5, 3, mode='interp')
-            # avg_score = scipy.ndimage.gaussian_filter1d(avg_score, sigma = 1.5)
+            plt.savefig(outputfolder + '/' + ferretname+'_'+rec_name+'_'+stream + '_' + pitchshift_text + '_averageovertime_smooth.png', bbox_inches='tight')
+        else:
+            plt.savefig(outputfolder + '/' + ferretname+'_'+rec_name+'_'+stream + '_' + pitchshift_text + '_averageovertime.png', bbox_inches='tight')
+        plt.show()
+    else:
+        for i, cluster in enumerate(meg_clusters + peg_clusters):
+            fig, axs = plt.subplots()
+            brain_area = high_units[high_units['ID'] == cluster]['BrainArea'].to_list()[0]
+            try:
+                avg_score = avg_scores[cluster]['avg_score']
+            except:
+                # remove the axis
+                axs.axis('off')
+                continue
+            timepoints = np.arange(0, (len(avg_score) / 100) * 4, 0.04)
+            std_dev = avg_scores[cluster]['std']
+            if smooth_option == True:
+                avg_score = scipy.signal.savgol_filter(avg_score, 5, 3, mode='interp')
 
+            axs.plot(timepoints, avg_score, c='black')
+            axs.fill_between(timepoints, avg_score - std_dev, avg_score + std_dev, alpha=0.3, color='purple')
 
-        axs.plot(timepoints, avg_score, c='black')
-        axs.fill_between(timepoints, avg_score - std_dev, avg_score + std_dev, alpha=0.3, color ='purple')
-
-
-        if i == 0:
+            if pitchshift == 'nopitchshiftvspitchshift' or pitchshift == 'nopitchshift':
+                pitchshift_option = False
+                pitchshift_text = 'control F0'
+            elif pitchshift == 'pitchshift':
+                pitchshift_option = True
+                pitchshift_text = 'inter-roved F0'
             axs.set_xlabel('time (s)', fontsize=20)
             axs.set_ylabel('balanced accuracy', fontsize=20)
-            axs.set_title(f'unit:{cluster}', fontsize = 20)
-            axs.set_yticks(ticks = [0, 0.2, 0.4, 0.6, 0.8, 1.0], labels = [0, 0.2, 0.4, 0.6, 0.8, 1.0], fontsize=15)
-            axs.set_xticks(ticks =[0, 0.2, 0.4, 0.6], labels = [0, 0.2, 0.4, 0.6], fontsize=15)
-        # elif num_rows == 2 and i == int(num_cols/2):
-        #     axs.set_xlabel('time (s)', fontsize=20)
-        #     axs.set_ylabel('balanced accuracy', fontsize=20)
-        #     axs.set_title(f'unit:{cluster}', fontsize=20)
-        #     axs.set_yticks(ticks=[0, 0.2, 0.4, 0.6, 0.8, 1.0], labels=[0, 0.2, 0.4, 0.6, 0.8, 1.0], fontsize=15)
-        #     axs.set_xticks(ticks=[0, 0.2, 0.4, 0.6], labels=[0, 0.2, 0.4, 0.6], fontsize=15)
-
-        else:
-            axs.set_xlabel('time (s)', fontsize=20)
-            axs.set_title(f'unit:{cluster}', fontsize = 20)
-            axs.set_yticks(ticks = [0, 0.2, 0.4, 0.6, 0.8, 1.0], labels = [0, 0.2, 0.4, 0.6, 0.8, 1.0], fontsize=15)
-            axs.set_xticks(ticks =[0, 0.2, 0.4, 0.6], labels = [0, 0.2, 0.4, 0.6], fontsize=15)
+            axs.set_title(f'unit: {cluster}_{ferretname}_{rec_name}_{stream},\n area: {brain_area}, {pitchshift_text}', fontsize=20)
+            axs.set_yticks(ticks=[0, 0.2, 0.4, 0.6, 0.8, 1.0], labels=[0, 0.2, 0.4, 0.6, 0.8, 1.0], fontsize=15)
+            axs.set_xticks(ticks=[0, 0.2, 0.4, 0.6], labels=[0, 0.2, 0.4, 0.6], fontsize=15)
+            plt.savefig(outputfolder + '/' +str(cluster)+'_'+ ferretname + '_' + rec_name + '_' + stream + '_' + pitchshift_text + '_averageovertime_' + str(cluster) + '.png', bbox_inches='tight')
 
 
 
-        axs.set_ylim([0, 1])
-        axs.grid()
-    # ax[0,0].set_title('MEG')
-
-    if num_rows == 2:
-        ax[0].text(-0.2, 0.5, 'MEG', horizontalalignment='center',
-                   verticalalignment='center', rotation=90, transform=ax[0].transAxes, fontsize = 20)
-        ax[num_cols].set_ylabel('balanced accuracy', fontsize=20)
-
-        ax[num_cols].text(-0.2, 0.5, 'PEG', horizontalalignment='center',
-                        verticalalignment='center', rotation=90, transform=ax[num_cols].transAxes, fontsize = 20)
-    else:
-        if len(meg_clusters) == 0:
-            ax[0].text(-0.2, 0.5, 'PEG', horizontalalignment='center',
-                       verticalalignment='center', rotation=90, transform=ax[0].transAxes, fontsize = 20)
-        elif len(peg_clusters) == 0:
-            ax[0].text(-0.2, 0.5, 'MEG', horizontalalignment='center',
-                       verticalalignment='center', rotation=90, transform=ax[0].transAxes, fontsize = 20)
-
-    # ax[1,0].set_title('PEG')
-
-    if pitchshift == 'nopitchshiftvspitchshift' or pitchshift == 'nopitchshift':
-        pitchshift_option = False
-        pitchshift_text = 'control F0'
-    elif pitchshift == 'pitchshift':
-        pitchshift_option = True
-        pitchshift_text = 'inter-roved F0'
-
-    plt.suptitle(f'balanced accuracy over time for {animal_id},  {pitchshift_text}, {rec_name}_{stream}',  fontsize=30)
-    if smooth_option == True:
-        plt.savefig(outputfolder + '/' + ferretname+'_'+rec_name+'_'+stream + '_' + pitchshift_text + '_averageovertime_smooth.png', bbox_inches='tight')
-    else:
-        plt.savefig(outputfolder + '/' + ferretname+'_'+rec_name+'_'+stream + '_' + pitchshift_text + '_averageovertime.png', bbox_inches='tight')
-    plt.show()
-
-def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferretname, talkerinput = 'talker1', smooth_option = True, clust_ids = []):
+def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferretname, talkerinput = 'talker1', smooth_option = True):
     probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
     score_dict = {}
     correlations = {}
     avg_correlations = {}
-
+    if pitchshift == 'nopitchshift':
+        scores = np.load(
+                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+                    allow_pickle=True)[()]
+    else:
+        scores = np.load(
+            str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_pitchshift_bs.npy',
+            allow_pickle=True)[()]
 
 
     #create a dictionary of scores for each cluster
-    for cluster in clust_ids:
+
+    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
         score_dict[cluster] = {}
         correlations[cluster] = {}
         avg_correlations[cluster] = {}
 
-    for cluster in clust_ids:
+
+    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
         for probeword in probewordslist:
             try:
                 if pitchshift == 'nopitchshift':
@@ -215,7 +252,7 @@ def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferret
                 continue
     #compute the cross correlation coefficient
 
-    for cluster in clust_ids:
+    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
         score_dict_cluster = score_dict[cluster]
         for key1 in score_dict_cluster.keys():
             for key2 in score_dict_cluster.keys():
@@ -238,7 +275,7 @@ def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferret
     #         else:
     #             avg_correlations[cluster][probeword] = 0.0  # If no correlation found for the probeword
     #do the entire average
-    for cluster in clust_ids:
+    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
         total_corr = 0.0
         count = 0
         for key_pair, correlation in correlations[cluster].items():
@@ -258,21 +295,28 @@ def calculate_total_distance(permutation):
         total_distance += abs(permutation[i][1] - permutation[i + 1][1])
     return total_distance
 
-def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname, talkerinput = 'talker1', smooth_option = True, clust_ids = []):
+def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname, talkerinput = 'talker1', smooth_option = True):
     probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
     score_dict = {}
     correlations = {}
     peak_dict = {}
     avg_correlations = {}
 
-
+    if pitchshift == 'nopitchshift':
+        scores = np.load(
+                    str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+                    allow_pickle=True)[()]
+    else:
+        scores = np.load(
+            str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_pitchshift_bs.npy',
+            allow_pickle=True)[()]
     #create a dictionary of scores for each cluster
-    for cluster in clust_ids:
+    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
         score_dict[cluster] = {}
         peak_dict[cluster] = {}
 
 
-    for cluster in clust_ids:
+    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
         for probeword in probewordslist:
             try:
                 if pitchshift == 'nopitchshift':
@@ -293,12 +337,15 @@ def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname
                 else:
                     score_dict[cluster][probeword] = scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index]
 
-            except:
+            except Exception as exception:
+                #print exception
+                print(exception)
+
                 print('error loading scores: ' + str(
                     file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(probeword) + '_' + ferretname + '_probe_bs.npy')
                 continue
 
-    for cluster in clust_ids:
+    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
         score_dict_cluster = score_dict[cluster]
         for key1 in score_dict_cluster.keys():
             #now compute the peak of the score timeseries
@@ -313,7 +360,7 @@ def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname
             peak_dict[cluster][key1] = peak_index
         #calculate the euclidean distance between the peaks
 
-    for cluster in clust_ids:
+    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
         peak_dict_unit = peak_dict[cluster]
 
         point_values = [(point, value) for point, value in peak_dict_unit.items()]
@@ -360,7 +407,7 @@ def run_scores_and_plot(file_path, pitchshift, output_folder, ferretname,  strin
                 allow_pickle=True)[()]
         else:
             scores = np.load(
-                str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + stringprobewordindex + '_' + ferretname + '_probe_pitchshift_bs.npy',
+                str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + stringprobewordindex + '_' + ferretname + '_probe_nopitchshift_bs.npy',
                 allow_pickle=True)[()]
     except:
         print('error loading scores: ' + str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + stringprobewordindex + '_' + ferretname + '_probe_bs.npy')
@@ -513,7 +560,7 @@ if __name__ == '__main__':
     ferretname = animal.split('_')[1]
     ferretname = ferretname.lower()
     #typo in my myriad code, this should really be relabelled as nopitchshift
-    pitchshift = 'pitchshift'
+    pitchshift = 'nopitchshift'
     stringprobewordlist = [2,3,4,5,6,7,8,9,10]
     # probewordlist = [ (5, 6),(2, 2), (42, 49), (32, 38), (20, 22)]
     totalcount = 0
@@ -536,55 +583,60 @@ if __name__ == '__main__':
                 totalcount = totalcount + 1
     big_correlation_dict = {}
     big_peak_dict = {}
-    for file_path in subfolders:
-        big_correlation_dict[file_path.parts[-2]] = {}
-        big_peak_dict[file_path.parts[-2]] = {}
-    for file_path in subfolders:
-        for talker in talkerlist:
-            # for probeword in stringprobewordlist:
-            #     print(probeword)
-            stream = str(file_path).split('\\')[-1]
-            stream = stream[-4:]
-            print(stream)
-            folder = str(file_path).split('\\')[-2]
+    for pitchshift in ['pitchshift', 'nopitchshift']:
+        big_correlation_dict = {}
+        big_peak_dict = {}
+        for file_path in subfolders:
+            big_correlation_dict[file_path.parts[-2]] = {}
+            big_peak_dict[file_path.parts[-2]] = {}
+        for file_path in subfolders:
+            for talker in talkerlist:
 
-            high_units = pd.read_csv(f'G:/neural_chapter/figures/unit_ids_trained_topgenindex_{animal}.csv')
-            # remove trailing steam
-            rec_name = folder[:-5]
+                # for probeword in stringprobewordlist:
+                #     print(probeword)
+                avg_correlations = calculate_correlation_coefficient(file_path, pitchshift, output_folder, ferretname, talkerinput = 'talker1')
+                totalcount = totalcount + 1
+                big_correlation_dict[file_path.parts[-2]][file_path.parts[-1]] = avg_correlations
+                #find the peak of the score timeseries
+                peak_dict = find_peak_of_score_timeseries(file_path, pitchshift, output_folder, ferretname, talkerinput = 'talker1')
+                big_peak_dict[file_path.parts[-2]][file_path.parts[-1]] = peak_dict
 
-            rec_name = folder
-            high_units = high_units[(high_units['rec_name'] == rec_name) & (high_units['stream'] == stream)]
-            clust_ids = high_units['ID'].to_list()
-            brain_area = high_units['BrainArea'].to_list()
+        np.save(output_folder + '/' + ferretname + '_'+ pitchshift+ '_peak_dict.npy', big_peak_dict)
+        np.save(output_folder + '/' + ferretname + '_'+ pitchshift + '_correlation_dict.npy', big_correlation_dict)
+        print('done')
 
-            avg_correlations = calculate_correlation_coefficient(file_path, pitchshift, output_folder, ferretname, talkerinput = 'talker1', clust_ids = clust_ids)
-            totalcount = totalcount + 1
-            big_correlation_dict[file_path.parts[-2]][file_path.parts[-1]] = avg_correlations
-            #find the peak of the score timeseries
-            peak_dict = find_peak_of_score_timeseries(file_path, pitchshift, output_folder, ferretname, talkerinput = 'talker1', clust_ids = clust_ids)
-            big_peak_dict[file_path.parts[-2]][file_path.parts[-1]] = peak_dict
+        for file_path in subfolders:
+            for talker in talkerlist:
+                stream = str(file_path).split('\\')[-1]
+                stream = stream[-4:]
+                print(stream)
+                folder = str(file_path).split('\\')[-2]
 
-    np.save(output_folder + '/' + ferretname + '_'+ pitchshift+ '_peak_dict.npy', big_peak_dict)
-    np.save(output_folder + '/' + ferretname + '_'+ pitchshift + '_correlation_dict.npy', big_correlation_dict)
-    print('done')
+                high_units = pd.read_csv(f'G:/neural_chapter/figures/unit_ids_trained_topgenindex_{animal}.csv')
+                # remove trailing steam
+                rec_name = folder[:-5]
+                # find the unique string
 
-    for file_path in subfolders:
-        for talker in talkerlist:
-            stream = str(file_path).split('\\')[-1]
-            stream = stream[-4:]
-            print(stream)
-            folder = str(file_path).split('\\')[-2]
+                # remove the repeating substring
 
-            high_units = pd.read_csv(f'G:/neural_chapter/figures/unit_ids_trained_topgenindex_{animal}.csv')
-            # remove trailing steam
-            rec_name = folder[:-5]
+                # find the units that have the phydir
 
-            rec_name = folder
-            high_units = high_units[(high_units['rec_name'] == rec_name) & (high_units['stream'] == stream)]
-            clust_ids = high_units['ID'].to_list()
-            brain_area = high_units['BrainArea'].to_list()
+                # max_length = len(rec_name) // 2
+                #
+                # for length in range(1, max_length + 1):
+                #     for i in range(len(rec_name) - length):
+                #         substring = rec_name[i:i + length]
+                #         if rec_name.count(substring) > 1:
+                #             repeating_substring = substring
+                #             break
+                #
+                # print(repeating_substring)
+                rec_name = folder
+                high_units = high_units[(high_units['rec_name'] == rec_name) & (high_units['stream'] == stream)]
+                clust_ids = high_units['ID'].to_list()
+                brain_area = high_units['BrainArea'].to_list()
 
-            plot_average_over_time(file_path, pitchshift, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=True, clust_ids = clust_ids)
+                plot_average_over_time(file_path, pitchshift, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=False)
 
 
 
