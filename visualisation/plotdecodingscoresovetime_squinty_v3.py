@@ -216,13 +216,18 @@ def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferret
             allow_pickle=True)[()]
 
 
-    #create a dictionary of scores for each cluster
-
-    for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
-        score_dict[cluster] = {}
-        correlations[cluster] = {}
-        avg_correlations[cluster] = {}
-
+    #create a dictionary of scores for each cluster\
+    try:
+        for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+            score_dict[cluster] = {}
+            correlations[cluster] = {}
+            avg_correlations[cluster] = {}
+    except:
+        pitchshift = 'nopitchshiftvspitchshift'
+        for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+            score_dict[cluster] = {}
+            correlations[cluster] = {}
+            avg_correlations[cluster] = {}
 
     for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
         for probeword in probewordslist:
@@ -547,7 +552,7 @@ def run_scores_and_plot(file_path, pitchshift, output_folder, ferretname,  strin
 if __name__ == '__main__':
     print('hello')
 
-    big_folder = Path('G:/results_decodingovertime_28112023/F1702_Zola/')
+    big_folder = Path('G:/results_decodingovertime_28112023/F1604_Squinty/')
     animal = big_folder.parts[-1]
     # file_path = 'D:\decodingresults_overtime\F1815_Cruella\lstm_kfold_balac_01092023_cruella/'
     output_folder = f'G:/decodingovertime_figures/{animal}/'
@@ -578,8 +583,7 @@ if __name__ == '__main__':
                 print(probeword)
                 run_scores_and_plot(file_path, pitchshift, output_folder, ferretname, stringprobewordindex=str(probeword), talker = talker, totalcount = totalcount )
                 totalcount = totalcount + 1
-    big_correlation_dict = {}
-    big_peak_dict = {}
+
     for pitchshift in ['pitchshift', 'nopitchshift']:
         big_correlation_dict = {}
         big_peak_dict = {}
