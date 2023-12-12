@@ -30,19 +30,20 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
                 if pitchshift == 'nopitchshift':
                     scores = np.load(
                         str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
-                            probeword) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+                            probeword) + '_' + ferretname + '_nopitchshift_probe_bs.npy',
                         allow_pickle=True)[()]
                 else:
                     scores = np.load(
                         str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
-                            probeword) + '_' + ferretname + '_probe_pitchshift_bs.npy',
+                            probeword) + '_' + ferretname + '_pitchshift_probe_bs.npy',
                         allow_pickle=True)[()]
                 #find the index of the cluster
                 index = scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id'].index(cluster)
 
                 score_dict[cluster][probeword] = scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index]
 
-            except:
+            except Exception as e:
+                print(e)
                 print('error loading scores: ' + str(
                     file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(probeword) + '_' + ferretname + '_probe_bs.npy')
                 continue
@@ -112,7 +113,7 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
 
 
             axs.plot(timepoints, avg_score, c='black')
-            axs.fill_between(timepoints, avg_score - std_dev, avg_score + std_dev, alpha=0.3, color ='purple')
+            axs.fill_between(timepoints, avg_score - std_dev, avg_score + std_dev, alpha=0.3, color ='cyan')
 
 
             if i == 0:
@@ -174,16 +175,16 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
                 # remove the axis
                 axs.axis('off')
                 continue
-            try:
-                timepoints = np.arange(0, (len(avg_score) / 100) * 4, 0.04)
-            except:
-                continue
+            # try:
+            timepoints = np.arange(0, (len(avg_score) / 100) * 4, 0.04)
+            # except:
+            #     continue
             std_dev = avg_scores[cluster]['std']
             if smooth_option == True:
                 avg_score = scipy.signal.savgol_filter(avg_score, 5, 3, mode='interp')
 
             axs.plot(timepoints, avg_score, c='black')
-            axs.fill_between(timepoints, avg_score - std_dev, avg_score + std_dev, alpha=0.3, color='purple')
+            axs.fill_between(timepoints, avg_score - std_dev, avg_score + std_dev, alpha=0.3, color='cyan')
 
             if pitchshift == 'nopitchshiftvspitchshift' or pitchshift == 'nopitchshift':
                 pitchshift_option = False
@@ -197,7 +198,7 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
             axs.set_yticks(ticks=[0, 0.2, 0.4, 0.6, 0.8, 1.0], labels=[0, 0.2, 0.4, 0.6, 0.8, 1.0], fontsize=15)
             axs.set_xticks(ticks=[0, 0.2, 0.4, 0.6], labels=[0, 0.2, 0.4, 0.6], fontsize=15)
             plt.savefig(outputfolder + '/' +str(cluster)+'_'+ ferretname + '_' + rec_name + '_' + stream + '_' + pitchshift_text + '_averageovertime_' + str(cluster) + '.png', bbox_inches='tight')
-
+            plt.show()
 
 def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferretname, talkerinput = 'talker1', smooth_option = True, clust_ids = []):
     probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -219,12 +220,12 @@ def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferret
                 if pitchshift == 'nopitchshift':
                     scores = np.load(
                         str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
-                            probeword) + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+                            probeword) + '_' + ferretname + '_nopitchshift_probe_bs.npy',
                         allow_pickle=True)[()]
                 else:
                     scores = np.load(
                         str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
-                            probeword) + '_' + ferretname + '_probe_pitchshift_bs.npy',
+                            probeword) + '_' + ferretname + '_pitchshift_probe_bs.npy',
                         allow_pickle=True)[()]
                 #find the index of the cluster
                 index = scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id'].index(cluster)
@@ -235,7 +236,8 @@ def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferret
                 else:
                     score_dict[cluster][probeword] = scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index]
 
-            except:
+            except Exception as e:
+                print(e)
                 print('error loading scores: ' + str(
                     file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(probeword) + '_' + ferretname + '_probe_bs.npy')
                 continue
@@ -319,7 +321,8 @@ def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname
                 else:
                     score_dict[cluster][probeword] = scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index]
 
-            except:
+            except Exception as e:
+                print(e)
                 print('error loading scores: ' + str(
                     file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(probeword) + '_' + ferretname + '_probe_bs.npy')
                 continue
@@ -382,13 +385,14 @@ def run_scores_and_plot(file_path, pitchshift, output_folder, ferretname,  strin
     try:
         if pitchshift == 'nopitchshift':
             scores = np.load(
-                str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + stringprobewordindex + '_' + ferretname + '_probe_nopitchshift_bs.npy',
+                str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + stringprobewordindex + '_' + ferretname + '_nopitchshift_probe_bs.npy',
                 allow_pickle=True)[()]
         else:
             scores = np.load(
-                str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + stringprobewordindex + '_' + ferretname + '_probe_pitchshift_bs.npy',
+                str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + stringprobewordindex + '_' + ferretname + '_pitchshift_probe_bs.npy',
                 allow_pickle=True)[()]
-    except:
+    except Exception as e:
+        print(e)
         print('error loading scores: ' + str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + stringprobewordindex + '_' + ferretname + '_probe_bs.npy')
         return
     rec_name = file_path.parts[-2]
@@ -529,7 +533,7 @@ def run_scores_and_plot(file_path, pitchshift, output_folder, ferretname,  strin
 if __name__ == '__main__':
     print('hello')
 
-    big_folder = Path('G:/results_decodingovertime_28112023/F1815_Cruella/')
+    big_folder = Path('G:/results_decodingovertime_28112023/F2003_Orecchiette/')
     animal = big_folder.parts[-1]
     # file_path = 'D:\decodingresults_overtime\F1815_Cruella\lstm_kfold_balac_01092023_cruella/'
     output_folder = f'G:/decodingovertime_figures/{animal}/'
@@ -539,14 +543,14 @@ if __name__ == '__main__':
     ferretname = animal.split('_')[1]
     ferretname = ferretname.lower()
     #typo in my myriad code, this should really be relabelled as nopitchshift
-    pitchshift = 'pitchshift'
+    pitchshift = 'nopitchshift'
     stringprobewordlist = [2,3,4,5,6,7,8,9,10]
     # probewordlist = [ (5, 6),(2, 2), (42, 49), (32, 38), (20, 22)]
     totalcount = 0
     talkerlist = ['female']
     #find all the subfolders, all the folders that contain the data
 
-    subfolders = [f for f in big_folder.glob('**/BB_*/') if f.is_dir()]
+    subfolders = [f for f in big_folder.glob('**/ng_0*/') if f.is_dir()]
 
 
 
@@ -560,7 +564,8 @@ if __name__ == '__main__':
                 print(probeword)
                 run_scores_and_plot(file_path, pitchshift, output_folder, ferretname, stringprobewordindex=str(probeword), talker = talker, totalcount = totalcount )
                 totalcount = totalcount + 1
-    for pitchshift in ['pitchshift', 'nopitchshift']:
+    for pitchshift in ['nopitchshift', 'pitchshift']:
+
         big_correlation_dict = {}
         big_peak_dict = {}
         for file_path in subfolders:
@@ -570,29 +575,16 @@ if __name__ == '__main__':
             for talker in talkerlist:
                 # for probeword in stringprobewordlist:
                 #     print(probeword)
-                stream = str(file_path).split('\\')[-1]
-                stream = stream[-4:]
-                print(stream)
-                folder = str(file_path).split('\\')[-2]
-
-                high_units = pd.read_csv(f'G:/neural_chapter/figures/unit_ids_trained_topgenindex_{animal}.csv')
-                # remove trailing steam
-                rec_name = folder[:-5]
-
-                rec_name = folder
-                high_units = high_units[(high_units['rec_name'] == rec_name) & (high_units['stream'] == stream)]
-                clust_ids = high_units['ID'].to_list()
-                brain_area = high_units['BrainArea'].to_list()
-
-                avg_correlations = calculate_correlation_coefficient(file_path, pitchshift, output_folder, ferretname, talkerinput = 'talker1', clust_ids = clust_ids)
+                avg_correlations = calculate_correlation_coefficient(file_path, pitchshift, output_folder, ferretname, talkerinput = 'talker1')
                 totalcount = totalcount + 1
                 big_correlation_dict[file_path.parts[-2]][file_path.parts[-1]] = avg_correlations
                 #find the peak of the score timeseries
-                peak_dict = find_peak_of_score_timeseries(file_path, pitchshift, output_folder, ferretname, talkerinput = 'talker1', clust_ids = clust_ids)
+                peak_dict = find_peak_of_score_timeseries(file_path, pitchshift, output_folder, ferretname, talkerinput = 'talker1')
                 big_peak_dict[file_path.parts[-2]][file_path.parts[-1]] = peak_dict
 
-        np.save(output_folder + '/' + ferretname + '_'+ pitchshift+ '_peak_dict.npy', big_peak_dict)
-        np.save(output_folder + '/' + ferretname + '_'+ pitchshift + '_correlation_dict.npy', big_correlation_dict)
+        #save the big_peak_dict
+        np.save(output_folder + '/' + ferretname + '_' + pitchshift + '_peak_dict.npy', big_peak_dict)
+        np.save(output_folder + '/' + ferretname + '_' + pitchshift + '_correlation_dict.npy', big_correlation_dict)
         print('done')
 
         for file_path in subfolders:
@@ -605,13 +597,32 @@ if __name__ == '__main__':
                 high_units = pd.read_csv(f'G:/neural_chapter/figures/unit_ids_trained_topgenindex_{animal}.csv')
                 # remove trailing steam
                 rec_name = folder[:-5]
+                # find the unique string
 
+                # remove the repeating substring
+
+                # find the units that have the phydir
+
+                # max_length = len(rec_name) // 2
+                #
+                # for length in range(1, max_length + 1):
+                #     for i in range(len(rec_name) - length):
+                #         substring = rec_name[i:i + length]
+                #         if rec_name.count(substring) > 1:
+                #             repeating_substring = substring
+                #             break
+                #
+                # print(repeating_substring)
                 rec_name = folder
-                high_units = high_units[(high_units['rec_name'] == rec_name) & (high_units['stream'] == stream)]
+                if rec_name.__contains__('s2'):
+                    stream = 't_s2'
+                elif rec_name.__contains__('s3'):
+                    stream = 't_s3'
+
+                high_units = high_units[(high_units['stream'] == stream) ]
                 clust_ids = high_units['ID'].to_list()
                 brain_area = high_units['BrainArea'].to_list()
 
-                plot_average_over_time(file_path, pitchshift, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=False, clust_ids = clust_ids)
-
+                plot_average_over_time(file_path, pitchshift, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=False)
 
 
