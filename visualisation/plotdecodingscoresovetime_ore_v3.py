@@ -83,6 +83,10 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
     fig, ax = plt.subplots(num_rows, num_cols, figsize=(40, 15))
     ax = ax.flatten()
     # fig, ax = plt.subplots(2, int(len(high_units['ID'].to_list())/2), figsize=(20, 20))
+    if pitchshift == 'nopitchshift':
+        color_text = 'cyan'
+    else:
+        color_text = 'dodgerblue'
     if plot_on_one_figure == True:
         for i, cluster in enumerate(meg_clusters + peg_clusters):
             brain_id = high_units[high_units['ID'] == cluster]['BrainArea'].to_list()[0]
@@ -111,7 +115,7 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
                 # avg_score = scipy.ndimage.gaussian_filter1d(avg_score, sigma = 1.5)
 
             axs.plot(timepoints, avg_score, c='black')
-            axs.fill_between(timepoints, avg_score - std_dev, avg_score + std_dev, alpha=0.3, color='cyan')
+            axs.fill_between(timepoints, avg_score - std_dev, avg_score + std_dev, alpha=0.3, color=color_text)
 
             if i == 0:
                 axs.set_xlabel('time (s)', fontsize=20)
@@ -184,7 +188,7 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
                 avg_score = scipy.signal.savgol_filter(avg_score, 5, 3, mode='interp')
 
             axs.plot(timepoints, avg_score, c='black')
-            axs.fill_between(timepoints, avg_score - std_dev, avg_score + std_dev, alpha=0.3, color='cyan')
+            axs.fill_between(timepoints, avg_score - std_dev, avg_score + std_dev, alpha=0.3, color=color_text)
 
             if pitchshift == 'nopitchshiftvspitchshift' or pitchshift == 'nopitchshift':
                 pitchshift_option = False
@@ -302,7 +306,7 @@ def calculate_total_distance(permutation):
         total_distance += abs(permutation[i][1] - permutation[i + 1][1])
     return total_distance
 
-def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname, talkerinput = 'talker1', smooth_option = True, clust_ids = []):
+def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname, talkerinput = 'talker1', smooth_option = False, clust_ids = []):
     probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
     score_dict = {}
     correlations = {}
@@ -339,6 +343,23 @@ def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname
                 index = scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id'].index(cluster)
                 if smooth_option == True:
                     score_dict[cluster][probeword] = scipy.signal.savgol_filter(scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index], 5, 3)
+                    #calculate the r2 value to determine if the smoothed score is a flat line
+                    r2 = scipy.stats.linregress(np.arange(0, (len(score_dict[cluster][probeword]) / 100) * 4, 0.04), score_dict[cluster][probeword])[2]
+                    if np.abs(r2) < 0.02:
+                        print('pretty flat line')
+                    #plot smoothed versus unsmoothed
+                    fig, axs = plt.subplots()
+                    axs.plot(scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index], label = 'unsmoothed')
+                    axs.set_title('')
+                    axs.plot(score_dict[cluster][probeword], label = 'smoothed')
+                    plt.ylim([0,1])
+                    plt.legend()
+                    plt.show()
+                    #check if the score plot is basically a flat line
+                    # std_dev_smoothed = np.std(score_dict[cluster][probeword])
+                    # if np.std(scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index]) < 0.01:
+                    #     print('flat line')
+                    #     continue
                     # score_dict[cluster][probeword]= scipy.ndimage.gaussian_filter1d(scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index], sigma = 1.5)
                 else:
                     score_dict[cluster][probeword] = scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index]

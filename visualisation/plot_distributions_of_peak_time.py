@@ -56,6 +56,9 @@ if __name__ == '__main__':
 
     # np.save(output_folder + '/' + ferretname + '_ '+ pitchshift + '_peak_dict.npy', big_peak_dict)
     # np.save(output_folder + '/' + ferretname + '_ '+ pitchshift + '_correlation_dict.npy', big_correlation_dict)
+    all_peak_dict_across_pitchshift = []
+    all_peak_dict_naive_across_pitchshift = []
+
     for pitchshift in ['pitchshift', 'nopitchshift']:
         animal_list_trained = ['F1702_Zola', 'F1815_Cruella']
         all_peak_dict = []
@@ -104,23 +107,33 @@ if __name__ == '__main__':
                             continue
         #remove the nan values
         all_peak_dict = [x for x in all_peak_dict if str(x) != 'nan']
-        fig, ax = plt.subplots()
-        sns.histplot(all_peak_dict, kde = True,  alpha = 0.5, label = 'trained', color = 'purple')
+        all_peak_dict_naive = [x for x in all_peak_dict_naive if str(x) != 'nan']
+        #append the data to a list
+        all_peak_dict_across_pitchshift.append(all_peak_dict)
+        all_peak_dict_naive_across_pitchshift.append(all_peak_dict_naive)
+    #faltten the list
+    all_peak_dict_across_pitchshift = [item for sublist in all_peak_dict_across_pitchshift for item in sublist]
+    all_peak_dict_naive_across_pitchshift = [item for sublist in all_peak_dict_naive_across_pitchshift for item in sublist]
 
-        sns.histplot(all_peak_dict_naive, kde = True, alpha = 0.5, label = 'naive', color = 'darkcyan')
-        # ax.hist(all_peak_dict, bins = 20, alpha = 0.5, label = 'trained', color = 'purple')
-        # ax.hist(all_peak_dict_naive, bins = 20, alpha = 0.5, label = 'naive', color = 'darkcyan')
-        ax.set_xlabel('standard deviation of peak time of decoding scores', fontsize = 15)
-        ax.set_ylabel('count', fontsize = 15)
-        ax.legend()
-        plt.title(f'Distribution of standard deviation of peak times, {pitchshifttext}', fontsize = 15)
-        fig.savefig(f'G:/decodingovertime_figures/peak_time_std_dev_{pitchshifttext}.png')
 
-        plt.show()
+    fig, ax = plt.subplots()
+
+    sns.histplot(all_peak_dict_across_pitchshift, kde = True,  alpha = 0.5, label = 'trained', color = 'purple')
+
+    sns.histplot(all_peak_dict_naive_across_pitchshift, kde = True, alpha = 0.5, label = 'naive', color = 'darkcyan')
+    # ax.hist(all_peak_dict, bins = 20, alpha = 0.5, label = 'trained', color = 'purple')
+    # ax.hist(all_peak_dict_naive, bins = 20, alpha = 0.5, label = 'naive', color = 'darkcyan')
+    ax.set_xlabel('standard deviation of peak time of decoding scores', fontsize = 15)
+    ax.set_ylabel('count', fontsize = 15)
+    ax.legend()
+    plt.title(f'Distribution of standard deviation of peak times in decoding scores over time', fontsize = 15)
+    fig.savefig(f'G:/decodingovertime_figures/peak_time_std_dev_acrosspitch.png')
+
+    plt.show()
 
         #calculate a mann whitney u test
-        print(scipy.stats.mannwhitneyu(all_peak_dict, all_peak_dict_naive, alternative = 'two-sided'))
+    print(scipy.stats.mannwhitneyu(all_peak_dict, all_peak_dict_naive, alternative = 'less'))
 
 
 
-        print('done')
+    print('done')

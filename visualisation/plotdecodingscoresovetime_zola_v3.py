@@ -87,6 +87,10 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
     fig, ax = plt.subplots(num_rows, num_cols, figsize=(40, 15))
     ax = ax.flatten()
     # fig, ax = plt.subplots(2, int(len(high_units['ID'].to_list())/2), figsize=(20, 20))
+    if pitchshift == 'nopitchshift':
+        color_text = 'purple'
+    else:
+        color_text = 'orchid'
     if plot_on_one_figure == True:
         for i, cluster in enumerate(meg_clusters + peg_clusters):
             brain_id = high_units[high_units['ID'] == cluster]['BrainArea'].to_list()[0]
@@ -116,7 +120,7 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
 
 
             axs.plot(timepoints, avg_score, c='black')
-            axs.fill_between(timepoints, avg_score - std_dev, avg_score + std_dev, alpha=0.3, color ='purple')
+            axs.fill_between(timepoints, avg_score - std_dev, avg_score + std_dev, alpha=0.3, color=color_text)
 
 
             if i == 0:
@@ -184,7 +188,7 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
                 avg_score = scipy.signal.savgol_filter(avg_score, 5, 3, mode='interp')
 
             axs.plot(timepoints, avg_score, c='black')
-            axs.fill_between(timepoints, avg_score - std_dev, avg_score + std_dev, alpha=0.3, color='purple')
+            axs.fill_between(timepoints, avg_score - std_dev, avg_score + std_dev, alpha=0.3, color=color_text)
 
             if pitchshift == 'nopitchshiftvspitchshift' or pitchshift == 'nopitchshift':
                 pitchshift_option = False
@@ -295,7 +299,7 @@ def calculate_total_distance(permutation):
         total_distance += abs(permutation[i][1] - permutation[i + 1][1])
     return total_distance
 
-def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname, talkerinput = 'talker1', smooth_option = True):
+def find_peak_of_score_timeseries(filepath, pitchshift, outputfolder, ferretname, talkerinput = 'talker1', smooth_option = False):
     probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
     score_dict = {}
     correlations = {}
