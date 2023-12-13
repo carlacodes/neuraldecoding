@@ -126,13 +126,20 @@ if __name__ == '__main__':
     ax.set_xlabel('standard deviation of peak time of decoding scores', fontsize = 15)
     ax.set_ylabel('count', fontsize = 15)
     ax.legend()
-    plt.title(f'Distribution of standard deviation of peak times in decoding scores over time', fontsize = 15)
+    plt.title(f'Distribution of standard deviation in decoding score peaks', fontsize = 15)
     fig.savefig(f'G:/decodingovertime_figures/peak_time_std_dev_acrosspitch.png')
 
     plt.show()
 
         #calculate a mann whitney u test
-    print(scipy.stats.mannwhitneyu(all_peak_dict, all_peak_dict_naive, alternative = 'less'))
+    manwhitscore_stat, _ = scipy.stats.mannwhitneyu(all_peak_dict, all_peak_dict_naive, alternative = 'less')
+    #calculate the effect size
+    print('effect size')
+    print(scipy.stats.ranksums(all_peak_dict, all_peak_dict_naive))
+    n1 = len(all_peak_dict)
+    n2 = len(all_peak_dict_naive)
+    r = 1 - (2 * manwhitscore_stat) / (n1 * n2)
+
 
 
 

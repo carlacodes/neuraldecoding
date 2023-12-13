@@ -2585,20 +2585,29 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     plt.savefig('G:/neural_chapter/figures/rovedF0vscontrolF0naivedistribution_20062023intertrialroving.png', dpi=1000)
     plt.show()
     kstestcontrolf0vsrovedtrained = scipy.stats.kstest(bigconcatenatetrained_nonps, bigconcatenatetrained_ps,
-                                                       alternative='two-sided')
+                                                       alternative='greater')
 
     # do levene's test
     leveneteststat = scipy.stats.levene(bigconcatenatetrained_nonps, bigconcatenatetrained_ps)
     kstestcontrolf0vsrovednaive = scipy.stats.kstest(bigconcatenatenaive_nonps, bigconcatenatenaive_ps,
-                                                     alternative='two-sided')
+                                                     alternative='greater')
+    # do a wilcoxon signed rank test
+    wilcoxon_stat, wilcoxon_pvalue = scipy.stats.wilcoxon(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, alternative = 'greater')
 
+    # do a wilcoxon signed rank test
+    wilcoxon_statnaive, wilcoxon_pvaluenaive = scipy.stats.wilcoxon(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, alternative = 'greater')
     # Calculating Cramér's V for effect size
     def cramers_v(n, ks_statistic):
         return np.sqrt(ks_statistic / n)
 
     n = len(bigconcatenatenaive_nonps) * len(bigconcatenatenaive_ps) / (
             len(bigconcatenatenaive_nonps) + len(bigconcatenatenaive_ps))
-    effect_size_naive = cramers_v(n, kstestcontrolf0vsrovednaive.statistic)
+    n= len(bigconcatenatenaive_nonps) + len(bigconcatenatenaive_ps)
+    # effect_size_naive = cramers_v(n, kstestcontrolf0vsrovednaive.statistic)
+    k = 2
+    eta_squared_naive = (kstestcontrolf0vsrovednaive.statistic - k + 1) / (n - k)
+    n = len(bigconcatenatetrained_nonps) + len(bigconcatenatetrained_ps)
+    eta_squared_trained = (kstestcontrolf0vsrovedtrained.statistic - k + 1) / (n - k)
 
     n_trained = len(bigconcatenatetrained_nonps) * len(bigconcatenatetrained_ps) / (
             len(bigconcatenatetrained_nonps) + len(bigconcatenatetrained_ps))
