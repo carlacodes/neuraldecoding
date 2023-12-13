@@ -589,10 +589,10 @@ def runlgbmmodel_score(df_use, optimization = False):
     for i, probe in enumerate(unique_probe_words):
         print(i, probe)
         data_df_trained['ProbeWord'] = data_df_trained['ProbeWord'].replace({i: probe})
-    #plot by ascending order
-    data_df_trained = data_df_trained.sort_values(by=['SHAP value'])
-    #get the average SHAp value for each probe word
-    data_df_trained = data_df_trained.sort_values(by=['SHAP value'])
+    #plot by descending order
+    data_df_trained = data_df_trained.sort_values(by=['SHAP value'], ascending=False)
+
+
     ax.barh(np.arange(0,len(data_df_trained['SHAP value']), 1), data_df_trained['SHAP value'], color='hotpink', label='Trained')
     #get the matching index for the probe words
     plt.yticks(np.arange(0, len(data_df_trained['SHAP value']), 1), data_df_trained['ProbeWord'], fontsize=16, rotation = 45)

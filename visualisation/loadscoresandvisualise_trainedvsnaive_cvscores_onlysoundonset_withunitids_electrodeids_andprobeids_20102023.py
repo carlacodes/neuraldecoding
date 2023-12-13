@@ -2549,6 +2549,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     ax.legend(fontsize=18)
     plt.savefig('G:/neural_chapter/figures/rovedF0distribution_20062023intertrialroving.png', dpi=1000)
 
+
+
     plt.show()
 
     fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
@@ -2604,7 +2606,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
     # run mann whitney u test
     manwhitscore_stat, manwhitescore_pvalue = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatetrained_ps,
-                                                           alternative='two-sided')
+                                                           alternative='greater')
     manwhitscore_statnaive, manwhitescore_pvaluenaive = mannwhitneyu(bigconcatenatenaive_nonps, bigconcatenatenaive_ps,
                                                                      alternative='two-sided')
     manwhitscore_statnaive2, manwhitescore_pvaluenaive2 = mannwhitneyu(bigconcatenatenaive_nonps, bigconcatenatenaive_ps,
@@ -3187,7 +3189,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     combined_df = df_full_naive_pitchsplit.append(df_full_pitchsplit)
     #now run the lightgbm function
     run_mixed_effects_on_dataframe(combined_df)
-    # runlgbmmodel_score(combined_df, optimization=False)
+    runlgbmmodel_score(combined_df, optimization=False)
 
 
     #now plot by animal:
