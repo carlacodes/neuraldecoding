@@ -2592,10 +2592,28 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     kstestcontrolf0vsrovednaive = scipy.stats.kstest(bigconcatenatenaive_nonps, bigconcatenatenaive_ps,
                                                      alternative='greater')
     # do a wilcoxon signed rank test
-    wilcoxon_stat, wilcoxon_pvalue = scipy.stats.wilcoxon(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, alternative = 'greater')
+    wilcoxon_stat = scipy.stats.wilcoxon(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, alternative = 'two-sided', method = 'approx')
 
     # do a wilcoxon signed rank test
-    wilcoxon_statnaive, wilcoxon_pvaluenaive = scipy.stats.wilcoxon(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, alternative = 'greater')
+    wilcoxon_statnaive= scipy.stats.wilcoxon(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, alternative = 'greater', method = 'approx')
+    #export bigconcatenatenaive_nonps and bigconcatenatenaive_ps to csv
+    df_naive = pd.DataFrame({'F0_control': bigconcatenatenaive_nonps, 'F0_roved': bigconcatenatenaive_ps})
+    df_naive.to_csv('G:/neural_chapter/figures/rovedF0vscontrolF0naivedistribution_20062023intertrialroving.csv')
+    df_trained = pd.DataFrame({'F0_control': bigconcatenatetrained_nonps, 'F0_roved': bigconcatenatetrained_ps})
+    df_trained.to_csv('G:/neural_chapter/figures/rovedF0vscontrolF0traineddistribution_20062023intertrialroving.csv')
+
+    z = wilcoxon_stat.zstatistic
+    n = len(bigconcatenatetrained_nonps)
+    effect_size_trained = z/np.sqrt(2*n)
+    print(effect_size_trained)
+
+    #calculate the effect size
+    #effect size = z/sqrt(n)
+    z = wilcoxon_statnaive.zstatistic
+    n = len(bigconcatenatenaive_nonps)
+    effect_size_naive = z/np.sqrt(2*n)
+
+
     # Calculating Cramér's V for effect size
     def cramers_v(n, ks_statistic):
         return np.sqrt(ks_statistic / n)
