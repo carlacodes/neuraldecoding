@@ -2345,10 +2345,53 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                 ignore_index=True)
         # export the dataframe to csv
         animal_dataframe.to_csv(f'G:/neural_chapter/figures/unit_ids_trained_topgenindex_{animal}.csv')
+    for animal in ['F1815_Cruella', 'F1702_Zola', 'F1604_Squinty', 'F1606_Windolene']:
+        # isolate the data for this animal
+        df_full_pitchsplit_plot_animal = df_full_pitchsplit[df_full_pitchsplit['ID'].str.contains(animal)]
+        # export the unit IDs for this animal
+        animal_dataframe = pd.DataFrame(columns=['ID', 'rec_name', 'stream', 'BrainArea', 'Score'])
+        for i in range(0, len(df_full_pitchsplit_plot_animal)):
+            full_id = df_full_pitchsplit_plot_animal.iloc[i]['ID']
+            components = full_id.split('_')
+            unit_id = components[0]
+            # remove the unit id from the full_id for the rec_name
+            rec_name = components[3:-2]
+            # concatenate the rec_name
+            rec_name = '_'.join(rec_name)
+            stream = full_id[-4:]
+            # genfrac = df_full_pitchsplit_plot_animal.iloc[i]['GenFrac']
+            brainarea = df_full_pitchsplit_plot_animal.iloc[i]['BrainArea']
+            # append to a dataframe
+            animal_dataframe = animal_dataframe.append(
+                {'ID': unit_id, 'rec_name': rec_name, 'stream': stream, 'BrainArea': brainarea,  'Score': df_full_pitchsplit_plot_animal.iloc[i]['Score']},
+                ignore_index=True)
+        # export the dataframe to csv
+        animal_dataframe.to_csv(f'G:/neural_chapter/csvs/unit_ids_trained_all_{animal}.csv')
 
     for animal in ['F1902_Eclair', 'F1901_Crumble', 'F1812_Nala', 'F2003_Orecchiette']:
         # isolate the data for this animal
-        df_full_pitchsplit_plot_animal = df_full_naive_pitchsplit_plot[
+        df_full_pitchsplit_plot_animal = df_full_naive_pitchsplit[
+            df_full_naive_pitchsplit['ID'].str.contains(animal)]
+        # export the unit IDs for this animal
+        animal_dataframe = pd.DataFrame(columns=['ID', 'rec_name', 'stream',  'Score'])
+        for i in range(0, len(df_full_pitchsplit_plot_animal)):
+            full_id = df_full_pitchsplit_plot_animal.iloc[i]['ID']
+            components = full_id.split('_')
+            unit_id = components[0]
+            # remove the unit id from the full_id for the rec_name
+            rec_name = components[3:-2]
+            # concatenate the rec_name
+            rec_name = '_'.join(rec_name)
+            stream = full_id[-4:]
+            # append to a dataframe
+            animal_dataframe = animal_dataframe.append(
+                {'ID': unit_id, 'rec_name': rec_name, 'stream': stream, 'BrainArea': brainarea, 'Score': df_full_pitchsplit_plot_animal.iloc[i]['Score']},
+                ignore_index=True)
+        # export the dataframe to csv
+        animal_dataframe.to_csv(f'G:/neural_chapter/csvs/unit_ids_all_naive_{animal}.csv')
+    for animal in ['F1902_Eclair', 'F1901_Crumble', 'F1812_Nala', 'F2003_Orecchiette']:
+            # isolate the data for this animal
+        df_full_pitchsplit_plot_animal = df_full_naive_pitchsplit[
             df_full_naive_pitchsplit_plot['ID'].str.contains(animal)]
         # export the unit IDs for this animal
         animal_dataframe = pd.DataFrame(columns=['ID', 'rec_name', 'stream', 'BrainArea', 'GenScore', 'MeanScore'])
@@ -2364,10 +2407,11 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
             # append to a dataframe
             genfrac = df_full_pitchsplit_plot_animal.iloc[i]['GenFrac']
             animal_dataframe = animal_dataframe.append(
-                {'ID': unit_id, 'rec_name': rec_name, 'stream': stream, 'BrainArea': brainarea, 'GenScore': genfrac, 'MeanScore': df_full_pitchsplit_plot_animal.iloc[i]['MeanScore']},
+                {'ID': unit_id, 'rec_name': rec_name, 'stream': stream, 'BrainArea': brainarea, 'GenScore': genfrac,
+                 'MeanScore': df_full_pitchsplit_plot_animal.iloc[i]['MeanScore']},
                 ignore_index=True)
         # export the dataframe to csv
-        animal_dataframe.to_csv(f'G:/neural_chapter/figures/unit_ids_trained_topgenindex_{animal}.csv')
+        animal_dataframe.to_csv(f'G:/neural_chapter/csvs/unit_ids_trained_topgenindex_{animal}.csv')
         ##do the roved - control f0 score divided by the control f0 score plot
         # first get the data into a format that can be analysed
     rel_frac_list_naive = []

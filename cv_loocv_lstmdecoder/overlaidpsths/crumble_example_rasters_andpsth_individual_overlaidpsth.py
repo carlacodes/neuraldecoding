@@ -96,7 +96,7 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
     #read the dataframe
 
 
-    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_overlaid0712/{dir}/')
+    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_overlaid1612/{dir}/')
 
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
@@ -382,14 +382,16 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
         rec_name = repeating_substring
         rec_name = rec_name[:-1]
         stream = str(ids_to_plot['Folder'][i])[-4:]
-
+        brain_area = pd.read_csv(f'G:/neural_chapter/csvs/unit_ids_all_naive_{animal}.csv')
+        brain_area = brain_area[(brain_area['rec_name'] == rec_name) & (brain_area['stream'] == stream)]
+        brain_area_text = brain_area[brain_area['ID'] == cluster_id]['BrainArea'].to_list()[0]
 
         rasterplot(spiketrains, c=color_option, histogram_bins=0, axes=ax2, s=0.3)
         ax2.set_ylabel('trial number')
         custom_xlim = (-0.1, 0.6)
         ax2.set_xlim(custom_xlim)
         ax2.set_title(
-            f'{cluster_id}_{rec_name}_{stream},\n {animal_id_num}, probe word: {probeword_text}, {pitchshift_text}')
+            f'{cluster_id}_{rec_name}_{stream},\n {animal_id_num}, probe word: {probeword_text}, {pitchshift_text}, {brain_area_text}')
         plt.savefig(saveDir / f'{cluster_id}_{ids_to_plot["Folder"][i]}_{animal_id_num}_{probeword_text}_PS{pitchshift_text}_{talker}.png')
 
 

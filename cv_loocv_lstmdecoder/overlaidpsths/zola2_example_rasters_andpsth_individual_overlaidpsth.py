@@ -388,8 +388,11 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
         ax2.set_ylabel('trial number')
         custom_xlim = (-0.1, 0.6)
         ax2.set_xlim(custom_xlim)
+        brain_area = pd.read_csv(f'G:/neural_chapter/csvs/unit_ids_trained_all_{animal}.csv')
+        brain_area = brain_area[(brain_area['rec_name'] == rec_name) & (brain_area['stream'] == stream)]
+        brain_area_text = brain_area[brain_area['ID'] == cluster_id]['BrainArea'].to_list()[0]
         ax2.set_title(
-            f'{cluster_id}_{rec_name}_{stream},\n {animal_id_num}, probe word: {probeword_text}, {pitchshift_text}')
+            f'{cluster_id}_{rec_name}_{stream},\n {animal_id_num}, probe word: {probeword_text}, {pitchshift_text}, {brain_area_text}')
         plt.savefig(saveDir / f'clust_{cluster_id}_probeword_{probeword}.jpg', dpi = 300)
 
         plt.savefig(saveDir / f'{cluster_id}_{ids_to_plot["Folder"][i]}_{animal_id_num}_{probeword_text}_PS{pitchshift_text}_{talker}.png')

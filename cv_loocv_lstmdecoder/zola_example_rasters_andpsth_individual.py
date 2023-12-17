@@ -3,6 +3,7 @@ from pathlib import Path
 from scipy.ndimage import gaussian_filter1d  # Import Gaussian filter for smoothing
 
 import pandas as pd
+import json
 import tensorflow as tf
 import neo
 import numpy as np
@@ -80,6 +81,12 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
     animal_id_num = animal.split('_')[0]
     clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
                  st.annotations['group'] != 'noise']
+    #get the corresponding brain areas from the csv file
+    brain_area = pd.read_csv(f'G:/neural_chapter/csvs/unit_ids_trained_all_{animal}.csv')
+
+    #find the corresponding brain area for the cluster
+    brain_area = brain_area[(brain_area['rec_name'] == phydir) & (brain_area['stream'] == stream)]
+    # brain_area = brain_area['BrainArea'].to_list()
 
     for j, cluster_id in enumerate(clust_ids):
         #make a figure of 2 columns and 10 rows
@@ -150,11 +157,11 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
 
                 elif probewords[0] == 5 and pitchshift_option == False:
                     probeword_text = 'accurate'
-                    color_option = 'black'
+                    color_option = 'mediumpurple'
 
                 elif probewords[0] == 5 and pitchshift_option == True:
                     probeword_text = 'accurate'
-                    color_option = 'grey'
+                    color_option = 'purple'
                 elif probewords[0] == 6 and pitchshift_option == False:
                     probeword_text = 'pink noise'
                     color_option = 'navy'
@@ -232,8 +239,12 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
                         rasterplot(spiketrains, c=color_option, histogram_bins=0, axes=ax, s=0.3)
                         ax.set_ylabel('trial number')
                         ax.set_xlim(custom_xlim)
+                    try:
+                        brain_area_text = brain_area[brain_area['ID'] == cluster_id]['BrainArea'].to_list()[0]
+                    except:
+                        continue
 
-                    ax.set_title(f'{cluster_id}_{phydir}_{stream}, \n {animal_id_num}, probe word: {probeword_text}, {pitchshift_text}')
+                    ax.set_title(f'{cluster_id}_{phydir}_{stream}, \n {animal_id_num}, probe word: {probeword_text}, {pitchshift_text}, {brain_area_text}')
                     # ax.text(-0.1, 0.5, probeword_text, horizontalalignment='center',
                     #                 verticalalignment='center', rotation=90, transform=ax.transAxes)
                     plt.savefig(
@@ -279,7 +290,11 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
                         ax.set_ylabel('trial number')
 
                     ax.set_xlim(custom_xlim)
-                    ax.set_title(f'{cluster_id}_{phydir}_{stream},\n {animal_id_num}, probeword: {probeword_text}, {pitchshift_text}')
+                    try:
+                        brain_area_text = brain_area[brain_area['ID'] == cluster_id]['BrainArea'].to_list()[0]
+                    except:
+                        continue
+                    ax.set_title(f'{cluster_id}_{phydir}_{stream},\n {animal_id_num}, probeword: {probeword_text}, {pitchshift_text}, {brain_area_text}')
 
                     # ax.text(-0.1, 0.5, probeword_text, horizontalalignment='center',
                     #                 verticalalignment='center', rotation=90, transform=ax.transAxes)
