@@ -322,7 +322,7 @@ def generate_rasters(dir):
     datapath_big = Path(f'G:/F2003_Orecchiette/')
     animal = str(datapath_big).split('\\')[-1]
     datapaths = [x for x in datapath_big.glob('**/*kilosort//phy//') if x.is_dir()]
-    datapaths = datapaths[0:2]
+    datapaths = datapaths[1:]
     for datapath in datapaths:
         stream = str(datapath).split('\\')[-3]
         stream = stream[-4:]
