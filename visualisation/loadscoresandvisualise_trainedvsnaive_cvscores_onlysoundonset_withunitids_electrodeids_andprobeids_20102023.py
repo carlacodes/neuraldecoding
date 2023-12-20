@@ -2221,6 +2221,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_of_neural_yield = pd.DataFrame(columns=['Animal', 'Number of single units', 'Number of multi units'])
     for animal in [ 'F1901_Crumble', 'F1902_Eclair', 'F1812_Nala', 'F2003_Orecchiette']:
         animal_units = df_full_naive_pitchsplit[df_full_naive_pitchsplit['ID'].str.contains(animal)]
+        #drop all non unique units
+        animal_units = animal_units.drop_duplicates(subset=['ID'])
         print(animal, len(animal_units))
         df_of_neural_yield = df_of_neural_yield.append(
             {'Animal': animal, 'Number of single units': np.sum(animal_units['SingleUnit']),
@@ -2231,6 +2233,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_of_neural_yield = pd.DataFrame(columns=['Animal', 'Number of single units', 'Number of multi units'])
     for animal in ['F1604_Squinty', 'F1606_Windolene', 'F1702_Zola', 'F1815_Cruella',]:
         animal_units = df_full_pitchsplit[df_full_pitchsplit['ID'].str.contains(animal)]
+        animal_units = animal_units.drop_duplicates(subset=['ID'])
         print(animal, len(animal_units))
         df_of_neural_yield = df_of_neural_yield.append(
             {'Animal': animal, 'Number of single units': np.sum(animal_units['SingleUnit']),
@@ -2255,6 +2258,8 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_of_neural_yield = pd.DataFrame(columns=['Animal', 'Number of single units', 'Number of multi units'])
     for animal in [ 'F1901_Crumble', 'F1902_Eclair', 'F1812_Nala', 'F2003_Orecchiette']:
         animal_units = df_full_naive[df_full_naive['ID'].str.contains(animal)]
+        animal_units = animal_units.drop_duplicates(subset=['ID'])
+
         print(animal, len(animal_units))
         df_of_neural_yield = df_of_neural_yield.append({'Animal': animal, 'Number of single units': np.sum(animal_units['SingleUnit']),
                                                         'Number of multi units': len(animal_units) - np.sum(animal_units['SingleUnit'])}, ignore_index=True)
@@ -2263,6 +2268,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_of_neural_yield = pd.DataFrame(columns=['Animal', 'Number of single units', 'Number of multi units'])
     for animal in ['F1604_Squinty', 'F1606_Windolene', 'F1702_Zola', 'F1815_Cruella',]:
         animal_units = df_full[df_full['ID'].str.contains(animal)]
+        animal_units = animal_units.drop_duplicates(subset=['ID'])
         print(animal, len(animal_units))
         df_of_neural_yield = df_of_neural_yield.append({'Animal': animal, 'Number of single units': np.sum(animal_units['SingleUnit']),
                                                         'Number of multi units': len(animal_units) - np.sum(animal_units['SingleUnit'])}, ignore_index=True)
@@ -2391,7 +2397,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         animal_dataframe.to_csv(f'G:/neural_chapter/csvs/unit_ids_all_naive_{animal}.csv')
     for animal in ['F1902_Eclair', 'F1901_Crumble', 'F1812_Nala', 'F2003_Orecchiette']:
             # isolate the data for this animal
-        df_full_pitchsplit_plot_animal = df_full_naive_pitchsplit[
+        df_full_pitchsplit_plot_animal = df_full_naive_pitchsplit_plot[
             df_full_naive_pitchsplit_plot['ID'].str.contains(animal)]
         # export the unit IDs for this animal
         animal_dataframe = pd.DataFrame(columns=['ID', 'rec_name', 'stream', 'BrainArea', 'GenScore', 'MeanScore'])

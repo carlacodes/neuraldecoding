@@ -1654,13 +1654,13 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     #get the scores for each word in the probewordlist;
 
     #need to reorganise the dictlist, create a NEW dictlist in a function
-    for key in dictlist_trained:
-        for key2 in key.keys():
-            for key3 in key[key2].keys():
-                for key4 in key[key2][key3].keys():
-                    for key5 in key[key2][key3][key4].keys():
-                        print(key5)
-                        print(key[key2][key3][key4][key5])
+    # for key in dictlist_trained:
+    #     for key2 in key.keys():
+    #         for key3 in key[key2].keys():
+    #             for key4 in key[key2][key3].keys():
+    #                 for key5 in key[key2][key3][key4].keys():
+    #                     print(key5)
+    #                     print(key[key2][key3][key4][key5])
 
 
 
