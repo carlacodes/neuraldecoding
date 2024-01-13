@@ -439,7 +439,7 @@ def main():
     path_list = {}
 
     for animal in animal_list:
-        path = Path('G:/testonroveresults/results_testonrove_inter_28102023/' + animal + '/')
+        path = Path('D:\ms4output_16102023/' + animal + '/')
         path_list[animal] = [path for path in path.glob('**/quality metrics.csv')]
         #get the parent directory of each path
         path_list[animal] = [path.parent for path in path_list[animal]]
@@ -703,8 +703,9 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     ax.set_xticks([0,1,2,3,4,5])
     ax.set_xticklabels(['high f0', 'control', 'low f0',  'high f0 - naive', 'control - naive','low f0 - naive'], rotation = 45)
     ax.set_ylabel('lstm decoding score')
-    ax.set_title('lstm decoding score for trained and naive animals')
+    ax.set_title('mean lstm decoding score for trained and naive animals')
     ax.legend()
+    plt.savefig('G:/testonroveresults/results_testonrove_inter_28102023/mean_lstm_decoding_score_for_trained_and_naive_animals.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
 
 
