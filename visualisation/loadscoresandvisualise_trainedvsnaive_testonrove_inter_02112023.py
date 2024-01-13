@@ -439,7 +439,7 @@ def main():
     path_list = {}
 
     for animal in animal_list:
-        path = Path('D:\ms4output_16102023/' + animal + '/')
+        path = Path('G:/testonroveresults/results_testonrove_inter_28102023/' + animal + '/')
         path_list[animal] = [path for path in path.glob('**/quality metrics.csv')]
         #get the parent directory of each path
         path_list[animal] = [path.parent for path in path_list[animal]]
@@ -514,7 +514,7 @@ def main():
             if animal == 'F1604_Squinty':
                 # try:
                 dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
-                                                                saveDir=f'F:/results_testonrove_inter_28102023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                saveDir=f'G:/testonroveresults/results_testonrove_inter_28102023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -525,7 +525,7 @@ def main():
 
                 # try:F:\results_testonrove_inter_28102023
                 dictoutput_instance = scatterplot_and_visualise(probewordlist_l74,
-                                                                saveDir=f'F:/results_testonrove_inter_28102023/{animal}/{rec_name_unique}/{streamtext}/',
+                                                                saveDir=f'G:/testonroveresults/results_testonrove_inter_28102023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -537,7 +537,7 @@ def main():
                 #     pass
             elif animal == 'F1815_Cruella' or animal == 'F1902_Eclair' or animal =='F1702_Zola':
                 # try:
-                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_testonrove_inter_28102023/{animal}/{rec_name_unique}/{streamtext}/',
+                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'G:/testonroveresults/results_testonrove_inter_28102023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal)
                 dictoutput_all.append(dictoutput_instance)
@@ -548,7 +548,7 @@ def main():
             elif animal == 'F2003_Orecchiette':
                 # try:
                 dictoutput_instance = scatterplot_and_visualise(probewordlist,
-                                                                saveDir=f'F:/results_testonrove_inter_28102023/{animal}/{rec_name_unique}/',
+                                                                saveDir=f'G:/testonroveresults/results_testonrove_inter_28102023/{animal}/{rec_name_unique}/',
                                                                 ferretname=animal_text,
                                                                 singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream],
@@ -558,7 +558,7 @@ def main():
 
             else:
                 # try:
-                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'F:/results_testonrove_inter_28102023/{animal}/{rec_name_unique}/{streamtext}/',
+                dictoutput_instance = scatterplot_and_visualise(probewordlist, saveDir= f'G:/testonroveresults/results_testonrove_inter_28102023/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                 multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal)
                 dictoutput_all.append(dictoutput_instance)
