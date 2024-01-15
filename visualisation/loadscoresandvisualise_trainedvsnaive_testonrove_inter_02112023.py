@@ -707,6 +707,27 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     ax.legend()
     plt.savefig('G:/testonroveresults/results_testonrove_inter_28102023/mean_lstm_decoding_score_for_trained_and_naive_animals.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
+    #make a swarm plot
+    fig, ax = plt.subplots(1, figsize=(5, 8))
+    #plot with error bars
+    ax = sns.swarmplot(x="ferret", y="score", hue="trained", data=emptydict, palette = colors)
+    ax.set_xticklabels(labels)
+    ax.set_ylabel('lstm decoding score')
+    ax.set_title('lstm decoding score for trained and naive animals')
+    ax.legend()
+    plt.savefig('G:/testonroveresults/results_testonrove_inter_28102023/SWARM_lstm_decoding_score_for_trained_and_naive_animals.png', dpi = 300, bbox_inches = 'tight')
+    plt.show()
+
+    #make a violin plopt
+    fig, ax = plt.subplots(1, figsize=(5, 8))
+    #plot with error bars
+    ax = sns.violinplot(x="ferret", y="score", hue="trained", data=emptydict, palette = 'Set2')
+    ax.set_xticklabels(labels)
+    ax.set_ylabel('lstm decoding score')
+    ax.set_title('lstm decoding score for trained and naive animals')
+    ax.legend()
+    plt.savefig('G:/testonroveresults/results_testonrove_inter_28102023/VIOLIN_lstm_decoding_score_for_trained_and_naive_animals.png', dpi = 300, bbox_inches = 'tight')
+    plt.show()
 
 
 
@@ -714,6 +735,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     # bigconcatenatenaive_nonps = np.empty(0)
     #
     # for dictouput in dictlist_naive:
+    return
 
 
 
