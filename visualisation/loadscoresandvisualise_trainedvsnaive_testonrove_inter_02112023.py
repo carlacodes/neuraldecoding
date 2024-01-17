@@ -665,14 +665,6 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
                 bigconcatenatenaive_low_f0 = np.concatenate(
                     (bigconcatenatenaive_low_f0, dictouput[key]['lowf0'][key3]))
 
-    #do a barplot of the lstm scores for the trained and naive animals
-    #do a barplot of the lstm scores for the trained and naive animals
-    #
-    #make a dataframe outof the bigconcatenatetrained_control_f0
-    #make a dataframe outof the bigconcatenatet
-
-    #plot with error bars
-
     fig, ax = plt.subplots(1, figsize=(5, 8))
     #plot with error bars
 
@@ -707,34 +699,63 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     ax.legend()
     plt.savefig('G:/testonroveresults/results_testonrove_inter_28102023/mean_lstm_decoding_score_for_trained_and_naive_animals.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
-    #make a swarm plot
-    fig, ax = plt.subplots(1, figsize=(5, 8))
-    #plot with error bars
-    ax = sns.swarmplot(x="ferret", y="score", hue="trained", data=emptydict, palette = colors)
-    ax.set_xticklabels(labels)
-    ax.set_ylabel('lstm decoding score')
-    ax.set_title('lstm decoding score for trained and naive animals')
-    ax.legend()
-    plt.savefig('G:/testonroveresults/results_testonrove_inter_28102023/SWARM_lstm_decoding_score_for_trained_and_naive_animals.png', dpi = 300, bbox_inches = 'tight')
-    plt.show()
+    #combine into a dataframe
+    bigconcatenatetrained_control_f0 = pd.DataFrame(bigconcatenatetrained_control_f0, columns = ['score'])
+    bigconcatenatetrained_control_f0['trained'] = 1
+    bigconcatenatetrained_control_f0['pitch'] = 1
+    bigconcatenatetrained_control_f0['ferret'] = 1
+    bigconcatenatetrained_control_f0['su'] = 1
 
-    #make a violin plopt
+    bigconcatenatetrained_high_f0 = pd.DataFrame(bigconcatenatetrained_high_f0, columns = ['score'])
+    bigconcatenatetrained_high_f0['trained'] = 1
+    bigconcatenatetrained_high_f0['pitch'] = 2
+    bigconcatenatetrained_high_f0['ferret'] = 1
+    bigconcatenatetrained_high_f0['su'] = 1
+
+    bigconcatenatetrained_low_f0 = pd.DataFrame(bigconcatenatetrained_low_f0, columns = ['score'])
+    bigconcatenatetrained_low_f0['trained'] = 1
+    bigconcatenatetrained_low_f0['pitch'] = 0
+    bigconcatenatetrained_low_f0['ferret'] = 1
+    bigconcatenatetrained_low_f0['su'] = 1
+
+    bigconcatenatenaive_control_f0 = pd.DataFrame(bigconcatenatenaive_control_f0, columns = ['score'])
+    bigconcatenatenaive_control_f0['trained'] = 0
+    bigconcatenatenaive_control_f0['pitch'] = 1
+    bigconcatenatenaive_control_f0['ferret'] = 1
+    bigconcatenatenaive_control_f0['su'] = 1
+
+    bigconcatenatenaive_high_f0 = pd.DataFrame(bigconcatenatenaive_high_f0, columns = ['score'])
+    bigconcatenatenaive_high_f0['trained'] = 0
+    bigconcatenatenaive_high_f0['pitch'] = 2
+    bigconcatenatenaive_high_f0['ferret'] = 1
+    bigconcatenatenaive_high_f0['su'] = 1
+
+    bigconcatenatenaive_low_f0 = pd.DataFrame(bigconcatenatenaive_low_f0, columns = ['score'])
+    bigconcatenatenaive_low_f0['trained'] = 0
+    bigconcatenatenaive_low_f0['pitch'] = 0
+    bigconcatenatenaive_low_f0['ferret'] = 1
+    bigconcatenatenaive_low_f0['su'] = 1
+
+    big_df = pd.concat([bigconcatenatetrained_control_f0, bigconcatenatetrained_high_f0, bigconcatenatetrained_low_f0, bigconcatenatenaive_control_f0, bigconcatenatenaive_high_f0, bigconcatenatenaive_low_f0])
+
+    #make a violin plot
     fig, ax = plt.subplots(1, figsize=(5, 8))
     #plot with error bars
-    ax = sns.violinplot(x="ferret", y="score", hue="trained", data=emptydict, palette = 'Set2')
-    ax.set_xticklabels(labels)
+    ax = sns.violinplot(x="pitch", y="score", hue="trained", data=big_df, palette = 'Set2')
+    # ax.set_xticklabels(['low f0', 'control', 'high f0', 'low f0', 'control', 'high f0'])
     ax.set_ylabel('lstm decoding score')
     ax.set_title('lstm decoding score for trained and naive animals')
-    ax.legend()
+    #get the legend labels
+    handles, labels = ax.get_legend_handles_labels()
+    labels = ['naive', 'trained']
+    ax.legend(handles, labels)
+    ax.set_xticklabels(['144 Hz', '191 Hz (control)', '251 Hz'])
+    ax.set_xlabel('pitch control F0 data tested on')
+
     plt.savefig('G:/testonroveresults/results_testonrove_inter_28102023/VIOLIN_lstm_decoding_score_for_trained_and_naive_animals.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
 
 
-
-    # bigconcatenatenaive_ps = np.empty(0)
-    # bigconcatenatenaive_nonps = np.empty(0)
-    #
-    # for dictouput in dictlist_naive:
     return
 
 
