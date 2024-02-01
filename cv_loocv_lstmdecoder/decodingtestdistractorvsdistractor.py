@@ -28,12 +28,14 @@ from Neural_Decoding.metrics import get_rho
 from Neural_Decoding.decoders import LSTMDecoder, LSTMClassification
 
 
-def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, window=[0, 0.5]):
+def target_vs_probe(blocks, talker=1, probeword_1 = [20, 22], probeword_2 = [20,22], pitchshift=True, window=[0, 0.5]):
     if talker == 1:
-        probeword = probewords[0]
+        probeword_1 = probeword_1[0]
+        probeword_2 = probeword_2[0]
         talker_text = 'female'
     else:
-        probeword = probewords[1]
+        probeword_1 = probeword_1[1]
+        probeword_2 = probeword_2[1]
         talker_text = 'male'
     binsize = 0.01
     # window = [0, 0.6]
@@ -65,7 +67,7 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
     # scores['bootScore'].append(bootScore)
     # scores['lstm_accuracylist'].append(accuracy_list)
     # scores['lstm_balancedaccuracylist'].append(bal_ac_list)
-    # scores['cm'].append(len(unique_trials_targ) + len(unique_trials_probe))
+    # scores['cm'].append(len(unique_trials_probe1) + len(unique_trials_probe2))
 
     cluster_id_droplist = np.empty([])
     for cluster_id in tqdm(clust_ids):
@@ -75,35 +77,27 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
         target_filter = ['Target trials', 'No Level Cue']  # , 'Non Correction Trials']
 
         # try:
-        raster_target, raster_targ_compare = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=1,
+        raster_probeword_first, raster_probeword_first_compare = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=probeword_1,
                                                                                   pitchshift=pitchshift,
                                                                                   correctresp=True,
                                                                                   df_filter=['No Level Cue'],
                                                                                   talker=talker_text)
-        raster_target = raster_target.reshape(raster_target.shape[0], )
-        if len(raster_target) == 0:
-            print('no relevant spikes for this target word:' + str(probeword) + ' and cluster: ' + str(cluster_id))
+        raster_probeword_first = raster_probeword_first.reshape(raster_probeword_first.shape[0], )
+        if len(raster_probeword_first) == 0:
+            print('no relevant spikes for this target word:' + str(probeword_1) + ' and cluster: ' + str(cluster_id))
             continue
 
-        # except Exception as error:
-        #     print('No relevant target firing')
-        #     print(error)
-        #     cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
-        #     continue
 
-        probe_filter = ['No Level Cue']  # , 'Non Correction Trials']
-        # try:
-        raster_probe, raster_probe_compare = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=probeword,
+        raster_probe_second, raster_probe_second_compare = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=probeword_2,
                                                                                   pitchshift=pitchshift,
                                                                                   correctresp=True,
                                                                                   df_filter=['No Level Cue'],
                                                                                   talker=talker_text)
-        # raster_probe = raster_probe[raster_probe['talker'] == talker]
-        raster_probe = raster_probe.reshape(raster_probe.shape[0], )
+        raster_probe_second = raster_probe_second.reshape(raster_probe_second.shape[0], )
 
-        raster_probe['trial_num'] = raster_probe['trial_num'] + np.max(raster_target['trial_num'])
-        if len(raster_probe) == 0:
-            print('no relevant spikes for this probe word:' + str(probeword) + ' and cluster: ' + str(cluster_id))
+        raster_probe_second['trial_num'] = raster_probe_second['trial_num'] + np.max(raster_probeword_first['trial_num'])
+        if len(raster_probe_second) == 0:
+            print('no relevant spikes for this probe word:' + str(probeword_2) + ' and cluster: ' + str(cluster_id))
             continue
         # except:
         #     print('No relevant probe firing')
@@ -111,71 +105,71 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
 
         #     continue
         # sample with replacement from target trials and probe trials to boostrap scores and so distributions are equal
-        lengthofraster = np.sum(len(raster_target['spike_time']) + len(raster_probe['spike_time']))
-        raster_targ_reshaped = np.empty([])
-        raster_probe_reshaped = np.empty([])
+        lengthofraster = np.sum(len(raster_probeword_first['spike_time']) + len(raster_probe_second['spike_time']))
+        raster_probe1_reshaped = np.empty([])
+        raster_probe2_reshaped = np.empty([])
         bins = np.arange(window[0], window[1], binsize)
 
-        lengthoftargraster = len(raster_target['spike_time'])
-        lengthofproberaster = len(raster_probe['spike_time'])
+        lengthoftargraster = len(raster_probeword_first['spike_time'])
+        lengthofproberaster = len(raster_probe_second['spike_time'])
 
-        unique_trials_targ = np.unique(raster_target['trial_num'])
-        unique_trials_probe = np.unique(raster_probe['trial_num'])
-        raster_targ_reshaped = np.empty([len(unique_trials_targ), len(bins) - 1])
-        raster_probe_reshaped = np.empty([len(unique_trials_probe), len(bins) - 1])
+        unique_trials_probe1 = np.unique(raster_probeword_first['trial_num'])
+        unique_trials_probe2 = np.unique(raster_probe_second['trial_num'])
+        raster_probe1_reshaped = np.empty([len(unique_trials_probe1), len(bins) - 1])
+        raster_probe2_reshaped = np.empty([len(unique_trials_probe2), len(bins) - 1])
         count = 0
-        for trial in (unique_trials_targ):
-            raster_targ_reshaped[count, :] = \
-                np.histogram(raster_target['spike_time'][raster_target['trial_num'] == trial], bins=bins,
+        for trial in (unique_trials_probe1):
+            raster_probe1_reshaped[count, :] = \
+                np.histogram(raster_probeword_first['spike_time'][raster_probeword_first['trial_num'] == trial], bins=bins,
                              range=(window[0], window[1]))[0]
             count += 1
         count = 0
-        for trial in (unique_trials_probe):
-            raster_probe_reshaped[count, :] = \
-                np.histogram(raster_probe['spike_time'][raster_probe['trial_num'] == trial], bins=bins,
+        for trial in (unique_trials_probe2):
+            raster_probe2_reshaped[count, :] = \
+                np.histogram(raster_probe_second['spike_time'][raster_probe_second['trial_num'] == trial], bins=bins,
                              range=(window[0], window[1]))[0]
             count += 1
-        if (len(raster_targ_reshaped)) < 5 or (len(raster_probe_reshaped)) < 5:
+        if (len(raster_probe1_reshaped)) < 5 or (len(raster_probe2_reshaped)) < 5:
             print('less than 5 trials for the target or distractor, CV would be overinflated, skipping')
             continue
-        if len(raster_targ_reshaped) < 15:
+        if len(raster_probe1_reshaped) < 15:
             # upsample to 15 trials
-            raster_targ_reshaped = raster_targ_reshaped[np.random.choice(len(raster_targ_reshaped), 15, replace=True),
+            raster_probe1_reshaped = raster_probe1_reshaped[np.random.choice(len(raster_probe1_reshaped), 15, replace=True),
                                    :]
-        if len(raster_probe_reshaped) < 15:
+        if len(raster_probe2_reshaped) < 15:
             # upsample to 15 trials
-            raster_probe_reshaped = raster_probe_reshaped[
-                                    np.random.choice(len(raster_probe_reshaped), 15, replace=True), :]
+            raster_probe2_reshaped = raster_probe2_reshaped[
+                                    np.random.choice(len(raster_probe2_reshaped), 15, replace=True), :]
 
-        if len(raster_targ_reshaped) >= len(raster_probe_reshaped) * 2:
+        if len(raster_probe1_reshaped) >= len(raster_probe2_reshaped) * 2:
             print('raster of distractor at least a 1/2 of target raster')
             # upsample the probe raster
-            raster_probe_reshaped = raster_probe_reshaped[
-                                    np.random.choice(len(raster_probe_reshaped), len(raster_targ_reshaped),
+            raster_probe2_reshaped = raster_probe2_reshaped[
+                                    np.random.choice(len(raster_probe2_reshaped), len(raster_probe1_reshaped),
                                                      replace=True), :]
-        elif len(raster_probe_reshaped) >= len(raster_targ_reshaped) * 2:
+        elif len(raster_probe2_reshaped) >= len(raster_probe1_reshaped) * 2:
             print('raster of target at least a 1/2 of probe raster')
             # upsample the target raster
-            raster_targ_reshaped = raster_targ_reshaped[
-                                   np.random.choice(len(raster_targ_reshaped), len(raster_probe_reshaped),
+            raster_probe1_reshaped = raster_probe1_reshaped[
+                                   np.random.choice(len(raster_probe1_reshaped), len(raster_probe2_reshaped),
                                                     replace=True), :]
 
-        print('now length of raster_probe is:')
-        print(len(raster_probe_reshaped))
-        stim0 = np.full(len(raster_target), 0)  # 0 = target word
-        stim1 = np.full(len(raster_probe), 1)  # 1 = probe word
+        print('now length of raster_probe_second is:')
+        print(len(raster_probe2_reshaped))
+        stim0 = np.full(len(raster_probeword_first), 0)  # 0 = target word
+        stim1 = np.full(len(raster_probe_second), 1)  # 1 = probe word
         stim = np.concatenate((stim0, stim1))
 
-        stim0 = np.full(len(raster_targ_reshaped), 0)  # 0 = target word
-        stim1 = np.full(len(raster_probe_reshaped), 1)  # 1 = probe word
+        stim0 = np.full(len(raster_probe1_reshaped), 0)  # 0 = target word
+        stim1 = np.full(len(raster_probe2_reshaped), 1)  # 1 = probe word
         if (len(stim0)) < 3 or (len(stim1)) < 3:
             print('less than 3 trials for the target or distractor, skipping')
             continue
 
         stim_lstm = np.concatenate((stim0, stim1))
 
-        raster = np.concatenate((raster_target, raster_probe))
-        raster_lstm = np.concatenate((raster_targ_reshaped, raster_probe_reshaped))
+        raster = np.concatenate((raster_probeword_first, raster_probe_second))
+        raster_lstm = np.concatenate((raster_probe1_reshaped, raster_probe2_reshaped))
 
         score, d, bootScore, bootClass, cm = classify_sweeps(raster, stim, binsize=binsize, window=window, genFig=False)
         # fit LSTM model to the same data
@@ -270,8 +264,8 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True, wind
         scores['lstm_balancedaccuracylist'].append(totalbalaclist)
         scores['perm_bal_ac'].append(np.mean(perm_outsideloopbalacclist))
         scores['perm_ac'].append(np.mean(perm_outsideloopacclist))
-        scores['cm'].append(len(unique_trials_targ) + len(
-            unique_trials_probe))  # Assuming unique_trials_targ and unique_trials_probe are defined somewhere
+        scores['cm'].append(len(unique_trials_probe1) + len(
+            unique_trials_probe2))  # Assuming unique_trials_probe1 and unique_trials_probe2 are defined somewhere
 
     return scores
 
@@ -514,12 +508,10 @@ def run_classification(dir, datapath, ferretid):
 
     scores = {}
     probewords_list = [(2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10)]
-
-    now = datetime.now()
     recname = str(datapath).split('/')[-4]
 
     tarDir = Path(
-        f'/home/zceccgr/Scratch/zceccgr/lstmdecodingproject/leavepoutcrossvalidationlstmdecoder/results_16092023/F1815_Cruella/{recname}/bb3/')
+        f'/home/zceccgr/Scratch/zceccgr/lstmdecodingproject/leavepoutcrossvalidationlstmdecoder/distvsdistresults_02012024/F1815_Cruella/{recname}/bb3/')
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
     for probeword in probewords_list:
@@ -535,15 +527,14 @@ def run_classification(dir, datapath, ferretid):
             scores[f'talker{talker}'] = {}
 
             scores[f'talker{talker}']['target_vs_probe'] = {}
-
+            track_list = []
             for i in probewords_list:
                 for i2 in probewords_list:
-                    if i[0] == i2[0] and i[1] == i2[1]:
+                    track_list.append(f'{i[0]}_{i[1]}_{i2[0]}_{i2[1]}')
+                    if f'{i[0]}_{i[1]}_{i2[0]}_{i2[1]}' in track_list or f'{i2[0]}_{i2[1]}_{i[0]}_{i[1]}' in track_list:
                         continue
-                    if i[0] == i2[1] and i[1] == i2[0]:
-                        continue
-                    if i[0] == i2[0] or i[0] == i2[1] or i[1] == i2[0] or i[1] == i2[1]:
-                        continue
+
+
                     scores[f'talker{talker}']['target_vs_probe'][f'{i[0]}_{i[1]}_{i2[0]}_{i2[1]}'] = target_vs_probe(blocks, talker=talker, probeword_1 = i,
                                                                                            probeword_2=i2,
                                                                                            pitchshift=False,
@@ -553,7 +544,6 @@ def run_classification(dir, datapath, ferretid):
                     np.save(saveDir / f'scores_{dir}_{i[0]}_vs_{i2[1]}_{ferretid}_probe_bs.npy',
                             scores)
 
-        # fname = 'scores_' + dir + f'_probe_earlylate_left_right_win_bs_{binsize}'
 
 
 def main():
