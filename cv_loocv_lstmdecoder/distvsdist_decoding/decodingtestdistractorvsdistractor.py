@@ -508,7 +508,7 @@ def run_classification(dir, datapath, ferretid):
 
     scores = {}
     probewords_list = [(2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10)]
-    recname = str(datapath).split('/')[-4]
+    recname = str(datapath).split('\\')[-2]
 
     tarDir = Path(
         f'/home/zceccgr/Scratch/zceccgr/lstmdecodingproject/leavepoutcrossvalidationlstmdecoder/distvsdistresults_02012024/F1815_Cruella/{recname}/bb3/')
@@ -530,15 +530,17 @@ def run_classification(dir, datapath, ferretid):
             track_list = []
             for i in probewords_list:
                 for i2 in probewords_list:
-                    track_list.append(f'{i[0]}_{i[1]}_{i2[0]}_{i2[1]}')
                     if f'{i[0]}_{i[1]}_{i2[0]}_{i2[1]}' in track_list or f'{i2[0]}_{i2[1]}_{i[0]}_{i[1]}' in track_list:
                         continue
+                    track_list.append(f'{i[0]}_{i[1]}_{i2[0]}_{i2[1]}')
+
 
 
                     scores[f'talker{talker}']['target_vs_probe'][f'{i[0]}_{i[1]}_{i2[0]}_{i2[1]}'] = target_vs_probe(blocks, talker=talker, probeword_1 = i,
                                                                                            probeword_2=i2,
                                                                                            pitchshift=False,
                                                                                            window=window)
+
 
 
                     np.save(saveDir / f'scores_{dir}_{i[0]}_vs_{i2[1]}_{ferretid}_probe_bs.npy',
@@ -550,8 +552,8 @@ def main():
     directories = [
         'cruella_2022']  # , 'Trifle_July_2022']/home/zceccgr/Scratch/zceccgr/ms4output/F1702_Zola/spkenvresults04102022allrowsbut4th
 
-    datapath = Path(
-        f'/home/zceccgr/Scratch/zceccgr/ms4output2/F1815_Cruella/16_09_2022_cruella/16_09_2022_cruella_16_09_2022_cruella_BB_3/mountainsort4/phy/')
+    datapath = Path(f'D:\ms4output_16102023\F1815_Cruella/16_09_2022_cruella/16_09_2022_cruella_16_09_2022_cruella_BB_3/mountainsort4/phy')
+
     ferretid = 'cruella'
 
     for dir in directories:

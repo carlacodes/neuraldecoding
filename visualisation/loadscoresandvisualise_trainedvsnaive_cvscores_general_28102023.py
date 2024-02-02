@@ -405,6 +405,7 @@ def main():
         path_list[animal] = [path for path in path.glob('**/quality metrics.csv')]
         #get the parent directory of each path
         path_list[animal] = [path.parent for path in path_list[animal]]
+
     #report, singleunitlist, and multiunitlist and noiselist need to be modified to include the recname
     for animal in animal_list:
         report[animal] = {}
