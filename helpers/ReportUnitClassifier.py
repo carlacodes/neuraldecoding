@@ -35,7 +35,7 @@ class ReportUnitClassifier:
         report['d_prime'] = report['d_prime'].fillna(0)
 
         report['unit_type'] = np.nan
-        report.loc[(report['l_ratio'] > 2.2) | (report['d_prime'] > 2.2), 'unit_type'] = 'mua'
+        report.loc[(report['l_ratio'] > 2.2) | (report['d_prime'] < 2.2), 'unit_type'] = 'mua'
         report.loc[(report['l_ratio'] <= 2.2) & (report['d_prime'] >= 2.2), 'unit_type'] = 'su'
         report.loc[(report['l_ratio'] >= 15) & (report['d_prime'] < 15), 'unit_type'] = 'trash'
 
