@@ -217,10 +217,19 @@ def plot_average_over_time_overlaid(file_path, outputfolder, ferretname, high_un
     stream = file_path.parts[-1]
 
     for pitchshift in ['nopitchshift', 'pitchshift']:
-        scores = np.load(
-            str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
-                2) + '_' + ferretname + '_probe_' + pitchshift + '_bs.npy',
-            allow_pickle=True)[()]
+        if ferretname == 'orecchiette':
+            scores = np.load(
+                        str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
+                            2) + '_' + ferretname + '_'+pitchshift+'_probe_bs.npy',
+                        allow_pickle=True)[()]
+        else:
+
+            scores = np.load(
+                str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
+                    2) + '_' + ferretname + '_probe_' + pitchshift + '_bs.npy',
+                allow_pickle=True)[()]
+
+
 
         # create a dictionary of scores for each cluster
         for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
@@ -286,7 +295,10 @@ def plot_average_over_time_overlaid(file_path, outputfolder, ferretname, high_un
             except KeyError:
                 continue  # Skip if there are no scores for this pitchshift
 
-            timepoints = np.arange(0, (len(avg_score) / 100) * 4, 0.04)
+            try:
+                timepoints = np.arange(0, (len(avg_score) / 100) * 4, 0.04)
+            except:
+                continue
             std_dev = avg_scores[pitchshift][cluster]['std']
 
             if smooth_option:
