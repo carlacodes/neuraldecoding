@@ -6,8 +6,17 @@ import pandas as pd
 import scipy
 from itertools import combinations, permutations
 
-def plot_average_over_time_overlaid_indiv(file_path, outputfolder, ferretname, high_units, talkerinput = 'talker1', animal_id = 'F1702', smooth_option = True, plot_on_one_figure = False):
-    probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+def plot_average_over_time_overlaid_indiv(file_path, outputfolder, ferretname, high_units, talkerinput = 'talker1', animal_id = 'F1702', smooth_option = True, naive= True, clust_ids = []):
+    if ferretname == 'squinty':
+        probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+        label_list = ['sailor', 'accurate', 'but', 'researched', 'when a', 'took', 'the vast', 'today', 'he takes', 'becomes', 'any', 'more', 'boats']
+
+
+    else:
+        probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+        label_list = ['craft', 'in contrast to', 'when a', 'accurate', 'pink noise', 'of science', 'rev. instruments',
+                      'boats', 'today']
+
     pitchshift_options = ['nopitchshift', 'pitchshift']
     score_dict = {option: {} for option in pitchshift_options}
     correlations = {option: {} for option in pitchshift_options}
@@ -16,26 +25,51 @@ def plot_average_over_time_overlaid_indiv(file_path, outputfolder, ferretname, h
     rec_name = file_path.parts[-2]
     stream = file_path.parts[-1]
     # color_list = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']
-    color_list = ['blue', 'lightblue', 'deepskyblue', 'dodgerblue', 'turquoise', 'mediumturquoise', 'darkturquoise',
-                  'royalblue', 'cyan']
-    label_list = ['craft', 'in contrast to',  'when a', 'accurate', 'pink noise', 'of science', 'rev. instruments', 'boats', 'today']
+    if naive:
+        color_list = ['blue', 'lightblue', 'deepskyblue', 'dodgerblue', 'turquoise', 'mediumturquoise', 'darkturquoise',
+                      'royalblue', 'cyan']
+    elif ferretname == 'squinty':
+        color_list = ['purple', 'violet', 'plum', 'orchid', 'magenta', 'mediumvioletred', 'deeppink', 'hotpink', 'pink', 'lightpink', 'palevioletred', 'mediumorchid', 'darkorchid']
+    else:
+        color_list = ['purple', 'violet', 'plum', 'orchid', 'magenta', 'mediumvioletred', 'deeppink', 'hotpink', 'pink']
 
 
     for pitchshift in pitchshift_options:
-        scores = np.load(
-            str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_' + pitchshift + '_probe_bs.npy',
-            allow_pickle=True)[()]
-        for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+        # try:
+        #     if naive == True:
+        #         scores = np.load(
+        #             str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_' + pitchshift + '_probe_bs.npy',
+        #             allow_pickle=True)[()]
+        #     else:
+        #         scores = np.load(
+        #             str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
+        #                 2) + '_' + ferretname + '_probe_' + pitchshift + '_bs.npy',
+        #             allow_pickle=True)[()]
+        #         # scores = np.load(
+        #         #     str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
+        #         #         probeword) + '_' + ferretname + '_probe_pitchshift_bs.npy',
+        #         #     allow_pickle=True)[()]
+        # except:
+        #     print('error loading scores: ' + str(
+        #         file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(2) + '_' + ferretname + '_probe_bs.npy')
+        #     continue
+        for cluster in clust_ids:
             score_dict[pitchshift][cluster] = {}
             correlations[pitchshift][cluster] = {}
             avg_scores[pitchshift][cluster] = {}
 
-        for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+        for cluster in clust_ids:
             for probeword in probewordslist:
                 try:
-                    scores = np.load(
-                        str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(probeword) + '_' + ferretname + '_' + pitchshift + '_probe_bs.npy',
-                        allow_pickle=True)[()]
+                    if naive == True:
+                        scores = np.load(
+                            str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(probeword) + '_' + ferretname + '_' + pitchshift + '_probe_bs.npy',
+                            allow_pickle=True)[()]
+                    elif ferretname == 'cruella' or ferretname == 'squinty':
+                        # scores_2022_cruella_10_cruella_probe_pitchshift_bs
+                        scores = np.load(
+                            str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(probeword) + '_' + ferretname +  '_probe_'+ pitchshift +'_bs.npy',
+                            allow_pickle=True)[()]
                     index = scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id'].index(cluster)
                     score_dict[pitchshift][cluster][probeword] = scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index]
                 except:
@@ -43,17 +77,9 @@ def plot_average_over_time_overlaid_indiv(file_path, outputfolder, ferretname, h
                         file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(probeword) + '_' + ferretname + '_probe_bs.npy')
                     continue
 
-    num_clusters = len(high_units['ID'].to_list())
     meg_clusters = high_units[high_units['BrainArea'] == 'MEG']['ID'].to_list()
     peg_clusters = high_units[high_units['BrainArea'] == 'PEG']['ID'].to_list()
 
-    num_cols = max(len(meg_clusters), len(peg_clusters))
-    if len(meg_clusters) == 0 or len(peg_clusters) == 0:
-        num_rows = 1
-    else:
-        num_rows = 2
-    fig, ax = plt.subplots(num_rows, num_cols, figsize=(40, 15))
-    ax = ax.flatten()
 
     for i, cluster in enumerate(meg_clusters + peg_clusters):
         fig, axs = plt.subplots()
@@ -63,7 +89,7 @@ def plot_average_over_time_overlaid_indiv(file_path, outputfolder, ferretname, h
                 try:
                     score = score_dict[pitchshift][cluster][probeword]
                 except:
-                    axs.axis('off')
+                    # axs.axis('off')
                     continue
                 try:
                     timepoints = np.arange(0, (len(score) / 100) * 4, 0.04)
@@ -88,9 +114,10 @@ def plot_average_over_time_overlaid_indiv(file_path, outputfolder, ferretname, h
         axs.set_xticks(ticks=[0, 0.2, 0.4, 0.6], labels=[0, 0.2, 0.4, 0.6], fontsize=15)
         axs.legend(loc='upper right', fontsize=10)
         plt.savefig(outputfolder + '/' + str(
-            cluster) + '_' + ferretname + '_' + rec_name + '_' + stream + '_averageovertime_overlaid_indiv_' + str(
+            cluster) + '_' + ferretname + '_' + rec_name + '_' + stream + '_averageovertime_overlaid_indiv22_' + str(
             cluster) + '.png', bbox_inches='tight')
-        plt.show()
+
+        # plt.show()
 
 def plot_average_over_time_overlaid(file_path, outputfolder, ferretname, high_units, talkerinput = 'talker1', animal_id = 'F1702', smooth_option = True, plot_on_one_figure = False):
     probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -856,4 +883,4 @@ if __name__ == '__main__':
             # plot_average_over_time(file_path, pitchshift, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=False)
 
             # plot_average_over_time_overlaid(file_path, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=False)
-            plot_average_over_time_overlaid_indiv(file_path, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=False)
+            plot_average_over_time_overlaid_indiv(file_path, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=False, clust_ids = clust_ids)

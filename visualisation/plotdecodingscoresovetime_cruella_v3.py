@@ -5,8 +5,59 @@ from pathlib import Path
 import pandas as pd
 import scipy
 from itertools import combinations, permutations
+from plotdecodingscoresovetime_ore_v3 import plot_average_over_time_overlaid_indiv
+def plot_scores_over_time_overlaid_indiv_cru(file_path, outputfolder, ferretname, high_units, talkerinput = 'talker1', animal_id = 'F1702', smooth_option = True, clust_ids = []):
+    probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+    score_dict = {'nopitchshift': {}, 'pitchshift': {}}
+    color_list = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']  # Add more colors if needed
+
+    for pitchshift in ['nopitchshift', 'pitchshift']:
 
 
+        for cluster in clust_ids:
+            score_dict[pitchshift][cluster] = {}
+
+        for cluster in clust_ids:
+            for probeword in probewordslist:
+                try:
+                    scores = np.load(
+                        str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
+                            probeword) + '_' + ferretname + '_probe_' + pitchshift + '_bs.npy',
+                        allow_pickle=True)[()]
+                    index = scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id'].index(cluster)
+                    score_dict[pitchshift][cluster][probeword] = \
+                    scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index]
+                except:
+                    print('error loading scores: ' + str(
+                        file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
+                        probeword) + '_' + ferretname + '_probe_bs.npy')
+                    continue
+
+    for i, cluster in enumerate(high_units['ID'].to_list()):
+        fig, axs = plt.subplots()
+        for pitchshift in ['nopitchshift', 'pitchshift']:
+            linestyle = '-' if pitchshift == 'nopitchshift' else '--'
+            for j, probeword in enumerate(probewordslist):
+                try:
+                    score = score_dict[pitchshift][cluster][probeword]
+                except KeyError:
+                    continue
+                timepoints = np.arange(0, (len(score) / 100) * 4, 0.04)
+                if smooth_option:
+                    score = scipy.signal.savgol_filter(score, 5, 3, mode='interp')
+                axs.plot(timepoints, score, c=color_list[j % len(color_list)], linestyle=linestyle, label=f'{probeword} {pitchshift}')
+
+        axs.set_xlabel('time (s)', fontsize=20)
+        axs.set_ylabel('balanced accuracy', fontsize=20)
+        axs.set_title(f'unit: {cluster}_{ferretname}', fontsize=20)
+        axs.set_yticks(ticks=[0, 0.2, 0.4, 0.6, 0.8, 1.0], labels=[0, 0.2, 0.4, 0.6, 0.8, 1.0], fontsize=15)
+        axs.set_xticks(ticks=[0, 0.2, 0.4, 0.6], labels=[0, 0.2, 0.4, 0.6], fontsize=15)
+        axs.legend()
+
+        plt.savefig(outputfolder + '/' + str(
+            cluster) + '_' + ferretname + '_scoresovertime_overlaid_indiv2_' + str(cluster) + '.png',
+                    bbox_inches='tight')
+    return
 def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high_units, talkerinput = 'talker1', animal_id = 'F1702', smooth_option = True, clust_ids = [], plot_on_one_figure = False):
     probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
     score_dict = {}
@@ -15,9 +66,6 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
     animal_id = animal_id.split('_')[0]
     rec_name = file_path.parts[-2]
     stream = file_path.parts[-1]
-
-
-
     #create a dictionary of scores for each cluster
     for cluster in clust_ids:
         score_dict[cluster] = {}
@@ -615,7 +663,7 @@ if __name__ == '__main__':
                 clust_ids = high_units['ID'].to_list()
                 brain_area = high_units['BrainArea'].to_list()
 
-                plot_average_over_time(file_path, pitchshift, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=False, clust_ids = clust_ids)
-
+                # plot_average_over_time(file_path, pitchshift, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=False, clust_ids = clust_ids)
+                plot_average_over_time_overlaid_indiv(file_path, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=False, clust_ids = clust_ids, naive = False)
 
 
