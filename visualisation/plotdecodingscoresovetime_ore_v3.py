@@ -58,7 +58,7 @@ def plot_average_over_time_overlaid_indiv(file_path, outputfolder, ferretname, h
     for i, cluster in enumerate(meg_clusters + peg_clusters):
         fig, axs = plt.subplots()
         brain_area = high_units[high_units['ID'] == cluster]['BrainArea'].to_list()[0]
-        for pitchshift in pitchshift_options:
+        for j0, pitchshift in enumerate(pitchshift_options):
             for j, probeword in enumerate(probewordslist):
                 try:
                     score = score_dict[pitchshift][cluster][probeword]
@@ -75,7 +75,10 @@ def plot_average_over_time_overlaid_indiv(file_path, outputfolder, ferretname, h
                 color_text = color_list[j % len(color_list)]
                 label_text = label_list[j % len(label_list)]
                 line_style = '--' if pitchshift == 'pitchshift' else '-'
-                axs.plot(timepoints, score, c=color_text, linestyle=line_style, label = label_text)
+                if j0 < 1:
+                    axs.plot(timepoints, score, c=color_text, linestyle=line_style, label = label_text)
+                else:
+                    axs.plot(timepoints, score, c=color_text, linestyle=line_style, label = None)
 
         axs.set_xlabel('time (s)', fontsize=20)
         axs.set_ylabel('balanced accuracy', fontsize=20)
