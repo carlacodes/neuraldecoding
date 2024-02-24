@@ -758,7 +758,7 @@ if __name__ == '__main__':
 
                 # plot_average_over_time(file_path, pitchshift, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=False)
                 # plot_average_over_time_overlaid(file_path, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=False)
-                plot_average_over_time_overlaid_indiv(file_path, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=False, clust_ids = clust_ids, naive = False)
+                plot_average_over_time_overlaid_indiv(file_path, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=True, clust_ids = clust_ids, naive = False)
 
 
 
