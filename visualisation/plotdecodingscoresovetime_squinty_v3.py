@@ -206,7 +206,7 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
 
 
 
-def plot_average_over_time_overlaid(file_path, pitchshift, outputfolder, ferretname, high_units, talkerinput = 'talker1', animal_id = 'F1702', smooth_option = True, plot_on_one_figure = False):
+def plot_average_over_time_overlaid(file_path, outputfolder, ferretname, high_units, talkerinput = 'talker1', animal_id = 'F1702', smooth_option = True, naive_option = False):
 
     probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
     score_dict = {'nopitchshift': {}, 'pitchshift': {}}
@@ -269,13 +269,18 @@ def plot_average_over_time_overlaid(file_path, pitchshift, outputfolder, ferretn
     # Rest of the code remains the same
     meg_clusters = high_units[high_units['BrainArea'] == 'MEG']['ID'].to_list()
     peg_clusters = high_units[high_units['BrainArea'] == 'PEG']['ID'].to_list()
-
+    if naive_option == True:
+        color_text_control = 'cyan'
+        color_text_inter = 'dodgerblue'
+    else:
+        color_text_control = 'purple'
+        color_text_inter = 'orchid'
     for i, cluster in enumerate(meg_clusters + peg_clusters):
         fig, axs = plt.subplots()
         brain_area = high_units[high_units['ID'] == cluster]['BrainArea'].to_list()[0]
 
-        for pitchshift, color, label in [('nopitchshift', 'purple', 'control F0'),
-                                         ('pitchshift', 'orchid', 'inter-roved F0')]:
+        for pitchshift, color, label in [('nopitchshift', color_text_control, 'control F0'),
+                                         ('pitchshift', color_text_inter, 'inter-roved F0')]:
             try:
                 avg_score = avg_scores[pitchshift][cluster]['avg_score']
             except KeyError:
@@ -739,7 +744,7 @@ if __name__ == '__main__':
                 brain_area = high_units['BrainArea'].to_list()
 
                 # plot_average_over_time(file_path, pitchshift, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=False)
-                plot_average_over_time_overlaid(file_path, pitchshift, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=False)
+                plot_average_over_time_overlaid(file_path, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=False)
 
 
 

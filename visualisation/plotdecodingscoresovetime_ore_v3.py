@@ -5,6 +5,7 @@ from pathlib import Path
 import pandas as pd
 import scipy
 from itertools import combinations, permutations
+from plotdecodingscoresovetime_squinty_v3 import plot_average_over_time_overlaid
 
 
 def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high_units, talkerinput = 'talker1', animal_id = 'F1702', smooth_option = True, plot_on_one_figure = False):
@@ -679,7 +680,7 @@ if __name__ == '__main__':
             clust_ids = high_units['ID'].to_list()
             brain_area = high_units['BrainArea'].to_list()
 
-            plot_average_over_time(file_path, pitchshift, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=False)
+            # plot_average_over_time(file_path, pitchshift, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=False)
 
-
+            plot_average_over_time_overlaid(file_path, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=True, plot_on_one_figure = True, naive_option=True)
 
