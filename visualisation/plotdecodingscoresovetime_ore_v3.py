@@ -83,6 +83,7 @@ def plot_average_over_time_overlaid_indiv(file_path, outputfolder, ferretname, h
                       fontsize=20)
         axs.set_yticks(ticks=[0, 0.2, 0.4, 0.6, 0.8, 1.0], labels=[0, 0.2, 0.4, 0.6, 0.8, 1.0], fontsize=15)
         axs.set_xticks(ticks=[0, 0.2, 0.4, 0.6], labels=[0, 0.2, 0.4, 0.6], fontsize=15)
+        ax.legend(loc='upper right', fontsize=10)
         plt.savefig(outputfolder + '/' + str(
             cluster) + '_' + ferretname + '_' + rec_name + '_' + stream + '_averageovertime_overlaid_indiv_' + str(
             cluster) + '.png', bbox_inches='tight')
