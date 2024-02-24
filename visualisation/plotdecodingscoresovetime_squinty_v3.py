@@ -201,9 +201,106 @@ def plot_average_over_time(file_path, pitchshift, outputfolder, ferretname, high
             axs.set_title(f'unit: {cluster}_{ferretname}_{rec_name}_{stream},\n area: {brain_area}, {pitchshift_text}', fontsize=20)
             axs.set_yticks(ticks=[0, 0.2, 0.4, 0.6, 0.8, 1.0], labels=[0, 0.2, 0.4, 0.6, 0.8, 1.0], fontsize=15)
             axs.set_xticks(ticks=[0, 0.2, 0.4, 0.6], labels=[0, 0.2, 0.4, 0.6], fontsize=15)
-            plt.savefig(outputfolder + '/' +str(cluster)+'_'+ ferretname + '_' + rec_name + '_' + stream + '_' + pitchshift_text + '_averageovertime_' + str(cluster) + '.png', bbox_inches='tight')
+            plt.savefig(outputfolder + '/' +str(cluster)+'_'+ ferretname + '_' + rec_name + '_' + stream + '_' + pitchshift_text + '_averageovertime' + str(cluster) + '.png', bbox_inches='tight')
 
 
+
+
+def plot_average_over_time_overlaid(file_path, pitchshift, outputfolder, ferretname, high_units, talkerinput = 'talker1', animal_id = 'F1702', smooth_option = True, plot_on_one_figure = False):
+
+    probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+    score_dict = {'nopitchshift': {}, 'pitchshift': {}}
+    correlations = {'nopitchshift': {}, 'pitchshift': {}}
+    avg_scores = {'nopitchshift': {}, 'pitchshift': {}}
+    animal_id = animal_id.split('_')[0]
+    rec_name = file_path.parts[-2]
+    stream = file_path.parts[-1]
+
+    for pitchshift in ['nopitchshift', 'pitchshift']:
+        scores = np.load(
+            str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
+                2) + '_' + ferretname + '_probe_' + pitchshift + '_bs.npy',
+            allow_pickle=True)[()]
+
+        # create a dictionary of scores for each cluster
+        for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+            score_dict[pitchshift][cluster] = {}
+            correlations[pitchshift][cluster] = {}
+            avg_scores[pitchshift][cluster] = {}
+
+        for cluster in scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id']:
+            for probeword in probewordslist:
+                try:
+                    scores = np.load(
+                        str(file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
+                            probeword) + '_' + ferretname + '_probe_' + pitchshift + '_bs.npy',
+                        allow_pickle=True)[()]
+                    # find the index of the cluster
+                    index = scores[talkerinput]['target_vs_probe'][pitchshift]['cluster_id'].index(cluster)
+
+                    score_dict[pitchshift][cluster][probeword] = \
+                    scores[talkerinput]['target_vs_probe'][pitchshift]['lstm_balancedaccuracylist'][index]
+
+                except:
+                    print('error loading scores: ' + str(
+                        file_path) + '/' + r'scores_2022_' + ferretname + '_' + str(
+                        probeword) + '_' + ferretname + '_probe_bs.npy')
+                    continue
+        # compute the average over time with the standard deviation
+        for cluster in score_dict[pitchshift].keys():
+            score_dict_cluster = score_dict[pitchshift][cluster]
+            score_dict_cluster_list = []
+            for probeword in probewordslist:
+                try:
+                    score_dict_cluster_list.append(score_dict_cluster[probeword])
+                except:
+                    continue
+            # convert to numpy array
+            score_dict_cluster_list = np.array(score_dict_cluster_list)
+
+            # plot this array over time
+
+            # take the mean over the rows
+
+            avg_scores[pitchshift][cluster]['avg_score'] = np.mean(score_dict_cluster_list, axis=0)
+            avg_scores[pitchshift][cluster]['std'] = np.std(score_dict_cluster_list, axis=0)
+
+            avg_scores[pitchshift][cluster]['std'] = np.std(score_dict_cluster_list)
+    # Rest of the code remains the same
+    meg_clusters = high_units[high_units['BrainArea'] == 'MEG']['ID'].to_list()
+    peg_clusters = high_units[high_units['BrainArea'] == 'PEG']['ID'].to_list()
+
+    for i, cluster in enumerate(meg_clusters + peg_clusters):
+        fig, axs = plt.subplots()
+        brain_area = high_units[high_units['ID'] == cluster]['BrainArea'].to_list()[0]
+
+        for pitchshift, color, label in [('nopitchshift', 'purple', 'control F0'),
+                                         ('pitchshift', 'orchid', 'inter-roved F0')]:
+            try:
+                avg_score = avg_scores[pitchshift][cluster]['avg_score']
+            except KeyError:
+                continue  # Skip if there are no scores for this pitchshift
+
+            timepoints = np.arange(0, (len(avg_score) / 100) * 4, 0.04)
+            std_dev = avg_scores[pitchshift][cluster]['std']
+
+            if smooth_option:
+                avg_score = scipy.signal.savgol_filter(avg_score, 5, 3, mode='interp')
+
+            axs.plot(timepoints, avg_score, c=color, label=label)
+            axs.fill_between(timepoints, avg_score - std_dev, avg_score + std_dev, alpha=0.3, color=color)
+        axs.set_xlabel('time (s)', fontsize=20)
+        axs.set_ylabel('balanced accuracy', fontsize=20)
+        axs.set_title(f'unit: {cluster}_{ferretname}_{rec_name}_{stream},\n area: {brain_area}', fontsize=20)
+        axs.set_yticks(ticks=[0, 0.2, 0.4, 0.6, 0.8, 1.0], labels=[0, 0.2, 0.4, 0.6, 0.8, 1.0], fontsize=15)
+        axs.set_xticks(ticks=[0, 0.2, 0.4, 0.6], labels=[0, 0.2, 0.4, 0.6], fontsize=15)
+        axs.legend()
+
+        plt.savefig(outputfolder + '/' + str(
+            cluster) + '_' + ferretname + '_' + rec_name + '_' + stream + '_averageovertime_overlaid_' + str(cluster) + '.png',
+                    bbox_inches='tight')
+        # plt.show()
+    return
 
 def calculate_correlation_coefficient(filepath, pitchshift, outputfolder, ferretname, talkerinput = 'talker1', smooth_option = True):
     probewordslist = [2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -641,7 +738,8 @@ if __name__ == '__main__':
                 clust_ids = high_units['ID'].to_list()
                 brain_area = high_units['BrainArea'].to_list()
 
-                plot_average_over_time(file_path, pitchshift, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=False)
+                # plot_average_over_time(file_path, pitchshift, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=False)
+                plot_average_over_time_overlaid(file_path, pitchshift, output_folder, ferretname, high_units, talkerinput = 'talker1', animal_id = animal, smooth_option=False)
 
 
 
