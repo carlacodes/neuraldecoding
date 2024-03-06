@@ -141,7 +141,6 @@ def scatterplot_and_visualise(probewordlist,
 
         probewordindex = probeword[0]
         print(probewordindex)
-
         stringprobewordindex = str(probewordindex)
         try:
             scores = np.load(
