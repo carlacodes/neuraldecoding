@@ -12,7 +12,6 @@ from sklearn.model_selection import cross_val_score
 from sklearn.metrics import mean_squared_error
 import json
 
-
 def find_repeating_substring(text):
     text_length = len(text)
     max_length = text_length // 2  # Maximum possible length of repeating substring
