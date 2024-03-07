@@ -703,6 +703,7 @@ def main():
     plot_heatmap(df_all_naive, trained=False)
     plot_heatmap_with_comparison(df_all_trained, df_all_trained_permutation, trained=True)
     plot_heatmap_with_comparison(df_all_naive, df_all_naive_permutation, trained=False)
+    filter_for_units_used_in_first_analysis(df_all, trained = True)
     return
 
 
@@ -729,6 +730,7 @@ def plot_heatmap(df_in, trained = True):
 
 def plot_heatmap_with_comparison(df_in, df_in_perm, trained = True):
     #plot the difference in the df_in and df_perm scores
+
     df_in = df_in.groupby(['probeword1', 'probeword2']).mean().reset_index() # taking the mean of the scores across clusters for each probeword pair
     pivot_df = df_in.pivot(index='probeword1', columns='probeword2', values='score')
     df_in_perm = df_in_perm.groupby(['probeword1', 'probeword2']).mean().reset_index() # taking the mean of the scores across clusters for each probeword pair
@@ -744,6 +746,19 @@ def plot_heatmap_with_comparison(df_in, df_in_perm, trained = True):
     plt.show()
 
 
+def filter_for_units_used_in_first_analysis(data_in, trained = True):
+    if trained == True:
+        #filter for the units used in the first analysis
+        #read the input CSV data
+        decoding_scores = pd.read_csv('G:/neural_chapter/trained_animals_decoding_scores.csv')
+    else:
+        decoding_scores = pd.read_csv('G:/neural_chapter/naive_animals_decoding_scores.csv')
+    #get the unique UNIT ids from the input data
+    data_in['cluster_id_int'] = data_in['cluster_id'].astype(int)
+    data_in['long_unit_id'] = data_in['cluster_id'].astype(str)+'_' + data_in['stream']
+    #filter so only units in decoding scores are in data_in
+    data_in = data_in[data_in['long_unit_id'].isin(decoding_scores['ID'])]
+    return data_in
 
 
 
