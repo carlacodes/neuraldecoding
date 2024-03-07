@@ -273,8 +273,6 @@ def scatterplot_and_visualise(probewordlist,
                                 probeword = (7,7)
 
 
-
-
                         if 200 > clus >= 100 and fullid != 'F2003_Orecchiette':
                             clus_id_report = clus - 100
                         elif 300> clus >= 200 and fullid != 'F2003_Orecchiette':
@@ -296,7 +294,6 @@ def scatterplot_and_visualise(probewordlist,
                                     su_pitchshiftlist_female_probeword = np.append(su_pitchshiftlist_female_probeword, probeword[talker-1])
 
                                     su_pitchshiftlist_female_unitid = np.append(su_pitchshiftlist_female_unitid, clust_text)
-
 
                                     su_pitchshiftlist_female_channel_id = np.append(su_pitchshiftlist_female_channel_id, report['tdt'][clus_id_report])
 

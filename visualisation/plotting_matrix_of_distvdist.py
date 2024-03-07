@@ -42,7 +42,7 @@ def load_scores_and_filter(probewordlist,
     original_cluster_list = np.empty([0])
 
     #declare a dataframe to store the scores
-    sorted_df_of_scores = pd.DataFrame({'probeword1': [], 'probeword2': [], 'cluster_id': [], 'score': [], 'unit_type': [], 'animal': [], 'stream': [], 'recname': []})
+    sorted_df_of_scores = pd.DataFrame({'probeword1': [], 'probeword2': [], 'cluster_id': [], 'score': [], 'unit_type': [], 'animal': [], 'stream': [], 'recname': [], 'clus_id_report': []})
     for probeword1 in probewordlist:
         for probeword2 in probewordlist:
             singleunitlist_copy = singleunitlist.copy()
@@ -130,72 +130,71 @@ def load_scores_and_filter(probewordlist,
             for talker in [1]:
                 comparisons = [comp for comp in scores[f'talker{talker}']]
                 for comp in comparisons:
-                    for cond in ['pitchshift', 'nopitchshift']:
-                        for i, clus in enumerate(scores[f'talker{talker}'][comp][cond]['cluster_id']):
-                            stream_small = stream[-4:]
-                            clust_text = str(clus)+'_'+fullid+'_'+recname+'_'+stream_small
+                    key_text = f'{probeword1[0]}_{probeword1[0]}_{probeword2[0]}_{probeword2[0]}'
+                    for i, clus in enumerate(scores[f'talker{talker}'][comp][key_text]['cluster_id']):
+                        stream_small = stream[-4:]
+                        clust_text = str(clus)+'_'+fullid+'_'+recname+'_'+stream_small
+                        print(i, clus)
+                        if probeword == (2,2) and fullid == 'F1702_Zola':
+                            probeword = (4,4)
+                        elif probeword == (5,6) and fullid == 'F1702_Zola':
+                            probeword = (2,2)
+                        elif probeword == (20,20) and fullid == 'F1702_Zola':
+                            probeword = (3,3)
+                        elif probeword == (42,49) and fullid == 'F1702_Zola':
+                            probeword = (5,5)
+                        elif probeword == (32,38) and fullid == 'F1702_Zola':
+                            probeword = (7,7)
 
-                            print(i, clus)
-
-                            if probeword == (2,2) and fullid == 'F1702_Zola':
-                                probeword = (4,4)
-                            elif probeword == (5,6) and fullid == 'F1702_Zola':
-                                probeword = (2,2)
-                            elif probeword == (20,20) and fullid == 'F1702_Zola':
-                                probeword = (3,3)
-                            elif probeword == (42,49) and fullid == 'F1702_Zola':
+                        if fullid == 'F1604_Squinty' or fullid == 'F1606_Windolene':
+                            if probeword == (3,3):
                                 probeword = (5,5)
-                            elif probeword == (32,38) and fullid == 'F1702_Zola':
+                            elif probeword == (6,6) :
+                                probeword = (4,4)
+                            elif probeword == (2,2):
+                                probeword = (13,13)
+                            elif probeword == (4,4):
+                                probeword = (15,15)
+                            elif probeword == (5,5):
+                                probeword = (16,16)
+                            elif probeword == (7,7):
+                                probeword = (18,18)
+                            elif probeword == (8,8):
+                                probeword = (19,19)
+                            elif probeword == (9,9):
+                                probeword = (20,20)
+                            elif probeword == (10,10):
+                                probeword = (21,21)
+                            elif probeword == (11,11):
+                                probeword = (22,22)
+                            elif probeword == (12,12):
+                                probeword = (23,23)
+                            elif probeword == (14,14):
                                 probeword = (7,7)
 
-                            if fullid == 'F1604_Squinty' or fullid == 'F1606_Windolene':
-                                if probeword == (3,3):
-                                    probeword = (5,5)
-                                elif probeword == (6,6) :
-                                    probeword = (4,4)
-                                elif probeword == (2,2):
-                                    probeword = (13,13)
-                                elif probeword == (4,4):
-                                    probeword = (15,15)
-                                elif probeword == (5,5):
-                                    probeword = (16,16)
-                                elif probeword == (7,7):
-                                    probeword = (18,18)
-                                elif probeword == (8,8):
-                                    probeword = (19,19)
-                                elif probeword == (9,9):
-                                    probeword = (20,20)
-                                elif probeword == (10,10):
-                                    probeword = (21,21)
-                                elif probeword == (11,11):
-                                    probeword = (22,22)
-                                elif probeword == (12,12):
-                                    probeword = (23,23)
-                                elif probeword == (14,14):
-                                    probeword = (7,7)
+
+                        if 200 > clus >= 100 and fullid != 'F2003_Orecchiette':
+                            clus_id_report = clus - 100
+                        elif 300> clus >= 200 and fullid != 'F2003_Orecchiette':
+                            clus_id_report = clus - 200
+                        elif 400 > clus >= 300 and fullid != 'F2003_Orecchiette':
+                            clus_id_report = clus - 300
+                        else:
+                            clus_id_report = clus
+                        if clus in singleunitlist_copy:
+                            unit_type = 'su'
+                            #append to the dataframe
+
+                            sorted_df_of_scores = sorted_df_of_scores.append({'probeword1': probeword1[0], 'probeword2': probeword2[0], 'cluster_id': clus, 'score': scores[f'talker{talker}'][comp][cond]['score'][i], 'unit_type': unit_type, 'animal': fullid, 'stream': stream, 'recname': recname, 'clus_id_report': clus_id_report}, ignore_index=True)
 
 
-                            if 200 > clus >= 100 and fullid != 'F2003_Orecchiette':
-                                clus_id_report = clus - 100
-                            elif 300> clus >= 200 and fullid != 'F2003_Orecchiette':
-                                clus_id_report = clus - 200
-                            elif 400 > clus >= 300 and fullid != 'F2003_Orecchiette':
-                                clus_id_report = clus - 300
-                            else:
-                                clus_id_report = clus
-                            if clus in singleunitlist_copy:
-                                unit_type = 'su'
-                                #append to the dataframe
-                                sorted_df_of_scores = sorted_df_of_scores.append({'probeword1': probeword1[0], 'probeword2': probeword2[0], 'cluster_id': clus, 'score': scores[f'talker{talker}'][comp][cond]['score'][i], 'unit_type': unit_type, 'animal': fullid, 'stream': stream, 'recname': recname}, ignore_index=True)
+                        elif clus in multiunitlist_copy:
+                            unit_type = 'mua'
+                            #append to the dataframe
+                            sorted_df_of_scores = sorted_df_of_scores.append({'probeword1': probeword1[0], 'probeword2': probeword2[0], 'cluster_id': clus, 'score': scores[f'talker{talker}'][comp][cond]['score'][i], 'unit_type': unit_type, 'animal': fullid, 'stream': stream, 'recname': recname, 'clus_id_report': clus_id_report}, ignore_index=True)
 
-
-                            elif clus in multiunitlist_copy:
-                                unit_type = 'mua'
-                                #append to the dataframe
-                                sorted_df_of_scores = sorted_df_of_scores.append({'probeword1': probeword1[0], 'probeword2': probeword2[0], 'cluster_id': clus, 'score': scores[f'talker{talker}'][comp][cond]['score'][i], 'unit_type': unit_type, 'animal': fullid, 'stream': stream, 'recname': recname}, ignore_index=True)
-
-                            elif clus in noiselist:
-                                pass
+                        elif clus in noiselist:
+                            pass
 
 
 
