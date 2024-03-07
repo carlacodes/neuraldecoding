@@ -264,7 +264,35 @@ def load_scores_and_filter(probewordlist,
                         elif clus in multiunitlist_copy:
                             unit_type = 'mua'
                             #append to the dataframe
-                            sorted_df_of_scores = sorted_df_of_scores.append({'probeword1': probeword1_input_text[0], 'probeword2': probeword2_input_text[0], 'cluster_id': clus, 'score': scores[f'talker{talker}'][comp][key_text][score_key][i], 'unit_type': unit_type, 'animal': fullid, 'stream': stream, 'recname': recname, 'clus_id_report': clus_id_report}, ignore_index=True)
+                            electrode_position_dict = electrode_position_data.get(fullid)
+                            if electrode_position_dict:
+                                tdt_position = report['tdt'][clus_id_report]
+                                channel_id = electrode_position_dict.get(str(tdt_position))
+                                if channel_id:
+                                    #get the brain area
+                                    brain_area = channel_id.get('brain_area')
+                                    #append to the dataframe
+                                    sorted_df_of_scores = sorted_df_of_scores.append(
+                                        {'probeword1': probeword1_input_text[0], 'probeword2': probeword2_input_text[0],
+                                         'cluster_id': clus,
+                                         'score': scores[f'talker{talker}'][comp][key_text][score_key][i],
+                                         'unit_type': unit_type, 'animal': fullid, 'stream': stream, 'recname': recname,
+                                         'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position,
+                                         'brain_area': brain_area}, ignore_index=True)
+                            elif fullid == 'F2003_Orecchiette':
+                                if 'mod' in stream:
+                                    brain_area = 'PEG'
+                                elif 's2' in stream:
+                                    brain_area = 'PEG'
+                                elif 's3' in stream:
+                                    brain_area = 'MEG'
+                                tdt_position = -1
+                                sorted_df_of_scores = sorted_df_of_scores.append(
+                                    {'probeword1': probeword1_input_text[0], 'probeword2': probeword2_input_text[0],
+                                     'cluster_id': clus,
+                                     'score': scores[f'talker{talker}'][comp][key_text][score_key][i],
+                                     'unit_type': unit_type, 'animal': fullid, 'stream': stream, 'recname': recname,
+                                     'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position, 'brain_area': brain_area}, ignore_index=True)
 
                         elif clus in noiselist:
                             pass
