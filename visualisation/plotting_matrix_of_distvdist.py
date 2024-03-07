@@ -563,7 +563,6 @@ def main():
         singleunitlist[animal] = {}
         multiunitlist[animal] = {}
         noiselist[animal] = {}
-
         for path in path_list[animal]:
             stream_name = path.parent.absolute()
             stream_name = stream_name.parent.absolute()
@@ -575,7 +574,6 @@ def main():
 
     # now create a dictionary of dictionaries, where the first key is the animal name, and the second key is the stream name
     #the value is are the decoding scores for each cluster
-
     dictoutput = {}
     dictoutput_trained = []
     dictoutput_trained_permutation = []
@@ -588,7 +586,6 @@ def main():
         for stream in report[animal]:
             dictoutput[animal][stream] = {}
             animal_text = animal.split('_')[1]
-
             if animal =='F2003_Orecchiette':
                 rec_name_unique = stream
             else:
@@ -618,7 +615,6 @@ def main():
                                                                 multiunitlist=multiunitlist[animal][stream],
                                                                 noiselist=noiselist[animal][stream], stream = stream, fullid = animal, report = report[animal][stream])
                 dictoutput_all.append(dictoutput_instance)
-
                 dictoutput_instance_permutation = scatterplot_and_visualise(probewordlist_l74,
                                                                 saveDir=f'G:/results_distvsdist_02022024/{animal}/{rec_name_unique}/{streamtext}/',
                                                                 ferretname=animal_text,
