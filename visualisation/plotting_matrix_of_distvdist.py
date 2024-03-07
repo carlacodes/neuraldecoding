@@ -47,6 +47,8 @@ def load_scores_and_filter(probewordlist,
         for probeword2 in probewordlist:
             singleunitlist_copy = singleunitlist.copy()
             multiunitlist_copy = multiunitlist.copy()
+            key_text = f'{probeword1[0]}_{probeword1[0]}_{probeword2[0]}_{probeword2[0]}'
+
             #load the original clusters to split from the json file
             json_file_path = f'F:\split_cluster_jsons/{fullid}/cluster_split_list.json'
             if ferretname == 'Orecchiette':
@@ -78,7 +80,7 @@ def load_scores_and_filter(probewordlist,
                     except Exception as e:
                         print(e)
                         continue
-                    original_to_split_cluster_ids = scores['talker1']['target_vs_probe']['pitchshift']['cluster_id']
+                    original_to_split_cluster_ids = scores['talker1']['target_vs_probe'][key_text]['cluster_id']
                     #if all of them need splitting
                 elif original_to_split_cluster_ids:
                     #TODO: not sure if this elif needed
@@ -544,10 +546,7 @@ def main():
 
                 dictoutput_all_permutation.append(dictoutput_instance_permutation)
 
-            female_talker_len = len(dictoutput_instance['su_list']['pitchshift']['female_talker'])
-            probeword_len = len(dictoutput_instance['su_list_probeword']['pitchshift']['female_talker'])
 
-            assert female_talker_len == probeword_len, f"Length mismatch: female_talker_len={female_talker_len}, probeword_len={probeword_len}"
 
             try:
                 if animal == 'F1604_Squinty' or animal == 'F1606_Windolene' or animal == 'F1702_Zola' or animal == 'F1815_Cruella':
