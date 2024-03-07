@@ -582,9 +582,24 @@ def main():
     labels = [ 'F1901_Crumble', 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala']
 
     colors = ['purple', 'magenta', 'darkturquoise', 'olivedrab', 'steelblue', 'darkcyan', 'darkorange']
+    plot_heatmap(df_all_trained)
 
     return
 
+
+def plot_heatmap(df_in):
+    '''plot a heatmap of the data for each probe word pair
+    :param data: the data to be plotted
+    :return: None
+    '''
+
+    pivot_df = df_in.pivot(index='probeword1', columns='probeword2', values='score')
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(pivot_df, cmap="YlGnBu")
+
+    # Show the plot
+    plt.show()
+    return
 
 
 
