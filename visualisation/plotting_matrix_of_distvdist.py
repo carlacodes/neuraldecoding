@@ -42,7 +42,8 @@ def scatterplot_and_visualise(probewordlist,
     noiselist = [x - 1 for x in noiselist]
     original_cluster_list = np.empty([0])
 
-
+    #declare a dataframe to store the scores
+    sorted_df_of_scores = pd.DataFrame()
     for probeword1 in probewordlist:
         for probeword2 in probewordlist:
             singleunitlist_copy = singleunitlist.copy()
@@ -82,33 +83,33 @@ def scatterplot_and_visualise(probewordlist,
             for talker in [1]:
                 comparisons = [comp for comp in scores[f'talker{talker}']]
                 for comp in comparisons:
-                    for cond in [pitchshift_text]:
-                        for i, clus in enumerate(scores[f'talker{talker}'][comp][cond]['cluster_id']):
-                            #check if clus is greater than 100
-                            if 200> clus >= 100:
-                                clus_instance = int(round(clus - 100))
-                                if clus_instance in singleunitlist_copy:
-                                    singleunitlist_copy.append(clus)
-                                    original_cluster_list = np.append(original_cluster_list, clus_instance)
-                                elif clus_instance in multiunitlist_copy:
-                                    multiunitlist_copy.append(clus)
-                                    original_cluster_list = np.append(original_cluster_list, clus_instance)
-                            elif 300 > clus >= 200:
-                                clus_instance = int(round(clus - 200))
-                                if clus_instance in singleunitlist_copy:
-                                    singleunitlist_copy.append(clus)
-                                    original_cluster_list = np.append(original_cluster_list, clus_instance)
-                                elif clus_instance in multiunitlist_copy:
-                                    multiunitlist_copy.append(clus)
-                                    original_cluster_list = np.append(original_cluster_list, clus_instance)
-                            elif 400 > clus >= 300:
-                                clus_instance = int(round(clus - 300))
-                                if clus_instance in singleunitlist_copy:
-                                    singleunitlist_copy.append(clus)
-                                    original_cluster_list = np.append(original_cluster_list, clus_instance)
-                                elif clus_instance in multiunitlist_copy:
-                                    multiunitlist_copy.append(clus)
-                                    original_cluster_list = np.append(original_cluster_list, clus_instance)
+                    key_text = f'{probeword1[0]}_{probeword1[0]}_{probeword2[0]}_{probeword2[0]}'
+                    for i, clus in enumerate(scores[f'talker{talker}'][comp][key_text]['cluster_id']):
+                        #check if clus is greater than 100
+                        if 200> clus >= 100:
+                            clus_instance = int(round(clus - 100))
+                            if clus_instance in singleunitlist_copy:
+                                singleunitlist_copy.append(clus)
+                                original_cluster_list = np.append(original_cluster_list, clus_instance)
+                            elif clus_instance in multiunitlist_copy:
+                                multiunitlist_copy.append(clus)
+                                original_cluster_list = np.append(original_cluster_list, clus_instance)
+                        elif 300 > clus >= 200:
+                            clus_instance = int(round(clus - 200))
+                            if clus_instance in singleunitlist_copy:
+                                singleunitlist_copy.append(clus)
+                                original_cluster_list = np.append(original_cluster_list, clus_instance)
+                            elif clus_instance in multiunitlist_copy:
+                                multiunitlist_copy.append(clus)
+                                original_cluster_list = np.append(original_cluster_list, clus_instance)
+                        elif 400 > clus >= 300:
+                            clus_instance = int(round(clus - 300))
+                            if clus_instance in singleunitlist_copy:
+                                singleunitlist_copy.append(clus)
+                                original_cluster_list = np.append(original_cluster_list, clus_instance)
+                            elif clus_instance in multiunitlist_copy:
+                                multiunitlist_copy.append(clus)
+                                original_cluster_list = np.append(original_cluster_list, clus_instance)
 
             #get the unique values from the original cluster list
             original_cluster_list = np.unique(original_cluster_list)
@@ -186,182 +187,15 @@ def scatterplot_and_visualise(probewordlist,
                                 clus_id_report = clus - 300
                             else:
                                 clus_id_report = clus
-
-
                             if clus in singleunitlist_copy:
-                                print('in single unit list')
-                                if cond == 'pitchshift':
-                                    if talker == 1:
-                                        su_pitchshiftlist_female = np.append(su_pitchshiftlist_female,
-                                                                             scores[f'talker{talker}'][comp][cond][
-                                                                                 score_key][i])
-                                        su_pitchshiftlist_female_probeword = np.append(su_pitchshiftlist_female_probeword, probeword[talker-1])
-
-                                        su_pitchshiftlist_female_unitid = np.append(su_pitchshiftlist_female_unitid, clust_text)
-
-
-                                        su_pitchshiftlist_female_channel_id = np.append(su_pitchshiftlist_female_channel_id, report['tdt'][clus_id_report])
-
-                                    elif talker == 2:
-                                        su_pitchshiftlist_male = np.append(su_pitchshiftlist_male,
-                                                                           scores[f'talker{talker}'][comp][cond][
-                                                                               score_key][i])
-                                        su_pitchshiftlist_male_probeword = np.append(su_pitchshiftlist_male_probeword, probeword[talker -1 ])
-                                        su_pitchshiftlist_male_unitid = np.append(su_pitchshiftlist_male_unitid, clust_text)
-                                        su_pitchshiftlist_male_channel_id = np.append(su_pitchshiftlist_male_channel_id, report['tdt'][clus_id_report])
-
-                                elif cond == 'nopitchshift':
-                                    if talker == 1:
-
-                                        su_nonpitchshiftlist_female = np.append(su_nonpitchshiftlist_female,
-                                                                                scores[f'talker{talker}'][comp][cond][
-                                                                                    score_key][i])
-                                        su_nonpitchshiftlist_female_probeword = np.append(su_nonpitchshiftlist_female_probeword, probeword[talker -1 ])
-                                        su_nonpitchshiftlist_female_unitid = np.append(su_nonpitchshiftlist_female_unitid, clust_text)
-                                        su_nonpitchshiftlist_female_channel_id = np.append(su_nonpitchshiftlist_female_channel_id, report['tdt'][clus_id_report])
-
-                                    elif talker == 2:
-
-                                        su_nonpitchshiftlist_male = np.append(su_nonpitchshiftlist_male,
-                                                                              scores[f'talker{talker}'][comp][cond][
-                                                                                  score_key][i])
-                                        su_nonpitchshiftlist_male_probeword = np.append(su_nonpitchshiftlist_male_probeword, probeword[talker -1 ])
-                                        su_nonpitchshiftlist_male_unitid = np.append(su_nonpitchshiftlist_male_unitid, clust_text)
-
-                                        su_nonpitchshiftlist_male_channel_id = np.append(su_nonpitchshiftlist_male_channel_id, report['tdt'][clus_id_report])
 
 
                             elif clus in multiunitlist_copy:
-                                if cond == 'pitchshift':
-                                    if talker == 1:
-
-                                        mu_pitchshiftlist_female = np.append(mu_pitchshiftlist_female,
-                                                                             scores[f'talker{talker}'][comp][cond][
-                                                                                 score_key][
-                                                                                 i])
-                                        mu_pitchshiftlist_female_probeword = np.append(mu_pitchshiftlist_female_probeword, probeword[talker -1 ])
-                                        mu_pitchshiftlist_female_unitid = np.append(mu_pitchshiftlist_female_unitid, clust_text)
-                                        mu_pitchshiftlist_female_channel_id = np.append(mu_pitchshiftlist_female_channel_id, report['tdt'][clus_id_report])
-
-                                    elif talker == 2:
-
-                                        mu_pitchshiftlist_male = np.append(mu_pitchshiftlist_male,
-                                                                           scores[f'talker{talker}'][comp][cond][
-                                                                              score_key][
-                                                                               i])
-                                        cluster_list_male_mu = np.append(cluster_list_male_mu, clust_text)
-                                        mu_pitchshiftlist_male_probeword = np.append(mu_pitchshiftlist_male_probeword, probeword[talker -1 ])
-                                        mu_pitchshiftlist_male_unitid = np.append(mu_pitchshiftlist_male_unitid, clust_text)
-                                        mu_pitchshiftlist_male_channel_id = np.append(mu_pitchshiftlist_male_channel_id, report['tdt'][clus_id_report])
-
-
-
-                                if cond == 'nopitchshift':
-                                    if talker == 1:
-
-                                        mu_nonpitchshiftlist_female = np.append(mu_nonpitchshiftlist_female,
-                                                                                scores[f'talker{talker}'][comp][cond][
-                                                                                    score_key][i])
-                                        mu_nonpitchshiftlist_female_probeword = np.append(mu_nonpitchshiftlist_female_probeword, probeword[talker -1 ])
-                                        mu_nonpitchshiftlist_female_unitid = np.append(mu_nonpitchshiftlist_female_unitid, clust_text)
-                                        mu_nonpitchshiftlist_female_channel_id = np.append(mu_nonpitchshiftlist_female_channel_id, report['tdt'][clus_id_report])
-
-                                    elif talker == 2:
-
-                                        mu_nonpitchshiftlist_male = np.append(mu_nonpitchshiftlist_male,
-                                                                              scores[f'talker{talker}'][comp][cond][
-                                                                                  score_key][i])
-                                        cluster_list_male_mu_nops= np.append(cluster_list_male_mu_nops, clust_text)
-                                        mu_nonpitchshiftlist_male_probeword = np.append(mu_nonpitchshiftlist_male_probeword, probeword[talker -1])
-                                        mu_nonpitchshiftlist_male_unitid = np.append(mu_nonpitchshiftlist_male_unitid, clust_text)
-                                        mu_nonpitchshiftlist_male_channel_id = np.append(mu_nonpitchshiftlist_male_channel_id, report['tdt'][clus_id_report])
 
                             elif clus in noiselist:
                                 pass
 
 
-    dictofsortedscores = {'su_list': {'pitchshift': {'female_talker': {},
-                                                     'male_talker': {}},
-                                      'nonpitchshift': {'female_talker': {},
-                                                        'male_talker': {}}},
-                          'mu_list': {'pitchshift': {'female_talker': {},
-                                                     'male_talker': {}},
-                                      'nonpitchshift': {'female_talker': {},
-                                                        'male_talker': {}}},
-
-                          'su_list_probeword': {'pitchshift': {'female_talker': {},
-                                                     'male_talker': {}},
-                                      'nonpitchshift': {'female_talker': {},
-                                                        'male_talker': {}}},
-                          'mu_list_probeword': {'pitchshift': {'female_talker': {},
-                                                     'male_talker': {}},
-                                      'nonpitchshift': {'female_talker': {},
-                                                        'male_talker': {}}},
-                          'su_list_unitid': {'pitchshift': {'female_talker': {},
-                                                               'male_talker': {}},
-                                                'nonpitchshift': {'female_talker': {},
-                                                                  'male_talker': {}}},
-                          'mu_list_unitid': {'pitchshift': {'female_talker': {},
-                                                               'male_talker': {}},
-                                                'nonpitchshift': {'female_talker': {},
-                                                                  'male_talker': {}}},
-                          'su_list_chanid': {'pitchshift': {'female_talker': {},
-                                                            'male_talker': {}},
-                                             'nonpitchshift': {'female_talker': {},
-                                                               'male_talker': {}}},
-                          'mu_list_chanid': {'pitchshift': {'female_talker': {},
-                                                            'male_talker': {}},
-                                             'nonpitchshift': {'female_talker': {},
-                                                               'male_talker': {}}}
-
-                         }
-    if len(su_pitchshiftlist_female_probeword) != len(su_pitchshiftlist_female):
-        print('not equal')
-
-    dictofsortedscores['su_list']['pitchshift']['female_talker'] = su_pitchshiftlist_female
-    dictofsortedscores['su_list']['pitchshift']['male_talker'] = su_pitchshiftlist_male
-    dictofsortedscores['su_list']['nonpitchshift']['female_talker'] = su_nonpitchshiftlist_female
-    dictofsortedscores['su_list']['nonpitchshift']['male_talker'] = su_nonpitchshiftlist_male
-
-    dictofsortedscores['mu_list']['pitchshift']['female_talker'] = mu_pitchshiftlist_female
-    dictofsortedscores['mu_list']['pitchshift']['male_talker'] = mu_pitchshiftlist_male
-    dictofsortedscores['mu_list']['nonpitchshift']['female_talker'] = mu_nonpitchshiftlist_female
-    dictofsortedscores['mu_list']['nonpitchshift']['male_talker'] = mu_nonpitchshiftlist_male
-
-    dictofsortedscores['su_list_probeword']['pitchshift']['female_talker'] = su_pitchshiftlist_female_probeword
-    dictofsortedscores['su_list_probeword']['pitchshift']['male_talker']  = su_pitchshiftlist_male_probeword
-    dictofsortedscores['su_list_probeword']['nonpitchshift']['female_talker'] = su_nonpitchshiftlist_female_probeword
-    dictofsortedscores['su_list_probeword']['nonpitchshift']['male_talker'] = su_nonpitchshiftlist_male_probeword
-
-    dictofsortedscores['mu_list_probeword']['pitchshift']['female_talker'] = mu_pitchshiftlist_female_probeword
-    dictofsortedscores['mu_list_probeword']['pitchshift']['male_talker'] = mu_pitchshiftlist_male_probeword
-    dictofsortedscores['mu_list_probeword']['nonpitchshift']['female_talker'] = mu_nonpitchshiftlist_female_probeword
-    dictofsortedscores['mu_list_probeword']['nonpitchshift']['male_talker'] = mu_nonpitchshiftlist_male_probeword
-
-    dictofsortedscores['su_list_unitid']['pitchshift']['female_talker'] = su_pitchshiftlist_female_unitid
-    dictofsortedscores['su_list_unitid']['pitchshift']['male_talker']  = su_pitchshiftlist_male_unitid
-    dictofsortedscores['su_list_unitid']['nonpitchshift']['female_talker'] = su_nonpitchshiftlist_female_unitid
-    dictofsortedscores['su_list_unitid']['nonpitchshift']['male_talker'] = su_nonpitchshiftlist_male_unitid
-
-    dictofsortedscores['mu_list_unitid']['pitchshift']['female_talker'] = mu_pitchshiftlist_female_unitid
-    dictofsortedscores['mu_list_unitid']['pitchshift']['male_talker'] = mu_pitchshiftlist_male_unitid
-    dictofsortedscores['mu_list_unitid']['nonpitchshift']['female_talker'] = mu_nonpitchshiftlist_female_unitid
-    dictofsortedscores['mu_list_unitid']['nonpitchshift']['male_talker'] = mu_nonpitchshiftlist_male_unitid
-
-    dictofsortedscores['su_list_chanid']['pitchshift']['female_talker'] = su_pitchshiftlist_female_channel_id
-    dictofsortedscores['su_list_chanid']['pitchshift']['male_talker']  = su_pitchshiftlist_male_channel_id
-    dictofsortedscores['su_list_chanid']['nonpitchshift']['female_talker'] = su_nonpitchshiftlist_female_channel_id
-    dictofsortedscores['su_list_chanid']['nonpitchshift']['male_talker'] = su_nonpitchshiftlist_male_channel_id
-
-    dictofsortedscores['mu_list_chanid']['pitchshift']['female_talker'] = mu_pitchshiftlist_female_channel_id
-    dictofsortedscores['mu_list_chanid']['pitchshift']['male_talker'] = mu_pitchshiftlist_male_channel_id
-    dictofsortedscores['mu_list_chanid']['nonpitchshift']['female_talker'] = mu_nonpitchshiftlist_female_channel_id
-    dictofsortedscores['mu_list_chanid']['nonpitchshift']['male_talker'] = mu_nonpitchshiftlist_male_channel_id
-
-
-
-    if len( dictofsortedscores['su_list_probeword']['pitchshift']['female_talker']) != len(  dictofsortedscores['su_list']['pitchshift']['female_talker']):
-        print('error in dict')
 
 
     return dictofsortedscores
