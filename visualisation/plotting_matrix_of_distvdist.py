@@ -279,7 +279,11 @@ def load_scores_and_filter(probewordlist,
                                 #get the brain area
                                 channel_id_and_brain_area = side_of_implant_df[side_of_implant_df['TDT_NUMBER'] == tdt_position]
                                 print(fullid, clus, tdt_position, channel_id_and_brain_area)
-                                brain_area = channel_id_and_brain_area['area'].values[0]
+                                try:
+                                    brain_area = channel_id_and_brain_area['area'].values[0]
+                                except Exception as e:
+                                    print(e)
+                                    continue
 
                                 sorted_df_of_scores = sorted_df_of_scores.append(
                                         {'probeword1': probeword1_input_text[0], 'probeword2': probeword2_input_text[0],
@@ -519,6 +523,7 @@ def main():
     probewordlist_l74 = [(10, 10), (2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (11, 11), (12, 12),
                              (14, 14)]
     animal_list = [ 'F1604_Squinty', 'F1901_Crumble', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala',  'F2003_Orecchiette',]
+    # animal_list = ['F1902_Eclair']
     report = {}
     singleunitlist = {}
     multiunitlist = {}
