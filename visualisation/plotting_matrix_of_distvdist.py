@@ -275,11 +275,9 @@ def scatterplot_and_visualise(probewordlist,
                                                                               scores[f'talker{talker}'][comp][cond][
                                                                                   score_key][i])
                                         cluster_list_male_mu_nops= np.append(cluster_list_male_mu_nops, clust_text)
-                                        mu_nonpitchshiftlist_male_probeword = np.append(mu_nonpitchshiftlist_male_probeword, probeword[talker -1 ])
+                                        mu_nonpitchshiftlist_male_probeword = np.append(mu_nonpitchshiftlist_male_probeword, probeword[talker -1])
                                         mu_nonpitchshiftlist_male_unitid = np.append(mu_nonpitchshiftlist_male_unitid, clust_text)
                                         mu_nonpitchshiftlist_male_channel_id = np.append(mu_nonpitchshiftlist_male_channel_id, report['tdt'][clus_id_report])
-
-
 
                             elif clus in noiselist:
                                 pass
@@ -546,13 +544,11 @@ def main():
     probewordlist_l74 = [(10, 10), (2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (11, 11), (12, 12),
                              (14, 14)]
     animal_list = [ 'F1604_Squinty', 'F1901_Crumble', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala',  'F2003_Orecchiette',]
-
     report = {}
     singleunitlist = {}
     multiunitlist = {}
     noiselist = {}
     path_list = {}
-
     for animal in animal_list:
         if animal == 'F2003_Orecchiette':
             path = Path('G:\F2003_Orecchiette/')
@@ -575,8 +571,6 @@ def main():
                 stream_name = str(stream_name).split('\\')[-2]
             else:
                 stream_name = str(stream_name).split('\\')[-1]
-
-
             report[animal][stream_name], singleunitlist[animal][stream_name], multiunitlist[animal][stream_name], noiselist[animal][stream_name] = load_classified_report(f'{path}')
 
     # now create a dictionary of dictionaries, where the first key is the animal name, and the second key is the stream name
