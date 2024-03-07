@@ -43,7 +43,7 @@ def scatterplot_and_visualise(probewordlist,
     original_cluster_list = np.empty([0])
 
     #declare a dataframe to store the scores
-    sorted_df_of_scores = pd.DataFrame()
+    sorted_df_of_scores = pd.DataFrame({'probeword1': [], 'probeword2': [], 'cluster_id': [], 'score': [], 'unit_type': [], 'animal': [], 'stream': [], 'recname': []})
     for probeword1 in probewordlist:
         for probeword2 in probewordlist:
             singleunitlist_copy = singleunitlist.copy()
@@ -188,9 +188,15 @@ def scatterplot_and_visualise(probewordlist,
                             else:
                                 clus_id_report = clus
                             if clus in singleunitlist_copy:
+                                unit_type = 'su'
+                                #append to the dataframe
+                                sorted_df_of_scores = sorted_df_of_scores.append({'probeword1': probeword1[0], 'probeword2': probeword2[0], 'cluster_id': clus, 'score': scores[f'talker{talker}'][comp][cond]['score'][i], 'unit_type': unit_type, 'animal': fullid, 'stream': stream, 'recname': recname}, ignore_index=True)
 
 
                             elif clus in multiunitlist_copy:
+                                unit_type = 'mua'
+                                #append to the dataframe
+                                sorted_df_of_scores = sorted_df_of_scores.append({'probeword1': probeword1[0], 'probeword2': probeword2[0], 'cluster_id': clus, 'score': scores[f'talker{talker}'][comp][cond]['score'][i], 'unit_type': unit_type, 'animal': fullid, 'stream': stream, 'recname': recname}, ignore_index=True)
 
                             elif clus in noiselist:
                                 pass
@@ -198,7 +204,7 @@ def scatterplot_and_visualise(probewordlist,
 
 
 
-    return dictofsortedscores
+    return sorted_df_of_scores
 
 
 def cool_dict_merge(dicts_list): #ripped this from stackoverflow
