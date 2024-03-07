@@ -247,7 +247,7 @@ def load_scores_and_filter(probewordlist,
                                         {'probeword1': probeword1_input_text[0], 'probeword2': probeword2_input_text[0],
                                          'cluster_id': clus,
                                          'score': scores[f'talker{talker}'][comp][key_text][score_key][i],
-                                         'unit_type': unit_type, 'animal': fullid, 'stream': stream, 'recname': recname,
+                                         'unit_type': unit_type, 'animal': fullid, 'stream': stream_id, 'recname': recname,
                                          'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position,
                                          'brain_area': brain_area}, ignore_index=True)
                             elif fullid == 'F2003_Orecchiette':
@@ -262,7 +262,7 @@ def load_scores_and_filter(probewordlist,
                                     {'probeword1': probeword1_input_text[0], 'probeword2': probeword2_input_text[0],
                                      'cluster_id': clus,
                                      'score': scores[f'talker{talker}'][comp][key_text][score_key][i],
-                                     'unit_type': unit_type, 'animal': fullid, 'stream': stream, 'recname': recname,
+                                     'unit_type': unit_type, 'animal': fullid, 'stream': stream_id, 'recname': recname,
                                      'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position, 'brain_area': brain_area}, ignore_index=True)
 
 
@@ -289,7 +289,7 @@ def load_scores_and_filter(probewordlist,
                                         {'probeword1': probeword1_input_text[0], 'probeword2': probeword2_input_text[0],
                                          'cluster_id': clus,
                                          'score': scores[f'talker{talker}'][comp][key_text][score_key][i],
-                                         'unit_type': unit_type, 'animal': fullid, 'stream': stream, 'recname': recname,
+                                         'unit_type': unit_type, 'animal': fullid, 'stream': stream_id, 'recname': recname,
                                          'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position,
                                          'brain_area': brain_area}, ignore_index=True)
                             elif fullid == 'F2003_Orecchiette':
@@ -304,7 +304,7 @@ def load_scores_and_filter(probewordlist,
                                     {'probeword1': probeword1_input_text[0], 'probeword2': probeword2_input_text[0],
                                      'cluster_id': clus,
                                      'score': scores[f'talker{talker}'][comp][key_text][score_key][i],
-                                     'unit_type': unit_type, 'animal': fullid, 'stream': stream, 'recname': recname,
+                                     'unit_type': unit_type, 'animal': fullid, 'stream': stream_id, 'recname': recname,
                                      'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position, 'brain_area': brain_area}, ignore_index=True)
 
                         elif clus in noiselist:
@@ -703,7 +703,7 @@ def main():
     plot_heatmap(df_all_naive, trained=False)
     plot_heatmap_with_comparison(df_all_trained, df_all_trained_permutation, trained=True)
     plot_heatmap_with_comparison(df_all_naive, df_all_naive_permutation, trained=False)
-    filter_for_units_used_in_first_analysis(df_all, trained = True)
+    filter_for_units_used_in_first_analysis(df_all_trained, trained = True)
     return
 
 
@@ -755,10 +755,12 @@ def filter_for_units_used_in_first_analysis(data_in, trained = True):
         decoding_scores = pd.read_csv('G:/neural_chapter/naive_animals_decoding_scores.csv')
     #get the unique UNIT ids from the input data
     data_in['cluster_id_int'] = data_in['cluster_id'].astype(int)
-    data_in['long_unit_id'] = data_in['cluster_id'].astype(str)+'_' + data_in['stream']
+    #round the cluster id to the nearest 1
+    data_in['cluster_id'] = data_in['cluster_id_int'].round()
+    data_in['long_unit_id'] = data_in['cluster_id'].astype(str)+'_' +data_in['animal']+'_'+ data_in['recname'] + '_' + data_in['stream']
     #filter so only units in decoding scores are in data_in
-    data_in = data_in[data_in['long_unit_id'].isin(decoding_scores['ID'])]
-    return data_in
+    data_in_filtered = data_in[data_in['long_unit_id'].isin(decoding_scores['ID'])]
+    return data_in_filtered
 
 
 
