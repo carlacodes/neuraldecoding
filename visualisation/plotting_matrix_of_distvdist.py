@@ -47,14 +47,7 @@ def load_scores_and_filter(probewordlist,
         electrode_position_data = json.load(f)
 
 
-    if 'BB_3' in stream and ferretname!='Squinty':
-        side_of_implant = 'right'
-    elif 'BB_2' in stream and ferretname!='Squinty':
-        side_of_implant = 'right'
-    elif 'BB_4' in stream:
-        side_of_implant = 'left'
-    elif 'BB_5' in stream:
-        side_of_implant = 'left'
+
 
     #declare a dataframe to store the scores
     sorted_df_of_scores = pd.DataFrame({'probeword1': [], 'probeword2': [], 'cluster_id': [], 'score': [], 'unit_type': [], 'animal': [], 'stream': [], 'recname': [], 'clus_id_report': [], 'brain_area': []})
@@ -83,6 +76,17 @@ def load_scores_and_filter(probewordlist,
                     loaded_data = json.load(json_file)
                 recname = saveDir.split('/')[-3]
                 stream_id = stream[-4:]
+
+                if 'BB_3' in stream_id and ferretname != 'Squinty':
+                    side_of_implant = 'right'
+                elif 'BB_2' in stream_id and ferretname != 'Squinty':
+                    side_of_implant = 'right'
+                elif 'BB_4' in stream_id:
+                    side_of_implant = 'left'
+                elif 'BB_5' in stream_id:
+                    side_of_implant = 'left'
+                else:
+                    side_of_implant = 'left'
                 if recname == '01_03_2022_cruellabb4bb5':
                     recname = '01_03_2022_cruella'
                 elif recname == '25_01_2023_cruellabb4bb5':
@@ -232,12 +236,14 @@ def load_scores_and_filter(probewordlist,
                             electrode_position_dict = electrode_position_data.get(fullid)
                             if electrode_position_dict:
                                 tdt_position = report['tdt'][clus_id_report]
-                                channel_id = electrode_position_dict.get(str(tdt_position))
-                                if channel_id:
-                                    #get the brain area
-                                    brain_area = channel_id.get('brain_area')
-                                    #append to the dataframe
-                                    sorted_df_of_scores = sorted_df_of_scores.append(
+                                side_of_implant_list = electrode_position_dict.get(side_of_implant)
+                                #convert list of dicts to a dataframe
+                                side_of_implant_df = pd.DataFrame(side_of_implant_list)
+                                #get the brain area
+                                channel_id_and_brain_area = side_of_implant_df[side_of_implant_df['TDT_NUMBER'] == clus_id_report]
+                                brain_area = channel_id_and_brain_area['area'].values[0]
+
+                                sorted_df_of_scores = sorted_df_of_scores.append(
                                         {'probeword1': probeword1_input_text[0], 'probeword2': probeword2_input_text[0],
                                          'cluster_id': clus,
                                          'score': scores[f'talker{talker}'][comp][key_text][score_key][i],
@@ -267,12 +273,14 @@ def load_scores_and_filter(probewordlist,
                             electrode_position_dict = electrode_position_data.get(fullid)
                             if electrode_position_dict:
                                 tdt_position = report['tdt'][clus_id_report]
-                                channel_id = electrode_position_dict.get(str(tdt_position))
-                                if channel_id:
-                                    #get the brain area
-                                    brain_area = channel_id.get('brain_area')
-                                    #append to the dataframe
-                                    sorted_df_of_scores = sorted_df_of_scores.append(
+                                side_of_implant_list = electrode_position_dict.get(side_of_implant)
+                                #convert list of dicts to a dataframe
+                                side_of_implant_df = pd.DataFrame(side_of_implant_list)
+                                #get the brain area
+                                channel_id_and_brain_area = side_of_implant_df[side_of_implant_df['TDT_NUMBER'] == clus_id_report]
+                                brain_area = channel_id_and_brain_area['area'].values[0]
+
+                                sorted_df_of_scores = sorted_df_of_scores.append(
                                         {'probeword1': probeword1_input_text[0], 'probeword2': probeword2_input_text[0],
                                          'cluster_id': clus,
                                          'score': scores[f'talker{talker}'][comp][key_text][score_key][i],
