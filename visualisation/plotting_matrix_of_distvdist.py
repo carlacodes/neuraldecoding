@@ -43,9 +43,21 @@ def load_scores_and_filter(probewordlist,
     multiunitlist = [x - 1 for x in multiunitlist]
     noiselist = [x - 1 for x in noiselist]
     original_cluster_list = np.empty([0])
+    with open('D:\spkvisanddecodeproj2/analysisscriptsmodcg/json_files\electrode_positions.json') as f:
+        electrode_position_data = json.load(f)
+
+
+    if 'BB_3' in stream and ferretname!='Squinty':
+        side_of_implant = 'right'
+    elif 'BB_2' in stream and ferretname!='Squinty':
+        side_of_implant = 'right'
+    elif 'BB_4' in stream:
+        side_of_implant = 'left'
+    elif 'BB_5' in stream:
+        side_of_implant = 'left'
 
     #declare a dataframe to store the scores
-    sorted_df_of_scores = pd.DataFrame({'probeword1': [], 'probeword2': [], 'cluster_id': [], 'score': [], 'unit_type': [], 'animal': [], 'stream': [], 'recname': [], 'clus_id_report': []})
+    sorted_df_of_scores = pd.DataFrame({'probeword1': [], 'probeword2': [], 'cluster_id': [], 'score': [], 'unit_type': [], 'animal': [], 'stream': [], 'recname': [], 'clus_id_report': [], 'brain_area': []})
     for probeword1 in probewordlist:
         for probeword2 in probewordlist:
             singleunitlist_copy = singleunitlist.copy()
@@ -217,7 +229,36 @@ def load_scores_and_filter(probewordlist,
                         if clus in singleunitlist_copy:
                             unit_type = 'su'
                             #append to the dataframe
-                            sorted_df_of_scores = sorted_df_of_scores.append({'probeword1': probeword1_input_text[0], 'probeword2': probeword2_input_text[0], 'cluster_id': clus, 'score': scores[f'talker{talker}'][comp][key_text][score_key][i], 'unit_type': unit_type, 'animal': fullid, 'stream': stream, 'recname': recname, 'clus_id_report': clus_id_report}, ignore_index=True)
+                            electrode_position_dict = electrode_position_data.get(fullid)
+                            if electrode_position_dict:
+                                tdt_position = report['tdt'][clus_id_report]
+                                channel_id = electrode_position_dict.get(str(tdt_position))
+                                if channel_id:
+                                    #get the brain area
+                                    brain_area = channel_id.get('brain_area')
+                                    #append to the dataframe
+                                    sorted_df_of_scores = sorted_df_of_scores.append(
+                                        {'probeword1': probeword1_input_text[0], 'probeword2': probeword2_input_text[0],
+                                         'cluster_id': clus,
+                                         'score': scores[f'talker{talker}'][comp][key_text][score_key][i],
+                                         'unit_type': unit_type, 'animal': fullid, 'stream': stream, 'recname': recname,
+                                         'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position,
+                                         'brain_area': brain_area}, ignore_index=True)
+                            elif fullid == 'F2003_Orecchiette':
+                                if 'mod' in stream:
+                                    brain_area = 'PEG'
+                                elif 's2' in stream:
+                                    brain_area = 'PEG'
+                                elif 's3' in stream:
+                                    brain_area = 'MEG'
+                                tdt_position = -1
+                                sorted_df_of_scores = sorted_df_of_scores.append(
+                                    {'probeword1': probeword1_input_text[0], 'probeword2': probeword2_input_text[0],
+                                     'cluster_id': clus,
+                                     'score': scores[f'talker{talker}'][comp][key_text][score_key][i],
+                                     'unit_type': unit_type, 'animal': fullid, 'stream': stream, 'recname': recname,
+                                     'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position, 'brain_area': brain_area}, ignore_index=True)
+
 
 
                         elif clus in multiunitlist_copy:
@@ -322,6 +363,39 @@ def runboostedregressiontreeforlstmscore(df_use):
     print(labels)
 
 
+def load_animal_electrode_data(animal, stream):
+    with open('D:\spkvisanddecodeproj2/analysisscriptsmodcg/json_files\electrode_positions.json') as f:
+        electrode_position_data = json.load(f)
+
+    #load the corresponding channel_id
+    if 'F1604_Squinty' in animal:
+        animal = 'F1604_Squinty'
+        side = 'left'
+    elif 'F1606_Windolene' in animal:
+        animal = 'F1606_Windolene'
+    elif 'F1702_Zola' in animal:
+        animal = 'F1702_Zola'
+    elif 'F1815_Cruella' in animal:
+        animal = 'F1815_Cruella'
+    elif 'F1901_Crumble' in animal:
+        animal = 'F1901_Crumble'
+    elif 'F1902_Eclair' in animal:
+        animal = 'F1902_Eclair'
+    elif 'F1812_Nala' in animal:
+        animal = 'F1812_Nala'
+    elif 'F2003_Orecchiette' in animal:
+        animal = 'F2003_Orecchiette'
+
+
+    if 'BB_3' in side and animal!='F1604_Squinty':
+        side = 'right'
+    elif 'BB_2' in unit_id and animal!='F1604_Squinty':
+        side = 'right'
+    elif 'BB_4' in unit_id:
+        side = 'left'
+    elif 'BB_5' in unit_id:
+        side = 'left'
+    return
 def load_classified_report(path):
     ''' Load the classified report
     :param path: path to the report
