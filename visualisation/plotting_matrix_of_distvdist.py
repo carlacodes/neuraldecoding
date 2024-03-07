@@ -278,6 +278,7 @@ def load_scores_and_filter(probewordlist,
                                 side_of_implant_df = pd.DataFrame(side_of_implant_list)
                                 #get the brain area
                                 channel_id_and_brain_area = side_of_implant_df[side_of_implant_df['TDT_NUMBER'] == tdt_position]
+                                print(fullid, clus, tdt_position, channel_id_and_brain_area)
                                 brain_area = channel_id_and_brain_area['area'].values[0]
 
                                 sorted_df_of_scores = sorted_df_of_scores.append(
