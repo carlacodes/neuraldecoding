@@ -1,5 +1,6 @@
 import os
 
+import matplotlib.pyplot as plt
 import pandas as pd
 import scipy.stats as stats
 import shap
@@ -582,24 +583,51 @@ def main():
     labels = [ 'F1901_Crumble', 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala']
 
     colors = ['purple', 'magenta', 'darkturquoise', 'olivedrab', 'steelblue', 'darkcyan', 'darkorange']
-    plot_heatmap(df_all_trained)
-
+    plot_heatmap(df_all_trained, trained = True)
+    plot_heatmap(df_all_naive, trained=False)
+    plot_heatmap_with_comparison(df_all_trained, df_all_trained_permutation, trained=True)
+    plot_heatmap_with_comparison(df_all_naive, df_all_naive_permutation, trained=False)
     return
 
 
-def plot_heatmap(df_in):
+def plot_heatmap(df_in, trained = True):
     '''plot a heatmap of the data for each probe word pair
     :param data: the data to be plotted
     :return: None
     '''
 
+    # pivot_df = df_in.pivot(index='probeword1', columns='probeword2', values='score')
+    df_in = df_in.groupby(['probeword1', 'probeword2']).mean().reset_index() # taking the mean of the scores across clusters for each probeword pair
     pivot_df = df_in.pivot(index='probeword1', columns='probeword2', values='score')
     plt.figure(figsize=(10, 8))
     sns.heatmap(pivot_df, cmap="YlGnBu")
+    if trained == True:
+        plt.title('Trained Animal LSTM decoding scores')
+    else:
+        plt.title('Naive Animal LSTM decoding scores')
+    plt.savefig(f'G:/neural_chapter/figures/heatmap_dist_v_dist_trained_{trained}.png', dpi = 300)
 
     # Show the plot
     plt.show()
     return
+
+def plot_heatmap_with_comparison(df_in, df_in_perm, trained = True):
+    #plot the difference in the df_in and df_perm scores
+    df_in = df_in.groupby(['probeword1', 'probeword2']).mean().reset_index() # taking the mean of the scores across clusters for each probeword pair
+    pivot_df = df_in.pivot(index='probeword1', columns='probeword2', values='score')
+    df_in_perm = df_in_perm.groupby(['probeword1', 'probeword2']).mean().reset_index() # taking the mean of the scores across clusters for each probeword pair
+    pivot_df_perm = df_in_perm.pivot(index='probeword1', columns='probeword2', values='score')
+    pivot_df = pivot_df - pivot_df_perm
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(pivot_df, cmap="YlGnBu")
+    if trained == True:
+        plt.title('Trained Animal LSTM decoding - permutation scores')
+    else:
+        plt.title('Naive Animal LSTM decoding - permutation scores')
+    plt.savefig(f'G:/neural_chapter/figures/heatmap_dist_v_dist_trained_difference_from_perm_{trained}.png', dpi = 300)
+    plt.show()
+
+
 
 
 
