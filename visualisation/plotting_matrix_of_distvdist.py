@@ -438,10 +438,10 @@ def main():
     # now create a dictionary of dictionaries, where the first key is the animal name, and the second key is the stream name
     #the value is are the decoding scores for each cluster
     dictoutput = {}
-    df_all_trained = []
-    df_all_trained_permutation = []
-    df_all_naive = []
-    df_all_naive_permutation = []
+    df_all_trained = pd.DataFrame()
+    df_all_trained_permutation = pd.DataFrame()
+    df_all_naive = pd.DataFrame()
+    df_all_naive_permutation = pd.DataFrame()
 
 
     df_all = pd.DataFrame()
