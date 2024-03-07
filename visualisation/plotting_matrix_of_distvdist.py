@@ -68,11 +68,28 @@ def load_scores_and_filter(probewordlist,
                 #get the cluster ids from the json file
                 original_to_split_cluster_ids = recname_json.get(stream_id)
                 original_to_split_cluster_ids = original_to_split_cluster_ids.get('cluster_to_split_list')
-                if original_to_split_cluster_ids:
+                if original_to_split_cluster_ids == 'clust_ids':
+                    probewordindex_1 = str(probeword1[0])
+                    probewordindex_2 = str(probeword2[0])
+                    try:
+                        scores = np.load(
+                            f'{saveDir}/scores_{probewordindex_1}_vs_{probewordindex_2}_{ferretname}_probe_{pitchshift_text}_bs.npy',
+                            allow_pickle=True)[()]
+                    except Exception as e:
+                        print(e)
+                        continue
+                    original_to_split_cluster_ids = scores['talker1']['target_vs_probe']['pitchshift']['cluster_id']
+                    #if all of them need splitting
+                elif original_to_split_cluster_ids:
+                    #TODO: not sure if this elif needed
                     #get all the unique clusters ids
                     probewordindex_1 = str(probeword1[0])
                     probewordindex_2 = str(probeword2[0])
-                    scores = np.load(f'{saveDir}/scores_{probewordindex_1}_vs_{probewordindex_2}_{ferretname}_probe_{pitchshift_text}_bs.npy', allow_pickle=True)[()]
+                    try:
+                        scores = np.load(f'{saveDir}/scores_{probewordindex_1}_vs_{probewordindex_2}_{ferretname}_probe_{pitchshift_text}_bs.npy', allow_pickle=True)[()]
+                    except Exception as e:
+                        print(e)
+                        continue
                     original_to_split_cluster_ids = [x for x in original_to_split_cluster_ids if x < 100]
                 elif original_to_split_cluster_ids == None:
                     original_to_split_cluster_ids = np.array([])
