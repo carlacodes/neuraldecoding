@@ -55,8 +55,15 @@ def load_scores_and_filter(probewordlist,
             json_file_path = f'F:\split_cluster_jsons/{fullid}/cluster_split_list.json'
             if ferretname == 'Orecchiette':
                 original_to_split_cluster_ids = np.array([])
-                scores = np.load(f'{saveDir}/scores_{probewordindex_1}_vs_{probewordindex_2}_{ferretname}_probe_{pitchshift_text}_bs.npy',
-                                 allow_pickle=True)[()]
+                probewordindex_1 = str(probeword1[0])
+                probewordindex_2 = str(probeword2[0])
+                try:
+                    scores = np.load(
+                        f'{saveDir}/scores_{probewordindex_1}_vs_{probewordindex_2}_{ferretname}_probe_{pitchshift_text}_bs.npy',
+                        allow_pickle=True)[()]
+                except Exception as e:
+                    print(e)
+                    continue
 
             else:
                 with open(json_file_path, "r") as json_file:
@@ -431,10 +438,10 @@ def main():
     # now create a dictionary of dictionaries, where the first key is the animal name, and the second key is the stream name
     #the value is are the decoding scores for each cluster
     dictoutput = {}
-    dictoutput_trained = []
-    dictoutput_trained_permutation = []
-    dictoutput_naive = []
-    dictoutput_naive_permutation = []
+    df_all_trained = []
+    df_all_trained_permutation = []
+    df_all_naive = []
+    df_all_naive_permutation = []
 
 
     df_all = pd.DataFrame()
@@ -561,12 +568,12 @@ def main():
             try:
                 if animal == 'F1604_Squinty' or animal == 'F1606_Windolene' or animal == 'F1702_Zola' or animal == 'F1815_Cruella':
                     print('trained animal'+ animal)
-                    dictoutput_trained.append(df_instance)
-                    dictoutput_trained_permutation.append(df_instance_permutation)
+                    df_all_trained = pd.concat([df_all_trained, df_instance])
+                    df_all_trained_permutation = pd.concat([df_all_trained_permutation, df_instance_permutation])
                 else:
                     print('naive animal:'+ animal)
-                    dictoutput_naive.append(df_instance)
-                    dictoutput_naive_permutation.append(df_instance_permutation)
+                    df_all_naive = pd.concat([df_all_naive, df_instance])
+                    df_all_naive_permutation = pd.concat([df_all_naive_permutation, df_instance_permutation])
             except:
                 print('no scores for this stream')
                 pass
