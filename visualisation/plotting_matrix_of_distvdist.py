@@ -240,7 +240,7 @@ def load_scores_and_filter(probewordlist,
                                 #convert list of dicts to a dataframe
                                 side_of_implant_df = pd.DataFrame(side_of_implant_list)
                                 #get the brain area
-                                channel_id_and_brain_area = side_of_implant_df[side_of_implant_df['TDT_NUMBER'] == clus_id_report]
+                                channel_id_and_brain_area = side_of_implant_df[side_of_implant_df['TDT_NUMBER'] == tdt_position]
                                 brain_area = channel_id_and_brain_area['area'].values[0]
 
                                 sorted_df_of_scores = sorted_df_of_scores.append(
@@ -277,7 +277,7 @@ def load_scores_and_filter(probewordlist,
                                 #convert list of dicts to a dataframe
                                 side_of_implant_df = pd.DataFrame(side_of_implant_list)
                                 #get the brain area
-                                channel_id_and_brain_area = side_of_implant_df[side_of_implant_df['TDT_NUMBER'] == clus_id_report]
+                                channel_id_and_brain_area = side_of_implant_df[side_of_implant_df['TDT_NUMBER'] == tdt_position]
                                 brain_area = channel_id_and_brain_area['area'].values[0]
 
                                 sorted_df_of_scores = sorted_df_of_scores.append(
