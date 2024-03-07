@@ -429,7 +429,7 @@ def main():
 
 
     df_all = pd.DataFrame()
-    df_all_permutation = []
+    df_all_permutation = pd.DataFrame()
     for animal in animal_list:
         dictoutput[animal] = {}
         for stream in report[animal]:
@@ -479,7 +479,7 @@ def main():
                                                              singleunitlist=singleunitlist[animal][stream],
                                                              multiunitlist=multiunitlist[animal][stream],
                                                              noiselist=noiselist[animal][stream], stream = stream, fullid = animal, report = report[animal][stream])
-                df_all.append(df_instance)
+                df_all = pd.concat([df_all, df_instance])
 
                 df_instance_permutation = load_scores_and_filter(probewordlist_l74,
                                                                          saveDir=f'G:/results_distvsdist_02022024/{animal}/{rec_name_unique}/{streamtext}/',
@@ -487,7 +487,7 @@ def main():
                                                                          singleunitlist=singleunitlist[animal][stream],
                                                                          multiunitlist=multiunitlist[animal][stream],
                                                                          noiselist=noiselist[animal][stream], stream = stream, fullid = animal, report = report[animal][stream], permutation_scores=True)
-                df_all_permutation.append(df_instance_permutation)
+                df_all_permutation = pd.concat([df_all_permutation, df_instance_permutation])
 
             elif animal =='F1702_Zola':
                 df_instance = load_scores_and_filter(probewordlist_zola, saveDir=f'G:/results_distvsdist_02022024/{animal}/{rec_name_unique}/{streamtext}/',
@@ -499,7 +499,7 @@ def main():
                                                                          ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                          multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal, report = report[animal][stream]
                                                                          , permutation_scores=True)
-                df_all_permutation.append(df_instance_permutation)
+                df_all_permutation = pd.concat([df_all_permutation, df_instance_permutation])
 
             elif animal == 'F1815_Cruella' or animal == 'F1902_Eclair':
                 df_instance = load_scores_and_filter(probewordlist, saveDir=f'G:/results_distvsdist_02022024/{animal}/{rec_name_unique}/{streamtext}/',
@@ -511,7 +511,7 @@ def main():
                                                                          ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                          multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal, report = report[animal][stream]
                                                                          , permutation_scores=True)
-                df_all_permutation.append(df_instance_permutation)
+                df_all_permutation = pd.concat([df_all_permutation, df_instance_permutation])
 
             elif animal == 'F2003_Orecchiette':
                 # try:
@@ -534,7 +534,7 @@ def main():
                                                                          fullid=animal,
                                                                          report=report[animal][stream], permutation_scores=True
                                                                          )
-                df_all_permutation.append(df_instance_permutation)
+                df_all_permutation = pd.concat([df_all_permutation, df_instance_permutation])
 
             else:
                 df_instance = load_scores_and_filter(probewordlist, saveDir=f'G:/results_distvsdist_02022024/{animal}/{rec_name_unique}/{streamtext}/',
@@ -547,9 +547,7 @@ def main():
                                                                          multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal, report = report[animal][stream]
                                                                          , permutation_scores=True)
 
-                df_all_permutation.append(df_instance_permutation)
-
-
+                df_all_permutation = pd.concat([df_all_permutation, df_instance_permutation])
 
             try:
                 if animal == 'F1604_Squinty' or animal == 'F1606_Windolene' or animal == 'F1702_Zola' or animal == 'F1815_Cruella':
