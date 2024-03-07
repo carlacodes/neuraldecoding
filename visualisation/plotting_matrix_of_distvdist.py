@@ -31,7 +31,7 @@ def scatterplot_and_visualise(probewordlist,
                               saveDir='D:/Users/cgriffiths/resultsms4/lstm_output_frommyriad_15012023/lstm_kfold_14012023_crumble',
                               ferretname='Crumble',
                               singleunitlist=[0,1,2],
-                              multiunitlist=[0,1,2,3], noiselist=[], stream = 'BB_2', fullid = 'F1901_Crumble', report =[], permutation_scores=False):
+                              multiunitlist=[0,1,2,3], noiselist=[], stream = 'BB_2', fullid = 'F1901_Crumble', report =[], permutation_scores=False, pitchshift_text = 'nopitchshift'):
     if permutation_scores == False:
         score_key = 'lstm_balanced_avg'
     else:
@@ -51,7 +51,7 @@ def scatterplot_and_visualise(probewordlist,
             json_file_path = f'F:\split_cluster_jsons/{fullid}/cluster_split_list.json'
             if ferretname == 'Orecchiette':
                 original_to_split_cluster_ids = np.array([])
-                scores = np.load(f'{saveDir}/scores_{probewordindex_1}_vs_{probewordindex_2}_{ferretname}_probe_bs.npy',
+                scores = np.load(f'{saveDir}/scores_{probewordindex_1}_vs_{probewordindex_2}_{ferretname}_probe_{pitchshift_text}_bs.npy',
                                  allow_pickle=True)[()]
 
             else:
@@ -72,19 +72,17 @@ def scatterplot_and_visualise(probewordlist,
                     #get all the unique clusters ids
                     probewordindex_1 = str(probeword1[0])
                     probewordindex_2 = str(probeword2[0])
-                    scores = np.load(f'{saveDir}/scores_{probewordindex_1}_vs_{probewordindex_2}_{ferretname}_probe_bs.npy', allow_pickle=True)[()]
-
-                    original_to_split_cluster_ids = np.unique(scores['talker1']['target_vs_probe']['pitchshift']['cluster_id']+scores['talker1']['target_vs_probe']['nopitchshift']['cluster_id'])
+                    scores = np.load(f'{saveDir}/scores_{probewordindex_1}_vs_{probewordindex_2}_{ferretname}_probe_{pitchshift_text}_bs.npy', allow_pickle=True)[()]
                     original_to_split_cluster_ids = [x for x in original_to_split_cluster_ids if x < 100]
                 elif original_to_split_cluster_ids == None:
                     original_to_split_cluster_ids = np.array([])
-                    scores = np.load(f'{saveDir}/scores_{probewordindex_1}_vs_{probewordindex_2}_{ferretname}_probe_bs.npy', allow_pickle=True)[()]
+                    scores = np.load(f'{saveDir}/scores_{probewordindex_1}_vs_{probewordindex_2}_{ferretname}_probe_{pitchshift_text}_bs.npy', allow_pickle=True)[()]
 
 
             for talker in [1]:
                 comparisons = [comp for comp in scores[f'talker{talker}']]
                 for comp in comparisons:
-                    for cond in ['pitchshift', 'nopitchshift']:
+                    for cond in [pitchshift_text]:
                         for i, clus in enumerate(scores[f'talker{talker}'][comp][cond]['cluster_id']):
                             #check if clus is greater than 100
                             if 200> clus >= 100:
@@ -101,7 +99,6 @@ def scatterplot_and_visualise(probewordlist,
                                     singleunitlist_copy.append(clus)
                                     original_cluster_list = np.append(original_cluster_list, clus_instance)
                                 elif clus_instance in multiunitlist_copy:
-
                                     multiunitlist_copy.append(clus)
                                     original_cluster_list = np.append(original_cluster_list, clus_instance)
                             elif 400 > clus >= 300:
@@ -590,13 +587,13 @@ def main():
                 rec_name_unique = stream
             else:
                 if 'BB_2' in stream:
-                    streamtext = 'bb2'
+                    streamtext = 'BB_2'
                 elif 'BB_3' in stream:
-                    streamtext = 'bb3'
+                    streamtext = 'BB_3'
                 elif 'BB_4' in stream:
-                    streamtext = 'bb4'
+                    streamtext = 'BB_4'
                 elif 'BB_5' in stream:
-                    streamtext = 'bb5'
+                    streamtext = 'BB_5'
                 #remove F number character from animal name
                 max_length = len(stream) // 2
                 for length in range(1, max_length + 1):
@@ -700,7 +697,6 @@ def main():
                                                                             , permutation_scores=True)
 
                 dictoutput_all_permutation.append(dictoutput_instance_permutation)
-
 
             female_talker_len = len(dictoutput_instance['su_list']['pitchshift']['female_talker'])
             probeword_len = len(dictoutput_instance['su_list_probeword']['pitchshift']['female_talker'])
