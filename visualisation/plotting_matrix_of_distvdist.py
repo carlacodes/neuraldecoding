@@ -81,8 +81,6 @@ def scatterplot_and_visualise(probewordlist,
                     scores = np.load(f'{saveDir}/scores_{probewordindex_1}_vs_{probewordindex_2}_{ferretname}_probe_bs.npy', allow_pickle=True)[()]
 
 
-
-
             for talker in [1]:
                 comparisons = [comp for comp in scores[f'talker{talker}']]
                 for comp in comparisons:
@@ -109,11 +107,9 @@ def scatterplot_and_visualise(probewordlist,
                             elif 400 > clus >= 300:
                                 clus_instance = int(round(clus - 300))
                                 if clus_instance in singleunitlist_copy:
-
                                     singleunitlist_copy.append(clus)
                                     original_cluster_list = np.append(original_cluster_list, clus_instance)
                                 elif clus_instance in multiunitlist_copy:
-
                                     multiunitlist_copy.append(clus)
                                     original_cluster_list = np.append(original_cluster_list, clus_instance)
 
