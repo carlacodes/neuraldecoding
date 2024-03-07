@@ -699,11 +699,16 @@ def main():
     labels = [ 'F1901_Crumble', 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala']
 
     colors = ['purple', 'magenta', 'darkturquoise', 'olivedrab', 'steelblue', 'darkcyan', 'darkorange']
-    plot_heatmap(df_all_trained, trained = True)
-    plot_heatmap(df_all_naive, trained=False)
-    plot_heatmap_with_comparison(df_all_trained, df_all_trained_permutation, trained=True)
-    plot_heatmap_with_comparison(df_all_naive, df_all_naive_permutation, trained=False)
-    filter_for_units_used_in_first_analysis(df_all_trained, trained = True)
+    # plot_heatmap(df_all_trained, trained = True)
+    # plot_heatmap(df_all_naive, trained=False)
+
+    data_trained_filtered = filter_for_units_used_in_first_analysis(df_all_trained, trained = True)
+    data_naive_filtered = filter_for_units_used_in_first_analysis(df_all_naive, trained = False)
+    df_all_trained_filtered_permutation = filter_for_units_used_in_first_analysis(df_all_trained_permutation, trained = True)
+    df_all_naive_filtered_permutation = filter_for_units_used_in_first_analysis(df_all_naive_permutation, trained = False)
+
+    plot_heatmap_with_comparison(data_trained_filtered, df_all_trained_filtered_permutation, trained=True)
+    plot_heatmap_with_comparison(data_naive_filtered, df_all_naive_filtered_permutation, trained=False)
     return
 
 
