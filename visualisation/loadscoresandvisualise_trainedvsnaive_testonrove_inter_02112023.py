@@ -755,6 +755,46 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     plt.savefig('G:/testonroveresults/results_testonrove_inter_28102023/VIOLIN_lstm_decoding_score_for_trained_and_naive_animals.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
 
+    #plot as a scatter plot, with decoding scores for 144 hz on the x axis, and 191 hz on the y axis
+    decoding_scores_144_trained = big_df[(big_df['pitch'] == 0) & (big_df['trained'] == 1)]
+    decoding_scores_191_trained = big_df[(big_df['pitch'] == 1) & (big_df['trained'] == 1)]
+    decoding_scores_251_trained = big_df[(big_df['pitch'] == 2) & (big_df['trained'] == 1)]
+
+    decoding_scores_144_naive = big_df[(big_df['pitch'] == 0) & (big_df['trained'] == 0)]
+    decoding_scores_191_naive = big_df[(big_df['pitch'] == 1) & (big_df['trained'] == 0)]
+    decoding_scores_251_naive = big_df[(big_df['pitch'] == 2) & (big_df['trained'] == 0)]
+
+    fig, ax = plt.subplots(1, figsize=(5, 5))
+    ax.scatter(decoding_scores_144_trained['score'], decoding_scores_191_trained['score'], color = 'purple', label = 'trained', s = 10)
+    ax.scatter(decoding_scores_144_naive['score'], decoding_scores_191_naive['score'], color = 'cyan', label = 'naive', s= 10)
+    #put a lingress line
+    slope, intercept, r_value, p_value, std_err = stats.linregress(decoding_scores_144_trained['score'], decoding_scores_191_trained['score'])
+    slope_naive, intercept_naive, r_value_naive, p_value_naive, std_err_naive = stats.linregress(decoding_scores_144_naive['score'], decoding_scores_191_naive['score'])
+    ax.set_xlabel('144 Hz')
+    ax.set_xlim(0, 1)
+    ax.set_ylabel('191 Hz')
+    ax.set_ylim(0, 1)
+    ax.set_title('lstm decoding score for trained and naive animals')
+    ax.legend()
+    plt.savefig('G:/testonroveresults/results_testonrove_inter_28102023/scatter_lstm_decoding_score_for_trained_and_naive_animals_144versus_control.png', dpi = 300, bbox_inches = 'tight')
+    plt.show()
+
+    fig, ax = plt.subplots(1, figsize=(5, 5))
+    ax.scatter(decoding_scores_251_trained['score'], decoding_scores_191_trained['score'], color = 'purple', label = 'trained', s = 10)
+    ax.scatter(decoding_scores_251_naive['score'], decoding_scores_191_naive['score'], color = 'cyan', label = 'naive', s = 10)
+    slope, intercept, r_value, p_value, std_err = stats.linregress(decoding_scores_251_trained['score'], decoding_scores_191_trained['score'])
+    slope_naive, intercept_naive, r_value_naive, p_value_naive, std_err_naive = stats.linregress(decoding_scores_251_naive['score'], decoding_scores_191_naive['score'])
+    ax.set_ylabel('191 Hz')
+    ax.set_xlim(0,1)
+    ax.set_xlabel('251 Hz')
+    ax.set_ylim(0,1)
+    ax.set_title('lstm decoding score for trained and naive animals')
+    ax.legend()
+    plt.savefig('G:/testonroveresults/results_testonrove_inter_28102023/scatter_lstm_decoding_score_for_trained_and_naive_animals_251versus_control.png', dpi = 300, bbox_inches = 'tight')
+    plt.show()
+
+    #plot with error b
+
 
     return
 
