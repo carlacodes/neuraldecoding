@@ -109,9 +109,18 @@ def load_scores_and_filter(probewordlist,
                     probewordindex_1 = str(probeword1[0])
                     probewordindex_2 = str(probeword2[0])
                     try:
-                        scores = np.load(
-                            f'{saveDir}/scores_{probewordindex_1}_vs_{probewordindex_2}_{ferretname}_probe_{pitchshift_text}_bs.npy',
-                            allow_pickle=True)[()]
+                        if probewordindex_1 == '1':
+                            scores = np.load(
+                                saveDir + r'scores_' + ferretname + '_2022_' + probewordindex_2 + '_' + ferretname + '_probe_bs.npy',
+                                allow_pickle=True)[()]
+                        elif probewordindex_2 == '1':
+                            scores = np.load(
+                                saveDir + r'scores_' + ferretname + '_2022_' + probewordindex_1 + '_' + ferretname + '_probe_bs.npy',
+                                allow_pickle=True)[()]
+                        else:
+                            scores = np.load(
+                                f'{saveDir}/scores_{probewordindex_1}_vs_{probewordindex_2}_{ferretname}_probe_{pitchshift_text}_bs.npy',
+                                allow_pickle=True)[()]
                     except Exception as e:
                         print(e)
                         continue
@@ -123,7 +132,18 @@ def load_scores_and_filter(probewordlist,
                     probewordindex_1 = str(probeword1[0])
                     probewordindex_2 = str(probeword2[0])
                     try:
-                        scores = np.load(f'{saveDir}/scores_{probewordindex_1}_vs_{probewordindex_2}_{ferretname}_probe_{pitchshift_text}_bs.npy', allow_pickle=True)[()]
+                        if probewordindex_1 == '1':
+                            scores = np.load(
+                                saveDir + r'scores_' + ferretname + '_2022_' + probewordindex_2 + '_' + ferretname + '_probe_bs.npy',
+                                allow_pickle=True)[()]
+                        elif probewordindex_2 == '1':
+                            scores = np.load(
+                                saveDir + r'scores_' + ferretname + '_2022_' + probewordindex_1 + '_' + ferretname + '_probe_bs.npy',
+                                allow_pickle=True)[()]
+                        else:
+                            scores = np.load(
+                                f'{saveDir}/scores_{probewordindex_1}_vs_{probewordindex_2}_{ferretname}_probe_{pitchshift_text}_bs.npy',
+                                allow_pickle=True)[()]
                     except Exception as e:
                         print(e)
                         continue
@@ -144,7 +164,10 @@ def load_scores_and_filter(probewordlist,
             for talker in [1]:
                 comparisons = [comp for comp in scores[f'talker{talker}']]
                 for comp in comparisons:
-                    key_text = f'{probeword1[0]}_{probeword1[0]}_{probeword2[0]}_{probeword2[0]}'
+                    if probewordindex_1 == '1' or probewordindex_2 == '1':
+                        key_text = f'{pitchshift_text}'
+                    else:
+                        key_text = f'{probeword1[0]}_{probeword1[0]}_{probeword2[0]}_{probeword2[0]}'
                     for i, clus in enumerate(scores[f'talker{talker}'][comp][key_text]['cluster_id']):
                         #check if clus is greater than 100
                         if 200> clus >= 100:
@@ -193,7 +216,10 @@ def load_scores_and_filter(probewordlist,
             for talker in [1]:
                 comparisons = [comp for comp in scores[f'talker{talker}']]
                 for comp in comparisons:
-                    key_text = f'{probeword1[0]}_{probeword1[0]}_{probeword2[0]}_{probeword2[0]}'
+                    if probewordindex_1 == '1' or probewordindex_2 == '1':
+                        key_text = f'{pitchshift_text}'
+                    else:
+                        key_text = f'{probeword1[0]}_{probeword1[0]}_{probeword2[0]}_{probeword2[0]}'
                     for i, clus in enumerate(scores[f'talker{talker}'][comp][key_text]['cluster_id']):
                         stream_small = stream[-4:]
                         clust_text = str(clus)+'_'+fullid+'_'+recname+'_'+stream_small
@@ -527,9 +553,9 @@ def load_classified_report(path):
 
     return report, singleunitlist, multiunitlist, noiselist
 def main():
-    probewordlist_zola = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
-    probewordlist =[ (2,2), (3,3), (4,4),(5,5), (6,6), (7,7), (8,8), (9,9), (10,10)]
-    probewordlist_l74 = [(10, 10), (2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (11, 11), (12, 12),
+    probewordlist_zola = [(1,1), (2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
+    probewordlist =[ (1,1), (2,2), (3,3), (4,4),(5,5), (6,6), (7,7), (8,8), (9,9), (10,10)]
+    probewordlist_l74 = [(1,1), (10, 10), (2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (11, 11), (12, 12),
                              (14, 14)]
     animal_list = [ 'F1604_Squinty', 'F1901_Crumble', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala',  'F2003_Orecchiette',]
     # animal_list = ['F1902_Eclair']
