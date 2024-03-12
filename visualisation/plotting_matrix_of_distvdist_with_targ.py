@@ -64,9 +64,18 @@ def load_scores_and_filter(probewordlist,
                 probewordindex_1 = str(probeword1[0])
                 probewordindex_2 = str(probeword2[0])
                 try:
-                    scores = np.load(
-                        f'{saveDir}/scores_{probewordindex_1}_vs_{probewordindex_2}_{ferretname}_probe_{pitchshift_text}_bs.npy',
-                        allow_pickle=True)[()]
+                    if probewordindex_1 == '1':
+                        scores = np.load(
+                            saveDir + r'scores_' + ferretname + '_2022_' + probewordindex_2+ '_' + ferretname + '_probe_bs.npy',
+                            allow_pickle=True)[()]
+                    elif probewordindex_2 == '1':
+                        scores = np.load(
+                            saveDir + r'scores_' + ferretname + '_2022_' + probewordindex_1 + '_' + ferretname + '_probe_bs.npy',
+                            allow_pickle=True)[()]
+                    else:
+                        scores = np.load(
+                            f'{saveDir}/scores_{probewordindex_1}_vs_{probewordindex_2}_{ferretname}_probe_{pitchshift_text}_bs.npy',
+                            allow_pickle=True)[()]
                 except Exception as e:
                     print(e)
                     continue
