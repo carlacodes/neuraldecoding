@@ -63,8 +63,6 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
               'lstm_score': [], }
     cluster_id_droplist = np.empty([])
     for cluster_id in tqdm(clust_ids):
-        if cluster_id == 8: #skip cluster 8 as it is a noise cluster
-            continue
         target_filter = ['Target trials', 'No Level Cue']  # , 'Non Correction Trials']
 
         try:
@@ -450,7 +448,7 @@ def save_pdf_classification_lstm_bothtalker(scores, saveDir, title):
 
 def run_classification(dir):
 
-    datapath = Path(f'D:\ms4output\F1812_Nala\wpsoutput26112022bb2bb3\phy')
+    datapath = Path(f'D:\ms4output\F1902_Eclair\wpsoutput08112022bb2bb3\phy')
     fname = 'blocks.pkl'
     with open(datapath / 'blocks.pkl', 'rb') as f:
         blocks = pickle.load(f)
@@ -495,7 +493,7 @@ def run_classification(dir):
                                                                                          pitchshift=True)
 
 
-            np.save(saveDir / f'scores_{dir}_{probeword[0]}_nala_probe_pitchshift_vs_not_by_talker_bs.npy', scores)
+            np.save(saveDir / f'scores_{dir}_{probeword[0]}_eclair_probe_pitchshift_vs_not_by_talker_bs.npy', scores)
 
         fname = 'scores_' + dir + f'_probe_earlylate_left_right_win_bs_{binsize}'
         save_pdf_classification_lstm(scores, saveDir, fname, probeword)
@@ -538,11 +536,11 @@ def main():
     # gdd.download_file_from_google_drive(file_id='1W3TwEtC0Z6Qmbfuz8_AWRiQHfuDb9FIS',
     #                                     dest_path='./Binned_data.zip',
     #                                     unzip=True)
-    binned_spikes = np.load('binned_spikes.npy')
-    choices = np.load('choices.npy') + 1
+    binned_spikes = np.load('../binned_spikes.npy')
+    choices = np.load('../choices.npy') + 1
     print(binned_spikes.shape, choices.shape)
     print(choices[:10])
-    directories = ['nala_2022']  # , 'Trifle_July_2022']
+    directories = ['Eclair_2022']  # , 'Trifle_July_2022']
     for dir in directories:
         run_classification(dir)
 

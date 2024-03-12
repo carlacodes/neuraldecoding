@@ -143,7 +143,7 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
         stim0 = np.full(len(raster_targ_reshaped), 0)  # 0 = target word
         stim1 = np.full(len(raster_probe_reshaped), 1)  # 1 = probe word
         stim_lstm = np.concatenate((stim0, stim1))
-        if len(stim_lstm) < 4:
+        if len(stim_lstm) < 3:
             continue
 
         #
@@ -462,7 +462,7 @@ def run_classification(dir):
     now = datetime.now()
     dt_string = now.strftime("%d%m%Y_%H_%M_%S")
 
-    tarDir = Path(f'/Users/cgriffiths/resultsms4/lstmclass_06122022_nalamorethan4trials')
+    tarDir = Path(f'/Users/cgriffiths/resultsms4/lstmclass_06122022_nalamorethan3trials')
     saveDir = tarDir / dt_string
     saveDir.mkdir(exist_ok=True, parents=True)
     for probeword in probewords_list:
@@ -540,8 +540,8 @@ def main():
     # gdd.download_file_from_google_drive(file_id='1W3TwEtC0Z6Qmbfuz8_AWRiQHfuDb9FIS',
     #                                     dest_path='./Binned_data.zip',
     #                                     unzip=True)
-    binned_spikes = np.load('binned_spikes.npy')
-    choices = np.load('choices.npy') + 1
+    binned_spikes = np.load('../binned_spikes.npy')
+    choices = np.load('../choices.npy') + 1
     print(binned_spikes.shape, choices.shape)
     print(choices[:10])
     directories = ['nala_2022']  # , 'Trifle_July_2022']

@@ -1,5 +1,6 @@
 import pickle
 from pathlib import Path
+import tensorflow as tf
 import numpy as np
 # from sklearn.metrics import confusion_matrix
 # import matplotlib.pyplot as plt
@@ -14,7 +15,6 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.ticker import MaxNLocator
 import seaborn as sns
-import tensorflow as tf
 from datetime import datetime
 from astropy.stats import bootstrap
 import sklearn
@@ -62,7 +62,7 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
               'cm': [],
               'bootScore': [],
               'lstm_score': [],
-              'lstm_shuffled_avg': []}
+              'lstm_shuffled_avg': [] }
     cluster_id_droplist = np.empty([])
     for cluster_id in tqdm(clust_ids):
 
@@ -127,6 +127,11 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
         stim1 = np.full(len(raster_probe_reshaped), 1)  # 1 = probe word
         stim_lstm = np.concatenate((stim0, stim1))
 
+        #
+        # if len(raster_target) > len(raster_probe):
+        #     raster_target = np.random.choice(raster_target, len(raster_probe), replace=True)
+        # elif len(raster_target) < len(raster_probe):
+        #     raster_probe = np.random.choice(raster_probe, len(raster_target), replace=True)
 
         raster = np.concatenate((raster_target, raster_probe))
         raster_lstm = np.concatenate((raster_targ_reshaped, raster_probe_reshaped))
@@ -142,13 +147,14 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
         for i in range(0,3):
             #do 3 iterations of the LSTM model,
             # get the average accuracy of this randomised shuffled score
-            raster_reshapedshuffled = sklearn.utils.shuffle(raster_reshaped)
+            # raster_reshapedshuffled = sklearn.utils.shuffle(raster_reshaped)
             tf.keras.backend.clear_session()
 
             X_train, X_test, y_train, y_test = train_test_split(raster_reshaped, stim_reshaped, test_size=0.33,
                                                                 )
-            model_lstm = LSTMClassification(units=400, dropout=0.25, num_epochs=10)
             X_train = sklearn.utils.shuffle(X_train)
+
+            model_lstm = LSTMClassification(units=400, dropout=0.25, num_epochs=10)
 
             # Fit model
             model_lstm.fit(X_train, y_train)
@@ -397,7 +403,7 @@ def save_pdf_classification_lstm_bothtalker(scores, saveDir, title):
                 width = 0.35
                 for condition in conditions:
                     try:
-                        y[condition] = [scores[f'talker{talker}'][comp][condition]['lstm_score'][i] for comp in
+                        y[condition] = [scores[f'talker{talker}'][comp][condition]['lstm_shuffled_avg'][i] for comp in
                                         comparisons]
                     except:
                         print('dimension mismatch')
@@ -443,7 +449,9 @@ def save_pdf_classification_lstm_bothtalker(scores, saveDir, title):
 
 def run_classification(dir):
 
-    datapath = Path(f'D:\ms4output\F1812_Nala\wpsoutput26112022bb2bb3\phy')
+
+    datapath = Path(f'D:\F1702_Zola\spkenvresults04102022allrowsbut4th')
+
     fname = 'blocks.pkl'
     with open(datapath / 'blocks.pkl', 'rb') as f:
         blocks = pickle.load(f)
@@ -488,7 +496,7 @@ def run_classification(dir):
                                                                                          pitchshift=True)
 
 
-            np.save(saveDir / f'scores_{dir}_{probeword[0]}_nala_probe_pitchshift_vs_not_by_talker_bs.npy', scores)
+            np.save(saveDir / f'scores_{dir}_{probeword[0]}_zola_probe_pitchshift_vs_not_by_talker_bs.npy', scores)
 
         fname = 'scores_' + dir + f'_probe_earlylate_left_right_win_bs_{binsize}'
         save_pdf_classification_lstm(scores, saveDir, fname, probeword)
@@ -531,11 +539,11 @@ def main():
     # gdd.download_file_from_google_drive(file_id='1W3TwEtC0Z6Qmbfuz8_AWRiQHfuDb9FIS',
     #                                     dest_path='./Binned_data.zip',
     #                                     unzip=True)
-    binned_spikes = np.load('binned_spikes.npy')
-    choices = np.load('choices.npy') + 1
+    binned_spikes = np.load('../binned_spikes.npy')
+    choices = np.load('../choices.npy') + 1
     print(binned_spikes.shape, choices.shape)
     print(choices[:10])
-    directories = ['nala_2022']  # , 'Trifle_July_2022']
+    directories = ['zola_2022']  # , 'Trifle_July_2022']
     for dir in directories:
         run_classification(dir)
 

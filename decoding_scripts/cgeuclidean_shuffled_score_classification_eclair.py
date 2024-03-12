@@ -8,15 +8,7 @@ import numpy as np
 # import time
 from sklearn.model_selection import train_test_split
 from tqdm import tqdm
-from scikeras.wrappers import KerasClassifier
-import keras
-keras_v1=int(keras.__version__[0])<=1
-from keras.models import Sequential
-from keras.layers import Dense, LSTM, SimpleRNN, GRU, Activation, Dropout
-from keras.utils import np_utils
-# import tensorflow as tf
-# from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
-
+import tensorflow as tf
 from sklearn.utils import resample
 import astropy
 import matplotlib.pyplot as plt
@@ -24,8 +16,6 @@ from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.ticker import MaxNLocator
 import seaborn as sns
 from datetime import datetime
-from sklearn.model_selection import KFold, StratifiedKFold
-from sklearn.model_selection import cross_val_score
 from astropy.stats import bootstrap
 import sklearn
 from instruments.helpers.util import simple_xy_axes, set_font_axes
@@ -71,16 +61,16 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
               'score': [],
               'cm': [],
               'bootScore': [],
-              'lstm_score': [],'lstm_score_train': [], }
+              'lstm_score': [],
+              'lstm_shuffled_avg': []}
     cluster_id_droplist = np.empty([])
     for cluster_id in tqdm(clust_ids):
-        if cluster_id == 8: #skip cluster 8 as it is a noise cluster
-            continue
+
         target_filter = ['Target trials', 'No Level Cue']  # , 'Non Correction Trials']
 
         try:
             raster_target = get_word_aligned_raster(blocks, cluster_id, word=1, pitchshift=pitchshift,
-                                                    correctresp=True,
+                                                    correctresp=False,
                                                     df_filter=target_filter)
             raster_target = raster_target[raster_target['talker'] == int(talker)]
             if len(raster_target) == 0:
@@ -94,7 +84,7 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
         probe_filter = ['No Level Cue']  # , 'Non Correction Trials']
         try:
             raster_probe = get_word_aligned_raster(blocks, cluster_id, word=probeword, pitchshift=pitchshift,
-                                                   correctresp=True,
+                                                   correctresp=False,
                                                    df_filter=probe_filter)
             raster_probe = raster_probe[raster_probe['talker'] == talker]
             raster_probe['trial_num'] = raster_probe['trial_num'] + np.max(raster_target['trial_num'])
@@ -128,25 +118,7 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
         for trial in (unique_trials_probe):
             raster_probe_reshaped[count, :] = np.histogram(raster_probe['spike_time'][raster_probe['trial_num'] == trial], bins=bins, range=(window[0], window[1]))[0]
             count+=1
-        # for i in range(0, len(raster_target)):
-        #     raster_targ_reshaped[i, :], edgestarg = np.histogram(raster_target['spike_time'][i], bins=bins)
-        #
-        # for i in range(0, len(raster_probe)):
-        #     raster_probe_reshaped[i, :], edgesprobe = np.histogram(raster_probe['spike_time'][i], bins=bins)
 
-        # targbins, edgestarg = np.histogram(raster_target['spike_time'], bins=bins)
-        # probebins, edgesprobe = np.histogram(raster_probe['spike_time'], bins=bins)
-
-        # raster_target = np.random.choice(raster_targ_reshaped[], 100, replace=True)
-        # raster_probe = np.random.choice(raster_probe, 100, replace=True)
-
-        # raster_targ_reshaped = sklearn.utils.resample(raster_targ_reshaped, n_samples=100, replace=True)
-        # raster_probe_reshaped = sklearn.utils.resample(raster_probe_reshaped, n_samples=100, replace=True)
-        # idxprobe = np.random.randint(0, high=lengthofproberaster, size=100, dtype=int)
-        # idxtarg = np.random.randint(0, high=lengthoftargraster, size=100, dtype=int)
-        #
-        # raster_probe_reshaped = raster_probe_reshaped[idxprobe, :]
-        # raster_targ_reshaped = raster_targ_reshaped[idxtarg, :]
         stim0 = np.full(len(raster_target), 0)  # 0 = target word
         stim1 = np.full(len(raster_probe), 1)  # 1 = probe word
         stim = np.concatenate((stim0, stim1))
@@ -171,58 +143,42 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
         raster_reshaped = np.reshape(raster_lstm, (np.size(raster_lstm, 0), np.size(raster_lstm, 1), 1)).astype(
             'float32')
         stim_reshaped = np.reshape(stim_lstm, (len(stim_lstm), 1)).astype('float32')
-        X_train, X_test, y_train, y_test = train_test_split(raster_reshaped, stim_reshaped, test_size=0.33,
-                                                            random_state=42)
-        model_lstm = LSTMClassification(units=400, dropout=0.25, num_epochs=10)
+        accuracy_list = []
+        for i in range(0,3):
+            #do 3 iterations of the LSTM model,
+            # get the average accuracy of this randomised shuffled score
+            tf.keras.backend.clear_session()
 
-        def create_model(dropout=0.25, units=400):
-            model=Sequential() #Declare model
-            #Add recurrent layer
-            if keras_v1:
-                model.add(LSTM(units,input_shape=(X_train.shape[1],X_train.shape[2]),dropout_W=dropout,dropout_U=dropout)) #Within recurrent layer, include dropout
-            else:
-                model.add(LSTM(units,input_shape=(X_train.shape[1],X_train.shape[2]),dropout=dropout,recurrent_dropout=dropout)) #Within recurrent layer, include dropout
-            if dropout!=0: model.add(Dropout(dropout)) #Dropout some units (recurrent layer output units)
-
-            #Add dense connections to output layer
-            model.add(Dense(y_train.shape[1]))
-            model.add(Activation('softplus'))
-            model.compile(loss='categorical_crossentropy', optimizer='rmsprop',
-                          metrics=['accuracy'])  # Set loss function and optimizer
-            return model
-
-        model_lstm_wrapper = KerasClassifier(model=create_model(), epochs = 10, verbose = 0)
+            X_train, X_test, y_train, y_test = train_test_split(raster_reshaped, stim_reshaped, test_size=0.33,
+                                                                )
+            model_lstm = LSTMClassification(units=400, dropout=0.25, num_epochs=10)
+            X_train = sklearn.utils.shuffle(X_train)
 
 
-        # Fit model
-        #model_lstm_wrapper.fit(X_train, y_train)
+            # Fit model
+            model_lstm.fit(X_train, y_train)
 
-        # Get predictions
-        kfold = KFold(n_splits=2, shuffle=False)
-        try:
-            accuracy_train = cross_val_score(model_lstm_wrapper, X_train, y_train, scoring='accuracy', cv=kfold)
-            accuracy_test = cross_val_score(model_lstm_wrapper, X_test, y_test, scoring='accuracy', cv=kfold)
-        except:
-            print('not enough samples')
-            continue
+            # Get predictions
+            y_valid_predicted_lstm = model_lstm.predict(X_test)
 
 
-        #y_valid_predicted_lstm = model_lstm_wrapper.predict(X_test)
 
-        #y_valid_predicted_lstm_bool = abs(np.round(y_valid_predicted_lstm))
-        #y_test_bool = abs(np.round(y_test)).astype(bool)
+            y_valid_predicted_lstm_bool = abs(np.round(y_valid_predicted_lstm))
+            y_test_bool = abs(np.round(y_test)).astype(bool)
 
-        # Get metric of fit
-        # R2s_lstm = get_R2(y_test, y_valid_predicted_lstm)
-        #accuracy = sklearn.metrics.accuracy_score(y_test.flatten(), y_valid_predicted_lstm.flatten())
+            # Get metric of fit
+            # R2s_lstm = get_R2(y_test, y_valid_predicted_lstm)
+            accuracy = sklearn.metrics.accuracy_score(y_test.flatten(), y_valid_predicted_lstm.flatten())
+            accuracy_list.append(accuracy)
 
+        accuracytoppercentile= np.percentile(accuracy_list, 97.5)
 
         # print('R2s:', R2s_lstm)
 
         scores['cluster_id'].append(cluster_id)
         scores['score'].append(score)
-        scores['lstm_score'].append(accuracy_test.mean())
-        scores['lstm_score_train'].append(accuracy_train.mean())
+        scores['lstm_score'].append(accuracytoppercentile)
+        scores['lstm_shuffled_avg'].append(np.mean(accuracy_list))
         scores['bootScore'].append(bootScore)
         scores['cm'].append(len(unique_trials_targ)+len(unique_trials_probe))
 
@@ -254,15 +210,16 @@ def probe_early_vs_late(blocks, talker=1, noise=True, df_filter=['No Level Cue']
 
         score, d, bootScore, bootClass, cm = classify_sweeps(raster, stim, binsize=binsize, iterations=100,
                                                              window=window, genFig=False)
-        X_train, X_test, y_train, y_test = train_test_split(raster, stim, test_size=0.33, random_state=42)
+        X_train, X_test, y_train, y_test = train_test_split(raster, stim, test_size=0.33, )
+        X_train = sklearn.utils.shuffle(X_train)
+
         model_lstm = LSTMDecoder(units=400, dropout=0, num_epochs=5)
-        model_lstm_wrapper = KerasClassifier(model=model_lstm, dropout=0, num_epochs=5)
 
         # Fit model
-        model_lstm_wrapper.fit(X_train, y_train)
+        model_lstm.fit(X_train, y_train)
 
         # Get predictions
-        y_valid_predicted_lstm = model_lstm_wrapper.predict(X_test)
+        y_valid_predicted_lstm = model_lstm.predict(X_test)
 
         # Get metric of fit
         R2s_lstm = get_R2(y_test, y_valid_predicted_lstm)
@@ -367,7 +324,7 @@ def save_pdf_classification_lstm(scores, saveDir, title, probeword):
                 width = 0.35
                 for condition in conditions:
                     try:
-                        y[condition] = [scores[f'talker{talker}'][comp][condition]['lstm_score'][i] for comp in
+                        y[condition] = [scores[f'talker{talker}'][comp][condition]['lstm_shuffled_avg'][i] for comp in
                                         comparisons]
                     except:
                         print('dimension mismatch')
@@ -493,7 +450,7 @@ def save_pdf_classification_lstm_bothtalker(scores, saveDir, title):
 
 def run_classification(dir):
 
-    datapath = Path(f'D:\ms4output\F1815_Cruella\wpsoutput24112022bb2bb3\phy')
+    datapath = Path(f'D:\ms4output\F1902_Eclair\wpsoutput08112022bb2bb3\phy')
     fname = 'blocks.pkl'
     with open(datapath / 'blocks.pkl', 'rb') as f:
         blocks = pickle.load(f)
@@ -503,7 +460,7 @@ def run_classification(dir):
     now = datetime.now()
     dt_string = now.strftime("%d%m%Y_%H_%M_%S")
 
-    tarDir = Path(f'/Users/cgriffiths/resultsms4/lstmclass_18112022')
+    tarDir = Path(f'/Users/cgriffiths/resultsms4/lstmclass_SHUFFLEDDATA_02122022')
     saveDir = tarDir / dt_string
     saveDir.mkdir(exist_ok=True, parents=True)
     for probeword in probewords_list:
@@ -538,7 +495,7 @@ def run_classification(dir):
                                                                                          pitchshift=True)
 
 
-            np.save(saveDir / f'scores_{dir}_{probeword[0]}_cruella_probe_pitchshift_vs_not_by_talker_bs.npy', scores)
+            np.save(saveDir / f'scores_{dir}_{probeword[0]}_eclair_probe_pitchshift_vs_not_by_talker_bs.npy', scores)
 
         fname = 'scores_' + dir + f'_probe_earlylate_left_right_win_bs_{binsize}'
         save_pdf_classification_lstm(scores, saveDir, fname, probeword)
@@ -581,11 +538,11 @@ def main():
     # gdd.download_file_from_google_drive(file_id='1W3TwEtC0Z6Qmbfuz8_AWRiQHfuDb9FIS',
     #                                     dest_path='./Binned_data.zip',
     #                                     unzip=True)
-    binned_spikes = np.load('binned_spikes.npy')
-    choices = np.load('choices.npy') + 1
+    binned_spikes = np.load('../binned_spikes.npy')
+    choices = np.load('../choices.npy') + 1
     print(binned_spikes.shape, choices.shape)
     print(choices[:10])
-    directories = ['Cruella_2022']  # , 'Trifle_July_2022']
+    directories = ['eclair_2022']  # , 'Trifle_July_2022']
     for dir in directories:
         run_classification(dir)
 

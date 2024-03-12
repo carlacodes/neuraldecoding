@@ -60,11 +60,9 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
               'score': [],
               'cm': [],
               'bootScore': [],
-              'lstm_score': [],
-              'lstm_shuffled_avg': []}
+              'lstm_score': [], }
     cluster_id_droplist = np.empty([])
     for cluster_id in tqdm(clust_ids):
-
         target_filter = ['Target trials', 'No Level Cue']  # , 'Non Correction Trials']
 
         try:
@@ -117,7 +115,25 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
         for trial in (unique_trials_probe):
             raster_probe_reshaped[count, :] = np.histogram(raster_probe['spike_time'][raster_probe['trial_num'] == trial], bins=bins, range=(window[0], window[1]))[0]
             count+=1
+        # for i in range(0, len(raster_target)):
+        #     raster_targ_reshaped[i, :], edgestarg = np.histogram(raster_target['spike_time'][i], bins=bins)
+        #
+        # for i in range(0, len(raster_probe)):
+        #     raster_probe_reshaped[i, :], edgesprobe = np.histogram(raster_probe['spike_time'][i], bins=bins)
 
+        # targbins, edgestarg = np.histogram(raster_target['spike_time'], bins=bins)
+        # probebins, edgesprobe = np.histogram(raster_probe['spike_time'], bins=bins)
+
+        # raster_target = np.random.choice(raster_targ_reshaped[], 100, replace=True)
+        # raster_probe = np.random.choice(raster_probe, 100, replace=True)
+
+        # raster_targ_reshaped = sklearn.utils.resample(raster_targ_reshaped, n_samples=100, replace=True)
+        # raster_probe_reshaped = sklearn.utils.resample(raster_probe_reshaped, n_samples=100, replace=True)
+        # idxprobe = np.random.randint(0, high=lengthofproberaster, size=100, dtype=int)
+        # idxtarg = np.random.randint(0, high=lengthoftargraster, size=100, dtype=int)
+        #
+        # raster_probe_reshaped = raster_probe_reshaped[idxprobe, :]
+        # raster_targ_reshaped = raster_targ_reshaped[idxtarg, :]
         stim0 = np.full(len(raster_target), 0)  # 0 = target word
         stim1 = np.full(len(raster_probe), 1)  # 1 = probe word
         stim = np.concatenate((stim0, stim1))
@@ -137,45 +153,31 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], pitchshift=True):
 
         score, d, bootScore, bootClass, cm = classify_sweeps(raster, stim, binsize=binsize, window=window, genFig=False)
         # fit LSTM model to the same data
-        #
         newraster = raster.tolist()
         raster_reshaped = np.reshape(raster_lstm, (np.size(raster_lstm, 0), np.size(raster_lstm, 1), 1)).astype(
             'float32')
         stim_reshaped = np.reshape(stim_lstm, (len(stim_lstm), 1)).astype('float32')
-        accuracy_list = []
-        for i in range(0,3):
-            # get the average accuracy of this randomised shuffled score
-            # Xtest = np.array([[[1.], [0.], [0.]], [[2.], [1.], [2.]], [[0.], [0.], [0.]]])
-            # xtestshuffle = sklearn.utils.shuffle(Xtest)
-            X_train, X_test, y_train, y_test = train_test_split(raster_reshaped, stim_reshaped, test_size=0.33,
-                                                                )
-            X_train = sklearn.utils.shuffle(X_train)
-            model_lstm = LSTMClassification(units=400, dropout=0.25, num_epochs=10)
+        X_train, X_test, y_train, y_test = train_test_split(raster_reshaped, stim_reshaped, test_size=0.33,
+                                                            random_state=42)
+        model_lstm = LSTMClassification(units=400, dropout=0.25, num_epochs=10)
 
-            # Fit model
-            model_lstm.fit(X_train, y_train)
+        # Fit model
+        model_lstm.fit(X_train, y_train)
 
-            # Get predictions
-            y_valid_predicted_lstm = model_lstm.predict(X_test)
+        # Get predictions
+        y_valid_predicted_lstm = model_lstm.predict(X_test)
+        y_valid_predicted_lstm_bool = abs(np.round(y_valid_predicted_lstm))
+        y_test_bool = abs(np.round(y_test)).astype(bool)
 
-
-
-            y_valid_predicted_lstm_bool = abs(np.round(y_valid_predicted_lstm))
-            y_test_bool = abs(np.round(y_test)).astype(bool)
-
-            # Get metric of fit
-            # R2s_lstm = get_R2(y_test, y_valid_predicted_lstm)
-            accuracy = sklearn.metrics.accuracy_score(y_test.flatten(), y_valid_predicted_lstm.flatten())
-            accuracy_list.append(accuracy)
-
-        accuracytoppercentile= np.percentile(accuracy_list, 97.5)
+        # Get metric of fit
+        # R2s_lstm = get_R2(y_test, y_valid_predicted_lstm)
+        accuracy = sklearn.metrics.accuracy_score(y_test.flatten(), y_valid_predicted_lstm.flatten())
 
         # print('R2s:', R2s_lstm)
 
         scores['cluster_id'].append(cluster_id)
         scores['score'].append(score)
-        scores['lstm_score'].append(accuracytoppercentile)
-        scores['lstm_shuffled_avg'].append(np.mean(accuracy_list))
+        scores['lstm_score'].append(accuracy)
         scores['bootScore'].append(bootScore)
         scores['cm'].append(len(unique_trials_targ)+len(unique_trials_probe))
 
@@ -207,7 +209,7 @@ def probe_early_vs_late(blocks, talker=1, noise=True, df_filter=['No Level Cue']
 
         score, d, bootScore, bootClass, cm = classify_sweeps(raster, stim, binsize=binsize, iterations=100,
                                                              window=window, genFig=False)
-        X_train, X_test, y_train, y_test = train_test_split(raster, stim, test_size=0.33, )
+        X_train, X_test, y_train, y_test = train_test_split(raster, stim, test_size=0.33, random_state=42)
         model_lstm = LSTMDecoder(units=400, dropout=0, num_epochs=5)
 
         # Fit model
@@ -319,7 +321,7 @@ def save_pdf_classification_lstm(scores, saveDir, title, probeword):
                 width = 0.35
                 for condition in conditions:
                     try:
-                        y[condition] = [scores[f'talker{talker}'][comp][condition]['lstm_shuffled_avg'][i] for comp in
+                        y[condition] = [scores[f'talker{talker}'][comp][condition]['lstm_score'][i] for comp in
                                         comparisons]
                     except:
                         print('dimension mismatch')
@@ -399,7 +401,7 @@ def save_pdf_classification_lstm_bothtalker(scores, saveDir, title):
                 width = 0.35
                 for condition in conditions:
                     try:
-                        y[condition] = [scores[f'talker{talker}'][comp][condition]['lstm_shuffled_avg'][i] for comp in
+                        y[condition] = [scores[f'talker{talker}'][comp][condition]['lstm_score'][i] for comp in
                                         comparisons]
                     except:
                         print('dimension mismatch')
@@ -445,19 +447,17 @@ def save_pdf_classification_lstm_bothtalker(scores, saveDir, title):
 
 def run_classification(dir):
 
-
-    datapath = Path(f'D:\ms4output\F1815_Cruella\wpsoutput24112022bb2bb3\phy')
-
+    datapath = Path(f'D:\F1702_Zola\spkenvresults04102022allrowsbut4th')
     fname = 'blocks.pkl'
     with open(datapath / 'blocks.pkl', 'rb') as f:
         blocks = pickle.load(f)
 
     scores = {}
-    probewords_list= [(2,2),(20,22), (5,6), (42,49), (32, 38)]
+    probewords_list= [(20,22), (2,2), (5,6), (42,49), (32, 38)]
     now = datetime.now()
     dt_string = now.strftime("%d%m%Y_%H_%M_%S")
 
-    tarDir = Path(f'/Users/cgriffiths/resultsms4/lstmclass_SHUFFLEDDATA_02122022')
+    tarDir = Path(f'/Users/cgriffiths/resultsms4/lstm_zola_18112022')
     saveDir = tarDir / dt_string
     saveDir.mkdir(exist_ok=True, parents=True)
     for probeword in probewords_list:
@@ -490,14 +490,45 @@ def run_classification(dir):
             scores[f'talker{talker}']['target_vs_probe']['pitchshift'] = target_vs_probe(blocks, talker=talker,
                                                                                          probewords=probeword,
                                                                                          pitchshift=True)
+            np.save(saveDir / f'scores_{dir}_{probeword[0]}_zola_probe_pitchshift_vs_not_by_talker_bs.npy', scores)
 
 
-            np.save(saveDir / f'scores_{dir}_{probeword[0]}_cruella_probe_pitchshift_vs_not_by_talker_bs.npy', scores)
+
+        #np.save(saveDir / f'scores_{dir}_probe_earlylate_left_right_win_bs.npy', scores)
 
         fname = 'scores_' + dir + f'_probe_earlylate_left_right_win_bs_{binsize}'
         save_pdf_classification_lstm(scores, saveDir, fname, probeword)
 
+    # title = f'eucl_classification_{dir}_26082022'
+    # with PdfPages(saveDir / f'{title}.pdf') as pdf:
+    #     for i, clus in enumerate(tqdm(scores['probe_early_vs_late']['cluster_id'])):
+    #         fig, axes = plt.subplots(3, 1, figsize=(4,10), dpi=300)
+    #         for j, comp in enumerate(scores):
+    #             ax = axes[j]
+    #             sns.heatmap(scores[comp]['cm'][i], annot=True, fmt="d", ax=ax, cmap='Blues')
+    #             ax.set_xlabel('\nPredicted Values')
+    #             ax.set_ylabel('Actual Values ');
+    #             ax.set_title(comp)
 
+    #         y = [scores[comp]['score'][i][0] for comp in scores]
+    #         yerrmax = [scores[comp]['score'][i][1] for comp in scores]
+    #         yerrmin = [scores[comp]['score'][i][2] for comp in scores]
+    #         axes[-1].bar(range(len(scores)), y, align='center', color='cornflowerblue')
+    #         axes[-1].set_xticks(range(len(scores)))
+    #         axes[-1].set_xticklabels(list(scores.keys()))
+
+    #         axes[-1].scatter(range(len(scores)), yerrmax, c='black', marker='_', s=10)
+    #         axes[-1].scatter(range(len(scores)), yerrmin, c='black', marker='_', s=10)
+
+    #         axes[-1].set_ylim([0,1])
+
+    #         # plt.figure()
+    #         # plt.imshow(scores[clus]['cm'], interpolation='nearest', cmap=plt.cm.Blues)
+    #         fig.suptitle(f'cluster {clus}')
+    #         fig.tight_layout()
+    #         # plt.colorbar()
+    #         pdf.savefig(fig)
+    #         plt.close(fig)
 
 
 def main():
@@ -506,11 +537,11 @@ def main():
     # gdd.download_file_from_google_drive(file_id='1W3TwEtC0Z6Qmbfuz8_AWRiQHfuDb9FIS',
     #                                     dest_path='./Binned_data.zip',
     #                                     unzip=True)
-    binned_spikes = np.load('binned_spikes.npy')
-    choices = np.load('choices.npy') + 1
+    binned_spikes = np.load('../binned_spikes.npy')
+    choices = np.load('../choices.npy') + 1
     print(binned_spikes.shape, choices.shape)
     print(choices[:10])
-    directories = ['cruella_2022']  # , 'Trifle_July_2022']
+    directories = ['Zola_June_2022']  # , 'Trifle_July_2022']
     for dir in directories:
         run_classification(dir)
 
