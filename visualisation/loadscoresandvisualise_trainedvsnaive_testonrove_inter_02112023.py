@@ -164,6 +164,9 @@ def scatterplot_and_visualise(probewordlist,
 
         #get the unique values from the original cluster list
         original_cluster_list = np.unique(original_cluster_list)
+
+
+
         #remove the original cluster list from the single and multi unit lists
         singleunitlist_copy = [x for x in singleunitlist_copy if x not in original_cluster_list]
         multiunitlist_copy = [x for x in multiunitlist_copy if x not in original_cluster_list]
@@ -171,6 +174,7 @@ def scatterplot_and_visualise(probewordlist,
         #check original_to_split_cluster_ids is not in single or multi unit list
         singleunitlist_copy = [x for x in singleunitlist_copy if x not in original_to_split_cluster_ids]
         multiunitlist_copy = [x for x in multiunitlist_copy if x not in original_to_split_cluster_ids]
+
 
 
         for talker in [1]:

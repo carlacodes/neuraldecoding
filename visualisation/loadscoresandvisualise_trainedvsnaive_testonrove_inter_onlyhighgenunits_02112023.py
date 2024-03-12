@@ -171,6 +171,23 @@ def scatterplot_and_visualise(probewordlist,
         #check original_to_split_cluster_ids is not in single or multi unit list
         singleunitlist_copy = [x for x in singleunitlist_copy if x not in original_to_split_cluster_ids]
         multiunitlist_copy = [x for x in multiunitlist_copy if x not in original_to_split_cluster_ids]
+        if fullid == 'F2003_Orecchiette' or fullid == 'F1901_Crumble' or fullid == 'F1812_Nala' or fullid == 'F1902_Eclair':
+            high_units = pd.read_csv(f'G:/neural_chapter/figures/unit_ids_naive_topgenindex_{fullid}.csv')
+        else:
+            high_units = pd.read_csv(f'G:/neural_chapter/figures/unit_ids_trained_topgenindex_{fullid}.csv')
+
+
+        high_units = high_units[(high_units['rec_name'] == recname) & (high_units['stream'] == stream_id)]
+        #continue if high_units is empty,
+        if high_units.empty:
+            continue
+
+
+        clust_ids = high_units['ID'].to_list()
+        brain_area = high_units['BrainArea'].to_list()
+        #remove single and multi units that are NOT in clust_ids
+        singleunitlist_copy = [x for x in singleunitlist_copy if x in clust_ids]
+        multiunitlist_copy = [x for x in multiunitlist_copy if x in clust_ids]
 
 
         for talker in [1]:
