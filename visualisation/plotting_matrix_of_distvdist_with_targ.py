@@ -232,8 +232,8 @@ def load_scores_and_filter(probewordlist,
                                 (42, 49): (5, 5),
                                 (32, 38): (7, 7)
                             }
-                            probeword1 = probeword_map.get(probeword1, probeword1)
-                            probeword2 = probeword_map.get(probeword2, probeword2)
+                            probeword1_input_text = probeword_map.get(probeword1, probeword1)
+                            probeword2_input_text = probeword_map.get(probeword2, probeword2)
 
                         elif fullid == 'F1604_Squinty' or fullid == 'F1606_Windolene':
                             probeword_map = {
