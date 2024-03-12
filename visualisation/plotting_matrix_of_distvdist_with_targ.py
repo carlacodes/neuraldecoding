@@ -340,6 +340,8 @@ def load_scores_and_filter(probewordlist,
                                 elif 's3' in stream:
                                     brain_area = 'MEG'
                                 tdt_position = -1
+                                stream_id = stream[-2:]
+
                                 sorted_df_of_scores = sorted_df_of_scores.append(
                                     {'probeword1': probeword1_input_text[0], 'probeword2': probeword2_input_text[0],
                                      'cluster_id': clus,
