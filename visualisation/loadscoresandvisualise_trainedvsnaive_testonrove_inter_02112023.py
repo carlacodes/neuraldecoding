@@ -796,17 +796,6 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     ax.legend()
     plt.savefig('G:/testonroveresults/results_testonrove_inter_28102023/scatter_lstm_decoding_score_for_trained_and_naive_animals_251versus_control.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
-    #now only repeat with the high performing units
-    for ferret_id_fancy in ['F1702_Zola', 'F1815_Cruella', 'F1604_Squinty', 'F1606_Windolene']:
-
-        high_units = pd.read_csv(f'G:/neural_chapter/figures/unit_ids_trained_topgenindex_{ferret_id_fancy}.csv')
-        # remove trailing steam
-
-
-
-        high_units = high_units[(high_units['rec_name'] == rec_name) & (high_units['stream'] == stream)]
-        clust_ids = high_units['ID'].to_list()
-        brain_area = high_units['BrainArea'].to_list()
 
     #plot with error b
 

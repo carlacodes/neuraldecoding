@@ -714,7 +714,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     ax.set_ylabel('lstm decoding score')
     ax.set_title('mean lstm decoding score for trained and naive animals')
     ax.legend()
-    plt.savefig('G:/testonroveresults/results_testonrove_inter_28102023/mean_lstm_decoding_score_for_trained_and_naive_animals.png', dpi = 300, bbox_inches = 'tight')
+    plt.savefig('G:/testonroveresults/results_testonrove_inter_28102023/mean_lstm_decoding_score_for_trained_and_naive_animals_highgenindex.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
     #combine into a dataframe
     bigconcatenatetrained_control_f0 = pd.DataFrame(bigconcatenatetrained_control_f0, columns = ['score'])
@@ -769,7 +769,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     ax.set_xticklabels(['144 Hz', '191 Hz (control)', '251 Hz'])
     ax.set_xlabel('pitch control F0 data tested on')
 
-    plt.savefig('G:/testonroveresults/results_testonrove_inter_28102023/VIOLIN_lstm_decoding_score_for_trained_and_naive_animals.png', dpi = 300, bbox_inches = 'tight')
+    plt.savefig('G:/testonroveresults/results_testonrove_inter_28102023/VIOLIN_lstm_decoding_score_for_trained_and_naive_animals_highgenindex.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
 
     #plot as a scatter plot, with decoding scores for 144 hz on the x axis, and 191 hz on the y axis
@@ -793,7 +793,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     ax.set_ylim(0, 1)
     ax.set_title('lstm decoding score for trained and naive animals')
     ax.legend()
-    plt.savefig('G:/testonroveresults/results_testonrove_inter_28102023/scatter_lstm_decoding_score_for_trained_and_naive_animals_144versus_control.png', dpi = 300, bbox_inches = 'tight')
+    plt.savefig('G:/testonroveresults/results_testonrove_inter_28102023/scatter_lstm_decoding_score_for_trained_and_naive_animals_144versus_control_highgenindex.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
 
     fig, ax = plt.subplots(1, figsize=(5, 5))
@@ -807,7 +807,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, labels, colors):
     ax.set_ylim(0,1)
     ax.set_title('lstm decoding score for trained and naive animals')
     ax.legend()
-    plt.savefig('G:/testonroveresults/results_testonrove_inter_28102023/scatter_lstm_decoding_score_for_trained_and_naive_animals_251versus_control.png', dpi = 300, bbox_inches = 'tight')
+    plt.savefig('G:/testonroveresults/results_testonrove_inter_28102023/scatter_lstm_decoding_score_for_trained_and_naive_animals_251versus_control_highgenindex.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
 
 
