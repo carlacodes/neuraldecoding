@@ -293,6 +293,7 @@ def load_scores_and_filter(probewordlist,
                                 elif 's3' in stream:
                                     brain_area = 'MEG'
                                 tdt_position = -1
+                                #NEED TO FIGURE OUT WHAT NG_0 IS ON MYRIAD TODO
                                 sorted_df_of_scores = sorted_df_of_scores.append(
                                     {'probeword1': probeword1_input_text[0], 'probeword2': probeword2_input_text[0],
                                      'cluster_id': clus,
