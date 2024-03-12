@@ -751,6 +751,8 @@ def main():
 
     plot_heatmap_with_comparison(data_trained_filtered, df_all_trained_filtered_permutation, trained=True)
     plot_heatmap_with_comparison(data_naive_filtered, df_all_naive_filtered_permutation, trained=False)
+    plot_heatmap(data_trained_filtered, trained = True)
+    plot_heatmap(data_naive_filtered, trained=False)
     return
 
 
