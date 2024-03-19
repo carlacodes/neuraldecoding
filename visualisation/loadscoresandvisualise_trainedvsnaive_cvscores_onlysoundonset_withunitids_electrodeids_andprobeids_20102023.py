@@ -2584,6 +2584,10 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     ax.set_xlim([0, 1])
     sns.distplot(bigconcatenatetrained_ps, label='trained', ax=ax, color='purple')
     sns.distplot(bigconcatenatenaive_ps, label='naive', ax=ax, color='darkcyan')
+    plt.xlim([0.25, 0.95])
+    plt.xticks([0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],fontsize=20)
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=20)
     # man whiteney test score
     # manwhitscore = mannwhitneyu(relativescoretrained, relativescorenaive, alternative = 'greater')
     plt.title('Roved F0 LSTM decoder scores between  \n trained and naive animals', fontsize=18)
