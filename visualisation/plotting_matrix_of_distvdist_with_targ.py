@@ -814,7 +814,7 @@ def plot_heatmap_with_comparison(df_in, df_in_perm, trained = True):
     pivot_df_perm = df_in_perm.pivot(index='probeword1', columns='probeword2', values='score')
     pivot_df = pivot_df - pivot_df_perm
     plt.figure(figsize=(10, 8))
-    sns.heatmap(pivot_df, cmap="YlGnBu", vmin=0.3, vmax=0.7)
+    sns.heatmap(pivot_df, cmap="YlGnBu")
     if trained == True:
         plt.title('Trained Animal LSTM decoding - permutation scores')
     else:
