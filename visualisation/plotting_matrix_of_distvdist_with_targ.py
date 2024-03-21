@@ -774,6 +774,33 @@ def plot_heatmap(df_in, trained = True):
     plt.savefig(f'G:/neural_chapter/figures/heatmap_dist_v_dist_trained_{trained}.png', dpi = 300)
 
     # Show the plot
+    map_of_words = {1: 'instruments',  2: 'craft',
+    3: 'in contrast to',
+    4: 'when a',
+    5: 'accurate',
+    6: 'pink noise',
+    7: 'of science',
+    8: 'rev. instruments',
+    9: 'boats',
+    10: 'today',
+    13: 'sailor',
+    15: 'but',
+    16: 'researched',
+    18: 'took',
+    19: 'the vast',
+    20: 'today',
+    21: 'he takes',
+    22: 'becomes',
+    23: 'any',
+    24: 'more'
+    }
+    #use the map of words to replace the xticks and yticks with the words
+    xticks = pivot_df.columns
+    yticks = pivot_df.index
+    xticks = [map_of_words.get(xtick, xtick) for xtick in xticks]
+    yticks = [map_of_words.get(ytick, ytick) for ytick in yticks]
+    plt.xticks(ticks = np.arange(0.5, len(xticks), 1), labels = xticks, rotation = 45)
+    plt.yticks(ticks = np.arange(0.5, len(yticks), 1), labels = yticks, rotation = 45)
     plt.show()
     return
 
@@ -791,6 +818,42 @@ def plot_heatmap_with_comparison(df_in, df_in_perm, trained = True):
         plt.title('Trained Animal LSTM decoding - permutation scores')
     else:
         plt.title('Naive Animal LSTM decoding - permutation scores')
+
+    #use the labels to label the xticks and y ticks
+
+    # df_full_pitchsplit_violinplot['ProbeWord'] = df_full_pitchsplit_violinplot['ProbeWord'].replace(
+    #     {'(2,2)': 'craft', '(3,3)': 'in contrast to', '(4,4)': 'when a', '(5,5)': 'accurate', '(6,6)': 'pink noise',
+    #      '(7,7)': 'of science', '(8,8)': 'rev. instruments', '(9,9)': 'boats', '(10,10)': 'today',
+    #      '(13,13)': 'sailor', '(15,15)': 'but', '(16,16)': 'researched', '(18,18)': 'took', '(19,19)': 'the vast',
+    #      '(20,20)': 'today', '(21,21)': 'he takes', '(22,22)': 'becomes', '(23,23)': 'any', '(24,24)': 'more'})
+    map_of_words = {1: 'instruments',  2: 'craft',
+    3: 'in contrast to',
+    4: 'when a',
+    5: 'accurate',
+    6: 'pink noise',
+    7: 'of science',
+    8: 'rev. instruments',
+    9: 'boats',
+    10: 'today',
+    13: 'sailor',
+    15: 'but',
+    16: 'researched',
+    18: 'took',
+    19: 'the vast',
+    20: 'today',
+    21: 'he takes',
+    22: 'becomes',
+    23: 'any',
+    24: 'more'
+    }
+    #use the map of words to replace the xticks and yticks with the words
+    xticks = pivot_df.columns
+    yticks = pivot_df.index
+    xticks = [map_of_words.get(xtick, xtick) for xtick in xticks]
+    yticks = [map_of_words.get(ytick, ytick) for ytick in yticks]
+    plt.xticks(ticks = np.arange(0.5, len(xticks), 1), labels = xticks, rotation = 45)
+    plt.yticks(ticks = np.arange(0.5, len(yticks), 1), labels = yticks, rotation = 45)
+
     plt.savefig(f'G:/neural_chapter/figures/heatmap_dist_v_dist_trained_difference_from_perm_{trained}.png', dpi = 300)
     plt.show()
 
