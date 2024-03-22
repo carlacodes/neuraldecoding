@@ -857,6 +857,7 @@ def plot_heatmap_with_comparison(df_in, df_in_perm, trained = True):
 
     plt.savefig(f'G:/neural_chapter/figures/heatmap_dist_v_dist_trained_difference_from_perm_{trained}.png', dpi = 300)
     plt.show()
+    return
 
 
 def filter_for_units_used_in_first_analysis(data_in, trained = True):
