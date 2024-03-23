@@ -2373,6 +2373,11 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     #get the ratio of highgenindex to low genindex units
     ratio_trained = len(df_full_pitchsplit_plot) / len(df_full_pitchsplit)
     ratio_naive = len(df_full_naive_pitchsplit_plot) / len(df_full_naive_pitchsplit)
+    #make a dataframe and export to csv
+    df_ratio = pd.DataFrame(columns=['Animal', 'Ratio'])
+    df_ratio = df_ratio.append({'Animal': 'Trained', 'Ratio': ratio_trained}, ignore_index=True)
+    df_ratio = df_ratio.append({'Animal': 'Naive', 'Ratio': ratio_naive}, ignore_index=True)
+    df_ratio.to_csv('G:/neural_chapter/csvs/ratio_highgenindex_lowgenindex.csv')
     for animal in ['F1902_Eclair', 'F1901_Crumble', 'F1812_Nala', 'F2003_Orecchiette']:
         # isolate the data for this animal
         df_full_pitchsplit_plot_animal = df_full_naive_pitchsplit[
