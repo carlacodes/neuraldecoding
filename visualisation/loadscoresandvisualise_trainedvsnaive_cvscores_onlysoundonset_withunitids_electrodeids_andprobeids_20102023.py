@@ -2370,7 +2370,9 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                 ignore_index=True)
         # export the dataframe to csv
         animal_dataframe.to_csv(f'G:/neural_chapter/csvs/unit_ids_trained_all_{animal}.csv')
-
+    #get the ratio of highgenindex to low genindex units
+    ratio_trained = len(df_full_pitchsplit_plot) / len(df_full_pitchsplit)
+    ratio_naive = len(df_full_naive_pitchsplit_plot) / len(df_full_naive_pitchsplit)
     for animal in ['F1902_Eclair', 'F1901_Crumble', 'F1812_Nala', 'F2003_Orecchiette']:
         # isolate the data for this animal
         df_full_pitchsplit_plot_animal = df_full_naive_pitchsplit[
