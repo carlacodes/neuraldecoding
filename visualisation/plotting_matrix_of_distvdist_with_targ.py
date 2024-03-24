@@ -829,7 +829,7 @@ def plot_heatmap(df_in, trained = True, pitchshift_option = 'nopitchshift'):
     yticks = [map_of_words.get(ytick, ytick) for ytick in yticks]
     plt.xticks(ticks = np.arange(0.5, len(xticks), 1), labels = xticks, rotation = 45)
     plt.yticks(ticks = np.arange(0.5, len(yticks), 1), labels = yticks, rotation = 45)
-    plt.savefig(f'G:/neural_chapter/figures/heatmap_dist_v_dist_trained_raw_{trained}.png', dpi = 300)
+    plt.savefig(f'G:/neural_chapter/figures/heatmap_dist_v_dist_trained_raw_{trained}.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
     return
 
@@ -893,7 +893,7 @@ def plot_heatmap_with_comparison(df_in, df_in_perm, trained = True, pitchshift_o
     plt.xticks(ticks = np.arange(0.5, len(xticks), 1), labels = xticks, rotation = 45)
     plt.yticks(ticks = np.arange(0.5, len(yticks), 1), labels = yticks, rotation = 45)
 
-    plt.savefig(f'G:/neural_chapter/figures/heatmap_dist_v_dist_trained_difference_from_perm_{trained}_{pitchshift_option}.png', dpi = 300)
+    plt.savefig(f'G:/neural_chapter/figures/heatmap_dist_v_dist_trained_difference_from_perm_{trained}_{pitchshift_option}.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
     return
 
