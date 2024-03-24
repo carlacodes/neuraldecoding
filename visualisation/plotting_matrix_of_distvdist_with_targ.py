@@ -175,7 +175,7 @@ def load_scores_and_filter(probewordlist,
                     else:
                         key_text = f'{probeword1[0]}_{probeword1[0]}_{probeword2[0]}_{probeword2[0]}'
                         #check if the key_text is in the scores
-                        if key_text in scores[f'talker{talker}'][comp] == False:
+                        if key_text not in scores[f'talker{talker}'][comp] :
                             key_text = f'{probeword2[0]}_{probeword2[0]}_{probeword1[0]}_{probeword1[0]}'
 
                     for i, clus in enumerate(scores[f'talker{talker}'][comp][key_text]['cluster_id']):
