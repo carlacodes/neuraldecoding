@@ -174,6 +174,10 @@ def load_scores_and_filter(probewordlist,
                         key_text = f'{pitchshift_text}'
                     else:
                         key_text = f'{probeword1[0]}_{probeword1[0]}_{probeword2[0]}_{probeword2[0]}'
+                        #check if the key_text is in the scores
+                        if key_text in scores[f'talker{talker}'][comp] == False:
+                            key_text = f'{probeword2[0]}_{probeword2[0]}_{probeword1[0]}_{probeword1[0]}'
+
                     for i, clus in enumerate(scores[f'talker{talker}'][comp][key_text]['cluster_id']):
                         #check if clus is greater than 100
                         if 200> clus >= 100:
