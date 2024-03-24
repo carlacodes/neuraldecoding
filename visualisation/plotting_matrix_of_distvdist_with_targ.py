@@ -230,6 +230,8 @@ def load_scores_and_filter(probewordlist,
                         key_text = f'{pitchshift_text}'
                     else:
                         key_text = f'{probeword1[0]}_{probeword1[0]}_{probeword2[0]}_{probeword2[0]}'
+                        if key_text not in scores[f'talker{talker}'][comp] :
+                            key_text = f'{probeword2[0]}_{probeword2[0]}_{probeword1[0]}_{probeword1[0]}'
                     for i, clus in enumerate(scores[f'talker{talker}'][comp][key_text]['cluster_id']):
                         stream_small = stream[-4:]
                         clust_text = str(clus)+'_'+fullid+'_'+recname+'_'+stream_small
