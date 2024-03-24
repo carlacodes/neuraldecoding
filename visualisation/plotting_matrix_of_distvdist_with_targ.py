@@ -779,6 +779,15 @@ def plot_heatmap(df_in, trained = True, pitchshift_option = 'nopitchshift'):
     # pivot_df = df_in.pivot(index='probeword1', columns='probeword2', values='score')
     df_in = df_in.groupby(['probeword1', 'probeword2']).mean().reset_index() # taking the mean of the scores across clusters for each probeword pair
     pivot_df = df_in.pivot(index='probeword1', columns='probeword2', values='score')
+    #make sure each combination of probewords is present in the pivot df by repeating the values
+    for probeword1 in pivot_df.index:
+        for probeword2 in pivot_df.columns:
+            if pd.isnull(pivot_df.loc[probeword1, probeword2]):
+                #access the value for probeword 2 and probeword 1
+                value = pivot_df.loc[probeword2, probeword1]
+                pivot_df.loc[probeword1, probeword2] = value
+
+
     plt.figure(figsize=(10, 8))
     sns.heatmap(pivot_df, cmap="YlGnBu", vmin=0.3, vmax = 0.7)
 
