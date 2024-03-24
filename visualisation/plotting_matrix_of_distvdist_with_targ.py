@@ -73,9 +73,15 @@ def load_scores_and_filter(probewordlist,
                             saveDir + r'scores_' + ferretname + '_2022_' + probewordindex_1 + '_' + ferretname + '_probe_bs.npy',
                             allow_pickle=True)[()]
                     else:
-                        scores = np.load(
-                            f'{saveDir}/scores_{probewordindex_1}_vs_{probewordindex_2}_{ferretname}_probe_{pitchshift_text}_bs.npy',
-                            allow_pickle=True)[()]
+                        try:
+                            scores = np.load(
+                                f'{saveDir}/scores_{probewordindex_1}_vs_{probewordindex_2}_{ferretname}_probe_{pitchshift_text}_bs.npy',
+                                allow_pickle=True)[()]
+                        except:
+                            #load the reverse as it's the same
+                            scores = np.load(
+                                f'{saveDir}/scores_{probewordindex_2}_vs_{probewordindex_1}_{ferretname}_probe_{pitchshift_text}_bs.npy',
+                                allow_pickle=True)[()]
                 except Exception as e:
                     print(e)
                     continue
