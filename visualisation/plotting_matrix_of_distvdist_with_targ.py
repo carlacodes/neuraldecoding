@@ -841,6 +841,12 @@ def plot_heatmap_with_comparison(df_in, df_in_perm, trained = True, pitchshift_o
     df_in_perm = df_in_perm.groupby(['probeword1', 'probeword2']).mean().reset_index() # taking the mean of the scores across clusters for each probeword pair
     pivot_df_perm = df_in_perm.pivot(index='probeword1', columns='probeword2', values='score')
     pivot_df = pivot_df - pivot_df_perm
+    for probeword1 in pivot_df.index:
+        for probeword2 in pivot_df.columns:
+            if pd.isnull(pivot_df.loc[probeword1, probeword2]):
+                #access the value for probeword 2 and probeword 1
+                value = pivot_df.loc[probeword2, probeword1]
+                pivot_df.loc[probeword1, probeword2] = value
     plt.figure(figsize=(10, 8))
     sns.heatmap(pivot_df, cmap="YlGnBu", vmin=-0.1, vmax=0.2)
     if trained == True and pitchshift_option == 'nopitchshift':
