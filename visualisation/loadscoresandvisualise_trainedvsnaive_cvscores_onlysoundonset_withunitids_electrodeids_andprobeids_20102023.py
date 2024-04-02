@@ -2313,18 +2313,18 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     plt.xlabel('Generalization fraction')
     plt.show()
 
-    # decoding score over all words vs generalisability
-    fig2, ax2 = plt.subplots(figsize=(10, 6))
-    sns.scatterplot(x='GenFrac', y='MaxScore', data=df_full_naive_pitchsplit_plot, ax=ax2, color = 'darkcyan')
-    sns.regplot(x='GenFrac', y='MaxScore', data=df_full_naive_pitchsplit_plot, ax=ax2, color = 'darkcyan')
-    #get the r2 value
-    x = df_full_naive_pitchsplit_plot['GenFrac']
-    y = df_full_naive_pitchsplit_plot['MaxScore']
-    r2 = stats.pearsonr(x, y)[0] ** 2
-    plt.text(0.05, 0.95, f'r2 = {r2}', transform=ax2.transAxes)
-    plt.title('Naive animals'' max score over generalization  frac')
-    plt.xlabel('Generalization frac')
-    plt.show()
+    # decoding score over all words vs generalisability, UNCOMMENT 02042024
+    # fig2, ax2 = plt.subplots(figsize=(10, 6))
+    # sns.scatterplot(x='GenFrac', y='MaxScore', data=df_full_naive_pitchsplit_plot, ax=ax2, color = 'darkcyan')
+    # sns.regplot(x='GenFrac', y='MaxScore', data=df_full_naive_pitchsplit_plot, ax=ax2, color = 'darkcyan')
+    # #get the r2 value
+    # x = df_full_naive_pitchsplit_plot['GenFrac']
+    # y = df_full_naive_pitchsplit_plot['MaxScore']
+    # r2 = stats.pearsonr(x, y)[0] ** 2
+    # plt.text(0.05, 0.95, f'r2 = {r2}', transform=ax2.transAxes)
+    # plt.title('Naive animals'' max score over generalization  frac')
+    # plt.xlabel('Generalization frac')
+    # plt.show()
 
 
     for animal in ['F1815_Cruella', 'F1702_Zola', 'F1604_Squinty', 'F1606_Windolene']:
