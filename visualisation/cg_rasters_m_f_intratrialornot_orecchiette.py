@@ -182,10 +182,11 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
         #plt.show()
     return
 
-def generate_rasters_soundonset(blocks, talker=1, pitchshift=True):
+def generate_rasters_soundonset(blocks, talker=1, pitchshift=True, stored_path = ''):
 
     binsize = 0.01
     window = [0, 0.6]
+    folder = str(stored_path).split('\\')[-2]
 
 
     clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
@@ -245,14 +246,21 @@ def generate_rasters_soundonset(blocks, talker=1, pitchshift=True):
         plt.setp(ax, xlim=custom_xlim)
 
         plt.suptitle('Sound onset for Ore,  clus id ' + str(cluster_id)+'pitchshift = '+str(pitchshift)+'talker'+str(talker), fontsize = 20)
-        plt.savefig('D:/Data/rasterplotsfromdecoding/Ore/mandf/Ore_clusid'+str(cluster_id)+' soundonset'+ str(pitchshift)+'talker'+str(talker)+'.png')
+        filename_path = f'D:/Data/rasterplotsfromdecoding/Ore/mandf/{folder}/Ore_clusid'+str(cluster_id)+' soundonset'+ str(pitchshift)+'talker'+str(talker)+'.png'
+        if Path(filename_path).exists() == False:
+            #make diretory
+            Path(filename_path).mkdir(parents=True, exist_ok=True)
+
+
+
+        plt.savefig(filename_path)
 
 
 
     return
 
 def run_classification(dir):
-    datapath = Path(f'E:/resultskilosort/F2003_Orecchiette/phy_folder')
+    datapath = Path(f'G:/F2003_Orecchiette/s2cgmod/recording_0/kilosort/phy/')
     fname = 'blocks.pkl'
     with open(datapath / 'blocks.pkl', 'rb') as f:
         blocks = pickle.load(f)
@@ -285,7 +293,7 @@ def run_classification(dir):
 
 
 def run_soundonset_rasters(dir):
-    datapath = Path(f'E:/resultskilosort/F2003_Orecchiette/phy_folder/')
+    datapath = Path(f'G:/F2003_Orecchiette/s2cgmod/recording_0/kilosort/phy/')
     fname = 'blocks.pkl'
     with open(datapath / 'blocks.pkl', 'rb') as f:
         blocks = pickle.load(f)
@@ -311,7 +319,7 @@ def run_soundonset_rasters(dir):
 
         scores[f'talker{talker}']['target_vs_probe'] = {}
 
-        generate_rasters_soundonset(blocks, talker=talker, pitchshift=False)
+        generate_rasters_soundonset(blocks, talker=talker, pitchshift=False, stored_path = datapath)
 
 def main():
 
