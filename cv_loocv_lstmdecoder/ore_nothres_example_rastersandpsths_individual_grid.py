@@ -69,7 +69,7 @@ def run_cleaning_of_rasters(blocks, datapath):
     return new_blocks
 def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'phy', animal = 'F1702_Zola', brain_area = [], gen_psth = False):
 
-    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_nothreshold_ANDPSTH_1612/individualfigs/rasters/{phydir}/{stream}/')
+    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_nothreshold_ANDPSTH_03042024/individualfigs/rasters/{phydir}/{stream}/')
     #load the high generalizable clusters, csv file
 
     saveDir = tarDir
@@ -83,12 +83,12 @@ def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'ph
     brain_area = pd.read_csv(f'G:/neural_chapter/csvs/unit_ids_all_naive_{animal}.csv')
     brain_area = brain_area[brain_area['stream'] == stream]
     clust_ids = brain_area['ID'].to_list()
-    if stream == 'gmod':
-        clust_ids = [189, 190]
-    elif stream == 't_s2':
-        clust_ids = [75, 75]
-    elif stream == 't_s3':
-        clust_ids = [104, 103]
+    # if stream == 'gmod':
+    #     clust_ids = [189, 190]
+    # elif stream == 't_s2':
+    #     clust_ids = [75, 75]
+    # elif stream == 't_s3':
+    #     clust_ids = [104, 103]
     for j, cluster_id in enumerate(clust_ids):
         #make a figure of 2 columns and 10 rows
         count = 0
