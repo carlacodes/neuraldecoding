@@ -29,7 +29,7 @@ from instruments.helpers.util import simple_xy_axes, set_font_axes
 from instruments.helpers.neural_analysis_helpers import get_word_aligned_raster_squinty, split_cluster_base_on_segment_zola
 import sys
 sys.path.append('../')
-from helpers.neural_analysis_helpers_zolainter import get_word_aligned_raster, get_word_aligned_raster_zola_cruella, get_word_aligned_raster_ore
+from analysisscriptsmodcg.cv_loocv_lstmdecoder.helpers.neural_analysis_helpers_zolainter import get_word_aligned_raster, get_word_aligned_raster_zola_cruella, get_word_aligned_raster_ore
 from instruments.helpers.euclidean_classification_minimal_function import classify_sweeps
 # Import standard packages
 import numpy as np
