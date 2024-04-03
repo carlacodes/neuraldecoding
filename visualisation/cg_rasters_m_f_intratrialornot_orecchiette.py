@@ -280,12 +280,12 @@ def run_classification(dir):
 
             scores[f'talker{talker}']['target_vs_probe'] = {}
 
-            target_vs_probe_with_raster(blocks, talker=talker,probewords=probeword,pitchshift=False)
-            target_vs_probe_with_raster(blocks, talker=talker,probewords=probeword,pitchshift=True)
+            target_vs_probe_with_raster(blocks, talker=talker, probewords=probeword, pitchshift=False)
+            target_vs_probe_with_raster(blocks, talker=talker, probewords=probeword, pitchshift=True)
 
 
 def run_soundonset_rasters(dir):
-    datapath = Path(f'E:/resultskilosort\F2003_Orecchiette/phy_folder/')
+    datapath = Path(f'E:/resultskilosort/F2003_Orecchiette/phy_folder/')
     fname = 'blocks.pkl'
     with open(datapath / 'blocks.pkl', 'rb') as f:
         blocks = pickle.load(f)
