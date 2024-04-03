@@ -96,7 +96,7 @@ def target_vs_probe_with_raster(datapaths, talker =1, animal='F1702_Zola'):
     #read the dataframe
 
 
-    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_overlaid0712/{dir}/')
+    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_overlaid03042024/{dir}/')
 
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
@@ -417,7 +417,8 @@ def generate_rasters(dir):
 
 
     datapaths = [Path('G:\F2003_Orecchiette/results_ore_pykilosort_s2/recording_0\pykilosort\phy'),
-                 Path('G:\F2003_Orecchiette/results_ore_pykilosort_s3/recording_0\pykilosort\phy')]
+                 Path('G:\F2003_Orecchiette/results_ore_pykilosort_s3/recording_0\pykilosort\phy'),
+                 Path('G:/F2003_Orecchiette/s2cgmod/recording_0\kilosort/phy')]
     for talker in [1]:
         target_vs_probe_with_raster(datapaths,talker=talker, animal = animal)
         # target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, gen_psth=True)
