@@ -186,7 +186,7 @@ def generate_rasters_soundonset(blocks, talker=1, pitchshift=True, stored_path =
 
     binsize = 0.01
     window = [0, 0.6]
-    folder = str(stored_path).split('\\')[-2]
+    folder = str(stored_path).split('\\')[-4]
 
 
     clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
