@@ -113,10 +113,15 @@ def target_vs_probe_with_raster(blocks, talker=1,  stream = 'BB_3', phydir = 'ph
                                                                                      pitchshift=pitchshift_option,
                                                                                      correctresp=False,
                                                                                      df_filter=[], talker='female')
+                ##NEED TO CHECK IF THE NUMBER OF TRIALS WAS LESS THAN 5 TO FIGURE OUT which units were used for decoding
                 raster_target = raster_target.reshape(raster_target.shape[0], )
                 if len(raster_target) == 0:
                     print('raster target empty:', cluster_id)
                     continue
+                elif len(raster_target) < 5:
+                    print('raster target less than 5 trials, skipping, cluster_id:', cluster_id)
+                    continue
+
 
                 bins = np.arange(window[0], window[1], binsize)
 
