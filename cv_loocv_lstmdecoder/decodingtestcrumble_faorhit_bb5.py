@@ -16,18 +16,6 @@ import matplotlib.pyplot as plt
 from scipy import io
 from scipy import stats
 import pickle
-
-# If you would prefer to load the '.h5' example file rather than the '.pickle' example file. You need the deepdish package
-# import deepdish as dd
-
-# Import function to get the covariate matrix that includes spike history from previous bins
-from Neural_Decoding.preprocessing_funcs import get_spikes_with_history
-import Neural_Decoding
-# Import metrics
-from Neural_Decoding.metrics import get_R2
-from Neural_Decoding.metrics import get_rho
-
-# Import decoder functions
 from Neural_Decoding.decoders import LSTMDecoder, LSTMClassification
 
 
