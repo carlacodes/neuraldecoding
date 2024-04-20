@@ -7,7 +7,7 @@ from tqdm import tqdm
 from keras import backend as K
 import sklearn
 from instruments.helpers.util import simple_xy_axes, set_font_axes
-from helpers.neural_analysis_helpers import get_before_word_raster_zola_cruella
+from analysisscriptsmodcg.cv_loocv_lstmdecoder.helpers.neural_analysis_helpers import *
 
 from instruments.helpers.euclidean_classification_minimal_function import classify_sweeps
 # Import standard packages
