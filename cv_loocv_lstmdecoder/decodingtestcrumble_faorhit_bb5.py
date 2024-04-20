@@ -5,18 +5,8 @@ import numpy as np
 from sklearn.model_selection import train_test_split, StratifiedKFold, LeavePOut
 from tqdm import tqdm
 from keras import backend as K
-
-from sklearn.utils import resample
-import astropy
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_pdf import PdfPages
-from matplotlib.ticker import MaxNLocator
-import seaborn as sns
-from datetime import datetime
-from astropy.stats import bootstrap
 import sklearn
 from instruments.helpers.util import simple_xy_axes, set_font_axes
-
 from helpers.neural_analysis_helpers import get_before_word_raster_zola_cruella
 
 from instruments.helpers.euclidean_classification_minimal_function import classify_sweeps
