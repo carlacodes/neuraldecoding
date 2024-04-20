@@ -19,11 +19,8 @@ import pickle
 from Neural_Decoding.decoders import LSTMDecoder, LSTMClassification
 
 
-def hit_vs_FA(blocks, talker=1, window=[0, 0.5]):
-    if talker == 1:
-        talker_text = 'female'
-    else:
-        talker_text = 'male'
+def hit_vs_FA(blocks, window=[0, 0.5]):
+
     binsize = 0.01
 
     clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
@@ -45,27 +42,15 @@ def hit_vs_FA(blocks, talker=1, window=[0, 0.5]):
               'perm_ac': [],
               'perm_bal_ac': []}
 
-    # scores['cluster_id'].append(cluster_id)
-    # scores['score'].append(score)
-    # scores['lstm_score'].append(np.mean(totalaclist))
-    # scores['lstm_balanced_avg'].append(np.mean(bal_ac_list))
-    # scores['bootScore'].append(bootScore)
-    # scores['lstm_accuracylist'].append(accuracy_list)
-    # scores['lstm_balancedaccuracylist'].append(bal_ac_list)
-    # scores['cm'].append(len(unique_trials_targ) + len(unique_trials_probe))
-
-    cluster_id_droplist = np.empty([])
     for cluster_id in tqdm(clust_ids):
         print('cluster_id:')
         print(cluster_id)
-
-        target_filter = ['Target trials', 'No Level Cue']  # , 'Non Correction Trials']
 
         # try:
         raster_hit= get_before_word_raster_zola_cruella(blocks, cluster_id, word=1,
                                                                                   
                                                                                   corresp_hit=True,
-                                                                                  df_filter=[], talker=talker_text)
+                                                                                  df_filter=['No Level Cue'])
         raster_hit = raster_hit.reshape(raster_hit.shape[0], )
         if len(raster_hit) == 0:
             print('no relevant spikes for cluster:' + str(cluster_id))
@@ -76,7 +61,7 @@ def hit_vs_FA(blocks, talker=1, window=[0, 0.5]):
         raster_FA = get_before_word_raster_zola_cruella(blocks, cluster_id, word=1,
 
                                                                                   corresp_hit=False,
-                                                                                  df_filter=[], talker=talker_text)
+                                                                                  df_filter=['No Level Cue'])
         # raster_FA = raster_FA[raster_FA['talker'] == talker]
         raster_FA= raster_FA.reshape(raster_FA.shape[0], )
 
@@ -254,23 +239,20 @@ def run_classification(dir, datapath, ferretid):
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
 
-    for talker in [1, 2]:
-        if talker == 1:
-            window = [-0.5, 0]
-        else:
-            window = [-0.5, 0]
-        print(f'talker {talker}')
+    # for talker in [1, 2]:
+    #     if talker == 1:
+    #         window = [-0.5, 0]
+    #     else:
+    #         window = [-0.5, 0]
+    window = [-0.5, 0]
 
-        scores[f'talker{talker}'] = {}
+    scores['hit_vs_FA'] = {}
 
-        scores[f'talker{talker}']['hit_vs_FA'] = {}
-
-        scores[f'talker{talker}']['hit_vs_FA']= hit_vs_FA(blocks, talker=talker,
-                                                          window=window)
+    scores['hit_vs_FA']= hit_vs_FA(blocks, window=window)
 
 
-        np.save(saveDir / f'scores_{dir}_hit_vs_FA_{ferretid}_probe_bs.npy',
-                scores)
+    np.save(saveDir / f'scores_{dir}_hit_vs_FA_{ferretid}_probe_bs.npy',
+            scores)
 
 
 def main():

@@ -913,7 +913,7 @@ def get_word_aligned_raster_zola_cruella(blocks, clust_id, word=None, pitchshift
 
 
 
-def get_before_word_raster_zola_cruella(blocks, clust_id, word=None,  corresp_hit=True, df_filter=[]):
+def get_before_word_raster_zola_cruella(blocks, clust_id, word=None, corresp_hit=True, df_filter=[]):
     unit_aligned_time = np.array([])
     unit_aligned_time_compare = np.array([])
     for s, seg in enumerate(blocks[0].segments):
