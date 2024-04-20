@@ -294,13 +294,10 @@ def run_classification(dir, datapath, ferretid):
         np.save(saveDir / f'scores_{dir}_hit_vs_FA_{ferretid}_probe_bs.npy',
                 scores)
 
-        # fname = 'scores_' + dir + f'_probe_earlylate_left_right_win_bs_{binsize}'
-
 
 def main():
     directories = [
         'crumble_2022']  # , 'Trifle_July_2022']/home/zceccgr/Scratch/zceccgr/ms4output/F1702_Zola/spkenvresults04102022allrowsbut4th
-
     datapath = Path(
         f'D:\ms4output_16102023\F1901_Crumble\BB2BB3_crumble_29092023_2\BB2BB3_crumble_29092023_BB2BB3_crumble_29092023_BB_3\mountainsort4\phy/')
     ferretid = 'crumble'
