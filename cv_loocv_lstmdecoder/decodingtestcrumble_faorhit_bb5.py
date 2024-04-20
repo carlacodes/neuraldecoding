@@ -41,19 +41,13 @@ from Neural_Decoding.metrics import get_rho
 from Neural_Decoding.decoders import LSTMDecoder, LSTMClassification
 
 
-def hit_vs_FA(blocks, talker=1, probewords=[20, 22],  window=[0, 0.5]):
+def hit_vs_FA(blocks, talker=1, window=[0, 0.5]):
     if talker == 1:
-        probeword = probewords[0]
-
         talker_text = 'female'
     else:
-        probeword = probewords[1]
         talker_text = 'male'
     binsize = 0.01
-    # window = [0, 0.6]
 
-    epochs = ['Early', 'Late']
-    epoch_threshold = 1.5
     clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
                  st.annotations['group'] != 'noise']
     clust_ids = clust_ids[1:]
@@ -96,18 +90,12 @@ def hit_vs_FA(blocks, talker=1, probewords=[20, 22],  window=[0, 0.5]):
                                                                                   df_filter=[], talker=talker_text)
         raster_hit = raster_hit.reshape(raster_hit.shape[0], )
         if len(raster_hit) == 0:
-            print('no relevant spikes for this target word:' + str(probeword) + ' and cluster: ' + str(cluster_id))
+            print('no relevant spikes for cluster:' + str(cluster_id))
             continue
 
-        # except Exception as error:
-        #     print('No relevant target firing')
-        #     print(error)
-        #     cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
-        #     continue
 
-        probe_filter = ['No Level Cue']  # , 'Non Correction Trials']
-        # try:
-        raster_FA = get_before_word_raster_zola_cruella(blocks, cluster_id, word=probeword,
+
+        raster_FA = get_before_word_raster_zola_cruella(blocks, cluster_id, word=1,
 
                                                                                   corresp_hit=False,
                                                                                   df_filter=[], talker=talker_text)
@@ -116,12 +104,10 @@ def hit_vs_FA(blocks, talker=1, probewords=[20, 22],  window=[0, 0.5]):
 
         raster_FA['trial_num'] = raster_FA['trial_num'] + np.max(raster_hit['trial_num'])
         if len(raster_FA) == 0:
-            print('no relevant spikes for this probe word:' + str(probeword) + ' and cluster: ' + str(cluster_id))
+            print('no relevant spikes :'  ' for cluster: ' + str(cluster_id))
             continue
         
-        lengthofraster = np.sum(len(raster_hit['spike_time']) + len(raster_FA['spike_time']))
-        raster_targ_reshaped = np.empty([])
-        raster_FA_reshaped = np.empty([])
+
         bins = np.arange(window[0], window[1], binsize)
 
         unique_trials_targ = np.unique(raster_hit['trial_num'])
@@ -279,11 +265,7 @@ def run_classification(dir, datapath, ferretid):
         blocks = pickle.load(f)
 
     scores = {}
-    probewords_list = [(2, 2), (20, 22), (5, 6), (42, 49), (32, 38)]
-    # probewords_list = [(2, 2)]
-    probewords_list = [(32, 38)]
-    probewords_list =[(1,1), (2,2), (3,3), (4,4),(5,5), (6,6), (7,7), (8,8), (9,9), (10,10)]
-    probewords_list= [  (6,6), ]
+
 
     recname = str(datapath).split('\\')[-4]
     print('recname')
@@ -293,30 +275,24 @@ def run_classification(dir, datapath, ferretid):
         f'F:/test_crumble/results_16092023/F1901_Crumble/{recname}/bb3/')
     saveDir = tarDir
     saveDir.mkdir(exist_ok=True, parents=True)
-    for probeword in probewords_list:
-        print('now starting')
-        print(probeword)
-        for talker in [1, 2]:
-            if talker == 1:
-                window = [-0.5, 0]
-            else:
-                window = [-0.5, 0]
-            print(f'talker {talker}')
 
-            scores[f'talker{talker}'] = {}
+    for talker in [1, 2]:
+        if talker == 1:
+            window = [-0.5, 0]
+        else:
+            window = [-0.5, 0]
+        print(f'talker {talker}')
 
-            scores[f'talker{talker}']['hit_vs_FA'] = {}
+        scores[f'talker{talker}'] = {}
 
-            scores[f'talker{talker}']['hit_vs_FA']= hit_vs_FA(blocks, talker=talker,
-                                                              probewords=probeword,
+        scores[f'talker{talker}']['hit_vs_FA'] = {}
 
-                                                              window=window)
-            # scores[f'talker{talker}']['target_vs_probe']['pitchshift'] = target_vs_probe(blocks, talker=talker,
-            #                                                                              probewords=probeword,
-            #                                                                              pitchshift=True, window=window)
+        scores[f'talker{talker}']['hit_vs_FA']= hit_vs_FA(blocks, talker=talker,
+                                                          window=window)
 
-            np.save(saveDir / f'scores_{dir}_{probeword[0]}_{ferretid}_probe_bs.npy',
-                    scores)
+
+        np.save(saveDir / f'scores_{dir}_hit_vs_FA_{ferretid}_probe_bs.npy',
+                scores)
 
         # fname = 'scores_' + dir + f'_probe_earlylate_left_right_win_bs_{binsize}'
 
