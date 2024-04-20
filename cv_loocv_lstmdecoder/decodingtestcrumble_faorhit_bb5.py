@@ -91,11 +91,11 @@ def hit_vs_FA(blocks, talker=1, probewords=[20, 22],  window=[0, 0.5]):
 
         # try:
         raster_hit= get_before_word_raster_zola_cruella(blocks, cluster_id, word=1,
-                                                                                  pitchshift=pitchshift,
-                                                                                  correctresp=False,
+                                                                                  
+                                                                                  corresp_hit=True,
                                                                                   df_filter=[], talker=talker_text)
-        raster_target = raster_target.reshape(raster_target.shape[0], )
-        if len(raster_target) == 0:
+        raster_hit = raster_hit.reshape(raster_hit.shape[0], )
+        if len(raster_hit) == 0:
             print('no relevant spikes for this target word:' + str(probeword) + ' and cluster: ' + str(cluster_id))
             continue
 
@@ -109,84 +109,79 @@ def hit_vs_FA(blocks, talker=1, probewords=[20, 22],  window=[0, 0.5]):
         # try:
         raster_FA = get_before_word_raster_zola_cruella(blocks, cluster_id, word=probeword,
 
-                                                                                  correctresp=False,
+                                                                                  corresp_hit=False,
                                                                                   df_filter=[], talker=talker_text)
-        # raster_probe = raster_probe[raster_probe['talker'] == talker]
-        raster_probe = raster_probe.reshape(raster_probe.shape[0], )
+        # raster_FA = raster_FA[raster_FA['talker'] == talker]
+        raster_FA= raster_FA.reshape(raster_FA.shape[0], )
 
-        raster_probe['trial_num'] = raster_probe['trial_num'] + np.max(raster_target['trial_num'])
-        if len(raster_probe) == 0:
+        raster_FA['trial_num'] = raster_FA['trial_num'] + np.max(raster_hit['trial_num'])
+        if len(raster_FA) == 0:
             print('no relevant spikes for this probe word:' + str(probeword) + ' and cluster: ' + str(cluster_id))
             continue
-        # except:
-        #     print('No relevant probe firing')
-        #     cluster_id_droplist = np.append(cluster_id_droplist, cluster_id)
-
-        #     continue
-        # sample with replacement from target trials and probe trials to boostrap scores and so distributions are equal
-        lengthofraster = np.sum(len(raster_target['spike_time']) + len(raster_probe['spike_time']))
+        
+        lengthofraster = np.sum(len(raster_hit['spike_time']) + len(raster_FA['spike_time']))
         raster_targ_reshaped = np.empty([])
-        raster_probe_reshaped = np.empty([])
+        raster_FA_reshaped = np.empty([])
         bins = np.arange(window[0], window[1], binsize)
 
-        unique_trials_targ = np.unique(raster_target['trial_num'])
-        unique_trials_probe = np.unique(raster_probe['trial_num'])
+        unique_trials_targ = np.unique(raster_hit['trial_num'])
+        unique_trials_probe = np.unique(raster_FA['trial_num'])
         raster_targ_reshaped = np.empty([len(unique_trials_targ), len(bins) - 1])
-        raster_probe_reshaped = np.empty([len(unique_trials_probe), len(bins) - 1])
+        raster_FA_reshaped = np.empty([len(unique_trials_probe), len(bins) - 1])
         count = 0
         for trial in (unique_trials_targ):
             raster_targ_reshaped[count, :] = \
-                np.histogram(raster_target['spike_time'][raster_target['trial_num'] == trial], bins=bins,
+                np.histogram(raster_hit['spike_time'][raster_hit['trial_num'] == trial], bins=bins,
                              range=(window[0], window[1]))[0]
             count += 1
         count = 0
         for trial in (unique_trials_probe):
-            raster_probe_reshaped[count, :] = \
-                np.histogram(raster_probe['spike_time'][raster_probe['trial_num'] == trial], bins=bins,
+            raster_FA_reshaped[count, :] = \
+                np.histogram(raster_FA['spike_time'][raster_FA['trial_num'] == trial], bins=bins,
                              range=(window[0], window[1]))[0]
             count += 1
 
-        if (len(raster_targ_reshaped)) < 5 or (len(raster_probe_reshaped)) < 5:
+        if (len(raster_targ_reshaped)) < 5 or (len(raster_FA_reshaped)) < 5:
             print('less than 5 trials for the target or distractor, CV would be overinflated, skipping')
             continue
         if len(raster_targ_reshaped) < 15:
             # upsample to 15 trials
             raster_targ_reshaped = raster_targ_reshaped[np.random.choice(len(raster_targ_reshaped), 15, replace=True),
                                    :]
-        if len(raster_probe_reshaped) < 15:
+        if len(raster_FA_reshaped) < 15:
             # upsample to 15 trials
-            raster_probe_reshaped = raster_probe_reshaped[
-                                    np.random.choice(len(raster_probe_reshaped), 15, replace=True), :]
+            raster_FA_reshaped = raster_FA_reshaped[
+                                    np.random.choice(len(raster_FA_reshaped), 15, replace=True), :]
 
-        if len(raster_targ_reshaped) >= len(raster_probe_reshaped) * 2:
+        if len(raster_targ_reshaped) >= len(raster_FA_reshaped) * 2:
             print('raster of distractor at least a 1/2 of target raster')
             # upsample the probe raster
-            raster_probe_reshaped = raster_probe_reshaped[
-                                    np.random.choice(len(raster_probe_reshaped), len(raster_targ_reshaped),
+            raster_FA_reshaped = raster_FA_reshaped[
+                                    np.random.choice(len(raster_FA_reshaped), len(raster_targ_reshaped),
                                                      replace=True), :]
-        elif len(raster_probe_reshaped) >= len(raster_targ_reshaped) * 2:
+        elif len(raster_FA_reshaped) >= len(raster_targ_reshaped) * 2:
             print('raster of target at least a 1/2 of probe raster')
             # upsample the target raster
             raster_targ_reshaped = raster_targ_reshaped[
-                                   np.random.choice(len(raster_targ_reshaped), len(raster_probe_reshaped),
+                                   np.random.choice(len(raster_targ_reshaped), len(raster_FA_reshaped),
                                                     replace=True), :]
 
-        print('now length of raster_probe is:')
-        print(len(raster_probe_reshaped))
-        stim0 = np.full(len(raster_target), 0)  # 0 = target word
-        stim1 = np.full(len(raster_probe), 1)  # 1 = probe word
+        print('now length of raster_FA is:')
+        print(len(raster_FA_reshaped))
+        stim0 = np.full(len(raster_hit), 0)  # 0 = target word
+        stim1 = np.full(len(raster_FA), 1)  # 1 = probe word
         stim = np.concatenate((stim0, stim1))
 
         stim0 = np.full(len(raster_targ_reshaped), 0)  # 0 = target word
-        stim1 = np.full(len(raster_probe_reshaped), 1)  # 1 = probe word
+        stim1 = np.full(len(raster_FA_reshaped), 1)  # 1 = probe word
         if (len(stim0)) < 3 or (len(stim1)) < 3:
             print('less than 3 trials for the target or distractor, skipping')
             continue
 
         stim_lstm = np.concatenate((stim0, stim1))
 
-        raster = np.concatenate((raster_target, raster_probe))
-        raster_lstm = np.concatenate((raster_targ_reshaped, raster_probe_reshaped))
+        raster = np.concatenate((raster_hit, raster_FA))
+        raster_lstm = np.concatenate((raster_targ_reshaped, raster_FA_reshaped))
 
         score, d, bootScore, bootClass, cm = classify_sweeps(raster, stim, binsize=binsize, window=window, genFig=False)
         # fit LSTM model to the same data
@@ -216,15 +211,6 @@ def hit_vs_FA(blocks, talker=1, probewords=[20, 22],  window=[0, 0.5]):
             row_indices = np.arange(X_bin.shape[0])
             np.random.shuffle(row_indices)
             X_bin_shuffled = X_bin_shuffled[row_indices]
-
-        # #figure out where each row went
-        # for i in range(X_bin.shape[0]):
-        #     row_to_find = X_bin[i]
-        #     for j in range(X_bin.shape[0]):
-        #         if np.array_equal(row_to_find, X_bin_shuffled[j]):
-        #             row_mapping.append(j)
-        #             break
-        #
 
         outsideloopacclist = []
         perm_outsideloopacclist = []
@@ -285,237 +271,6 @@ def hit_vs_FA(blocks, talker=1, probewords=[20, 22],  window=[0, 0.5]):
             unique_trials_probe))  # Assuming unique_trials_targ and unique_trials_probe are defined somewhere
 
     return scores
-
-
-def probe_early_vs_late(blocks, talker=1, noise=True, df_filter=['No Level Cue'],
-                        window=[0, 0.8], binsize=0.02):
-    epochs = ['Early', 'Late']
-    epoch_treshold = 1.5
-    clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
-                 st.annotations['group'] != 'noise']
-
-    scores = {'cluster_id': [],
-              'score': [],
-              'cm': [], }
-    for cluster_id in tqdm(clust_ids):
-        # df_filter = ['No Level Cue'] #, 'Non Correction Trials']
-        raster = get_word_aligned_raster_zola_cruella(blocks, cluster_id, noise=noise, df_filter=df_filter)
-        raster = raster[raster['talker'] == talker]
-
-        stim = np.zeros(len(raster), dtype=np.int64)
-        stim[raster['relStart'] > epoch_treshold] = 1
-
-        score, d, bootScore, bootClass, cm = classify_sweeps(raster, stim, binsize=binsize, iterations=100,
-                                                             window=window, genFig=False)
-        X_train, X_test, y_train, y_test = train_test_split(raster, stim, test_size=0.33, )
-        model_lstm = LSTMDecoder(units=400, dropout=0, num_epochs=5)
-
-        # Fit model
-        model_lstm.fit(X_train, y_train)
-
-        # Get predictions
-        y_valid_predicted_lstm = model_lstm.predict(X_test)
-
-        # Get metric of fit
-        R2s_lstm = get_R2(y_test, y_valid_predicted_lstm)
-        print('R2s:', R2s_lstm)
-
-        scores['cluster_id'].append(cluster_id)
-        scores['score'].append(score)
-        scores['cm'].append(cm)
-
-    return scores
-
-
-def save_pdf_classification(scores, saveDir, title):
-    conditions = ['silence']
-    for talker in [1, 2]:
-        # talker = 1
-        # title = f'eucl_classification_{month}_talker{talker}_win_bs_earlylateprobe_leftright_26082022'
-
-        comparisons = [comp for comp in scores[f'talker{talker}']]
-        comp = comparisons[0]
-        i = 0
-        clus = scores[f'talker{talker}'][comp]['silence']['cluster_id'][i]
-
-        with PdfPages(saveDir / f'{title}_talker{talker}.pdf') as pdf:
-            for i, clus in enumerate(tqdm(scores[f'talker{talker}'][comp]['silence']['cluster_id'])):
-                fig, ax = plt.subplots(figsize=(10, 5))
-                y = {}
-                yerrmax = {}
-                yerrmin = {}
-                x = np.arange(len(comparisons))
-                width = 0.35
-                for condition in conditions:
-                    y[condition] = [scores[f'talker{talker}'][comp][condition]['score'][i][0] for comp in comparisons]
-                    yerrmax[condition] = [scores[f'talker{talker}'][comp][condition]['score'][i][1] for comp in
-                                          comparisons]
-                    yerrmin[condition] = [scores[f'talker{talker}'][comp][condition]['score'][i][2] for comp in
-                                          comparisons]
-                rects1 = ax.bar(x - width / 2 - 0.01, y[conditions[0]], width, label=conditions[0],
-                                color='cornflowerblue')
-
-                ax.set_ylabel('Scores')
-                ax.set_xticks(x, comparisons)
-                ax.legend()
-
-                ax.scatter(x - width / 2 - 0.01, yerrmax[conditions[0]], c='black', marker='_', s=50)
-                ax.scatter(x - width / 2 - 0.01, yerrmin[conditions[0]], c='black', marker='_', s=50)
-
-                n_trials = {}
-                trial_string = ''
-                for comp in comparisons:
-                    n_trials[comp] = {}
-                    for cond in conditions:
-                        n_trials[comp][cond] = np.sum(scores[f'talker{talker}'][comp][cond]['cm'][i])
-                        trial_string += f'{comp} {cond}: {n_trials[comp][cond]}\n'
-
-                ax.bar_label(rects1, padding=3)
-                # ax.bar_label(rects2, padding=3)
-                ax.set_ylim([0, 1])
-                simple_xy_axes(ax)
-                set_font_axes(ax, add_size=10)
-                fig.suptitle(f'cluster {clus}, \nn_trials: {trial_string}')
-                fig.tight_layout()
-                pdf.savefig(fig)
-                plt.close(fig)
-
-
-def save_pdf_classification_lstm(scores, saveDir, title, probeword):
-    conditions = ['pitchshift', 'nopitchshift']
-    for talker in [1, 2]:
-
-        comparisons = [comp for comp in scores[f'talker{talker}']]
-        comp = comparisons[0]
-        i = 0
-        # clus = scores[f'talker{talker}'][comp]['pitchshift']['cluster_id'][i]
-        if len(scores['talker1'][comp]['pitchshift']) > len(scores['talker1'][comp]['nopitchshift']):
-            k = 'pitchshift'
-        else:
-            k = 'nopitchshift'
-
-        with PdfPages(saveDir / f'{title}_talker{talker}_probeword{probeword[0]}.pdf') as pdf:
-            for i, clus in enumerate(
-                    tqdm(scores[f'talker{talker}'][comp][k]['cluster_id'])):  # ['pitchshift']['cluster_id'])):
-                fig, ax = plt.subplots(figsize=(10, 5))
-                y = {}
-                yerrmax = {}
-                yerrmin = {}
-                x = np.arange(len(comparisons))
-                x2 = np.arange(len(conditions))
-
-                width = 0.35
-                for condition in conditions:
-                    try:
-                        y[condition] = [scores[f'talker{talker}'][comp][condition]['lstm_avg'][i] for comp in
-                                        comparisons]
-                    except:
-                        print('dimension mismatch')
-                        continue
-
-                try:
-                    rects1 = ax.bar(x - width / 2 - 0.01, y[conditions[0]], width, label=conditions[0],
-                                    color='cornflowerblue')
-                    rects2 = ax.bar(x + width / 2 + 0.01, y[conditions[1]], width, label=conditions[1],
-                                    color='lightcoral')
-                except:
-                    print('both conditions not satisfied')
-                    continue
-                ax.set_ylabel('Scores')
-                ax.set_xticks(x, comparisons)
-                if talker == 1:
-                    talkestring = 'Female'
-                else:
-                    talkestring = 'Male'
-                # plt.title('LSTM classification scores for extracted units,'+ talkestring+' talker')
-                ax.legend()
-                #
-                # ax.scatter(x - width / 2 - 0.01, yerrmax[conditions[0]], c='black', marker='_', s=50)
-                # ax.scatter(x - width / 2 - 0.01, yerrmin[conditions[0]], c='black', marker='_', s=50)
-                # ax.scatter(x + width / 2 + 0.01, yerrmax[conditions[1]], c='black', marker='_', s=50)
-                # ax.scatter(x + width / 2 + 0.01, yerrmin[conditions[1]], c='black', marker='_', s=50)
-                # ax.scatter(range(len(scores)), yerrmax, c='black', marker='_', s=10)
-                # ax.scatter(range(len(scores)), yerrmin, c='black', marker='_', s=10)
-
-                n_trials = {}
-                trial_string = ''
-                for comp in comparisons:
-                    n_trials[comp] = {}
-                    for cond in conditions:
-                        n_trials[comp][cond] = np.sum(scores[f'talker{talker}'][comp][cond]['cm'][i])
-                        trial_string += f'{comp} {cond}: {n_trials[comp][cond]}\n'
-
-                ax.bar_label(rects1, padding=3, fmt='%.2f')
-                ax.bar_label(rects2, padding=3, fmt='%.2f')
-                ax.set_ylim([0, 1])
-                simple_xy_axes(ax)
-                set_font_axes(ax, add_size=10)
-                fig.suptitle(f'cluster {clus}, \nn_trials: {trial_string}')
-                fig.tight_layout()
-                pdf.savefig(fig)
-                plt.close(fig)
-
-
-def save_pdf_classification_lstm_bothtalker(scores, saveDir, title):
-    conditions = ['pitchshift', 'nopitchshift']
-    for talker in [1, 2]:
-        # talker = 1
-        # title = f'eucl_classification_{month}_talker{talker}_win_bs_earlylateprobe_leftright_26082022'
-
-        comparisons = [comp for comp in scores[f'talker{talker}']]
-        comp = comparisons[0]
-        i = 0
-        clus = scores[f'talker{talker}'][comp]['pitchshift']['cluster_id'][i]
-        if len(scores['talker1'][comp]['pitchshift']) > len(scores['talker1'][comp]['nopitchshift']):
-            k = 'pitchshift'
-        else:
-            k = 'nopitchshift'
-
-        with PdfPages(saveDir / f'{title}_talker{talker}.pdf') as pdf:
-            for i, clus in enumerate(
-                    tqdm(scores[f'talker{talker}'][comp][k]['cluster_id'])):  # ['pitchshift']['cluster_id'])):
-                fig, ax = plt.subplots(figsize=(10, 5))
-                y = {}
-                yerrmax = {}
-                yerrmin = {}
-                x = np.arange(len(comparisons))
-                x2 = np.arange(len(conditions))
-
-                width = 0.35
-                for condition in conditions:
-                    try:
-                        y[condition] = [scores[f'talker{talker}'][comp][condition]['lstm_avg'][i] for comp in
-                                        comparisons]
-                    except:
-                        print('dimension mismatch')
-                        continue
-
-                rects1 = ax.bar(x - width / 2 - 0.01, y[conditions[0]], width, label=conditions[0],
-                                color='cornflowerblue')
-                rects2 = ax.bar(x + width / 2 + 0.01, y[conditions[1]], width, label=conditions[1], color='lightcoral')
-
-                ax.set_ylabel('Scores')
-                ax.set_xticks(x, comparisons)
-                plt.title('LSTM classification scores for extracted units')
-                ax.legend()
-
-                n_trials = {}
-                trial_string = ''
-                for comp in comparisons:
-                    n_trials[comp] = {}
-                    for cond in conditions:
-                        n_trials[comp][cond] = np.sum(scores[f'talker{talker}'][comp][cond]['cm'][i])
-                        trial_string += f'{comp} {cond}: {n_trials[comp][cond]}\n'
-
-                ax.bar_label(rects1, padding=3, fmt='%2f')
-                ax.bar_label(rects2, padding=3, fmt='%2f')
-                ax.set_ylim([0, 1])
-                simple_xy_axes(ax)
-                set_font_axes(ax, add_size=10)
-                fig.suptitle(f'cluster {clus}, \nn_trials: {trial_string}')
-                fig.tight_layout()
-                pdf.savefig(fig)
-                plt.close(fig)
 
 
 def run_classification(dir, datapath, ferretid):
