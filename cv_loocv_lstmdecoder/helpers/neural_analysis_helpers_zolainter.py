@@ -465,6 +465,38 @@ def return_word_aligned_array(spiketrain,
 
     return al_t
 
+def return_before_word_aligned_array(spiketrain,
+                              df_bhv,
+                              word_token,
+                              before_release_only=False
+                              ):
+    wordtimings = get_absolute_word_timing(df_bhv, word_token)
+    df_bhv = df_bhv.assign(probestarts=wordtimings['start'], probeends=wordtimings['end'],
+                           rel_probestarts=wordtimings['rel_start'])
+    # 258.6533
+    # 258.6789
+
+    if before_release_only:
+
+        df_bhv = df_bhv.loc[df_bhv.absoluteRealLickRelease > df_bhv.probeends]
+
+        if len(df_bhv) == 0:
+            return None, None
+
+    dtype = [('trial_num', 'float64'), ('spike_time', 'float64'),
+             ('start', 'float64'), ('end', 'float64'),
+             ('relStart', 'float64'), ('talker', 'float64')]
+    # 6468 4287
+    al_t = align_times(spiketrain.times.magnitude, df_bhv.probestarts, [-1, 2])
+    al_t = np.concatenate((al_t, np.zeros((al_t.shape[0], 4))), axis=1)
+    al_t.dtype = dtype
+    al_t['start'] = df_bhv.probestarts.to_numpy()[al_t['trial_num'].astype(int)]
+    al_t['end'] = df_bhv.probeends.to_numpy()[al_t['trial_num'].astype(int)]
+    al_t['relStart'] = df_bhv.rel_probestarts.to_numpy()[al_t['trial_num'].astype(int)]
+    al_t['talker'] = df_bhv.talker.to_numpy()[al_t['trial_num'].astype(int)]
+
+    return al_t
+
 
 def return_soundonset_array(spiketrain,
                             df_bhv,
@@ -878,6 +910,87 @@ def get_word_aligned_raster_zola_cruella(blocks, clust_id, word=None, pitchshift
         #     print('same times extracted at iteration:' + str(s))
 
     return unit_aligned_time, unit_aligned_time_compare
+
+
+
+def get_before_word_raster_zola_cruella(blocks, clust_id, word=None,  corresp_hit=True, df_filter=[]):
+    unit_aligned_time = np.array([])
+    unit_aligned_time_compare = np.array([])
+    for s, seg in enumerate(blocks[0].segments):
+        # print(f"Processing segment {s}...")
+
+        # check if pitchshiftmat is in annotations
+        if seg.df_bhv is None:
+            try:
+                print('Loading bhv data from annotations...')
+                seg.df_bhv = seg.load_bhv_data(seg.annotations['bhv_file'])
+            except:
+                print('Possibly corrupted or non-existent data file at iteration...' + str(s))
+                continue
+
+        if 'PitchShiftMat' in seg.df_bhv:
+            print('This is an intra-trial pitch shift level, skipping iteration..' + str(s))
+            # print(f"Block name: {seg.df_bhv['recBlock']}, iteration:" + str(s))
+            continue
+
+        pitchshiftlist = np.array([])
+        for k in range(0, len(seg.df_bhv)):
+            # if talker is not 1 then it is pitch shifted
+            if seg.df_bhv.talker.values[k] == 1 or seg.df_bhv.talker.values[k] == 2:
+                # if talker is only 1 or 2, it's not going to be pitch shifted
+                pitchshiftlist = np.append(pitchshiftlist, 0)
+            else:
+                pitchshiftlist = np.append(pitchshiftlist, 1)
+
+        seg.df_bhv['pitchshift'] = pitchshiftlist
+
+        if word is None:
+            word = seg.df_bhv.probes[0]
+        df_bhv = seg.df_bhv
+
+        # if pitchshift:
+        #     df_bhv = df_bhv.loc[df_bhv.pitchshift == 1]
+        # else:
+        #     df_bhv = df_bhv.loc[df_bhv.pitchshift == 0]
+
+        # if talker == 'female':
+        #     # any talker that is not 2, 13 or 8
+        #     df_bhv = df_bhv[(df_bhv['talker'] == 1) | (df_bhv['talker'] == 3) | (df_bhv['talker'] == 5)]
+        # else:
+        #     df_bhv = df_bhv[(df_bhv['talker'] == 2) | (df_bhv['talker'] == 13) | (df_bhv['talker'] == 8)]
+
+        df_bhv['targTimes'] = df_bhv['timeToTarget'] / 24414.0625
+
+        df_bhv['centreRelease'] = df_bhv['lickRelease'] - df_bhv['startTrialLick']
+        df_bhv['relReleaseTimes'] = df_bhv['centreRelease'] - df_bhv['targTimes']
+        df_bhv['realRelReleaseTimes'] = df_bhv['relReleaseTimes'] - df_bhv['absentTime']
+
+        if corresp_hit:
+            df_bhv = df_bhv.loc[df_bhv['realRelReleaseTimes'].between(0, 2.2, inclusive=True)]
+        else:
+            df_bhv = df_bhv.loc[df_bhv['realRelReleaseTimes'].between(-6, 0, inclusive=False)]
+
+        if len(df_filter) > 0:
+            for f in df_filter:
+                df_bhv = apply_filter(df_bhv, f)
+        df_bhv = df_bhv.reset_index(drop=True)
+        if len(df_bhv) == 0:
+            print('no applicable trials found for segment:' + str(s))
+            continue
+
+        unit = [st for st in seg.spiketrains if st.annotations['cluster_id'] == clust_id][0]
+        # compare the raw spike times of unit and unit_compare
+        if len(unit_aligned_time) == 0:
+            unit_aligned_time = return_word_aligned_array(unit, df_bhv, word)
+        else:
+            seg_aligned_word = return_word_aligned_array(unit, df_bhv, word)
+            seg_aligned_word['trial_num'] = seg_aligned_word['trial_num'] + np.max(unit_aligned_time['trial_num'])
+            unit_aligned_time = np.concatenate((unit_aligned_time, seg_aligned_word))
+            # print("no instance of word found in this behavioural data file ")
+
+
+
+    return unit_aligned_time
 
 
 # def get_word_aligned_raster_zola_cruella(blocks, clust_id, word=None, pitchshift=True, correctresp=True, df_filter=[]):
