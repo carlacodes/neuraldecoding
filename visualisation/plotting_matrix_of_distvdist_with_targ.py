@@ -541,9 +541,9 @@ def load_classified_report(path):
                 #get that tow from the channel pos
 
                 row = channel_pos.iloc[channel_id-1]
-                if row[1] >= 3200 and report['d_prime'][i] < 4:
+                if row[1] >= 3200 and report['d_prime'][i] > 4:
                     singleunitlist.append(i+1)
-                elif row[1] >= 3200 and report['d_prime'][i] >= 4:
+                elif row[1] >= 3200 and report['d_prime'][i] <= 4:
                     multiunitlist.append(i+1)
                 else:
                     noiselist.append(i+1)

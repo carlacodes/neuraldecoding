@@ -591,9 +591,9 @@ def load_classified_report(path):
             # get the list of multi units and single units
             for i in range(0, len(report)):
 
-                if i in clusters_above_hpc[:, 0] and report['isi_violations_ratio'][i] <=0.7 and i in singleunitlist:
+                if i in clusters_above_hpc[:, 0] and report['isi_violations_ratio'][i] <= 0.7 and i in singleunitlist:
                     singleunitlist.append(i + 1)
-                elif i in clusters_above_hpc[:, 0] and report['isi_violations_ratio'][i] <=0.7:
+                elif i in clusters_above_hpc[:, 0] and report['isi_violations_ratio'][i] <= 0.7:
                     multiunitlist.append(i + 1)
                 else:
                     noiselist.append(i + 1)
