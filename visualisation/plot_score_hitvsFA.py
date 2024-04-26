@@ -103,7 +103,7 @@ def load_scores_and_filter(probewordlist,
             except Exception as e:
                 print(e)
 
-            original_to_split_cluster_ids = scores['talker1']['target_vs_probe'][key_text]['cluster_id']
+            original_to_split_cluster_ids = scores['hit_vs_FA']['cluster_id']
             #if all of them need splitting
         elif original_to_split_cluster_ids:
             original_to_split_cluster_ids = [x for x in original_to_split_cluster_ids if x < 100]
