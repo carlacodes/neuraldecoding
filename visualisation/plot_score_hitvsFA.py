@@ -171,109 +171,109 @@ def load_scores_and_filter(probewordlist,
         except:                # make a column of 0s for the tdt column
             report['tdt'] = np.zeros((len(report), 1))
 
-    for talker in [1]:
-        comparisons = [comp for comp in scores[f'talker{talker}']]
-        for comp in comparisons:
-            key_text = f'{pitchshift_text}'
-            for i, clus in enumerate(scores[f'talker{talker}'][comp][key_text]['cluster_id']):
-                stream_small = stream[-4:]
-                clust_text = str(clus)+'_'+fullid+'_'+recname+'_'+stream_small
-                print(i, clus)
+    # for talker in [1]:
+    comparisons = [comp for comp in scores]
+    for comp in comparisons:
+        key_text = f'{pitchshift_text}'
+        for i, clus in enumerate(scores[comp]['cluster_id']):
+            stream_small = stream[-4:]
+            clust_text = str(clus)+'_'+fullid+'_'+recname+'_'+stream_small
+            print(i, clus)
 
-                if 200 > clus >= 100 and fullid != 'F2003_Orecchiette':
-                    clus_id_report = clus - 100
-                elif 300> clus >= 200 and fullid != 'F2003_Orecchiette':
-                    clus_id_report = clus - 200
-                elif 400 > clus >= 300 and fullid != 'F2003_Orecchiette':
-                    clus_id_report = clus - 300
-                else:
-                    clus_id_report = clus
-                if clus in singleunitlist_copy:
-                    unit_type = 'su'
-                    #append to the dataframe
-                    electrode_position_dict = electrode_position_data.get(fullid)
-                    if electrode_position_dict:
-                        tdt_position = report['tdt'][clus_id_report]
-                        side_of_implant_list = electrode_position_dict.get(side_of_implant)
-                        #convert list of dicts to a dataframe
-                        side_of_implant_df = pd.DataFrame(side_of_implant_list)
-                        #get the brain area
-                        channel_id_and_brain_area = side_of_implant_df[side_of_implant_df['TDT_NUMBER'] == tdt_position]
-                        brain_area = channel_id_and_brain_area['area'].values[0]
+            if 200 > clus >= 100 and fullid != 'F2003_Orecchiette':
+                clus_id_report = clus - 100
+            elif 300> clus >= 200 and fullid != 'F2003_Orecchiette':
+                clus_id_report = clus - 200
+            elif 400 > clus >= 300 and fullid != 'F2003_Orecchiette':
+                clus_id_report = clus - 300
+            else:
+                clus_id_report = clus
+            if clus in singleunitlist_copy:
+                unit_type = 'su'
+                #append to the dataframe
+                electrode_position_dict = electrode_position_data.get(fullid)
+                if electrode_position_dict:
+                    tdt_position = report['tdt'][clus_id_report]
+                    side_of_implant_list = electrode_position_dict.get(side_of_implant)
+                    #convert list of dicts to a dataframe
+                    side_of_implant_df = pd.DataFrame(side_of_implant_list)
+                    #get the brain area
+                    channel_id_and_brain_area = side_of_implant_df[side_of_implant_df['TDT_NUMBER'] == tdt_position]
+                    brain_area = channel_id_and_brain_area['area'].values[0]
 
-                        sorted_df_of_scores = sorted_df_of_scores.append(
-                                {'score_category': 'hit_vs_FA',
-                                 'cluster_id': clus,
-                                 'score': scores[f'talker{talker}'][comp][key_text][score_key][i],
-                                 'unit_type': unit_type, 'animal': fullid, 'stream': stream_id, 'recname': recname,
-                                 'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position,
-                                 'brain_area': brain_area}, ignore_index=True)
-                    elif fullid == 'F2003_Orecchiette':
-                        if 'mod' in stream:
-                            brain_area = 'PEG'
-                        elif 's2' in stream:
-                            brain_area = 'PEG'
-                        elif 's3' in stream:
-                            brain_area = 'MEG'
-                        tdt_position = -1
-                        #NEED TO FIGURE OUT WHAT stream NG_0 IS ON MYRIAD TODO
-                        try:
-                            sorted_df_of_scores = sorted_df_of_scores.append(
-                                {'score_category': 'hit_vs_FA',
-                                 'cluster_id': clus,
-                                 'score': scores[f'talker{talker}'][comp][key_text][score_key][i],
-                                 'unit_type': unit_type, 'animal': fullid, 'stream': stream_id, 'recname': recname,
-                                 'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position, 'brain_area': brain_area}, ignore_index=True)
-                        except Exception as e:
-                            print(e)
-                            continue
-
-
-
-                elif clus in multiunitlist_copy:
-                    unit_type = 'mua'
-                    #append to the dataframe
-                    electrode_position_dict = electrode_position_data.get(fullid)
-                    if electrode_position_dict:
-                        tdt_position = report['tdt'][clus_id_report]
-                        side_of_implant_list = electrode_position_dict.get(side_of_implant)
-                        #convert list of dicts to a dataframe
-                        side_of_implant_df = pd.DataFrame(side_of_implant_list)
-                        #get the brain area
-                        channel_id_and_brain_area = side_of_implant_df[side_of_implant_df['TDT_NUMBER'] == tdt_position]
-                        print(fullid, clus, tdt_position, channel_id_and_brain_area)
-                        try:
-                            brain_area = channel_id_and_brain_area['area'].values[0]
-                        except Exception as e:
-                            print(e)
-                            continue
-
-                        sorted_df_of_scores = sorted_df_of_scores.append(
-                                {'score_category': 'hit_vs_FA',
-                                 'cluster_id': clus,
-                                 'score': scores[f'talker{talker}'][comp][key_text][score_key][i],
-                                 'unit_type': unit_type, 'animal': fullid, 'stream': stream_id, 'recname': recname,
-                                 'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position,
-                                 'brain_area': brain_area}, ignore_index=True)
-                    elif fullid == 'F2003_Orecchiette':
-                        if 'mod' in stream:
-                            brain_area = 'PEG'
-                        elif 's2' in stream:
-                            brain_area = 'PEG'
-                        elif 's3' in stream:
-                            brain_area = 'MEG'
-                        tdt_position = -1
-                        stream_id = stream[-2:]
-
+                    sorted_df_of_scores = sorted_df_of_scores.append(
+                            {'score_category': 'hit_vs_FA',
+                             'cluster_id': clus,
+                             'score': scores[comp][score_key][i],
+                             'unit_type': unit_type, 'animal': fullid, 'stream': stream_id, 'recname': recname,
+                             'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position,
+                             'brain_area': brain_area}, ignore_index=True)
+                elif fullid == 'F2003_Orecchiette':
+                    if 'mod' in stream:
+                        brain_area = 'PEG'
+                    elif 's2' in stream:
+                        brain_area = 'PEG'
+                    elif 's3' in stream:
+                        brain_area = 'MEG'
+                    tdt_position = -1
+                    #NEED TO FIGURE OUT WHAT stream NG_0 IS ON MYRIAD TODO
+                    try:
                         sorted_df_of_scores = sorted_df_of_scores.append(
                             {'score_category': 'hit_vs_FA',
                              'cluster_id': clus,
                              'score': scores[f'talker{talker}'][comp][key_text][score_key][i],
                              'unit_type': unit_type, 'animal': fullid, 'stream': stream_id, 'recname': recname,
                              'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position, 'brain_area': brain_area}, ignore_index=True)
+                    except Exception as e:
+                        print(e)
+                        continue
 
-                elif clus in noiselist:
-                    pass
+
+
+            elif clus in multiunitlist_copy:
+                unit_type = 'mua'
+                #append to the dataframe
+                electrode_position_dict = electrode_position_data.get(fullid)
+                if electrode_position_dict:
+                    tdt_position = report['tdt'][clus_id_report]
+                    side_of_implant_list = electrode_position_dict.get(side_of_implant)
+                    #convert list of dicts to a dataframe
+                    side_of_implant_df = pd.DataFrame(side_of_implant_list)
+                    #get the brain area
+                    channel_id_and_brain_area = side_of_implant_df[side_of_implant_df['TDT_NUMBER'] == tdt_position]
+                    print(fullid, clus, tdt_position, channel_id_and_brain_area)
+                    try:
+                        brain_area = channel_id_and_brain_area['area'].values[0]
+                    except Exception as e:
+                        print(e)
+                        continue
+
+                    sorted_df_of_scores = sorted_df_of_scores.append(
+                            {'score_category': 'hit_vs_FA',
+                             'cluster_id': clus,
+                             'score': scores[comp][score_key][i],
+                             'unit_type': unit_type, 'animal': fullid, 'stream': stream_id, 'recname': recname,
+                             'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position,
+                             'brain_area': brain_area}, ignore_index=True)
+                elif fullid == 'F2003_Orecchiette':
+                    if 'mod' in stream:
+                        brain_area = 'PEG'
+                    elif 's2' in stream:
+                        brain_area = 'PEG'
+                    elif 's3' in stream:
+                        brain_area = 'MEG'
+                    tdt_position = -1
+                    stream_id = stream[-2:]
+
+                    sorted_df_of_scores = sorted_df_of_scores.append(
+                        {'score_category': 'hit_vs_FA',
+                         'cluster_id': clus,
+                         'score': scores[f'talker{talker}'][comp][key_text][score_key][i],
+                         'unit_type': unit_type, 'animal': fullid, 'stream': stream_id, 'recname': recname,
+                         'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position, 'brain_area': brain_area}, ignore_index=True)
+
+            elif clus in noiselist:
+                pass
 
 
 
