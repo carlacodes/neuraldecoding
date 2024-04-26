@@ -668,11 +668,28 @@ def main():
         # # plot_heatmap(df_all_naive, trained=False)
 
         data_trained_filtered = filter_for_units_used_in_first_analysis(df_all_trained, trained = True)
-        data_naive_filtered = filter_for_units_used_in_first_analysis(df_all_naive, trained = False)
         df_all_trained_filtered_permutation = filter_for_units_used_in_first_analysis(df_all_trained_permutation, trained = True)
-        df_all_naive_filtered_permutation = filter_for_units_used_in_first_analysis(df_all_naive_permutation, trained = False)
-
+        plot_scores_relative_to_permutation_scores(data_trained_filtered, df_all_trained_filtered_permutation)
     return
+
+def plot_scores_relative_to_permutation_scores(df_all, df_all_permutation):
+    #get the difference between the scores and the permutation scores, need to assert that the long unit id is the same
+    df_all = df_all.sort_values('long_unit_id')
+    df_all_permutation = df_all_permutation.sort_values('long_unit_id')
+
+    assert all(df_all['long_unit_id'] == df_all_permutation['long_unit_id']), "long_unit_id in both dataframes are not the same"
+
+    df_all['score_minus_permutation'] = df_all['score'] - df_all_permutation['score']
+    #find the fraction that are greater than 0
+    df_all['fraction_greater_than_zero'] = df_all['score_minus_permutation'] > 0
+    #get the fraction
+    frac_greater_than_zero = df_all['fraction_greater_than_zero'].sum() / len(df_all)
+    #plot the distribution of the scores minus the permutation scores
+    sns.histplot(df_all['score_minus_permutation'])
+    #get the mean of the scores minus the permutation scores
+    df_all['mean_score_minus_permutation'] = df_all.groupby('cluster_id')['score_minus_permutation'].transform('mean')
+    return
+
 
 
 
