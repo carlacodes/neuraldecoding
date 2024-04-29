@@ -55,7 +55,8 @@ def load_scores_and_filter(probewordlist,
         for probeword2 in probewordlist:
             singleunitlist_copy = singleunitlist.copy()
             multiunitlist_copy = multiunitlist.copy()
-            key_text = f'{probeword1[0]}_{probeword1[0]}_{probeword2[0]}_{probeword2[0]}'
+            # key_text = f'{probeword1[0]}_{probeword1[0]}_{probeword2[0]}_{probeword2[0]}'
+            key_text = f'{probeword1[0]}_testedon_{probeword2[0]}'
 
             #load the original clusters to split from the json file
             json_file_path = f'F:\split_cluster_jsons/{fullid}/cluster_split_list.json'
@@ -639,12 +640,12 @@ def main():
                     df_all_permutation = pd.concat([df_all_permutation, df_instance_permutation])
 
                 elif animal == 'F1815_Cruella' or animal == 'F1902_Eclair':
-                    df_instance = load_scores_and_filter(probewordlist, saveDir=f'G:/results_distvdist_21032024/{animal}/{rec_name_unique}/{streamtext}/',
+                    df_instance = load_scores_and_filter(probewordlist, saveDir=f'G:/results_compareonprobeword_22042024/{animal}/{rec_name_unique}/{streamtext}/',
                                                                  ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                  multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal, report = report[animal][stream], pitchshift_text=pitchshift_option)
                     df_all = pd.concat([df_all, df_instance])
 
-                    df_instance_permutation = load_scores_and_filter(probewordlist, saveDir=f'G:/results_distvdist_21032024/{animal}/{rec_name_unique}/{streamtext}/',
+                    df_instance_permutation = load_scores_and_filter(probewordlist, saveDir=f'G:/results_compareonprobeword_22042024/{animal}/{rec_name_unique}/{streamtext}/',
                                                                              ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                              multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal, report = report[animal][stream]
                                                                              , permutation_scores=True, pitchshift_text=pitchshift_option)
@@ -653,7 +654,7 @@ def main():
                 elif animal == 'F2003_Orecchiette':
                     # try:
                     df_instance = load_scores_and_filter(probewordlist,
-                                                                 saveDir=f'G:/results_distvdist_21032024/{animal}/{rec_name_unique}/',
+                                                                 saveDir=f'G:/results_compareonprobeword_22042024/{animal}/{rec_name_unique}/',
                                                                  ferretname=animal_text,
                                                                  singleunitlist=singleunitlist[animal][stream],
                                                                  multiunitlist=multiunitlist[animal][stream],
@@ -663,7 +664,7 @@ def main():
 
                     df_all = pd.concat([df_all, df_instance])
                     df_instance_permutation = load_scores_and_filter(probewordlist,
-                                                                             saveDir=f'G:/results_distvdist_21032024/{animal}/{rec_name_unique}/',
+                                                                             saveDir=f'G:/results_compareonprobeword_22042024/{animal}/{rec_name_unique}/',
                                                                              ferretname=animal_text,
                                                                              singleunitlist=singleunitlist[animal][stream],
                                                                              multiunitlist=multiunitlist[animal][stream],
@@ -674,12 +675,12 @@ def main():
                     df_all_permutation = pd.concat([df_all_permutation, df_instance_permutation])
 
                 else:
-                    df_instance = load_scores_and_filter(probewordlist, saveDir=f'G:/results_distvdist_21032024/{animal}/{rec_name_unique}/{streamtext}/',
+                    df_instance = load_scores_and_filter(probewordlist, saveDir=f'G:/results_compareonprobeword_22042024/{animal}/{rec_name_unique}/{streamtext}/',
                                                                  ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                  multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal, report = report[animal][stream], pitchshift_text=pitchshift_option)
                     df_all = pd.concat([df_all, df_instance])
 
-                    df_instance_permutation = load_scores_and_filter(probewordlist, saveDir=f'G:/results_distvdist_21032024/{animal}/{rec_name_unique}/{streamtext}/',
+                    df_instance_permutation = load_scores_and_filter(probewordlist, saveDir=f'G:/results_compareonprobeword_22042024/{animal}/{rec_name_unique}/{streamtext}/',
                                                                              ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
                                                                              multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal, report = report[animal][stream]
                                                                              , permutation_scores=True, pitchshift_text=pitchshift_option)
