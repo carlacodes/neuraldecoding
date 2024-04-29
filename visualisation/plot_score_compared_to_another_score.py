@@ -126,13 +126,9 @@ def load_scores_and_filter(probewordlist,
             for talker in [1]:
                 comparisons = [comp for comp in scores[f'talker{talker}']]
                 for comp in comparisons:
-                    if probewordindex_1 == '1' or probewordindex_2 == '1':
-                        key_text = f'{pitchshift_text}'
-                    else:
-                        key_text = f'{probeword1[0]}_{probeword1[0]}_{probeword2[0]}_{probeword2[0]}'
-                        #check if the key_text is in the scores
-                        if key_text not in scores[f'talker{talker}'][comp] :
-                            key_text = f'{probeword2[0]}_{probeword2[0]}_{probeword1[0]}_{probeword1[0]}'
+
+                    key_text = f'{probeword1[0]}_testedon_{probeword2[0]}'
+
 
                     for i, clus in enumerate(scores[f'talker{talker}'][comp][key_text]['cluster_id']):
                         #check if clus is greater than 100
@@ -182,12 +178,8 @@ def load_scores_and_filter(probewordlist,
             for talker in [1]:
                 comparisons = [comp for comp in scores[f'talker{talker}']]
                 for comp in comparisons:
-                    if probewordindex_1 == '1' or probewordindex_2 == '1':
-                        key_text = f'{pitchshift_text}'
-                    else:
-                        key_text = f'{probeword1[0]}_{probeword1[0]}_{probeword2[0]}_{probeword2[0]}'
-                        if key_text not in scores[f'talker{talker}'][comp] :
-                            key_text = f'{probeword2[0]}_{probeword2[0]}_{probeword1[0]}_{probeword1[0]}'
+                    key_text = f'{probeword1[0]}_testedon_{probeword2[0]}'
+
                     for i, clus in enumerate(scores[f'talker{talker}'][comp][key_text]['cluster_id']):
                         stream_small = stream[-4:]
                         clust_text = str(clus)+'_'+fullid+'_'+recname+'_'+stream_small
@@ -532,7 +524,7 @@ def main():
     probewordlist =[ (1,1), (2,2), (3,3), (4,4),(5,5), (6,6), (7,7), (8,8), (9,9), (10,10)]
     probewordlist_l74 = [(1,1), (10, 10), (2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (11, 11), (12, 12),
                              (14, 14)]
-    animal_list = [ 'F1604_Squinty', 'F1901_Crumble', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala',  'F2003_Orecchiette',]
+    animal_list = [ 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella',]
     # animal_list = ['F1902_Eclair']
     report = {}
     singleunitlist = {}
@@ -715,14 +707,10 @@ def main():
         # plot_heatmap(df_all_naive, trained=False)
 
         data_trained_filtered = filter_for_units_used_in_first_analysis(df_all_trained, trained = True)
-        data_naive_filtered = filter_for_units_used_in_first_analysis(df_all_naive, trained = False)
         df_all_trained_filtered_permutation = filter_for_units_used_in_first_analysis(df_all_trained_permutation, trained = True)
-        df_all_naive_filtered_permutation = filter_for_units_used_in_first_analysis(df_all_naive_permutation, trained = False)
 
         plot_heatmap_with_comparison(data_trained_filtered, df_all_trained_filtered_permutation, trained=True, pitchshift_option=pitchshift_option)
-        plot_heatmap_with_comparison(data_naive_filtered, df_all_naive_filtered_permutation, trained=False, pitchshift_option=pitchshift_option)
         plot_heatmap(data_trained_filtered, trained = True, pitchshift_option=pitchshift_option)
-        plot_heatmap(data_naive_filtered, trained=False, pitchshift_option=pitchshift_option)
     return
 
 
