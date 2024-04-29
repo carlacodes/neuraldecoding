@@ -95,7 +95,7 @@ def load_scores_and_filter(probewordlist,
                     except Exception as e:
                         print(e)
                         continue
-                    original_to_split_cluster_ids = scores['talker1']['target_vs_probe'][key_text]['cluster_id']
+                    original_to_split_cluster_ids = scores['talker1']['target_vs_probe_control'][key_text]['cluster_id']
                     #if all of them need splitting
                 elif original_to_split_cluster_ids:
                     #TODO: not sure if this elif needed
