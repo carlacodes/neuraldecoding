@@ -14,8 +14,10 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], probeword_compare=[22
                     window=[0, 0.5]):
     if talker == 1:
         probeword = probewords[0]
+        probeword_compare = probeword_compare[0]
     else:
         probeword = probewords[1]
+        probeword_compare = probeword_compare[1]
     binsize = 0.01
 
     clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
@@ -76,7 +78,7 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], probeword_compare=[22
         raster_probe['trial_num'] = raster_probe['trial_num'] + np.max(raster_target['trial_num'])
         raster_probe_test['trial_num'] = raster_probe_test['trial_num'] + np.max(raster_target['trial_num'])
 
-        if len(raster_probe) == 0 or len(raster_probe_test):
+        if len(raster_probe) == 0 or len(raster_probe_test) == 0:
             print('no relevant spikes for this probe word:' + str(probeword) + ' and cluster: ' + str(cluster_id))
             continue
 
@@ -86,8 +88,7 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], probeword_compare=[22
 
         #     continue
         # sample with replacement from target trials and probe trials to boostrap scores and so distributions are equal
-        raster_targ_reshaped = np.empty([])
-        raster_probe_reshaped = np.empty([])
+
         bins = np.arange(window[0], window[1], binsize)
 
         unique_trials_targ = np.unique(raster_target['trial_num'])
@@ -96,6 +97,8 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], probeword_compare=[22
         raster_targ_reshaped = np.empty([len(unique_trials_targ), len(bins) - 1])
         raster_probe_reshaped = np.empty([len(unique_trials_probe), len(bins) - 1])
         raster_probe_reshaped_test = np.empty([len(unique_trials_probe_test), len(bins) - 1])
+
+
         count = 0
         for trial in (unique_trials_targ):
             raster_targ_reshaped[count, :] = \
@@ -159,10 +162,6 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], probeword_compare=[22
 
         print('now length of raster_probe is:')
         print(len(raster_probe_reshaped))
-        stim0 = np.full(len(raster_target), 0)  # 0 = target word
-        stim1 = np.full(len(raster_probe), 1)  # 1 = probe word
-
-        stim1_compare = np.full(len(raster_probe_test), 1)  # 1 = probe word
 
         stim0 = np.full(len(raster_targ_reshaped), 0)  # 0 = target word
         stim1 = np.full(len(raster_probe_reshaped), 1)  # 1 = probe word
@@ -215,8 +214,9 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], probeword_compare=[22
         perm_outsideloopbalacclist = []
         compare_pitch_outsideloopacclist = []
         compare_pitch_outsideloopbalacclist = []
-
-        for i in range(0, 1):
+        print('before lstm loop')
+        for i in range(1):
+            print('running first iteration of i: ' + str(i))
             accuracy_list = []
             bal_ac_list = []
             perm_accuracy_list = []
@@ -238,7 +238,7 @@ def target_vs_probe(blocks, talker=1, probewords=[20, 22], probeword_compare=[22
                 y_pred = np.argmax(y_pred, axis=1)
 
                 y_pred_compare = model_lstm.model(X_compare, training=False)
-                y_pred_compare = np.argmax(y_compare, axis=1)
+                y_pred_compare = np.argmax(y_pred_compare, axis=1)
 
                 accuracy_compare = sklearn.metrics.accuracy_score(y_compare.flatten(), y_pred_compare.flatten())
                 balancedacscore_compare = sklearn.metrics.balanced_accuracy_score(y_compare.flatten(),
@@ -304,8 +304,8 @@ def run_classification(datapath, ferretid, ferretid_fancy='F1902_Eclair'):
     scores = {}
     probewords_list = [(2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10)]
     probewords_list_compare = [(2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10)]
-    recname = str(datapath).split('/')[-4]
-    stream_used = str(datapath).split('/')[-3]
+    recname = str(datapath).split('\\')[-4]
+    stream_used = str(datapath).split('\\')[-3]
     stream_used = stream_used[-4:]
 
     tarDir = Path(
@@ -363,7 +363,6 @@ def run_classification(datapath, ferretid, ferretid_fancy='F1902_Eclair'):
 
 
 def main():
-
     datapath_big = Path(f'D:\ms4output_16102023\F1815_Cruella/')
     ferret_id_fancy = datapath_big.parts[-1]
     ferret_id = ferret_id_fancy.split('_')[1]
