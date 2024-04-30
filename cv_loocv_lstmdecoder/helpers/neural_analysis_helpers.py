@@ -18,7 +18,7 @@ from collections import Counter
 from probeinterface import generate_multi_columns_probe
 from instruments.io.archive.phywarpio import PhyWarpIO
 from instruments.io.archive.phynpxlio import PhyNpxlIO
-from helpers.analysis_helpers import apply_filter
+from analysisscriptsmodcg.cv_loocv_lstmdecoder.helpers.neural_analysis_helpers import apply_filter
 
 
 def extractDataForTrialStruct(file):
