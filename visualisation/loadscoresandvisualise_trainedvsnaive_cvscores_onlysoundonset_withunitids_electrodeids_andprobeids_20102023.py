@@ -1448,9 +1448,9 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
     #now plot the scores by aeg, peg, meg for the trained animals
     #initialise a dataframe for each of the areas
-    df_full = pd.DataFrame(columns=['ID', 'ProbeWord', 'Score', 'Below-chance', 'BrainArea', 'SingleUnit'])
+    df_full = pd.DataFrame(columns=['ID', 'ProbeWord', 'Score', 'Below-chance', 'BrainArea', 'SingleUnit', 'PermutationScore'])
 
-    df_full_pitchsplit = pd.DataFrame(columns=['ID', 'ProbeWord', 'Score', 'Below-chance', 'BrainArea', 'PitchShift', 'SingleUnit'])
+    df_full_pitchsplit = pd.DataFrame(columns=['ID', 'ProbeWord', 'Score', 'Below-chance', 'BrainArea', 'PitchShift', 'SingleUnit', 'PermutationScore'])
 
     for unit_id in scoredict_by_unit_meg.keys():
         example_unit = scoredict_by_unit_meg[unit_id]
@@ -1563,6 +1563,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
 
                 if len(su_list) > 0:
                     # calculate the score
+                    #because the su_list is just length of 1 -- already divided by pitch
                     score = np.mean(su_list)
                     # compare with the permutation data
                     su_list_perm = scoredict_by_unit_perm_meg_pitchsplit[unit_id][probeword][pitchshiftkey]['su_list']
@@ -1574,7 +1575,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     # add to the dataframe
                     df_full_pitchsplit = df_full_pitchsplit.append(
                         {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
-                         'BrainArea': 'MEG', 'PitchShift': pitchshiftnum, 'SingleUnit': int(1)}, ignore_index=True)
+                         'BrainArea': 'MEG', 'PitchShift': pitchshiftnum, 'SingleUnit': int(1), 'PermutationScore': su_list_perm}, ignore_index=True)
                 elif len(mu_list) > 0:
                     # calculate the score
                     score = np.mean(mu_list)
@@ -1588,7 +1589,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     # add to the dataframe
                     df_full_pitchsplit = df_full_pitchsplit.append(
                         {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
-                         'BrainArea': 'MEG', 'PitchShift': pitchshiftnum, 'SingleUnit': 0}, ignore_index=True)
+                         'BrainArea': 'MEG', 'PitchShift': pitchshiftnum, 'SingleUnit': 0, 'PermutationScore': su_list_perm}, ignore_index=True)
     for unit_id in scoredict_by_unit_peg_pitchsplit.keys():
         example_unit = scoredict_by_unit_peg_pitchsplit[unit_id]
         for probeword in example_unit.keys():
@@ -1614,7 +1615,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     # add to the dataframe
                     df_full_pitchsplit = df_full_pitchsplit.append(
                         {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
-                         'BrainArea': 'PEG', 'PitchShift': pitchshiftnum, 'SingleUnit': int(1)}, ignore_index=True)
+                         'BrainArea': 'PEG', 'PitchShift': pitchshiftnum, 'SingleUnit': int(1), 'PermutationScore': su_list_perm}, ignore_index=True)
                 elif len(mu_list) > 0:
                     # calculate the score
                     score = np.mean(mu_list)
@@ -1628,7 +1629,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     # add to the dataframe
                     df_full_pitchsplit = df_full_pitchsplit.append(
                         {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
-                         'BrainArea': 'PEG', 'PitchShift': pitchshiftnum, 'SingleUnit': 0}, ignore_index=True)
+                         'BrainArea': 'PEG', 'PitchShift': pitchshiftnum, 'SingleUnit': 0, 'PermutationScore': su_list_perm}, ignore_index=True)
     for unit_id in scoredict_by_unit_aeg_pitchsplit.keys():
         example_unit = scoredict_by_unit_aeg_pitchsplit[unit_id]
         for probeword in example_unit.keys():
@@ -1668,7 +1669,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     # add to the dataframe
                     df_full_pitchsplit = df_full_pitchsplit.append(
                         {'ID': unit_id, 'ProbeWord': probeword, 'Score': score, 'Below-chance': below_chance,
-                         'BrainArea': 'PEG', 'PitchShift': pitchshiftnum, 'SingleUnit': 0}, ignore_index=True)
+                         'BrainArea': 'PEG', 'PitchShift': pitchshiftnum, 'SingleUnit': 0, 'PermutationScore': su_list_perm}, ignore_index=True)
 
     #plot as a swarm plot with the below chance as a different colour
 
@@ -2299,6 +2300,10 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_full_pitchsplit_plot = df_full_pitchsplit_highsubset[df_full_pitchsplit_highsubset['GenFrac'].notna()]
     df_full_pitchsplit_plot = df_full_pitchsplit_plot.drop_duplicates(subset=['ID'])
 
+    df_full_pitchsplit_csv_save = df_full_pitchsplit_highsubset[df_full_pitchsplit_highsubset['GenFrac'].notna()]
+    df_full_pitchsplit_csv_save =df_full_pitchsplit_csv_save[df_full_pitchsplit_csv_save['GenIndex'] <= 0.2]
+
+
     # decoding score over all words vs generalisability
 
 
@@ -2306,6 +2311,10 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_full_naive_pitchsplit_plot = create_gen_frac_and_index_variable(df_full_naive_pitchsplit, high_score_threshold=False, sixty_score_threshold = False,
                                                               need_ps=True)
     df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['GenFrac'].notna()]
+    df_full_pitchsplit_csv_naive_save = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['GenFrac'].notna()]
+    df_full_pitchsplit_csv_naive_save = df_full_pitchsplit_csv_naive_save[df_full_pitchsplit_csv_naive_save['GenIndex'] <= 0.2]
+
+
     df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot.drop_duplicates(subset=['ID'])
 
 
@@ -2316,6 +2325,39 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     #make sure the mean score is over 60%
     df_full_pitchsplit_plot = df_full_pitchsplit_plot[df_full_pitchsplit_plot['MeanScore'] >= 0.60]
     df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['MeanScore'] >= 0.60]
+
+    #add the unit ID and stream name to the dataframe
+    for i in range(0, len(df_full_pitchsplit_csv_save)):
+        full_id = df_full_pitchsplit_csv_save.iloc[i]['ID']
+        components = full_id.split('_')
+        unit_id = components[0]
+        # remove the unit id from the full_id for the rec_name
+        rec_name = components[3:-2]
+        # concatenate the rec_name
+        rec_name = '_'.join(rec_name)
+        stream = full_id[-4:]
+        # append to a dataframe
+        df_full_pitchsplit_csv_save.at[i, 'ID_small'] = unit_id
+        df_full_pitchsplit_csv_save.at[i, 'rec_name'] = rec_name
+        df_full_pitchsplit_csv_save.at[i, 'stream'] = stream
+    for i in range(0, len(df_full_pitchsplit_csv_naive_save)):
+        full_id = df_full_pitchsplit_csv_naive_save.iloc[i]['ID']
+        components = full_id.split('_')
+        unit_id = components[0]
+        # remove the unit id from the full_id for the rec_name
+        rec_name = components[3:-2]
+        # concatenate the rec_name
+        rec_name = '_'.join(rec_name)
+        stream = full_id[-4:]
+        # append to a dataframe#
+        df_full_pitchsplit_csv_naive_save.at[i, 'ID_small'] = unit_id
+        df_full_pitchsplit_csv_naive_save.at[i, 'rec_name'] = rec_name
+        df_full_pitchsplit_csv_naive_save.at[i, 'stream'] = stream
+
+    df_full_pitchsplit_csv_save.to_csv('G:/neural_chapter/csvs/units_topgenindex_allanimalstrained.csv')
+    df_full_pitchsplit_csv_naive_save.to_csv('G:/neural_chapter/csvs/units_topgenindex_allanimalsnaive.csv')
+
+    #export the unit IDs
 
 
     fig, ax = plt.subplots(figsize=(10, 6))
