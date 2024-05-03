@@ -67,7 +67,7 @@ def run_cleaning_of_rasters(blocks, datapath):
     return new_blocks
 def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_3', phydir = 'phy', animal = 'F1702_Zola', brain_area = [], gen_psth = False, csv_info = []):
 
-    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_nothreshold_ANDPSTH_2011/{phydir}/{stream}/')
+    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_nothreshold_ANDPSTH_03052024/{phydir}/{stream}/')
     #load the high generalizable clusters, csv file
 
     saveDir = tarDir
@@ -84,7 +84,10 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
         cluster_info = csv_info[csv_info['ID_small'] == cluster_id]
         fig, ax = plt.subplots(len(probewords_list), 2, figsize=(10, 30))
         count = 0
-        mean_score_for_cluster = cluster_info['mean_score'].values[0]
+        mean_score_for_cluster = cluster_info['MeanScore'].values[0]
+        mean_perm_score_for_cluster = cluster_info['PermutationScore'].values[:]
+        #convert to numpy array
+        mean_perm_score_for_cluster = np.array(mean_perm_score_for_cluster)
 
         for idx, probewords in enumerate(probewords_list):
             for pitchshift_option in [True, False]:
@@ -287,7 +290,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
         plt.subplots_adjust(wspace=0.3, hspace=1.0)
 
         if gen_psth:
-            plt.suptitle(f'PSTHs for {animal}, unit id: {cluster_id}, stream: {stream}, mean score: {mean_score_for_cluster}', fontsize=15)
+            plt.suptitle(f'PSTHs for {animal}, unit id: {cluster_id}, stream: {stream}, mean score: {mean_score_for_cluster}, mean permutation score: {mean_perm_score_for_cluster}', fontsize=15)
 
             plt.savefig(
                 str(saveDir) + f'/PSTH_targdist_grid_clusterid_{cluster_id}_{stream}_' + str(
@@ -296,7 +299,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
                 str(saveDir) + f'/PSTH_targdist_grid_clusterid_{cluster_id}_{stream}_' + str(
                     cluster_id) + '.svg', bbox_inches='tight')
         else:
-            plt.suptitle(f'Rasters for {animal}, unit id: {cluster_id}, stream: {stream}, mean score: {mean_score_for_cluster}', fontsize=15)
+            plt.suptitle(f'Rasters for {animal}, unit id: {cluster_id}, stream: {stream}, mean score: {mean_score_for_cluster}, mean permutation score: {mean_perm_score_for_cluster}', fontsize=15)
 
             plt.savefig(
                 str(saveDir) + f'/targdist_grid_clusterid_{cluster_id}_{stream}_' + str(

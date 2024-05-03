@@ -1274,7 +1274,10 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                         # Add 'channel_id'
                         scoredict_byunit_trained_perm[unit_id][probewordtext]['mu_list'].append(
                             dict['mu_list'][key][talker_key][count])
-
+                        mu_list = dict['mu_list'][key][talker_key][count]
+                        #check if mu_list is a list
+                        if isinstance(mu_list, list):
+                            print(f'list detected, mu_list:{mu_list}')
                         scoredict_byunit_trained_perm_pitchsplit[unit_id][probewordtext][key]['mu_list'].append(
                             dict['mu_list'][key][talker_key][count])
                         scoredict_byunit_trained_perm[unit_id][probewordtext]['channel_id'].append(
@@ -1287,7 +1290,7 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                         # Update 'channel_id'
                     count = count + 1
     #load the json file which has the electrode positions
-    with open('D:\spkvisanddecodeproj2/analysisscriptsmodcg/json_files\electrode_positions.json') as f:
+    with open('D:/spkvisanddecodeproj2/analysisscriptsmodcg/json_files/electrode_positions.json') as f:
         electrode_position_data = json.load(f)
     scoredict_by_unit_meg = {}
     scoredict_by_unit_meg_pitchsplit = {}
