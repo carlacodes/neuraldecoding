@@ -2313,6 +2313,10 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['GenFrac'].notna()]
     df_full_pitchsplit_csv_naive_save = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['GenFrac'].notna()]
     df_full_pitchsplit_csv_naive_save = df_full_pitchsplit_csv_naive_save[df_full_pitchsplit_csv_naive_save['GenIndex'] <= 0.2]
+    #reset the index
+    df_full_pitchsplit_csv_naive_save = df_full_pitchsplit_csv_naive_save.reset_index(drop = True)
+    df_full_pitchsplit_csv_save = df_full_pitchsplit_csv_save.reset_index(drop = True)
+
 
 
     df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot.drop_duplicates(subset=['ID'])
@@ -2353,6 +2357,10 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
         df_full_pitchsplit_csv_naive_save.at[i, 'ID_small'] = unit_id
         df_full_pitchsplit_csv_naive_save.at[i, 'rec_name'] = rec_name
         df_full_pitchsplit_csv_naive_save.at[i, 'stream'] = stream
+
+    #order df_full_pitchsplit_csv_save by score
+    df_full_pitchsplit_csv_save = df_full_pitchsplit_csv_save.sort_values(by = 'MeanScore', ascending = False)
+    df_full_pitchsplit_csv_naive_save = df_full_pitchsplit_csv_naive_save.sort_values(by = 'MeanScore', ascending = False)
 
     df_full_pitchsplit_csv_save.to_csv('G:/neural_chapter/csvs/units_topgenindex_allanimalstrained.csv')
     df_full_pitchsplit_csv_naive_save.to_csv('G:/neural_chapter/csvs/units_topgenindex_allanimalsnaive.csv')
