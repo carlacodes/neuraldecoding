@@ -14,6 +14,7 @@ from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import mean_squared_error
 import json
+from helpers.vis_stats_helpers import run_mixed_effects_on_dataframe, run_anova_on_dataframe, create_gen_frac_variable, runlgbmmodel_score, create_gen_frac_and_index_variable
 
 def find_repeating_substring(text):
     text_length = len(text)
@@ -694,19 +695,32 @@ def main():
         df_merged = df_all_reindexed.join(df_all_permutation_reindexed, how='left')
         #create a new column of naive based on the animal name
         df_merged['Naive'] = df_merged['animal'].apply(lambda x: False if x in ['F1604_Squinty', 'F1606_Windolene', 'F1702_Zola', 'F1815_Cruella'] else True)
-
-        # Use join to merge the dataframes
-
+        #make an ID column that combines the cluster id, stream, and recname
+        df_merged['ID'] = df_merged['cluster_id'].astype(str) + '_' + df_merged['stream'].astype(str) + '_' + df_merged['recname'].astype(str)
+        #also make a Below-chance column that is True if the score is below permutation score
+        df_merged['Below-chance'] = df_merged['score'] < df_merged['score_permutation']
+        #rename brain area to BrainArea
+        df_merged = df_merged.rename(columns={'brain_area': 'BrainArea'})
     return df_merged
+def color_by_probeword(probeword):
+    return probe_word_palette[df_full_naive['ProbeWord'].unique().tolist().index(probeword)]
 
 def plot_major_analysis(df_merged):
-    # plot as a swarm plot with the below chance as a different colour
-    # do the same for the naive animals
+    # df_full represents trained animals, df_full_naive represents naive animals
+    df_full = df_merged[df_merged['Naive'] == False]
+    df_full_naive = df_merged[df_merged['Naive'] == True]
     for unit_id in df_full_naive['ID']:
         df_full_unit_naive = df_full_naive[df_full_naive['ID'].str.contains(unit_id)]
         # check if all the probe words are below chance
         if np.sum(df_full_unit_naive['Below-chance']) == len(df_full_unit_naive['Below-chance']):
             df_full_naive = df_full_naive[df_full_naive['ID'] != unit_id]
+    #apply the same thing to the trained animals
+    for unit_id in df_full['ID']:
+        df_full_unit_trained = df_full[df_full['ID'].str.contains(unit_id)]
+        # check if all the probe words are below chance
+        if np.sum(df_full_unit_trained['Below-chance']) == len(df_full_unit_trained['Below-chance']):
+            df_full = df_full[df_full['ID'] != unit_id]
+
 
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
     sns.stripplot(x='BrainArea', y='Score', hue='Below-chance', data=df_full_naive, ax=ax, alpha=0.5)
@@ -721,8 +735,6 @@ def plot_major_analysis(df_merged):
     probe_word_palette = sns.color_palette("Set2", n_colors=len(df_full['ProbeWord'].unique()))
 
     # Define a function to apply different colors for ProbeWords
-    def color_by_probeword(probeword):
-        return probe_word_palette[df_full_naive['ProbeWord'].unique().tolist().index(probeword)]
 
     # Filter the DataFrame for above and below chance scores
     df_above_chance_naive = df_full_naive[df_full_naive['Below-chance'] == 0]
