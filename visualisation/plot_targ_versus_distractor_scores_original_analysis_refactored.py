@@ -276,7 +276,7 @@ def load_scores_and_filter(probewordlist,
                                     continue
 
                                 sorted_df_of_scores = sorted_df_of_scores.append(
-                                        {'probeword1': probeword1_input_text[0], 'probeword2': probeword2_input_text[0],
+                                        {'probeword1': probeword1_input_text[0], 'pitchshift': cond,
                                          'cluster_id': clus,
                                          'score': scores[f'talker{talker}'][comp][key_text][score_key][i],
                                          'unit_type': unit_type, 'animal': fullid, 'stream': stream_id, 'recname': recname,
@@ -395,40 +395,6 @@ def runboostedregressiontreeforlstmscore(df_use):
     labels = [item.get_text() for item in ax.get_yticklabels()]
     print(labels)
 
-
-def load_animal_electrode_data(animal, stream):
-    with open('D:\spkvisanddecodeproj2/analysisscriptsmodcg/json_files\electrode_positions.json') as f:
-        electrode_position_data = json.load(f)
-
-    #load the corresponding channel_id
-    if 'F1604_Squinty' in animal:
-        animal = 'F1604_Squinty'
-        side = 'left'
-    elif 'F1606_Windolene' in animal:
-        animal = 'F1606_Windolene'
-    elif 'F1702_Zola' in animal:
-        animal = 'F1702_Zola'
-    elif 'F1815_Cruella' in animal:
-        animal = 'F1815_Cruella'
-    elif 'F1901_Crumble' in animal:
-        animal = 'F1901_Crumble'
-    elif 'F1902_Eclair' in animal:
-        animal = 'F1902_Eclair'
-    elif 'F1812_Nala' in animal:
-        animal = 'F1812_Nala'
-    elif 'F2003_Orecchiette' in animal:
-        animal = 'F2003_Orecchiette'
-
-
-    if 'BB_3' in side and animal!='F1604_Squinty':
-        side = 'right'
-    elif 'BB_2' in unit_id and animal!='F1604_Squinty':
-        side = 'right'
-    elif 'BB_4' in unit_id:
-        side = 'left'
-    elif 'BB_5' in unit_id:
-        side = 'left'
-    return
 def load_classified_report(path):
     ''' Load the classified report
     :param path: path to the report
@@ -523,9 +489,9 @@ def main():
     path_list = {}
     for animal in animal_list:
         if animal == 'F2003_Orecchiette':
-            path = Path('G:\F2003_Orecchiette/')
+            path = Path('G:/F2003_Orecchiette/')
         else:
-            path = Path('D:\ms4output_16102023/' + animal + '/')
+            path = Path('D:/ms4output_16102023/' + animal + '/')
         path_list[animal] = [path for path in path.glob('**/quality metrics.csv')]
         #get the parent directory of each path
         path_list[animal] = [path.parent for path in path_list[animal]]
@@ -562,17 +528,19 @@ def main():
             for stream in report[animal]:
                 dictoutput[animal][stream] = {}
                 animal_text = animal.split('_')[1]
+                #make it lowercase
+                animal_text = animal_text.lower()
                 if animal =='F2003_Orecchiette':
                     rec_name_unique = stream
                 else:
                     if 'BB_2' in stream:
-                        streamtext = 'BB_2'
+                        streamtext = 'bb2'
                     elif 'BB_3' in stream:
-                        streamtext = 'BB_3'
+                        streamtext = 'bb3'
                     elif 'BB_4' in stream:
-                        streamtext = 'BB_4'
+                        streamtext = 'bb4'
                     elif 'BB_5' in stream:
-                        streamtext = 'BB_5'
+                        streamtext = 'bb5'
                     #remove F number character from animal name
                     max_length = len(stream) // 2
                     for length in range(1, max_length + 1):
@@ -693,14 +661,7 @@ def main():
         labels = [ 'F1901_Crumble', 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala']
 
         colors = ['purple', 'magenta', 'darkturquoise', 'olivedrab', 'steelblue', 'darkcyan', 'darkorange']
-        # plot_heatmap(df_all_trained, trained = True)
-        # plot_heatmap(df_all_naive, trained=False)
 
-        data_trained_filtered = filter_for_units_used_in_first_analysis(df_all_trained, trained = True)
-        df_all_trained_filtered_permutation = filter_for_units_used_in_first_analysis(df_all_trained_permutation, trained = True)
-
-        plot_heatmap_with_comparison(data_trained_filtered, df_all_trained_filtered_permutation, trained=True, pitchshift_option=pitchshift_option)
-        plot_heatmap(data_trained_filtered, trained = True, pitchshift_option=pitchshift_option)
     return
 
 
@@ -832,21 +793,6 @@ def plot_heatmap_with_comparison(df_in, df_in_perm, trained = True, pitchshift_o
     return
 
 
-def filter_for_units_used_in_first_analysis(data_in, trained = True):
-    if trained == True:
-        #filter for the units used in the first analysis
-        #read the input CSV data
-        decoding_scores = pd.read_csv('G:/neural_chapter/trained_animals_decoding_scores.csv')
-    else:
-        decoding_scores = pd.read_csv('G:/neural_chapter/naive_animals_decoding_scores.csv')
-    #get the unique UNIT ids from the input data
-    data_in['cluster_id_int'] = data_in['cluster_id'].astype(int)
-    #round the cluster id to the nearest 1
-    data_in['cluster_id'] = data_in['cluster_id_int'].round()
-    data_in['long_unit_id'] = data_in['cluster_id'].astype(str)+'_' +data_in['animal']+'_'+ data_in['recname'] + '_' + data_in['stream']
-    #filter so only units in decoding scores are in data_in
-    data_in_filtered = data_in[data_in['long_unit_id'].isin(decoding_scores['ID'])]
-    return data_in_filtered
 
 
 
