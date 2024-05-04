@@ -358,12 +358,26 @@ def runlgbmmodel_score(df_use, optimization = False):
     df_use['ID'] = pd.Categorical(df_use['ID'],categories=unique_IDs, ordered=True)
 
     #relabel the probe word labels to be the same as the paper
-    df_use['ProbeWord'] = df_use['ProbeWord'].replace({ '(2,2)': 'craft', '(3,3)': 'in contrast to', '(4,4)': 'when a', '(5,5)': 'accurate', '(6,6)': 'pink noise', '(7,7)': 'of science', '(8,8)': 'rev. instruments', '(9,9)': 'boats', '(10,10)': 'today',
-        '(13,13)': 'sailor', '(15,15)': 'but', '(16,16)': 'researched', '(18,18)': 'took', '(19,19)': 'the vast', '(20,20)': 'today', '(21,21)': 'he takes', '(22,22)': 'becomes', '(23,23)': 'any', '(24,24)': 'more'})
+    try:
+        df_use['ProbeWord'] = df_use['ProbeWord'].replace({ '(2,2)': 'craft', '(3,3)': 'in contrast to', '(4,4)': 'when a', '(5,5)': 'accurate', '(6,6)': 'pink noise', '(7,7)': 'of science', '(8,8)': 'rev. instruments', '(9,9)': 'boats', '(10,10)': 'today',
+            '(13,13)': 'sailor', '(15,15)': 'but', '(16,16)': 'researched', '(18,18)': 'took', '(19,19)': 'the vast', '(20,20)': 'today', '(21,21)': 'he takes', '(22,22)': 'becomes', '(23,23)': 'any', '(24,24)': 'more'})
+    # df_use['ProbeWord'] = df_use['ProbeWord'].replace(
+    #     {2.0: 'craft', '(3,3)': 'in contrast to', '(4,4)': 'when a', '(5,5)': 'accurate', '(6,6)': 'pink noise',
+    #      '(7,7)': 'of science', '(8,8)': 'rev. instruments', '(9,9)': 'boats', '(10,10)': 'today',
+    #      '(13,13)': 'sailor', '(15,15)': 'but', '(16,16)': 'researched', '(18,18)': 'took', '(19,19)': 'the vast',
+    #      '(20,20)': 'today', '(21,21)': 'he takes', '(22,22)': 'becomes', '(23,23)': 'any', '(24,24)': 'more'})
+    except:
+        df_use['ProbeWord'] = df_use['ProbeWord'].replace(
+        {2.0: 'craft', 3.0: 'in contrast to', 4.0: 'when a', 5.0: 'accurate', 6.0: 'pink noise',
+         7.0: 'of science', 8.0: 'rev. instruments', 9.0: 'boats', 10.0: 'today',
+         13.0: 'sailor', 15.0: 'but', 16.0: 'researched', 18.0: 'took', 19.0: 'the vast',
+         20.0: 'today', 21.0: 'he takes', 22.0: 'becomes', 23.0: 'any', 24.0: 'more'})
 
     #replace probeword with number ordered by length
     #order the probewords by length
     unique_probe_words = df_use['ProbeWord'].unique()
+    #convert unique_probe_words to int
+    # unique_probe_words = [int(unique_probe_word) for unique_probe_word in unique_probe_words]
     unique_probe_words = sorted(unique_probe_words, key=len)
     for i, probe in enumerate(unique_probe_words):
         df_use['ProbeWord'] = df_use['ProbeWord'].replace({probe: i})
