@@ -704,6 +704,7 @@ def main():
         df_merged = df_merged.rename(columns={'score': 'Score'})
         df_merged = df_merged.rename(columns={'probeword1': 'ProbeWord'})
         df_merged = df_merged.rename(columns={'pitchshift': 'PitchShift'})
+        df_merged['SingleUnit'] = df_merged['unit_type'].apply(lambda x: 1 if x == 'su' else 0)
         #if the value is nopitchshift replace with 0, if it is pitchshift replace with 1
         df_merged['PitchShift'] = df_merged['PitchShift'].apply(lambda x: 0 if x == 'nopitchshift' else 1)
 
