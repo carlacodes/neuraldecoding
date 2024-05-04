@@ -673,7 +673,8 @@ def main():
 
         colors = ['purple', 'magenta', 'darkturquoise', 'olivedrab', 'steelblue', 'darkcyan', 'darkorange']
         #merge the information of df_all_trained_permutation and df_all_trained
-        df_all['permutation_score'] = df_all_permutation['score']
+        df_all_permutation.rename(columns={'score': 'score_permutation'}, inplace=True)
+        df_trained_with_perm = df_all.merge(df_all_permutation[['score_permutation']], on=['cluster_id', 'stream', 'recname'], how='left')
 
     return
 
