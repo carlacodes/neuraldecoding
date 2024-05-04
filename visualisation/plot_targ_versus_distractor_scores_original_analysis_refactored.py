@@ -59,68 +59,70 @@ def load_scores_and_filter(probewordlist,
 
         #load the original clusters to split from the json file
         json_file_path = f'F:\split_cluster_jsons/{fullid}/cluster_split_list.json'
+        if ferretname == 'orecchiette':
+            original_to_split_cluster_ids = np.array([])
+        else:
+            with open(json_file_path, "r") as json_file:
+                loaded_data = json.load(json_file)
+                recname = saveDir.split('/')[-3]
+                stream_id = stream[-4:]
 
-        with open(json_file_path, "r") as json_file:
-            loaded_data = json.load(json_file)
-            recname = saveDir.split('/')[-3]
-            stream_id = stream[-4:]
+                if 'BB_3' in stream_id and ferretname != 'squinty':
+                    side_of_implant = 'right'
+                elif 'BB_2' in stream_id and ferretname != 'squinty':
+                    side_of_implant = 'right'
+                elif 'BB_4' in stream_id:
+                    side_of_implant = 'left'
+                elif 'BB_5' in stream_id:
+                    side_of_implant = 'left'
+                elif ferretname == 'Squinty':
+                    side_of_implant = 'left'
+                else:
+                    side_of_implant = 'left'
+                if recname == '01_03_2022_cruellabb4bb5':
+                    recname = '01_03_2022_cruella'
+                elif recname == '25_01_2023_cruellabb4bb5':
+                    recname = '25_01_2023_cruella'
+                recname_json = loaded_data.get(recname)
 
-            if 'BB_3' in stream_id and ferretname != 'squinty':
-                side_of_implant = 'right'
-            elif 'BB_2' in stream_id and ferretname != 'squinty':
-                side_of_implant = 'right'
-            elif 'BB_4' in stream_id:
-                side_of_implant = 'left'
-            elif 'BB_5' in stream_id:
-                side_of_implant = 'left'
-            elif ferretname == 'Squinty':
-                side_of_implant = 'left'
-            else:
-                side_of_implant = 'left'
-            if recname == '01_03_2022_cruellabb4bb5':
-                recname = '01_03_2022_cruella'
-            elif recname == '25_01_2023_cruellabb4bb5':
-                recname = '25_01_2023_cruella'
-            recname_json = loaded_data.get(recname)
-
-            #get the cluster ids from the json file
-            original_to_split_cluster_ids = recname_json.get(stream_id)
-            original_to_split_cluster_ids = original_to_split_cluster_ids.get('cluster_to_split_list')
-            if original_to_split_cluster_ids == 'clust_ids':
-                stringprobewordindex = str(probeword[0])
-                try:
-                    scores = np.load(
-                    saveDir + r'scores_' + ferretname + '_2022_' + stringprobewordindex + '_' + ferretname + '_probe_bs.npy',
-                    allow_pickle=True)[()]
-                except Exception as e:
-                    print(e)
-                    continue
-                original_to_split_cluster_ids = np.unique(scores['talker1']['target_vs_probe']['pitchshift']['cluster_id']+scores['talker1']['target_vs_probe']['nopitchshift']['cluster_id'])
-                #if all of them need splitting
-            elif original_to_split_cluster_ids:
-                #TODO: not sure if this elif needed
-                #get all the unique clusters ids
-                stringprobewordindex = str(probeword[0])
-                try:
-
-                    scores = np.load(
+                #get the cluster ids from the json file
+                original_to_split_cluster_ids = recname_json.get(stream_id)
+                original_to_split_cluster_ids = original_to_split_cluster_ids.get('cluster_to_split_list')
+                if original_to_split_cluster_ids == 'clust_ids':
+                    stringprobewordindex = str(probeword[0])
+                    try:
+                        scores = np.load(
                         saveDir + r'scores_' + ferretname + '_2022_' + stringprobewordindex + '_' + ferretname + '_probe_bs.npy',
                         allow_pickle=True)[()]
-                except Exception as e:
-                    print(e)
-                    continue
-                original_to_split_cluster_ids = [x for x in original_to_split_cluster_ids if x < 100]
+                    except Exception as e:
+                        print(e)
+                        continue
+                    original_to_split_cluster_ids = np.unique(scores['talker1']['target_vs_probe']['pitchshift']['cluster_id']+scores['talker1']['target_vs_probe']['nopitchshift']['cluster_id'])
+                    #if all of them need splitting
+                elif original_to_split_cluster_ids:
+                    #TODO: not sure if this elif needed
+                    #get all the unique clusters ids
+                    stringprobewordindex = str(probeword[0])
+                    try:
 
-            elif original_to_split_cluster_ids == None or not original_to_split_cluster_ids:
-                original_to_split_cluster_ids = np.array([])
-                stringprobewordindex = str(probeword[0])
-                try:
-                    scores = np.load(
-                        saveDir + r'scores_' + ferretname + '_2022_' + stringprobewordindex + '_' + ferretname + '_probe_bs.npy',
-                        allow_pickle=True)[()]
-                except Exception as e:
-                    print(e)
-                    continue
+                        scores = np.load(
+                            saveDir + r'scores_' + ferretname + '_2022_' + stringprobewordindex + '_' + ferretname + '_probe_bs.npy',
+                            allow_pickle=True)[()]
+                    except Exception as e:
+                        print(e)
+                        continue
+                    original_to_split_cluster_ids = [x for x in original_to_split_cluster_ids if x < 100]
+
+                elif original_to_split_cluster_ids == None or not original_to_split_cluster_ids:
+                    original_to_split_cluster_ids = np.array([])
+                    stringprobewordindex = str(probeword[0])
+                    try:
+                        scores = np.load(
+                            saveDir + r'scores_' + ferretname + '_2022_' + stringprobewordindex + '_' + ferretname + '_probe_bs.npy',
+                            allow_pickle=True)[()]
+                    except Exception as e:
+                        print(e)
+                        continue
 
         for talker in [1]:
             comparisons = [comp for comp in scores[f'talker{talker}']]
@@ -662,7 +664,8 @@ def main():
         labels = [ 'F1901_Crumble', 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala']
 
         colors = ['purple', 'magenta', 'darkturquoise', 'olivedrab', 'steelblue', 'darkcyan', 'darkorange']
-        #merge the dataframes to
+        #merge the information of df_all_trained_permutation and df_all_trained
+        df_all['permutation_score'] = df_all_permutation['score']
 
     return
 
