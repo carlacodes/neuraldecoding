@@ -194,7 +194,7 @@ def load_scores_and_filter(probewordlist,
                     for i, clus in enumerate(scores[f'talker{talker}'][comp][cond]['cluster_id']):
                         stream_small = stream[-4:]
                         clust_text = str(clus) + '_' + fullid + '_' + recname + '_' + stream_small
-                        print(i, clus)
+                        # print(i, clus)
                         if fullid == 'F1702_Zola':
                             probeword_map = {
                                 (2, 2): (4, 4),
@@ -503,6 +503,7 @@ def main():
                          (14, 14)]
     animal_list = ['F1604_Squinty', 'F1901_Crumble', 'F1606_Windolene', 'F1702_Zola', 'F1815_Cruella', 'F1902_Eclair',
                    'F1812_Nala', 'F2003_Orecchiette', ]
+    # animal_list = ['F1702_Zola']
     report = {}
     singleunitlist = {}
     multiunitlist = {}
@@ -581,7 +582,7 @@ def main():
                                                          noiselist=noiselist[animal][stream], stream=stream,
                                                          fullid=animal, report=report[animal][stream],
                                                          pitchshift_text=pitchshift_option)
-                    df_all.append(df_instance)
+                    df_all = pd.concat([df_all, df_instance])
                     df_instance_permutation = load_scores_and_filter(probewordlist_l74,
                                                                      saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/{streamtext}/',
                                                                      ferretname=animal_text,
@@ -624,7 +625,7 @@ def main():
                                                          noiselist=noiselist[animal][stream], stream=stream,
                                                          fullid=animal, report=report[animal][stream],
                                                          pitchshift_text=pitchshift_option)
-                    df_all.append(df_instance)
+                    df_all = pd.concat([df_all, df_instance])
 
                     df_instance_permutation = load_scores_and_filter(probewordlist_zola,
                                                                      saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/{streamtext}/',
