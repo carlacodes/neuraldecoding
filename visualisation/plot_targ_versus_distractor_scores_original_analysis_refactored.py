@@ -65,13 +65,15 @@ def load_scores_and_filter(probewordlist,
             recname = saveDir.split('/')[-3]
             stream_id = stream[-4:]
 
-            if 'BB_3' in stream_id and ferretname != 'Squinty':
+            if 'BB_3' in stream_id and ferretname != 'squinty':
                 side_of_implant = 'right'
-            elif 'BB_2' in stream_id and ferretname != 'Squinty':
+            elif 'BB_2' in stream_id and ferretname != 'squinty':
                 side_of_implant = 'right'
             elif 'BB_4' in stream_id:
                 side_of_implant = 'left'
             elif 'BB_5' in stream_id:
+                side_of_implant = 'left'
+            elif ferretname == 'Squinty':
                 side_of_implant = 'left'
             else:
                 side_of_implant = 'left'
@@ -229,9 +231,9 @@ def load_scores_and_filter(probewordlist,
                                 brain_area = channel_id_and_brain_area['area'].values[0]
 
                                 sorted_df_of_scores = sorted_df_of_scores.append(
-                                        {'probeword1': probeword1_input_text[0],
+                                        {'probeword1': probeword1_input_text[0], 'pitchshift': cond,
                                          'cluster_id': clus,
-                                         'score': scores[f'talker{talker}'][comp][key_text][score_key][i],
+                                         'score': scores[f'talker{talker}'][comp][cond][score_key][i],
                                          'unit_type': unit_type, 'animal': fullid, 'stream': stream_id, 'recname': recname,
                                          'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position,
                                          'brain_area': brain_area}, ignore_index=True)
@@ -246,7 +248,7 @@ def load_scores_and_filter(probewordlist,
                                 #NEED TO FIGURE OUT WHAT stream NG_0 IS ON MYRIAD TODO
                                 try:
                                     sorted_df_of_scores = sorted_df_of_scores.append(
-                                        {'probeword1': probeword1_input_text[0], 'probeword2': probeword2_input_text[0],
+                                        {'probeword1': probeword1_input_text[0], 'pitchshift': probeword2_input_text[0],
                                          'cluster_id': clus,
                                          'score': scores[f'talker{talker}'][comp][key_text][score_key][i],
                                          'unit_type': unit_type, 'animal': fullid, 'stream': stream_id, 'recname': recname,
@@ -278,7 +280,7 @@ def load_scores_and_filter(probewordlist,
                                 sorted_df_of_scores = sorted_df_of_scores.append(
                                         {'probeword1': probeword1_input_text[0], 'pitchshift': cond,
                                          'cluster_id': clus,
-                                         'score': scores[f'talker{talker}'][comp][key_text][score_key][i],
+                                         'score': scores[f'talker{talker}'][comp][cond][score_key][i],
                                          'unit_type': unit_type, 'animal': fullid, 'stream': stream_id, 'recname': recname,
                                          'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position,
                                          'brain_area': brain_area}, ignore_index=True)
