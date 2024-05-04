@@ -703,6 +703,8 @@ def main():
         df_merged = df_merged.rename(columns={'brain_area': 'BrainArea'})
         df_merged = df_merged.rename(columns={'score': 'Score'})
         df_merged = df_merged.rename(columns={'probeword1': 'ProbeWord'})
+        df_merged = df_merged.rename(columns={'pitchshift': 'PitchShift'})
+
     plot_major_analysis(df_merged)
     return df_merged
 def color_by_probeword(probeword):
