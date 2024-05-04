@@ -12,7 +12,6 @@ from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import mean_squared_error
 import json
-import math
 from scipy.stats import mannwhitneyu
 from helpers.vis_stats_helpers import run_mixed_effects_on_dataframe, run_anova_on_dataframe, create_gen_frac_variable, runlgbmmodel_score, create_gen_frac_and_index_variable
 
@@ -1147,7 +1146,6 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
             } for probeword_text in probeword_to_text.values()
         } for unit_id in unit_ids_naive_permutation
     }
-
     for talker in [1]:
         if talker == 1:
             talker_key = 'female_talker'
@@ -1163,24 +1161,21 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                     channel_id = dict['su_list_chanid'][key][talker_key][count]
                     # adding 16 to match the json file
                     if 'BB_3' in unit_id:
+                        print(unit_id)
                         channel_id = channel_id + 16
                     elif 'BB_5' in unit_id:
                         channel_id = channel_id + 16
 
+                    # Add 'channel_id'
                     if probewordtext:
-                        su_list_unique = dict['su_list'][key][talker_key][count]
+                        scoredict_byunit_naive_perm[unit_id][probewordtext]['su_list'].append(
+                            dict['su_list'][key][talker_key][count])
+                        scoredict_byunit_naive_perm[unit_id][probewordtext]['channel_id'].append(channel_id)  # Update 'channel_id'
 
-                        # Check if the entry already exists approximately before appending
-                        if not any(math.isclose(su, su_list_unique, rel_tol=1e-9) for su in
-                                   scoredict_byunit_naive_perm[unit_id][probewordtext]['su_list']):
-                            scoredict_byunit_naive_perm[unit_id][probewordtext]['su_list'].append(su_list_unique)
-                            scoredict_byunit_naive_perm[unit_id][probewordtext]['channel_id'].append(channel_id)
-
-                            scoredict_byunit_naive_perm_pitchsplit[unit_id][probewordtext][key]['su_list'].append(
-                                dict['su_list'][key][talker_key][count])
-                            scoredict_byunit_naive_perm_pitchsplit[unit_id][probewordtext][key]['channel_id'].append(
-                                channel_id)  # Update 'channel_id'
-                    count += 1
+                        scoredict_byunit_naive_perm_pitchsplit[unit_id][probewordtext][key]['su_list'].append(
+                            dict['su_list'][key][talker_key][count])
+                        scoredict_byunit_naive_perm_pitchsplit[unit_id][probewordtext][key]['channel_id'].append(channel_id)  # Update 'channel_id'
+                    count = count + 1
 
             for key in dict['mu_list_probeword']:
                 probewords = dict['mu_list_probeword'][key][talker_key]
@@ -1195,19 +1190,14 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                             channel_id = channel_id + 16
                         elif 'BB_5' in unit_id:
                             channel_id = channel_id + 16
-
-                        mu_list = dict['mu_list'][key][talker_key][count]
-
-                        # Check if the entry already exists approximately before appending
-                        if not any(math.isclose(mu, mu_list, rel_tol=1e-9) for mu in
-                                   scoredict_byunit_naive_perm[unit_id][probewordtext]['mu_list']):
-                            scoredict_byunit_naive_perm[unit_id][probewordtext]['mu_list'].append(mu_list)
-                            scoredict_byunit_naive_perm_pitchsplit[unit_id][probewordtext][key]['mu_list'].append(
-                                mu_list)
-                            scoredict_byunit_naive_perm[unit_id][probewordtext]['channel_id'].append(channel_id)
-                            scoredict_byunit_naive_pitchsplit[unit_id][probewordtext][key]['channel_id'].append(
-                                channel_id)  # Update 'channel_id'
-                    count += 1
+                        # Add 'channel_id'
+                        scoredict_byunit_naive_perm[unit_id][probewordtext]['mu_list'].append(
+                            dict['mu_list'][key][talker_key][count])
+                        scoredict_byunit_naive_perm_pitchsplit[unit_id][probewordtext][key]['mu_list'].append(
+                            dict['mu_list'][key][talker_key][count])
+                        scoredict_byunit_naive_perm[unit_id][probewordtext]['channel_id'].append(channel_id)
+                        scoredict_byunit_naive_pitchsplit[unit_id][probewordtext][key]['channel_id'].append(channel_id)        # Update 'channel_id'
+                    count = count + 1
 
     unit_ids_trained_permutation = []
     for dict in dictlist_trained_permutation:
@@ -1254,26 +1244,27 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                             channel_id = channel_id + 16
                         elif 'BB_5' in unit_id:
                             channel_id = channel_id + 16
-
+                        # Add 'channel_id'
                         su_list_unique = dict['su_list'][key][talker_key][count]
-
                         if isinstance(su_list_unique, list):
                             print(f'list detected, su_list:{su_list_unique}')
 
-                        # Check if the entry already exists before appending
-                        if su_list_unique not in scoredict_byunit_trained_perm[unit_id][probewordtext]['su_list']:
-                            scoredict_byunit_trained_perm[unit_id][probewordtext]['su_list'].append(su_list_unique)
-                            scoredict_byunit_trained_perm[unit_id][probewordtext]['channel_id'].append(channel_id)
+                        scoredict_byunit_trained_perm[unit_id][probewordtext]['su_list'].append(
+                            dict['su_list'][key][talker_key][count])
+                        #check if su_list has more than one entry
 
-                            len_before = len(scoredict_byunit_trained_perm[unit_id][probewordtext]['su_list'])
+                        # check if mu_list is a list
 
-                            len_after = len(scoredict_byunit_trained_perm[unit_id][probewordtext]['su_list'])
+                        scoredict_byunit_trained_perm_pitchsplit[unit_id][probewordtext][key]['su_list'].append(
+                            dict['su_list'][key][talker_key][count])
+                        scoredict_byunit_trained_perm[unit_id][probewordtext]['channel_id'].append(
+                            channel_id)
 
-                            if len_after - len_before > 1:
-                                print(
-                                    f"Multiple entries were appended to su_list for unit_id {unit_id} and probewordtext {probewordtext}")
+                        scoredict_byunit_trained_perm_pitchsplit[unit_id][probewordtext][key]['channel_id'].append(
+                            channel_id)
 
-                        count += 1
+                        # Update 'channel_id'
+                    count = count + 1
 
             for key in dict['mu_list_probeword']:
                 probewords = dict['mu_list_probeword'][key][talker_key]
@@ -1288,26 +1279,24 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
                             channel_id = channel_id + 16
                         elif 'BB_5' in unit_id:
                             channel_id = channel_id + 16
-
+                        # Add 'channel_id'
+                        scoredict_byunit_trained_perm[unit_id][probewordtext]['mu_list'].append(
+                            dict['mu_list'][key][talker_key][count])
                         mu_list = dict['mu_list'][key][talker_key][count]
-
+                        #check if mu_list is a list
                         if isinstance(mu_list, list):
                             print(f'list detected, mu_list:{mu_list}')
+                        scoredict_byunit_trained_perm_pitchsplit[unit_id][probewordtext][key]['mu_list'].append(
+                            dict['mu_list'][key][talker_key][count])
+                        scoredict_byunit_trained_perm[unit_id][probewordtext]['channel_id'].append(
+                            channel_id)
 
-                        if mu_list not in scoredict_byunit_trained_perm[unit_id][probewordtext]['mu_list']:
-                            scoredict_byunit_trained_perm[unit_id][probewordtext]['mu_list'].append(mu_list)
-                            scoredict_byunit_trained_perm[unit_id][probewordtext]['channel_id'].append(channel_id)
+                        scoredict_byunit_trained_perm_pitchsplit[unit_id][probewordtext][key]['channel_id'].append(
+                            channel_id)
 
-                            len_before = len(scoredict_byunit_trained_perm[unit_id][probewordtext]['mu_list'])
 
-                            len_after = len(scoredict_byunit_trained_perm[unit_id][probewordtext]['mu_list'])
-
-                            if len_after - len_before > 1:
-                                print(
-                                    f"Multiple entries were appended to mu_list for unit_id {unit_id} and probewordtext {probewordtext}")
-
-                        count += 1
-
+                        # Update 'channel_id'
+                    count = count + 1
     #load the json file which has the electrode positions
     with open('D:/spkvisanddecodeproj2/analysisscriptsmodcg/json_files/electrode_positions.json') as f:
         electrode_position_data = json.load(f)
@@ -1318,8 +1307,16 @@ def generate_plots(dictlist, dictlist_trained, dictlist_naive, dictlist_permutat
     scoredict_by_unit_peg_pitchsplit = {}
     scoredict_by_unit_aeg = {}
     scoredict_by_unit_aeg_pitchsplit = {}
-
-    for unit_id, unit_data in scoredict_byunit_trained_perm_pitchsplit.items():
+    for unit_id, unit_data in scoredict_byunit_pitchsplit.items():
+        for probeword_text, probeword_data in unit_data.items():
+            for key, value in probeword_data.items():
+                if len(value['su_list']) > 1:
+                    print(
+                        f'Multiple entries detected in su_list for unit_id: {unit_id}, probeword_text: {probeword_text}')
+                if len(value['mu_list']) > 1:
+                    print(
+                        f'Multiple entries detected in mu_list for unit_id: {unit_id}, probeword_text: {probeword_text}')
+    for unit_id, unit_data in scoredict_byunit_pitchsplit.items():
         for probeword_text, probeword_data in unit_data.items():
             for key, value in probeword_data.items():
                 if len(value['su_list']) > 1:
