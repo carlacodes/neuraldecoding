@@ -440,6 +440,22 @@ def load_classified_report(path):
             #multiunit list all the other clusters in clusters above hpc
             multiunitlist = [x for x in clusters_above_hpc[:, 0] if x not in singleunitlist]
             noiselist = []
+            report = pd.read_csv(
+                'G:\F2003_Orecchiette\s2cgmod/recording_0/kilosort/phy/quality_metrics.csv')  # get the list of multi units and single units
+            # the column is called unit_type
+            multiunitlist = []
+            singleunitlist = []
+            noiselist = []
+
+            # get the list of multi units and single units
+            for i in range(0, len(report)):
+
+                if i in clusters_above_hpc[:, 0] and report['isi_violations_ratio'][i] <= 0.7 and i in singleunitlist:
+                    singleunitlist.append(i + 1)
+                elif i in clusters_above_hpc[:, 0] and report['isi_violations_ratio'][i] <= 0.7:
+                    multiunitlist.append(i + 1)
+                else:
+                    noiselist.append(i + 1)
         else:
             if 's2' in str(path):
                 channel_pos = os.path.join(path, 'channelpos_s2.csv')
@@ -465,9 +481,9 @@ def load_classified_report(path):
                 #get that tow from the channel pos
 
                 row = channel_pos.iloc[channel_id - 1]
-                if row[1] >= 3200 and report['d_prime'][i] > 4:
+                if row[1] >= 3200 and report['d_prime'][i] > 4 and report['isi_violations_ratio'][i] <= 0.7:
                     singleunitlist.append(i + 1)
-                elif row[1] >= 3200 and report['d_prime'][i] <= 4:
+                elif row[1] >= 3200 and report['d_prime'][i] <= 4 and report['isi_violations_ratio'][i] <= 0.7:
                     multiunitlist.append(i + 1)
                 else:
                     noiselist.append(i + 1)
