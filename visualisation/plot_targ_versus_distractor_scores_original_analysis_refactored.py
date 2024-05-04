@@ -908,21 +908,21 @@ def plot_major_analysis(df_merged):
         stream = full_id[-4:]
         # append to a dataframe
         df_full_pitchsplit_csv_save.at[i, 'ID_small'] = unit_id
-        df_full_pitchsplit_csv_save.at[i, 'rec_name'] = rec_name
-        df_full_pitchsplit_csv_save.at[i, 'stream'] = stream
+        # df_full_pitchsplit_csv_save.at[i, 'rec_name'] = rec_name
+        # df_full_pitchsplit_csv_save.at[i, 'stream'] = stream
     for i in range(0, len(df_full_pitchsplit_csv_naive_save)):
         full_id = df_full_pitchsplit_csv_naive_save.iloc[i]['ID']
         components = full_id.split('_')
         unit_id = components[0]
         # remove the unit id from the full_id for the rec_name
         rec_name = components[3:-2]
-        # concatenate the rec_name
-        rec_name = '_'.join(rec_name)
-        stream = full_id[-4:]
+        # # concatenate the rec_name
+        # rec_name = '_'.join(rec_name)
+        # stream = full_id[-4:]
         # append to a dataframe#
         df_full_pitchsplit_csv_naive_save.at[i, 'ID_small'] = unit_id
-        df_full_pitchsplit_csv_naive_save.at[i, 'rec_name'] = rec_name
-        df_full_pitchsplit_csv_naive_save.at[i, 'stream'] = stream
+        # df_full_pitchsplit_csv_naive_save.at[i, 'rec_name'] = rec_name
+        # df_full_pitchsplit_csv_naive_save.at[i, 'stream'] = stream
 
     # order df_full_pitchsplit_csv_save by score
     df_full_pitchsplit_csv_save = df_full_pitchsplit_csv_save.sort_values(by='MeanScore', ascending=False)
@@ -971,8 +971,8 @@ def plot_major_analysis(df_merged):
             # remove the unit id from the full_id for the rec_name
             rec_name = components[3:-2]
             # concatenate the rec_name
-            rec_name = '_'.join(rec_name)
-            stream = full_id[-4:]
+            rec_name = df_full_pitchsplit_plot_animal.iloc[i]['recname']
+            stream = df_full_pitchsplit_plot_animal.iloc[i]['stream']
             genfrac = df_full_pitchsplit_plot_animal.iloc[i]['GenFrac']
             brainarea = df_full_pitchsplit_plot_animal.iloc[i]['BrainArea']
             # append to a dataframe
@@ -992,10 +992,10 @@ def plot_major_analysis(df_merged):
             components = full_id.split('_')
             unit_id = components[0]
             # remove the unit id from the full_id for the rec_name
-            rec_name = components[3:-2]
+            rec_name = df_full_pitchsplit_plot_animal.iloc[i]['recname']
             # concatenate the rec_name
-            rec_name = '_'.join(rec_name)
-            stream = full_id[-4:]
+            # rec_name = '_'.join(rec_name)
+            stream = df_full_pitchsplit_plot_animal.iloc[i]['stream']
             # genfrac = df_full_pitchsplit_plot_animal.iloc[i]['GenFrac']
             brainarea = df_full_pitchsplit_plot_animal.iloc[i]['BrainArea']
             # append to a dataframe
@@ -1024,10 +1024,10 @@ def plot_major_analysis(df_merged):
             components = full_id.split('_')
             unit_id = components[0]
             # remove the unit id from the full_id for the rec_name
-            rec_name = components[3:-2]
+            rec_name = df_full_pitchsplit_plot_animal.iloc[i]['recname']
             # concatenate the rec_name
-            rec_name = '_'.join(rec_name)
-            stream = full_id[-4:]
+            # rec_name = '_'.join(rec_name)
+            stream = df_full_pitchsplit_plot_animal.iloc[i]['stream']
             # append to a dataframe
             brainarea = df_full_pitchsplit_plot_animal.iloc[i]['BrainArea']
 
@@ -1048,10 +1048,9 @@ def plot_major_analysis(df_merged):
             components = full_id.split('_')
             unit_id = components[0]
             # remove the unit id from the full_id for the rec_name
-            rec_name = components[3:-2]
             # concatenate the rec_name
-            rec_name = '_'.join(rec_name)
-            stream = full_id[-4:]
+            rec_name = df_full_pitchsplit_plot_animal.iloc[i]['recname']
+            stream = df_full_pitchsplit_plot_animal.iloc[i]['stream']
             # append to a dataframe
             genfrac = df_full_pitchsplit_plot_animal.iloc[i]['GenFrac']
             animal_dataframe = animal_dataframe.append(
