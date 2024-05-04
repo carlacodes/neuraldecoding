@@ -14,7 +14,9 @@ from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import mean_squared_error
 import json
-from helpers.vis_stats_helpers import run_mixed_effects_on_dataframe, run_anova_on_dataframe, create_gen_frac_variable, runlgbmmodel_score, create_gen_frac_and_index_variable
+from helpers.vis_stats_helpers import run_mixed_effects_on_dataframe, run_anova_on_dataframe, create_gen_frac_variable, \
+    runlgbmmodel_score, create_gen_frac_and_index_variable
+
 
 def find_repeating_substring(text):
     text_length = len(text)
@@ -34,8 +36,9 @@ def find_repeating_substring(text):
 def load_scores_and_filter(probewordlist,
                            saveDir='D:/Users/cgriffiths/resultsms4/lstm_output_frommyriad_15012023/lstm_kfold_14012023_crumble',
                            ferretname='Crumble',
-                           singleunitlist=[0,1,2],
-                           multiunitlist=[0,1,2,3], noiselist=[], stream = 'BB_2', fullid = 'F1901_Crumble', report =[], permutation_scores=False, pitchshift_text = 'nopitchshift'):
+                           singleunitlist=[0, 1, 2],
+                           multiunitlist=[0, 1, 2, 3], noiselist=[], stream='BB_2', fullid='F1901_Crumble', report=[],
+                           permutation_scores=False, pitchshift_text='nopitchshift'):
     if permutation_scores == False:
         score_key = 'lstm_balanced_avg'
     else:
@@ -47,11 +50,10 @@ def load_scores_and_filter(probewordlist,
     with open('D:\spkvisanddecodeproj2/analysisscriptsmodcg/json_files\electrode_positions.json') as f:
         electrode_position_data = json.load(f)
 
-
-
-
     #declare a dataframe to store the scores
-    sorted_df_of_scores = pd.DataFrame({'probeword1': [], 'pitchshift': [], 'cluster_id': [], 'score': [], 'unit_type': [], 'animal': [], 'stream': [], 'recname': [], 'clus_id_report': [], 'brain_area': []})
+    sorted_df_of_scores = pd.DataFrame(
+        {'probeword1': [], 'pitchshift': [], 'cluster_id': [], 'score': [], 'unit_type': [], 'animal': [], 'stream': [],
+         'recname': [], 'clus_id_report': [], 'brain_area': []})
     for probeword in probewordlist:
         probewordindex = probeword[0]
         stringprobewordindex = str(probewordindex)
@@ -101,12 +103,14 @@ def load_scores_and_filter(probewordlist,
                     stringprobewordindex = str(probeword[0])
                     try:
                         scores = np.load(
-                        saveDir + r'scores_' + ferretname + '_2022_' + stringprobewordindex + '_' + ferretname + '_probe_bs.npy',
-                        allow_pickle=True)[()]
+                            saveDir + r'scores_' + ferretname + '_2022_' + stringprobewordindex + '_' + ferretname + '_probe_bs.npy',
+                            allow_pickle=True)[()]
                     except Exception as e:
                         print(e)
                         continue
-                    original_to_split_cluster_ids = np.unique(scores['talker1']['target_vs_probe']['pitchshift']['cluster_id']+scores['talker1']['target_vs_probe']['nopitchshift']['cluster_id'])
+                    original_to_split_cluster_ids = np.unique(
+                        scores['talker1']['target_vs_probe']['pitchshift']['cluster_id'] +
+                        scores['talker1']['target_vs_probe']['nopitchshift']['cluster_id'])
                     #if all of them need splitting
                 elif original_to_split_cluster_ids:
                     #TODO: not sure if this elif needed
@@ -139,7 +143,7 @@ def load_scores_and_filter(probewordlist,
                 for cond in ['pitchshift', 'nopitchshift']:
                     for i, clus in enumerate(scores[f'talker{talker}'][comp][cond]['cluster_id']):
                         #check if clus is greater than 100
-                        if 200> clus >= 100:
+                        if 200 > clus >= 100:
                             clus_instance = int(round(clus - 100))
                             if clus_instance in singleunitlist_copy:
                                 singleunitlist_copy.append(clus)
@@ -175,11 +179,12 @@ def load_scores_and_filter(probewordlist,
         recname = saveDir.split('/')[-3]
         if fullid == 'F2003_Orecchiette':
             try:
-                report['tdt'] = pd.read_csv(f'G:/F2003_Orecchiette/{stream}/recording_0/pykilosort/report/' + 'unit_list.csv')
+                report['tdt'] = pd.read_csv(
+                    f'G:/F2003_Orecchiette/{stream}/recording_0/pykilosort/report/' + 'unit_list.csv')
                 #take only the second column
                 report['tdt'] = report['tdt'].iloc[:, 1]
 
-            except:                # make a column of 0s for the tdt column
+            except:  # make a column of 0s for the tdt column
                 report['tdt'] = np.zeros((len(report), 1))
 
         for talker in [1]:
@@ -188,7 +193,7 @@ def load_scores_and_filter(probewordlist,
                 for cond in ['pitchshift', 'nopitchshift']:
                     for i, clus in enumerate(scores[f'talker{talker}'][comp][cond]['cluster_id']):
                         stream_small = stream[-4:]
-                        clust_text = str(clus)+'_'+fullid+'_'+recname+'_'+stream_small
+                        clust_text = str(clus) + '_' + fullid + '_' + recname + '_' + stream_small
                         print(i, clus)
                         if fullid == 'F1702_Zola':
                             probeword_map = {
@@ -219,10 +224,9 @@ def load_scores_and_filter(probewordlist,
                         else:
                             probeword1_input_text = probeword
 
-
                         if 200 > clus >= 100 and fullid != 'F2003_Orecchiette':
                             clus_id_report = clus - 100
-                        elif 300> clus >= 200 and fullid != 'F2003_Orecchiette':
+                        elif 300 > clus >= 200 and fullid != 'F2003_Orecchiette':
                             clus_id_report = clus - 200
                         elif 400 > clus >= 300 and fullid != 'F2003_Orecchiette':
                             clus_id_report = clus - 300
@@ -238,16 +242,17 @@ def load_scores_and_filter(probewordlist,
                                 #convert list of dicts to a dataframe
                                 side_of_implant_df = pd.DataFrame(side_of_implant_list)
                                 #get the brain area
-                                channel_id_and_brain_area = side_of_implant_df[side_of_implant_df['TDT_NUMBER'] == tdt_position]
+                                channel_id_and_brain_area = side_of_implant_df[
+                                    side_of_implant_df['TDT_NUMBER'] == tdt_position]
                                 brain_area = channel_id_and_brain_area['area'].values[0]
 
                                 sorted_df_of_scores = sorted_df_of_scores.append(
-                                        {'probeword1': probeword1_input_text[0], 'pitchshift': cond,
-                                         'cluster_id': clus,
-                                         'score': scores[f'talker{talker}'][comp][cond][score_key][i],
-                                         'unit_type': unit_type, 'animal': fullid, 'stream': stream_id, 'recname': recname,
-                                         'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position,
-                                         'brain_area': brain_area}, ignore_index=True)
+                                    {'probeword1': probeword1_input_text[0], 'pitchshift': cond,
+                                     'cluster_id': clus,
+                                     'score': scores[f'talker{talker}'][comp][cond][score_key][i],
+                                     'unit_type': unit_type, 'animal': fullid, 'stream': stream_id, 'recname': recname,
+                                     'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position,
+                                     'brain_area': brain_area}, ignore_index=True)
                             elif fullid == 'F2003_Orecchiette':
                                 if 'mod' in stream:
                                     brain_area = 'PEG'
@@ -262,8 +267,10 @@ def load_scores_and_filter(probewordlist,
                                         {'probeword1': probeword1_input_text[0], 'pitchshift': cond,
                                          'cluster_id': clus,
                                          'score': scores[f'talker{talker}'][comp][cond][score_key][i],
-                                         'unit_type': unit_type, 'animal': fullid, 'stream': stream_id, 'recname': recname,
-                                         'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position, 'brain_area': brain_area}, ignore_index=True)
+                                         'unit_type': unit_type, 'animal': fullid, 'stream': stream_id,
+                                         'recname': recname,
+                                         'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position,
+                                         'brain_area': brain_area}, ignore_index=True)
                                 except Exception as e:
                                     print(e)
                                     continue
@@ -280,7 +287,8 @@ def load_scores_and_filter(probewordlist,
                                 #convert list of dicts to a dataframe
                                 side_of_implant_df = pd.DataFrame(side_of_implant_list)
                                 #get the brain area
-                                channel_id_and_brain_area = side_of_implant_df[side_of_implant_df['TDT_NUMBER'] == tdt_position]
+                                channel_id_and_brain_area = side_of_implant_df[
+                                    side_of_implant_df['TDT_NUMBER'] == tdt_position]
                                 print(fullid, clus, tdt_position, channel_id_and_brain_area)
                                 try:
                                     brain_area = channel_id_and_brain_area['area'].values[0]
@@ -289,12 +297,12 @@ def load_scores_and_filter(probewordlist,
                                     continue
 
                                 sorted_df_of_scores = sorted_df_of_scores.append(
-                                        {'probeword1': probeword1_input_text[0], 'pitchshift': cond,
-                                         'cluster_id': clus,
-                                         'score': scores[f'talker{talker}'][comp][cond][score_key][i],
-                                         'unit_type': unit_type, 'animal': fullid, 'stream': stream_id, 'recname': recname,
-                                         'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position,
-                                         'brain_area': brain_area}, ignore_index=True)
+                                    {'probeword1': probeword1_input_text[0], 'pitchshift': cond,
+                                     'cluster_id': clus,
+                                     'score': scores[f'talker{talker}'][comp][cond][score_key][i],
+                                     'unit_type': unit_type, 'animal': fullid, 'stream': stream_id, 'recname': recname,
+                                     'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position,
+                                     'brain_area': brain_area}, ignore_index=True)
                             elif fullid == 'F2003_Orecchiette':
                                 if 'mod' in stream:
                                     brain_area = 'PEG'
@@ -310,18 +318,16 @@ def load_scores_and_filter(probewordlist,
                                      'cluster_id': clus,
                                      'score': scores[f'talker{talker}'][comp][cond][score_key][i], 'pitchshift': cond,
                                      'unit_type': unit_type, 'animal': fullid, 'stream': stream_id, 'recname': recname,
-                                     'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position, 'brain_area': brain_area}, ignore_index=True)
+                                     'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position,
+                                     'brain_area': brain_area}, ignore_index=True)
 
                         elif clus in noiselist:
                             pass
 
-
-
-
     return sorted_df_of_scores
 
 
-def cool_dict_merge(dicts_list): #ripped this from stackoverflow
+def cool_dict_merge(dicts_list):  #ripped this from stackoverflow
     d = {**dicts_list[0]}
     for entry in dicts_list[1:]:
         for k, v in entry.items():
@@ -360,6 +366,7 @@ def data_merge(a, b):
 
     return a
 
+
 def runboostedregressiontreeforlstmscore(df_use):
     col = 'score'
     dfx = df_use.loc[:, df_use.columns != col]
@@ -384,7 +391,7 @@ def runboostedregressiontreeforlstmscore(df_use):
     ypred = xg_reg.predict(X_test)
     lgb.plot_importance(xg_reg)
     plt.title('feature importances for the lstm decoding score model')
-    plt.savefig(f'G:/neural_chapter/figures/lightgbm_model_feature_importances.png', dpi = 300)
+    plt.savefig(f'G:/neural_chapter/figures/lightgbm_model_feature_importances.png', dpi=300)
     plt.show()
 
     kfold = KFold(n_splits=10)
@@ -392,21 +399,21 @@ def runboostedregressiontreeforlstmscore(df_use):
     results_TEST = cross_val_score(xg_reg, X_test, y_test, scoring='neg_mean_squared_error', cv=kfold)
 
     mse = mean_squared_error(ypred, y_test)
-    print("neg MSE on test set: %.2f" % (np.mean(results_TEST)*100))
+    print("neg MSE on test set: %.2f" % (np.mean(results_TEST) * 100))
     print("negative MSE on train set: %.2f%%" % (np.mean(results) * 100.0))
     print(results)
     shap_values = shap.TreeExplainer(xg_reg).shap_values(dfx)
     fig, ax = plt.subplots(figsize=(15, 15))
     # title kwargs still does nothing so need this workaround for summary plots
 
-    fig, ax = plt.subplots(1, figsize=(10, 10), dpi = 300)
-    shap.summary_plot(shap_values,dfx,  max_display=20)
-    plt.savefig(f'G:/neural_chapter/figures/lightgbm_summary_plot.png', dpi = 300)
+    fig, ax = plt.subplots(1, figsize=(10, 10), dpi=300)
+    shap.summary_plot(shap_values, dfx, max_display=20)
+    plt.savefig(f'G:/neural_chapter/figures/lightgbm_summary_plot.png', dpi=300)
     plt.show()
-
 
     labels = [item.get_text() for item in ax.get_yticklabels()]
     print(labels)
+
 
 def load_classified_report(path):
     ''' Load the classified report
@@ -424,7 +431,7 @@ def load_classified_report(path):
                 r'D:\spkvisanddecodeproj2/analysisscriptsmodcg/visualisation\channelpositions\F2003_Orecchiette/channelpos.pkl')
             # remove rows that are not the cluster id, represented by the first column in the np array out of three columns
             #remove rows that are below the auditory cortex
-                    # get the x and y coordinates
+            # get the x and y coordinates
             #only get clusters, first column that are greater than 3200 in depth
             clusters_above_hpc = channelpositions[channelpositions[:, 2] > 3200]
             #add one to the cluster ids
@@ -457,13 +464,13 @@ def load_classified_report(path):
                 channel_id = int(channel_id)
                 #get that tow from the channel pos
 
-                row = channel_pos.iloc[channel_id-1]
+                row = channel_pos.iloc[channel_id - 1]
                 if row[1] >= 3200 and report['d_prime'][i] > 4:
-                    singleunitlist.append(i+1)
+                    singleunitlist.append(i + 1)
                 elif row[1] >= 3200 and report['d_prime'][i] <= 4:
-                    multiunitlist.append(i+1)
+                    multiunitlist.append(i + 1)
                 else:
-                    noiselist.append(i+1)
+                    noiselist.append(i + 1)
 
 
 
@@ -471,7 +478,7 @@ def load_classified_report(path):
         report_path = os.path.join(path, 'quality_metrics_classified.csv')
         #combine the paths
 
-        report = pd.read_csv(report_path)    #get the list of multi units and single units
+        report = pd.read_csv(report_path)  #get the list of multi units and single units
         #the column is called unit_type
         multiunitlist = []
         singleunitlist = []
@@ -480,20 +487,22 @@ def load_classified_report(path):
         #get the list of multi units and single units
         for i in range(0, len(report['unit_type'])):
             if report['unit_type'][i] == 'mua':
-                multiunitlist.append(i+1)
+                multiunitlist.append(i + 1)
             elif report['unit_type'][i] == 'su':
-                singleunitlist.append(i+1)
+                singleunitlist.append(i + 1)
             elif report['unit_type'][i] == 'trash':
-                noiselist.append(i+1)
-
+                noiselist.append(i + 1)
 
     return report, singleunitlist, multiunitlist, noiselist
+
+
 def main():
-    probewordlist_zola = [ (2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
-    probewordlist =[ (2,2), (3,3), (4,4),(5,5), (6,6), (7,7), (8,8), (9,9), (10,10)]
+    probewordlist_zola = [(2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
+    probewordlist = [(2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10)]
     probewordlist_l74 = [(10, 10), (2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (11, 11), (12, 12),
-                             (14, 14)]
-    animal_list = [ 'F1604_Squinty', 'F1901_Crumble', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala',  'F2003_Orecchiette',]
+                         (14, 14)]
+    animal_list = ['F1604_Squinty', 'F1901_Crumble', 'F1606_Windolene', 'F1702_Zola', 'F1815_Cruella', 'F1902_Eclair',
+                   'F1812_Nala', 'F2003_Orecchiette', ]
     report = {}
     singleunitlist = {}
     multiunitlist = {}
@@ -520,7 +529,8 @@ def main():
                 stream_name = str(stream_name).split('\\')[-2]
             else:
                 stream_name = str(stream_name).split('\\')[-1]
-            report[animal][stream_name], singleunitlist[animal][stream_name], multiunitlist[animal][stream_name], noiselist[animal][stream_name] = load_classified_report(f'{path}')
+            report[animal][stream_name], singleunitlist[animal][stream_name], multiunitlist[animal][stream_name], \
+            noiselist[animal][stream_name] = load_classified_report(f'{path}')
 
     # now create a dictionary of dictionaries, where the first key is the animal name, and the second key is the stream name
     #the value is are the decoding scores for each cluster
@@ -532,7 +542,6 @@ def main():
         df_all_naive = pd.DataFrame()
         df_all_naive_permutation = pd.DataFrame()
 
-
         df_all = pd.DataFrame()
         df_all_permutation = pd.DataFrame()
         for animal in animal_list:
@@ -542,7 +551,7 @@ def main():
                 animal_text = animal.split('_')[1]
                 #make it lowercase
                 animal_text = animal_text.lower()
-                if animal =='F2003_Orecchiette':
+                if animal == 'F2003_Orecchiette':
                     rec_name_unique = stream
                 else:
                     if 'BB_2' in stream:
@@ -565,112 +574,155 @@ def main():
                     rec_name_unique = repeating_substring[0:-1]
                 if animal == 'F1604_Squinty':
                     df_instance = load_scores_and_filter(probewordlist_l74,
-                                                                 saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/{streamtext}/',
-                                                                 ferretname=animal_text,
-                                                                 singleunitlist=singleunitlist[animal][stream],
-                                                                 multiunitlist=multiunitlist[animal][stream],
-                                                                 noiselist=noiselist[animal][stream], stream = stream, fullid = animal, report = report[animal][stream], pitchshift_text=pitchshift_option)
+                                                         saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/{streamtext}/',
+                                                         ferretname=animal_text,
+                                                         singleunitlist=singleunitlist[animal][stream],
+                                                         multiunitlist=multiunitlist[animal][stream],
+                                                         noiselist=noiselist[animal][stream], stream=stream,
+                                                         fullid=animal, report=report[animal][stream],
+                                                         pitchshift_text=pitchshift_option)
                     df_all.append(df_instance)
                     df_instance_permutation = load_scores_and_filter(probewordlist_l74,
-                                                                             saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/{streamtext}/',
-                                                                             ferretname=animal_text,
-                                                                             singleunitlist=singleunitlist[animal][stream],
-                                                                             multiunitlist=multiunitlist[animal][stream],
-                                                                             noiselist=noiselist[animal][stream], stream = stream, fullid = animal, report = report[animal][stream], permutation_scores=True, pitchshift_text=pitchshift_option)
+                                                                     saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/{streamtext}/',
+                                                                     ferretname=animal_text,
+                                                                     singleunitlist=singleunitlist[animal][stream],
+                                                                     multiunitlist=multiunitlist[animal][stream],
+                                                                     noiselist=noiselist[animal][stream], stream=stream,
+                                                                     fullid=animal, report=report[animal][stream],
+                                                                     permutation_scores=True,
+                                                                     pitchshift_text=pitchshift_option)
                     df_all_permutation.append(df_instance_permutation)
 
                 elif animal == 'F1606_Windolene':
                     df_instance = load_scores_and_filter(probewordlist_l74,
-                                                                 saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/{streamtext}/',
-                                                                 ferretname=animal_text,
-                                                                 singleunitlist=singleunitlist[animal][stream],
-                                                                 multiunitlist=multiunitlist[animal][stream],
-                                                                 noiselist=noiselist[animal][stream], stream = stream, fullid = animal, report = report[animal][stream], pitchshift_text=pitchshift_option)
+                                                         saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/{streamtext}/',
+                                                         ferretname=animal_text,
+                                                         singleunitlist=singleunitlist[animal][stream],
+                                                         multiunitlist=multiunitlist[animal][stream],
+                                                         noiselist=noiselist[animal][stream], stream=stream,
+                                                         fullid=animal, report=report[animal][stream],
+                                                         pitchshift_text=pitchshift_option)
                     df_all = pd.concat([df_all, df_instance])
 
                     df_instance_permutation = load_scores_and_filter(probewordlist_l74,
-                                                                             saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/{streamtext}/',
-                                                                             ferretname=animal_text,
-                                                                             singleunitlist=singleunitlist[animal][stream],
-                                                                             multiunitlist=multiunitlist[animal][stream],
-                                                                             noiselist=noiselist[animal][stream], stream = stream, fullid = animal, report = report[animal][stream], permutation_scores=True, pitchshift_text=pitchshift_option)
+                                                                     saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/{streamtext}/',
+                                                                     ferretname=animal_text,
+                                                                     singleunitlist=singleunitlist[animal][stream],
+                                                                     multiunitlist=multiunitlist[animal][stream],
+                                                                     noiselist=noiselist[animal][stream], stream=stream,
+                                                                     fullid=animal, report=report[animal][stream],
+                                                                     permutation_scores=True,
+                                                                     pitchshift_text=pitchshift_option)
                     df_all_permutation = pd.concat([df_all_permutation, df_instance_permutation])
 
-                elif animal =='F1702_Zola':
-                    df_instance = load_scores_and_filter(probewordlist_zola, saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/{streamtext}/',
-                                                                 ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
-                                                                 multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal, report = report[animal][stream], pitchshift_text=pitchshift_option)
+                elif animal == 'F1702_Zola':
+                    df_instance = load_scores_and_filter(probewordlist_zola,
+                                                         saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/{streamtext}/',
+                                                         ferretname=animal_text,
+                                                         singleunitlist=singleunitlist[animal][stream],
+                                                         multiunitlist=multiunitlist[animal][stream],
+                                                         noiselist=noiselist[animal][stream], stream=stream,
+                                                         fullid=animal, report=report[animal][stream],
+                                                         pitchshift_text=pitchshift_option)
                     df_all.append(df_instance)
 
-                    df_instance_permutation = load_scores_and_filter(probewordlist_zola, saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/{streamtext}/',
-                                                                             ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
-                                                                             multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal, report = report[animal][stream]
-                                                                             , permutation_scores=True, pitchshift_text=pitchshift_option)
+                    df_instance_permutation = load_scores_and_filter(probewordlist_zola,
+                                                                     saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/{streamtext}/',
+                                                                     ferretname=animal_text,
+                                                                     singleunitlist=singleunitlist[animal][stream],
+                                                                     multiunitlist=multiunitlist[animal][stream],
+                                                                     noiselist=noiselist[animal][stream], stream=stream,
+                                                                     fullid=animal, report=report[animal][stream]
+                                                                     , permutation_scores=True,
+                                                                     pitchshift_text=pitchshift_option)
                     df_all_permutation = pd.concat([df_all_permutation, df_instance_permutation])
 
                 elif animal == 'F1815_Cruella' or animal == 'F1902_Eclair':
-                    df_instance = load_scores_and_filter(probewordlist, saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/{streamtext}/',
-                                                                 ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
-                                                                 multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal, report = report[animal][stream], pitchshift_text=pitchshift_option)
+                    df_instance = load_scores_and_filter(probewordlist,
+                                                         saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/{streamtext}/',
+                                                         ferretname=animal_text,
+                                                         singleunitlist=singleunitlist[animal][stream],
+                                                         multiunitlist=multiunitlist[animal][stream],
+                                                         noiselist=noiselist[animal][stream], stream=stream,
+                                                         fullid=animal, report=report[animal][stream],
+                                                         pitchshift_text=pitchshift_option)
                     df_all = pd.concat([df_all, df_instance])
 
-                    df_instance_permutation = load_scores_and_filter(probewordlist, saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/{streamtext}/',
-                                                                             ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
-                                                                             multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal, report = report[animal][stream]
-                                                                             , permutation_scores=True, pitchshift_text=pitchshift_option)
+                    df_instance_permutation = load_scores_and_filter(probewordlist,
+                                                                     saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/{streamtext}/',
+                                                                     ferretname=animal_text,
+                                                                     singleunitlist=singleunitlist[animal][stream],
+                                                                     multiunitlist=multiunitlist[animal][stream],
+                                                                     noiselist=noiselist[animal][stream], stream=stream,
+                                                                     fullid=animal, report=report[animal][stream]
+                                                                     , permutation_scores=True,
+                                                                     pitchshift_text=pitchshift_option)
                     df_all_permutation = pd.concat([df_all_permutation, df_instance_permutation])
 
                 elif animal == 'F2003_Orecchiette':
                     # try:
                     df_instance = load_scores_and_filter(probewordlist,
-                                                                 saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/',
-                                                                 ferretname=animal_text,
-                                                                 singleunitlist=singleunitlist[animal][stream],
-                                                                 multiunitlist=multiunitlist[animal][stream],
-                                                                 noiselist=noiselist[animal][stream], stream=stream,
-                                                                 fullid=animal,
-                                                                 report=report[animal][stream], pitchshift_text=pitchshift_option)
+                                                         saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/',
+                                                         ferretname=animal_text,
+                                                         singleunitlist=singleunitlist[animal][stream],
+                                                         multiunitlist=multiunitlist[animal][stream],
+                                                         noiselist=noiselist[animal][stream], stream=stream,
+                                                         fullid=animal,
+                                                         report=report[animal][stream],
+                                                         pitchshift_text=pitchshift_option)
 
                     df_all = pd.concat([df_all, df_instance])
                     df_instance_permutation = load_scores_and_filter(probewordlist,
-                                                                             saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/',
-                                                                             ferretname=animal_text,
-                                                                             singleunitlist=singleunitlist[animal][stream],
-                                                                             multiunitlist=multiunitlist[animal][stream],
-                                                                             noiselist=noiselist[animal][stream], stream=stream,
-                                                                             fullid=animal,
-                                                                             report=report[animal][stream], permutation_scores=True, pitchshift_text=pitchshift_option)
+                                                                     saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/',
+                                                                     ferretname=animal_text,
+                                                                     singleunitlist=singleunitlist[animal][stream],
+                                                                     multiunitlist=multiunitlist[animal][stream],
+                                                                     noiselist=noiselist[animal][stream], stream=stream,
+                                                                     fullid=animal,
+                                                                     report=report[animal][stream],
+                                                                     permutation_scores=True,
+                                                                     pitchshift_text=pitchshift_option)
 
                     df_all_permutation = pd.concat([df_all_permutation, df_instance_permutation])
 
                 else:
-                    df_instance = load_scores_and_filter(probewordlist, saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/{streamtext}/',
-                                                                 ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
-                                                                 multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal, report = report[animal][stream], pitchshift_text=pitchshift_option)
+                    df_instance = load_scores_and_filter(probewordlist,
+                                                         saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/{streamtext}/',
+                                                         ferretname=animal_text,
+                                                         singleunitlist=singleunitlist[animal][stream],
+                                                         multiunitlist=multiunitlist[animal][stream],
+                                                         noiselist=noiselist[animal][stream], stream=stream,
+                                                         fullid=animal, report=report[animal][stream],
+                                                         pitchshift_text=pitchshift_option)
                     df_all = pd.concat([df_all, df_instance])
 
-                    df_instance_permutation = load_scores_and_filter(probewordlist, saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/{streamtext}/',
-                                                                             ferretname=animal_text, singleunitlist=singleunitlist[animal][stream],
-                                                                             multiunitlist=multiunitlist[animal][stream], noiselist = noiselist[animal][stream], stream = stream, fullid = animal, report = report[animal][stream]
-                                                                             , permutation_scores=True, pitchshift_text=pitchshift_option)
+                    df_instance_permutation = load_scores_and_filter(probewordlist,
+                                                                     saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/{streamtext}/',
+                                                                     ferretname=animal_text,
+                                                                     singleunitlist=singleunitlist[animal][stream],
+                                                                     multiunitlist=multiunitlist[animal][stream],
+                                                                     noiselist=noiselist[animal][stream], stream=stream,
+                                                                     fullid=animal, report=report[animal][stream]
+                                                                     , permutation_scores=True,
+                                                                     pitchshift_text=pitchshift_option)
 
                     df_all_permutation = pd.concat([df_all_permutation, df_instance_permutation])
 
                 try:
                     if animal == 'F1604_Squinty' or animal == 'F1606_Windolene' or animal == 'F1702_Zola' or animal == 'F1815_Cruella':
-                        print('trained animal'+ animal)
+                        print('trained animal' + animal)
                         df_all_trained = pd.concat([df_all_trained, df_instance])
                         df_all_trained_permutation = pd.concat([df_all_trained_permutation, df_instance_permutation])
                     else:
-                        print('naive animal:'+ animal)
+                        print('naive animal:' + animal)
                         df_all_naive = pd.concat([df_all_naive, df_instance])
                         df_all_naive_permutation = pd.concat([df_all_naive_permutation, df_instance_permutation])
                 except:
                     print('no scores for this stream')
                     pass
 
-
-        labels = [ 'F1901_Crumble', 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala']
+        labels = ['F1901_Crumble', 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola', 'F1815_Cruella', 'F1902_Eclair',
+                  'F1812_Nala']
 
         colors = ['purple', 'magenta', 'darkturquoise', 'olivedrab', 'steelblue', 'darkcyan', 'darkorange']
         #merge the information of df_all_trained_permutation and df_all_trained
@@ -683,20 +735,26 @@ def main():
         df_all['unique_id'] = df_all['cluster_id'].astype(str) + '_' + df_all['stream'].astype(str) + '_' + df_all[
             'recname'].astype(str) + '_' + df_all['probeword1'].astype(str) + '_' + df_all['pitchshift'].astype(str)
 
-        df_all_permutation['unique_id'] = df_all_permutation['cluster_id'].astype(str) + '_' + df_all_permutation['stream'].astype(str) + '_' + df_all_permutation['recname'].astype(str) + '_' + df_all_permutation['probeword1'].astype(str) + '_' + df_all_permutation['pitchshift'].astype(str)
-
+        df_all_permutation['unique_id'] = df_all_permutation['cluster_id'].astype(str) + '_' + df_all_permutation[
+            'stream'].astype(str) + '_' + df_all_permutation['recname'].astype(str) + '_' + df_all_permutation[
+                                              'probeword1'].astype(str) + '_' + df_all_permutation['pitchshift'].astype(
+            str)
 
         # Set 'unique_id' as the index
         df_all_reindexed = df_all.set_index('unique_id')
         df_all_permutation_reindexed = df_all_permutation.set_index('unique_id')
         df_all_permutation_reindexed = df_all_permutation_reindexed.rename(columns={'score': 'score_permutation'})
-        df_all_permutation_reindexed = df_all_permutation_reindexed.drop(columns = ['probeword1', 'pitchshift', 'cluster_id', 'stream', 'recname', 'unit_type', 'animal', 'clus_id_report', 'brain_area', 'tdt_electrode_num'])
+        df_all_permutation_reindexed = df_all_permutation_reindexed.drop(
+            columns=['probeword1', 'pitchshift', 'cluster_id', 'stream', 'recname', 'unit_type', 'animal',
+                     'clus_id_report', 'brain_area', 'tdt_electrode_num'])
         # Use join to merge the dataframes, just select the subset of score
         df_merged = df_all_reindexed.join(df_all_permutation_reindexed, how='left')
         #create a new column of naive based on the animal name
-        df_merged['Naive'] = df_merged['animal'].apply(lambda x: False if x in ['F1604_Squinty', 'F1606_Windolene', 'F1702_Zola', 'F1815_Cruella'] else True)
+        df_merged['Naive'] = df_merged['animal'].apply(
+            lambda x: False if x in ['F1604_Squinty', 'F1606_Windolene', 'F1702_Zola', 'F1815_Cruella'] else True)
         #make an ID column that combines the cluster id, stream, and recname
-        df_merged['ID'] = df_merged['cluster_id'].astype(str) + '_' + df_merged['stream'].astype(str) + '_' + df_merged['recname'].astype(str)
+        df_merged['ID'] = df_merged['cluster_id'].astype(str) + '_' + df_merged['stream'].astype(str) + '_' + df_merged[
+            'recname'].astype(str)
         #also make a Below-chance column that is True if the score is below permutation score
         df_merged['Below-chance'] = df_merged['score'] < df_merged['score_permutation']
         #rename brain area to BrainArea
@@ -710,8 +768,11 @@ def main():
 
     plot_major_analysis(df_merged)
     return df_merged
+
+
 def color_by_probeword(probeword):
     return probe_word_palette[df_full_naive['ProbeWord'].unique().tolist().index(probeword)]
+
 
 def plot_major_analysis(df_merged):
     # df_full represents trained animals, df_full_naive represents naive animals
@@ -728,7 +789,6 @@ def plot_major_analysis(df_merged):
         # check if all the probe words are below chance
         if np.sum(df_full_unit_trained['Below-chance']) == len(df_full_unit_trained['Below-chance']):
             df_full = df_full[df_full['ID'] != unit_id]
-
 
     fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
     sns.stripplot(x='BrainArea', y='Score', hue='Below-chance', data=df_full_naive, ax=ax, alpha=0.5)
@@ -1387,10 +1447,10 @@ def plot_major_analysis(df_merged):
                 components = full_id.split('_')
                 unit_id = components[0]
                 # remove the unit id from the full_id for the rec_name
-                rec_name = components[3:-2]
+                rec_name = df_full_pitchsplit_plot_animal.iloc[i]['recname']
                 # concatenate the rec_name
-                rec_name = '_'.join(rec_name)
-                stream = full_id[-4:]
+                # rec_name = '_'.join(rec_name)
+                stream = df_full_pitchsplit_plot_animal.iloc[i]['stream']
                 brainarea = df_full_pitchsplit_plot_animal.iloc[i]['BrainArea']
                 # append to a dataframe
                 animal_dataframe = animal_dataframe.append(
@@ -1410,10 +1470,10 @@ def plot_major_analysis(df_merged):
                 components = full_id.split('_')
                 unit_id = components[0]
                 # remove the unit id from the full_id for the rec_name
-                rec_name = components[3:-2]
+                rec_name =df_full_pitchsplit_plot_animal.iloc[i]['recname']
                 # concatenate the rec_name
-                rec_name = '_'.join(rec_name)
-                stream = full_id[-4:]
+                # rec_name = '_'.join(rec_name)
+                stream = df_full_pitchsplit_plot_animal.iloc[i]['stream']
                 # append to a dataframe
                 animal_dataframe = animal_dataframe.append(
                     {'ID': unit_id, 'rec_name': rec_name, 'stream': stream, 'BrainArea': brainarea},
@@ -2239,14 +2299,6 @@ def plot_general_distributions(dictlist, dictlist_naive, dictlist_trained):
                                    np.ones((len(bigconcatenatenaive_ps), 1))))
     scores = np.concatenate(
         (bigconcatenatetrained_nonps, bigconcatenatetrained_ps, bigconcatenatenaive_nonps, bigconcatenatenaive_ps))
-
-
-
-
-
-
-
-
 
 
 if __name__ == '__main__':
