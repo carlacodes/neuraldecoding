@@ -248,9 +248,9 @@ def load_scores_and_filter(probewordlist,
                                 #NEED TO FIGURE OUT WHAT stream NG_0 IS ON MYRIAD TODO
                                 try:
                                     sorted_df_of_scores = sorted_df_of_scores.append(
-                                        {'probeword1': probeword1_input_text[0], 'pitchshift': probeword2_input_text[0],
+                                        {'probeword1': probeword1_input_text[0], 'pitchshift': cond,
                                          'cluster_id': clus,
-                                         'score': scores[f'talker{talker}'][comp][key_text][score_key][i],
+                                         'score': scores[f'talker{talker}'][comp][cond][score_key][i],
                                          'unit_type': unit_type, 'animal': fullid, 'stream': stream_id, 'recname': recname,
                                          'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position, 'brain_area': brain_area}, ignore_index=True)
                                 except Exception as e:
@@ -482,8 +482,7 @@ def main():
     probewordlist =[ (1,1), (2,2), (3,3), (4,4),(5,5), (6,6), (7,7), (8,8), (9,9), (10,10)]
     probewordlist_l74 = [(1,1), (10, 10), (2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (11, 11), (12, 12),
                              (14, 14)]
-    animal_list = [ 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella',]
-    # animal_list = ['F1902_Eclair']
+    animal_list = [ 'F1604_Squinty', 'F1901_Crumble', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala',  'F2003_Orecchiette',]
     report = {}
     singleunitlist = {}
     multiunitlist = {}
@@ -663,6 +662,7 @@ def main():
         labels = [ 'F1901_Crumble', 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala']
 
         colors = ['purple', 'magenta', 'darkturquoise', 'olivedrab', 'steelblue', 'darkcyan', 'darkorange']
+        #merge the dataframes to
 
     return
 
