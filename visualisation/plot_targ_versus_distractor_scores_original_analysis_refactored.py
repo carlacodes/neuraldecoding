@@ -969,7 +969,7 @@ def plot_major_analysis(df_merged):
             components = full_id.split('_')
             unit_id = components[0]
             # remove the unit id from the full_id for the rec_name
-            rec_name = components[3:-2]
+            # rec_name = components[3:-2]
             # concatenate the rec_name
             rec_name = df_full_pitchsplit_plot_animal.iloc[i]['recname']
             stream = df_full_pitchsplit_plot_animal.iloc[i]['stream']
