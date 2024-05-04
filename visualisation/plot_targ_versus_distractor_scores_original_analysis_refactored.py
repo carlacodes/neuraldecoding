@@ -61,6 +61,14 @@ def load_scores_and_filter(probewordlist,
         json_file_path = f'F:\split_cluster_jsons/{fullid}/cluster_split_list.json'
         if ferretname == 'orecchiette':
             original_to_split_cluster_ids = np.array([])
+            try:
+                scores = np.load(
+                    saveDir + r'scores_' + ferretname + '_2022_' + stringprobewordindex + '_' + ferretname + '_probe_bs.npy',
+                    allow_pickle=True)[()]
+            except Exception as e:
+                print(e)
+                continue
+
         else:
             with open(json_file_path, "r") as json_file:
                 loaded_data = json.load(json_file)
@@ -480,9 +488,9 @@ def load_classified_report(path):
 
     return report, singleunitlist, multiunitlist, noiselist
 def main():
-    probewordlist_zola = [(1,1), (2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
-    probewordlist =[ (1,1), (2,2), (3,3), (4,4),(5,5), (6,6), (7,7), (8,8), (9,9), (10,10)]
-    probewordlist_l74 = [(1,1), (10, 10), (2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (11, 11), (12, 12),
+    probewordlist_zola = [ (2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
+    probewordlist =[ (2,2), (3,3), (4,4),(5,5), (6,6), (7,7), (8,8), (9,9), (10,10)]
+    probewordlist_l74 = [(10, 10), (2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (11, 11), (12, 12),
                              (14, 14)]
     animal_list = [ 'F1604_Squinty', 'F1901_Crumble', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala',  'F2003_Orecchiette',]
     report = {}
