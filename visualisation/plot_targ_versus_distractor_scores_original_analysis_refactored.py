@@ -1029,6 +1029,8 @@ def plot_major_analysis(df_merged):
             rec_name = '_'.join(rec_name)
             stream = full_id[-4:]
             # append to a dataframe
+            brainarea = df_full_pitchsplit_plot_animal.iloc[i]['BrainArea']
+
             animal_dataframe = animal_dataframe.append(
                 {'ID': unit_id, 'rec_name': rec_name, 'stream': stream, 'BrainArea': brainarea,
                  'Score': df_full_pitchsplit_plot_animal.iloc[i]['Score']},
