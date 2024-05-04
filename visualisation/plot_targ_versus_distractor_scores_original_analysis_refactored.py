@@ -673,8 +673,29 @@ def main():
 
         colors = ['purple', 'magenta', 'darkturquoise', 'olivedrab', 'steelblue', 'darkcyan', 'darkorange']
         #merge the information of df_all_trained_permutation and df_all_trained
-        df_all_permutation.rename(columns={'score': 'score_permutation'}, inplace=True)
-        df_trained_with_perm = df_all.merge(df_all_permutation[['score_permutation']], on=['cluster_id', 'stream', 'recname'], how='left')
+        df_all_permutation_renamed = df_all_permutation.rename(columns={'score': 'score_permutation'})
+
+        # Set 'cluster_id', 'stream', and 'recname' as index for both dataframes
+        #make a unique column that is the cluster id, stream, and recnam
+
+        # Create a new column 'unique_id' that concatenates 'cluster_id', 'stream', and 'recname'
+        df_all['unique_id'] = df_all['cluster_id'].astype(str) + '_' + df_all['stream'].astype(str) + '_' + df_all[
+            'recname'].astype(str) + '_' + df_all['probeword1'].astype(str) + '_' + df_all['pitchshift'].astype(str)
+
+        df_all_permutation['unique_id'] = df_all_permutation['cluster_id'].astype(str) + '_' + df_all_permutation['stream'].astype(str) + '_' + df_all_permutation['recname'].astype(str) + '_' + df_all_permutation['probeword1'].astype(str) + '_' + df_all_permutation['pitchshift'].astype(str)
+
+
+        # Set 'unique_id' as the index
+        df_all_reindexed = df_all.set_index('unique_id')
+        df_all_permutation_reindexed = df_all_permutation.set_index('unique_id')
+        df_all_permutation_reindexed = df_all_permutation_reindexed.rename(columns={'score': 'score_permutation'})
+        df_all_permutation_reindexed = df_all_permutation_reindexed.drop(columns = ['probeword1', 'pitchshift', 'cluster_id', 'stream', 'recname', 'unit_type', 'animal', 'clus_id_report', 'brain_area', 'tdt_electrode_num'])
+        # Use join to merge the dataframes, just select the subset of score
+        df_merged = df_all_reindexed.join(df_all_permutation_reindexed, how='left')
+
+
+        # Use join to merge the dataframes
+        df_merged = df_all_indexed.join(df_all_permutation_indexed, how='left')
 
     return
 
