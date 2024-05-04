@@ -726,7 +726,7 @@ def plot_major_analysis(df_merged):
     sns.stripplot(x='BrainArea', y='Score', hue='Below-chance', data=df_full_naive, ax=ax, alpha=0.5)
     sns.violinplot(x='BrainArea', y='Score', data=df_full_naive, ax=ax, inner=None, color='lightgray')
     plt.title('Naive animals')
-    plt.savefig(f'G:/neural_chapter/figures/violinplot_by_area_score_naiveanimals_02042024.png')
+    plt.savefig(f'G:/neural_chapter/figures/violinplot_by_area_score_naiveanimals_04052024.png')
     plt.show()
 
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -757,7 +757,7 @@ def plot_major_analysis(df_merged):
 
     # Add a title
     plt.title('Naive animals')
-    plt.savefig(f'G:/neural_chapter/figures/violinplot_ofdecodingscores_bybrainarea_naiveanimals_02042024.png', dpi=300)
+    plt.savefig(f'G:/neural_chapter/figures/violinplot_ofdecodingscores_bybrainarea_naiveanimals_04052024.png', dpi=300)
     # Show the plot
     plt.show()
     anova_table_naive, anova_model_naive = run_anova_on_dataframe(df_full_naive)
@@ -789,7 +789,7 @@ def plot_major_analysis(df_merged):
         # Set custom colors for ProbeWords in the legend
         # Add a title
         plt.title('Naive animal, {}'.format(animal))
-        plt.savefig(f'G:/neural_chapter/figures/violinplot_by_area_score_naive_{animal}_02042024.png')
+        plt.savefig(f'G:/neural_chapter/figures/violinplot_by_area_score_naive_{animal}_04052024.png')
 
         # Show the plot
         plt.show()
@@ -938,7 +938,7 @@ def plot_major_analysis(df_merged):
     plt.xlabel('Generalization fraction')
     plt.show()
 
-    # decoding score over all words vs generalisability, UNCOMMENT 02042024
+    # decoding score over all words vs generalisability, UNCOMMENT 04052024
     # fig2, ax2 = plt.subplots(figsize=(10, 6))
     # sns.scatterplot(x='GenFrac', y='MaxScore', data=df_full_naive_pitchsplit_plot, ax=ax2, color = 'darkcyan')
     # sns.regplot(x='GenFrac', y='MaxScore', data=df_full_naive_pitchsplit_plot, ax=ax2, color = 'darkcyan')
@@ -1142,7 +1142,7 @@ def plot_major_analysis(df_merged):
     plt.xlabel('Control - roved F0 \n LSTM decoder scores divided by Control F0', fontsize=20)
     plt.ylabel('Count', fontsize=20)
     # ax.legend()
-    plt.savefig('G:/neural_chapter/figures/diffF0distribution_02042024_02042024.png', dpi=1000)
+    plt.savefig('G:/neural_chapter/figures/diffF0distribution_04052024_04052024.png', dpi=1000)
     plt.show()
     fig, ax = plt.subplots(1, figsize=(8, 8), dpi=300)
     ax.scatter(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, marker='P', color='purple', alpha=0.5,
@@ -1172,7 +1172,7 @@ def plot_major_analysis(df_merged):
 
     plt.legend(fontsize=15, ncol=2)
     fig.tight_layout()
-    plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023_02042024.png', dpi=1000,
+    plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023_04052024.png', dpi=1000,
                 bbox_inches='tight')
     plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000, bbox_inches='tight')
     plt.show()
@@ -1191,7 +1191,7 @@ def plot_major_analysis(df_merged):
     plt.title('F0 control vs. roved, naive animals', fontsize=30)
     plt.ylabel('F0 roved score', fontsize=30)
     plt.xlabel('F0 control score', fontsize=30)
-    plt.savefig('G:/neural_chapter/figures/kdeplot_naiveanimals_2_02042024.png', dpi=300, bbox_inches='tight')
+    plt.savefig('G:/neural_chapter/figures/kdeplot_naiveanimals_2_04052024.png', dpi=300, bbox_inches='tight')
     plt.show()
 
     df_trained_kde = pd.DataFrame({'F0_control': bigconcatenatetrained_nonps, 'F0_roved': bigconcatenatetrained_ps})
@@ -1205,7 +1205,7 @@ def plot_major_analysis(df_merged):
     plt.title('F0 control vs. roved, trained animals', fontsize=30)
     plt.ylabel('F0 roved score', fontsize=30)
     plt.xlabel('F0 control score', fontsize=30)
-    plt.savefig('G:/neural_chapter/figures/kdeplot_trainedanimals_2_02042024.png', dpi=300, bbox_inches='tight')
+    plt.savefig('G:/neural_chapter/figures/kdeplot_trainedanimals_2_04052024.png', dpi=300, bbox_inches='tight')
     plt.show()
     manwhitscorecontrolf0 = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatenaive_nonps, alternative='greater')
 
@@ -1213,7 +1213,7 @@ def plot_major_analysis(df_merged):
     n2 = len(bigconcatenatenaive_nonps)
     r_controlf0 = 1 - (2 * manwhitscorecontrolf0.statistic) / (n1 * n2)
     # ax.legend()
-    plt.savefig('G:/neural_chapter/figures/controlF0distribution20062023intertrialroving_02042024.png', dpi=1000)
+    plt.savefig('G:/neural_chapter/figures/controlF0distribution20062023intertrialroving_04052024.png', dpi=1000)
     plt.show()
 
     fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
@@ -1238,7 +1238,7 @@ def plot_major_analysis(df_merged):
 
     # ax.leg
     ax.legend(fontsize=18)
-    plt.savefig('G:/neural_chapter/figures/rovedF0distribution_20062023intertrialroving_02042024.png', dpi=1000)
+    plt.savefig('G:/neural_chapter/figures/rovedF0distribution_20062023intertrialroving_04052024.png', dpi=1000)
 
     plt.show()
 
@@ -1255,7 +1255,7 @@ def plot_major_analysis(df_merged):
     plt.ylabel('Density', fontsize=30)
     plt.xlim([0.35, 1])
 
-    plt.savefig('G:/neural_chapter/figures/rovedF0vscontrolF0traineddistribution_20062023intertrialroving_02042024.png',
+    plt.savefig('G:/neural_chapter/figures/rovedF0vscontrolF0traineddistribution_20062023intertrialroving_04052024.png',
                 dpi=400, bbox_inches='tight')
     plt.show()
 
@@ -1271,7 +1271,7 @@ def plot_major_analysis(df_merged):
     plt.xlabel(' LSTM decoder scores', fontsize=30)
     plt.title('Roved and Control F0 Distributions \n for the Naive Animals', fontsize=30)
     plt.ylabel('Density', fontsize=30)
-    plt.savefig('G:/neural_chapter/figures/rovedF0vscontrolF0naivedistribution_20062023intertrialroving_02042024.png',
+    plt.savefig('G:/neural_chapter/figures/rovedF0vscontrolF0naivedistribution_20062023intertrialroving_04052024.png',
                 dpi=1000)
     plt.show()
     kstestcontrolf0vsrovedtrained = scipy.stats.kstest(bigconcatenatetrained_nonps, bigconcatenatetrained_ps,
@@ -1426,7 +1426,7 @@ def plot_major_analysis(df_merged):
             plt.xticks([0, 0.2, 0.4, 0.6, 0.8, 1], labels=[0, 0.2, 0.4, 0.6, 0.8, 1])
 
         plt.ylabel('Count', fontsize=20)
-        plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_{options}_02042024.png')
+        plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_{options}_04052024.png')
         plt.show()
 
         # plot as a violin plot with brainarea on the x axis
@@ -1442,7 +1442,7 @@ def plot_major_analysis(df_merged):
             plt.xlim(0, 1)
 
         plt.ylabel('Count', fontsize=20)
-        plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_violin_{options}_02042024.png')
+        plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_violin_{options}_04052024.png')
         plt.show()
 
         fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
@@ -1454,7 +1454,7 @@ def plot_major_analysis(df_merged):
             plt.xlabel('Generalizability Index of Top 25% of Units', fontsize=20)
         elif options == 'frac':
             plt.xlabel('Generalizability Fraction of Top 25% of Units', fontsize=20)
-        plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_violin_naive_{options}_02042024.png')
+        plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_violin_naive_{options}_04052024.png')
         plt.show()
 
         # do the mann whitney u test between genfrac scores from PEG and MEG
@@ -1479,7 +1479,7 @@ def plot_major_analysis(df_merged):
 
             plt.xlabel('Generalizability Fraction of Top 25% of Units', fontsize=20)
         plt.ylabel('Count', fontsize=20)
-        plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_violin_bybrainarea_{options}_02042024.png')
+        plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_violin_bybrainarea_{options}_04052024.png')
 
         fig, ax = plt.subplots(1, dpi=300)
         sns.violinplot(x='BrainArea', y='MeanScore', data=df_full_pitchsplit_plot, ax=ax, inner=None, label=None,
@@ -1522,7 +1522,7 @@ def plot_major_analysis(df_merged):
 
         # reinsert the handles and labeels:
 
-        plt.savefig(f'G:/neural_chapter/figures/meanscore_highthreshold_violin_bybrainarea_{options}_02042024.png')
+        plt.savefig(f'G:/neural_chapter/figures/meanscore_highthreshold_violin_bybrainarea_{options}_04052024.png')
 
         df_full_pitchsplit_plot['Group'] = 'Trained'
         df_full_naive_pitchsplit_plot['Group'] = 'Naive'
@@ -1545,7 +1545,7 @@ def plot_major_analysis(df_merged):
         handles, labels = ax.get_legend_handles_labels()
         ax.legend(handles=[handles[0], handles[1]], labels=['trained', 'naive'], title=None, fontsize=18)
         plt.savefig(
-            f'G:/neural_chapter/figures/meanscore_highthreshold_naive_trained_violin_bybrainarea_{options}_02042024.png')
+            f'G:/neural_chapter/figures/meanscore_highthreshold_naive_trained_violin_bybrainarea_{options}_04052024.png')
 
         plt.show()
 
@@ -1561,7 +1561,7 @@ def plot_major_analysis(df_merged):
             plt.xlabel('Generalizability Fraction of Top 25% of Units', fontsize=20)
         plt.ylabel('GenFrac', fontsize=20)
 
-        plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_violin_naive_bybrainarea_{options}_02042024.png')
+        plt.savefig(f'G:/neural_chapter/figures/GenFrac_highthreshold_violin_naive_bybrainarea_{options}_04052024.png')
 
         # stat_peg, p_peg = mannwhitneyu(df_full_naive_pitchsplit_plot_peg['GenFrac'], df_full_naive_pitchsplit_plot_meg['GenFrac'], alternative = 'less')
         # plot the brain area loation of the units that are significantly different
@@ -1582,7 +1582,7 @@ def plot_major_analysis(df_merged):
         # reinsert the legend
         ax.legend(handles=[handles[0]], labels=['naive'], title=None, fontsize=18)
         plt.ylabel('Mean Score', fontsize=20)
-        plt.savefig(f'G:/neural_chapter/figures/meanscore_highthreshold_violin_naive_bybrainarea_02042024.png')
+        plt.savefig(f'G:/neural_chapter/figures/meanscore_highthreshold_violin_naive_bybrainarea_04052024.png')
 
         n1 = len(df_full_naive_pitchsplit_plot_peg)
         n2 = len(df_full_naive_pitchsplit_plot_meg)
@@ -1638,7 +1638,7 @@ def plot_major_analysis(df_merged):
         print(stat_general)
         print(p_general)
 
-        plt.savefig(f'G:/neural_chapter/figures/GenFrac_allthreshold_{options}_02042024.png')
+        plt.savefig(f'G:/neural_chapter/figures/GenFrac_allthreshold_{options}_04052024.png')
         plt.show()
 
         # plot as a violin plot with brainarea on the x-axis
@@ -1652,7 +1652,7 @@ def plot_major_analysis(df_merged):
         elif options == 'frac':
             plt.xlabel('Generalizability Fraction', fontsize=20)
 
-        plt.savefig(f'G:/neural_chapter/figures/GenFrac_allthreshold_violin_{options}_02042024.png')
+        plt.savefig(f'G:/neural_chapter/figures/GenFrac_allthreshold_violin_{options}_04052024.png')
         plt.show()
 
         fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
@@ -1665,7 +1665,7 @@ def plot_major_analysis(df_merged):
         elif options == 'frac':
             plt.xlabel('Generalizability Fraction', fontsize=20)
         plt.title(f'Generalizability scores for the naive animals, all units, method: {options}')
-        plt.savefig(f'G:/neural_chapter/figures/GenFrac_allthreshold_violin_naive_{options}_02042024.png')
+        plt.savefig(f'G:/neural_chapter/figures/GenFrac_allthreshold_violin_naive_{options}_04052024.png')
         # do the mann whitney u test between genfrac scores from PEG and MEG
         df_full_pitchsplit_plot_peg = df_full_pitchsplit_plot[df_full_pitchsplit_plot['BrainArea'] == 'PEG']
         df_full_pitchsplit_plot_meg = df_full_pitchsplit_plot[df_full_pitchsplit_plot['BrainArea'] == 'MEG']
@@ -1689,7 +1689,7 @@ def plot_major_analysis(df_merged):
                   hue='Below-chance', alpha=1, jitter=True)
     sns.violinplot(x='ProbeWord', y='Score', data=df_full, ax=ax, color='white')
     plt.title('Trained animals'' scores over distractor word')
-    plt.savefig(f'G:/neural_chapter/figurestrained_animals_overdistractor_02042024.png', dpi=300)
+    plt.savefig(f'G:/neural_chapter/figurestrained_animals_overdistractor_04052024.png', dpi=300)
     plt.show()
 
     # plot strip plot split by pitch shift
@@ -1739,7 +1739,7 @@ def plot_major_analysis(df_merged):
     plt.xlabel(None)
 
     plt.title("Trained animals' scores over probe word", fontsize=40)
-    plt.savefig(f'G:/neural_chapter/figures/trained_animals_overdistractor_dividedbypitchshift_02042024.png', dpi=300,
+    plt.savefig(f'G:/neural_chapter/figures/trained_animals_overdistractor_dividedbypitchshift_04052024.png', dpi=300,
                 bbox_inches='tight')
     plt.show()
 
@@ -1767,7 +1767,7 @@ def plot_major_analysis(df_merged):
     plt.xlabel(None)
 
     plt.title("Trained animals' scores, \n top performing units, over probe word", fontsize=40)
-    plt.savefig(f'G:/neural_chapter/figures/trained_animals_topunits_overdistractor_dividedbypitchshift_02042024.png',
+    plt.savefig(f'G:/neural_chapter/figures/trained_animals_topunits_overdistractor_dividedbypitchshift_04052024.png',
                 dpi=300,
                 bbox_inches='tight')
     plt.show()
@@ -1839,7 +1839,7 @@ def plot_major_analysis(df_merged):
 
     ax.legend(handles=handles[0:2], labels=['Control', 'Pitch-shifted'], title=None, fontsize=18)
     plt.title("Naive animals' scores over distractor word", fontsize=40)
-    plt.savefig(f'G:/neural_chapter/figures/naive_animals_overdistractor_dividedbypitchshift_02042024.png', dpi=300,
+    plt.savefig(f'G:/neural_chapter/figures/naive_animals_overdistractor_dividedbypitchshift_04052024.png', dpi=300,
                 bbox_inches='tight')
     plt.show()
 
@@ -1864,7 +1864,7 @@ def plot_major_analysis(df_merged):
 
     ax.legend(handles=handles[0:2], labels=['Control', 'Pitch-shifted'], title=None, fontsize=18)
     plt.title("Naive animals' scores, \n top performing units, over distractor word", fontsize=40)
-    plt.savefig(f'G:/neural_chapter/figures/naive_animals_topunits_overdistractor_dividedbypitchshift_02042024.png',
+    plt.savefig(f'G:/neural_chapter/figures/naive_animals_topunits_overdistractor_dividedbypitchshift_04052024.png',
                 dpi=300, bbox_inches='tight')
     plt.show()
 
@@ -1963,7 +1963,7 @@ def plot_major_analysis(df_merged):
 
         sns.violinplot(x='ProbeWord', y='Score', data=df_full_naive_ps_animal, ax=ax, hue='PitchShift')
         plt.title(f'Naive scores over distractor word:{animal}')
-        plt.savefig(f'G:/neural_chapter/figures/naive_animals_overdistractor_dividedbypitchshift_{animal}_02042024.png',
+        plt.savefig(f'G:/neural_chapter/figures/naive_animals_overdistractor_dividedbypitchshift_{animal}_04052024.png',
                     dpi=300)
 
         plt.show()
@@ -1984,7 +1984,7 @@ def plot_major_analysis(df_merged):
         sns.violinplot(x='ProbeWord', y='Score', data=df_full_pitchsplit_animal, ax=ax, hue='PitchShift',
                        palette='Spectral')
         plt.title(f'Trained scores over distractor word:{animal}')
-        plt.savefig(f'G:/neural_chapter/figurestrained_{animal}_overdistractor_dividedbypitchshift_02042024.png',
+        plt.savefig(f'G:/neural_chapter/figurestrained_{animal}_overdistractor_dividedbypitchshift_04052024.png',
                     dpi=300)
 
         plt.show()
@@ -2102,7 +2102,7 @@ def plot_general_distributions(dictlist, dictlist_naive, dictlist_trained):
     plt.xlabel('Control - roved F0 \n LSTM decoder scores', fontsize=20)
     plt.ylabel('Density', fontsize=20)
     # ax.legend()
-    # plt.savfig('G:/neural_chapter/figures/diffF0distribution_02042024_02042024.png', dpi=1000)
+    # plt.savfig('G:/neural_chapter/figures/diffF0distribution_04052024_04052024.png', dpi=1000)
     plt.show()
 
     # plot sns histogram of the relative score and with the displot function overlaid
@@ -2111,7 +2111,7 @@ def plot_general_distributions(dictlist, dictlist_naive, dictlist_trained):
     sns.histplot(relativescoretrainedfrac, bins=20, label='trained', color='purple', kde=True)
     sns.histplot(relativescorenaivefrac, bins=20, label='naive', color='darkcyan', kde=True)
 
-    # plt.savfig('G:/neural_chapter/figures/diffF0distribution_relfrac_histplotwithkde_02042024_02042024.png', dpi=1000)
+    # plt.savfig('G:/neural_chapter/figures/diffF0distribution_relfrac_histplotwithkde_04052024_04052024.png', dpi=1000)
 
     plt.show()
 
@@ -2149,7 +2149,7 @@ def plot_general_distributions(dictlist, dictlist_naive, dictlist_trained):
     plt.ylabel('Density', fontsize=20)
     # ax.legend(fontsize = 18)
 
-    # plt.savfig('G:/neural_chapter/figures/diffF0distribution_frac_20062023wlegendintertrialroving_02042024_02042024.png', dpi=1000)
+    # plt.savfig('G:/neural_chapter/figures/diffF0distribution_frac_20062023wlegendintertrialroving_04052024_04052024.png', dpi=1000)
     plt.show()
 
     fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
@@ -2166,7 +2166,7 @@ def plot_general_distributions(dictlist, dictlist_naive, dictlist_trained):
     manwhitscorecontrolf0 = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatenaive_nonps, alternative='greater')
 
     # ax.legend()
-    # plt.savfig('G:/neural_chapter/figures/controlF0distribution20062023intertrialroving_02042024_02042024.png', dpi=1000)
+    # plt.savfig('G:/neural_chapter/figures/controlF0distribution20062023intertrialroving_04052024_04052024.png', dpi=1000)
 
     plt.show()
 
@@ -2182,7 +2182,7 @@ def plot_general_distributions(dictlist, dictlist_naive, dictlist_trained):
     manwhitscorerovedf0 = mannwhitneyu(bigconcatenatetrained_ps, bigconcatenatenaive_ps, alternative='greater')
 
     ax.legend(fontsize=18)
-    # plt.savfig('G:/neural_chapter/figures/rovedF0distribution_20062023intertrialroving_02042024_02042024.png', dpi=1000)
+    # plt.savfig('G:/neural_chapter/figures/rovedF0distribution_20062023intertrialroving_04052024_04052024.png', dpi=1000)
 
     plt.show()
 
@@ -2194,7 +2194,7 @@ def plot_general_distributions(dictlist, dictlist_naive, dictlist_trained):
     plt.title('Roved and Control F0 Distributions for the Trained Animals', fontsize=18)
     plt.xlabel(' LSTM decoder scores', fontsize=20)
 
-    # plt.savfig('G:/neural_chapter/figures/rovedF0vscontrolF0traineddistribution_20062023intertrialroving_02042024_02042024.png', dpi=1000)
+    # plt.savfig('G:/neural_chapter/figures/rovedF0vscontrolF0traineddistribution_20062023intertrialroving_04052024_04052024.png', dpi=1000)
 
     plt.show()
 
@@ -2207,7 +2207,7 @@ def plot_general_distributions(dictlist, dictlist_naive, dictlist_trained):
     plt.title('Roved and Control F0 Distributions for the Naive Animals', fontsize=18)
 
     plt.savfig(
-        'G:/neural_chapter/figures/rovedF0vscontrolF0naivedistribution_20062023intertrialroving_02042024_02042024.png',
+        'G:/neural_chapter/figures/rovedF0vscontrolF0naivedistribution_20062023intertrialroving_04052024_04052024.png',
         dpi=1000)
     plt.show()
     kstestcontrolf0vsrovedtrained = scipy.stats.kstest(bigconcatenatetrained_nonps, bigconcatenatetrained_ps,
