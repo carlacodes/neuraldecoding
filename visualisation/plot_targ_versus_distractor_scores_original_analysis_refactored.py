@@ -760,7 +760,7 @@ def plot_major_analysis(df_merged):
     plt.savefig(f'G:/neural_chapter/figures/violinplot_ofdecodingscores_bybrainarea_naiveanimals_02042024.png', dpi=300)
     # Show the plot
     plt.show()
-    anova_table_naive, anova_model_naive = run_anova_on_dataframe(df_full_naive_pitchsplit)
+    anova_table_naive, anova_model_naive = run_anova_on_dataframe(df_full_naive)
     # now plot by animal for the trained animals
     for animal in ['F1901_Crumble', 'F1902_Eclair',
                    'F1812_Nala', 'F2003_Orecchiette']:
@@ -797,7 +797,7 @@ def plot_major_analysis(df_merged):
     # export to csv the amount of units per animal
     df_of_neural_yield = pd.DataFrame(columns=['Animal', 'Number of single units', 'Number of multi units'])
     for animal in ['F1901_Crumble', 'F1902_Eclair', 'F1812_Nala', 'F2003_Orecchiette']:
-        animal_units = df_full_naive_pitchsplit[df_full_naive_pitchsplit['ID'].str.contains(animal)]
+        animal_units = df_full_naive[df_full_naive['ID'].str.contains(animal)]
         # drop all non unique units
         animal_units = animal_units.drop_duplicates(subset=['ID'])
         print(animal, len(animal_units))
@@ -809,7 +809,7 @@ def plot_major_analysis(df_merged):
     # export to csv the amount of units per animal
     df_of_neural_yield = pd.DataFrame(columns=['Animal', 'Number of single units', 'Number of multi units'])
     for animal in ['F1604_Squinty', 'F1606_Windolene', 'F1702_Zola', 'F1815_Cruella', ]:
-        animal_units = df_full_pitchsplit[df_full_pitchsplit['ID'].str.contains(animal)]
+        animal_units = df_full[df_full['ID'].str.contains(animal)]
         animal_units = animal_units.drop_duplicates(subset=['ID'])
         print(animal, len(animal_units))
         df_of_neural_yield = df_of_neural_yield.append(
@@ -817,17 +817,17 @@ def plot_major_analysis(df_merged):
              'Number of multi units': len(animal_units) - np.sum(animal_units['SingleUnit'])}, ignore_index=True)
     df_of_neural_yield.to_csv('G:/neural_chapter/neural_yield_trained.csv')
 
-    for unit_id in df_full_naive_pitchsplit['ID']:
-        df_full_unit_naive = df_full_naive_pitchsplit[df_full_naive_pitchsplit['ID'].str.contains(unit_id)]
+    for unit_id in df_full_naive['ID']:
+        df_full_unit_naive = df_full_naive[df_full_naive['ID'].str.contains(unit_id)]
         # check if all the probe words are below chance
         if np.sum(df_full_unit_naive['Below-chance']) == len(df_full_unit_naive['Below-chance']):
-            df_full_naive_pitchsplit = df_full_naive_pitchsplit[df_full_naive_pitchsplit['ID'] != unit_id]
+            df_full_naive = df_full_naive[df_full_naive['ID'] != unit_id]
 
-    for unit_id in df_full_pitchsplit['ID']:
-        df_full_unit = df_full_pitchsplit[df_full_pitchsplit['ID'].str.contains(unit_id)]
+    for unit_id in df_full['ID']:
+        df_full_unit = df_full[df_full['ID'].str.contains(unit_id)]
         # check if all the probe words are below chance
         if np.sum(df_full_unit['Below-chance']) == len(df_full_unit['Below-chance']):
-            df_full_pitchsplit = df_full_pitchsplit[df_full_pitchsplit['ID'] != unit_id]
+            df_full = df_full[df_full['ID'] != unit_id]
 
     df_of_neural_yield = pd.DataFrame(columns=['Animal', 'Number of single units', 'Number of multi units'])
     for animal in ['F1901_Crumble', 'F1902_Eclair', 'F1812_Nala', 'F2003_Orecchiette']:
@@ -854,7 +854,7 @@ def plot_major_analysis(df_merged):
     df_full.to_csv('G:/neural_chapter/trained_animals_decoding_scores.csv')
 
     ##export the high genfrac units
-    df_full_pitchsplit_highsubset = create_gen_frac_and_index_variable(df_full_pitchsplit, high_score_threshold=False,
+    df_full_pitchsplit_highsubset = create_gen_frac_and_index_variable(df_full, high_score_threshold=False,
                                                                        sixty_score_threshold=False,
                                                                        need_ps=True)
 
@@ -867,7 +867,7 @@ def plot_major_analysis(df_merged):
     # decoding score over all words vs generalisability
 
     # export the unit ids of the units that are in the top 25% of genfrac scores
-    df_full_naive_pitchsplit_plot = create_gen_frac_and_index_variable(df_full_naive_pitchsplit,
+    df_full_naive_pitchsplit_plot = create_gen_frac_and_index_variable(df_full_naive,
                                                                        high_score_threshold=False,
                                                                        sixty_score_threshold=False,
                                                                        need_ps=True)
@@ -976,7 +976,7 @@ def plot_major_analysis(df_merged):
         animal_dataframe.to_csv(f'G:/neural_chapter/figures/unit_ids_trained_topgenindex_{animal}.csv')
     for animal in ['F1815_Cruella', 'F1702_Zola', 'F1604_Squinty', 'F1606_Windolene']:
         # isolate the data for this animal
-        df_full_pitchsplit_plot_animal = df_full_pitchsplit[df_full_pitchsplit['ID'].str.contains(animal)]
+        df_full_pitchsplit_plot_animal = df_full[df_full['ID'].str.contains(animal)]
         # export the unit IDs for this animal
         animal_dataframe = pd.DataFrame(columns=['ID', 'rec_name', 'stream', 'BrainArea', 'Score'])
         for i in range(0, len(df_full_pitchsplit_plot_animal)):
@@ -998,8 +998,8 @@ def plot_major_analysis(df_merged):
         # export the dataframe to csv
         animal_dataframe.to_csv(f'G:/neural_chapter/csvs/unit_ids_trained_all_{animal}.csv')
     # get the ratio of highgenindex to low genindex units
-    ratio_trained = len(df_full_pitchsplit_plot) / len(df_full_pitchsplit)
-    ratio_naive = len(df_full_naive_pitchsplit_plot) / len(df_full_naive_pitchsplit)
+    ratio_trained = len(df_full_pitchsplit_plot) / len(df_full)
+    ratio_naive = len(df_full_naive_pitchsplit_plot) / len(df_full_naive)
     # make a dataframe and export to csv
     df_ratio = pd.DataFrame(columns=['Animal', 'Ratio'])
     df_ratio = df_ratio.append({'Animal': 'Trained', 'Ratio': ratio_trained}, ignore_index=True)
@@ -1007,8 +1007,8 @@ def plot_major_analysis(df_merged):
     df_ratio.to_csv('G:/neural_chapter/csvs/ratio_highgenindex_lowgenindex.csv')
     for animal in ['F1902_Eclair', 'F1901_Crumble', 'F1812_Nala', 'F2003_Orecchiette']:
         # isolate the data for this animal
-        df_full_pitchsplit_plot_animal = df_full_naive_pitchsplit[
-            df_full_naive_pitchsplit['ID'].str.contains(animal)]
+        df_full_pitchsplit_plot_animal = df_full_naive[
+            df_full_naive['ID'].str.contains(animal)]
         # export the unit IDs for this animal
         animal_dataframe = pd.DataFrame(columns=['ID', 'rec_name', 'stream', 'Score'])
         for i in range(0, len(df_full_pitchsplit_plot_animal)):
@@ -1058,8 +1058,8 @@ def plot_major_analysis(df_merged):
     bigconcatenatetrained_nonps = []
     bigconcatenatetrained_ps = []
     rel_frac_list_trained = []
-    for unit_id in df_full_naive_pitchsplit['ID']:
-        df_full_unit_naive = df_full_naive_pitchsplit[df_full_naive_pitchsplit['ID'] == unit_id]
+    for unit_id in df_full_naive['ID']:
+        df_full_unit_naive = df_full_naive[df_full_naive['ID'] == unit_id]
         # get all the scores where pitchshift is 1 for each probe word
         for probeword in df_full_unit_naive['ProbeWord'].unique():
             try:
@@ -1085,8 +1085,8 @@ def plot_major_analysis(df_merged):
                 rel_frac_list_naive.append(rel_score)
                 bigconcatenatenaive_ps.append(pitchshift_score)
                 bigconcatenatenaive_nonps.append(control_score)
-    for unit_id in df_full_pitchsplit['ID']:
-        df_full_unit = df_full_pitchsplit[df_full_pitchsplit['ID'] == unit_id]
+    for unit_id in df_full['ID']:
+        df_full_unit = df_full[df_full['ID'] == unit_id]
         # get all the scores where pitchshift is 1 for the each probe word
         for probeword in df_full_unit['ProbeWord'].unique():
             try:
@@ -1177,8 +1177,8 @@ def plot_major_analysis(df_merged):
     plt.savefig('G:/neural_chapter/figures/scattermuaandsuregplot_mod_21062023.pdf', dpi=1000, bbox_inches='tight')
     plt.show()
 
-    unique_unit_ids_naive = df_full_naive_pitchsplit['ID'].unique()
-    unique_unit_ids_trained = df_full_pitchsplit['ID'].unique()
+    unique_unit_ids_naive = df_full_naive['ID'].unique()
+    unique_unit_ids_trained = df_full['ID'].unique()
     # make a kde plot
     # makea  dataframe
     df_naive = pd.DataFrame({'F0_control': bigconcatenatenaive_nonps, 'F0_roved': bigconcatenatenaive_ps})
@@ -1356,14 +1356,14 @@ def plot_major_analysis(df_merged):
         'G:/neural_chapter/figures/stats_16112023_comparingdistributions_generalintertrialroving.csv')
 
     for options in ['index', 'frac']:
-        df_full_pitchsplit_highsubset = create_gen_frac_variable(df_full_pitchsplit, high_score_threshold=True,
+        df_full_pitchsplit_highsubset = create_gen_frac_variable(df_full, high_score_threshold=True,
                                                                  index_or_frac=options)
         # remove all rows where GenFrac is nan
         df_full_pitchsplit_plot = df_full_pitchsplit_highsubset[df_full_pitchsplit_highsubset['GenFrac'].notna()]
         df_full_pitchsplit_plot = df_full_pitchsplit_plot.drop_duplicates(subset=['ID'])
         # export the unit ids of the units that are in the top 25% of genfrac scores
         df_full_pitchsplit_plot.to_csv(f'G:/neural_chapter/figures/unit_ids_trained_highthreshold_{options}.csv')
-        df_full_naive_pitchsplit_plot = create_gen_frac_variable(df_full_naive_pitchsplit, high_score_threshold=True,
+        df_full_naive_pitchsplit_plot = create_gen_frac_variable(df_full_naive, high_score_threshold=True,
                                                                  index_or_frac=options)
         df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['GenFrac'].notna()]
         df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot.drop_duplicates(subset=['ID'])
@@ -1609,7 +1609,7 @@ def plot_major_analysis(df_merged):
         print(stat)
         print(p)
 
-        df_full_pitchsplit_allsubset = create_gen_frac_variable(df_full_pitchsplit, high_score_threshold=False,
+        df_full_pitchsplit_allsubset = create_gen_frac_variable(df_full, high_score_threshold=False,
                                                                 index_or_frac=options)
         # remove all rows where GenFrac is nan
         df_full_pitchsplit_plot = df_full_pitchsplit_allsubset[df_full_pitchsplit_allsubset['GenFrac'].notna()]
@@ -1617,7 +1617,7 @@ def plot_major_analysis(df_merged):
         # get the subset of the data where the meanscore is above 0.75
         df_full_pitchsplit_plot_highsubset = df_full_pitchsplit_plot[df_full_pitchsplit_plot['MeanScore'] > 0.75]
 
-        df_full_naive_pitchsplit_plot = create_gen_frac_variable(df_full_naive_pitchsplit, high_score_threshold=False,
+        df_full_naive_pitchsplit_plot = create_gen_frac_variable(df_full_naive, high_score_threshold=False,
                                                                  index_or_frac=options)
         df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot[df_full_naive_pitchsplit_plot['GenFrac'].notna()]
         df_full_naive_pitchsplit_plot = df_full_naive_pitchsplit_plot.drop_duplicates(subset=['ID'])
@@ -1693,7 +1693,7 @@ def plot_major_analysis(df_merged):
     plt.show()
 
     # plot strip plot split by pitch shift
-    df_full_pitchsplit_violinplot = df_full_pitchsplit
+    df_full_pitchsplit_violinplot = df_full
     df_full_pitchsplit_violinplot['ProbeWord'] = df_full_pitchsplit_violinplot['ProbeWord'].replace(
         {'(2,2)': 'craft', '(3,3)': 'in contrast to', '(4,4)': 'when a', '(5,5)': 'accurate', '(6,6)': 'pink noise',
          '(7,7)': 'of science', '(8,8)': 'rev. instruments', '(9,9)': 'boats', '(10,10)': 'today',
@@ -1801,7 +1801,7 @@ def plot_major_analysis(df_merged):
     # export the dataframe
     df_kruskal.to_csv('G:/neural_chapter/figures/kruskal_pvalues_trained.csv')
 
-    df_full_naive_pitchsplit_violinplot = df_full_naive_pitchsplit
+    df_full_naive_pitchsplit_violinplot = df_full_naive
     df_full_naive_pitchsplit_violinplot['ProbeWord'] = df_full_naive_pitchsplit_violinplot['ProbeWord'].replace(
         {'(2,2)': 'craft', '(3,3)': 'in contrast to', '(4,4)': 'when a', '(5,5)': 'accurate', '(6,6)': 'pink noise',
          '(7,7)': 'of science', '(8,8)': 'rev. instruments', '(9,9)': 'boats', '(10,10)': 'today',
@@ -1828,7 +1828,7 @@ def plot_major_analysis(df_merged):
     sns.stripplot(x='ProbeWord', y='Score', data=df_below_chance, ax=ax, size=3, dodge=True, color='lightgray',
                   alpha=0.1, jitter=True, hue='PitchShift', palette=custom_colors_naive, edgecolor='k', linewidth=0.2)
 
-    sns.violinplot(x='ProbeWord', y='Score', data=df_full_naive_pitchsplit, ax=ax, color='white', hue='PitchShift')
+    sns.violinplot(x='ProbeWord', y='Score', data=df_full_naive, ax=ax, color='white', hue='PitchShift')
     # get the legend handles
     plt.ylabel('Decoding Score', fontsize=40)
     plt.xlabel(None)
@@ -1903,7 +1903,7 @@ def plot_major_analysis(df_merged):
     # run an anova to see if probe word is significant
     # first get the data into a format that can be analysed
 
-    df_full_pitchsplit_anova = df_full_pitchsplit.copy()
+    df_full_pitchsplit_anova = df_full.copy()
 
     unique_probe_words = df_full_pitchsplit_anova['ProbeWord'].unique()
 
@@ -1940,16 +1940,16 @@ def plot_major_analysis(df_merged):
     print(anova_table)
     # combine the dataframes df_full_naive_pitchsplit and
     # add the column naive to df_full_naive_pitchsplit
-    df_full_naive_pitchsplit['Naive'] = 1
-    df_full_pitchsplit['Naive'] = 0
-    combined_df = df_full_naive_pitchsplit.append(df_full_pitchsplit)
+    df_full_naive['Naive'] = 1
+    df_full['Naive'] = 0
+    combined_df = df_full_naive.append(df_full)
     # now run the lightgbm function
     run_mixed_effects_on_dataframe(combined_df)
     runlgbmmodel_score(combined_df, optimization=False)
 
     # now plot by animal:
     for animal in ['F1901_Crumble', 'F1902_Eclair', 'F2003_Orecchiette', 'F1812_Nala']:
-        df_full_naive_ps_animal = df_full_naive_pitchsplit[df_full_naive_pitchsplit['ID'].str.contains(animal)]
+        df_full_naive_ps_animal = df_full_naive[df_full_naive['ID'].str.contains(animal)]
         if len(df_full_naive_ps_animal) == 0:
             continue
         fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
@@ -1969,7 +1969,7 @@ def plot_major_analysis(df_merged):
         plt.show()
 
     for animal in ['F1702_Zola', 'F1815_Cruella', 'F1604_Squinty', 'F1606_Windolene']:
-        df_full_pitchsplit_animal = df_full_pitchsplit[df_full_pitchsplit['ID'].str.contains(animal)]
+        df_full_pitchsplit_animal = df_full[df_full['ID'].str.contains(animal)]
         if len(df_full_pitchsplit_animal) == 0:
             continue
         fig, ax = plt.subplots(1, figsize=(20, 10), dpi=300)
