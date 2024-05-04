@@ -692,12 +692,12 @@ def main():
         df_all_permutation_reindexed = df_all_permutation_reindexed.drop(columns = ['probeword1', 'pitchshift', 'cluster_id', 'stream', 'recname', 'unit_type', 'animal', 'clus_id_report', 'brain_area', 'tdt_electrode_num'])
         # Use join to merge the dataframes, just select the subset of score
         df_merged = df_all_reindexed.join(df_all_permutation_reindexed, how='left')
-
+        #create a new column of naive based on the animal name
+        df_merged['Naive'] = df_merged['animal'].apply(lambda x: False if x in ['F1604_Squinty', 'F1606_Windolene', 'F1702_Zola', 'F1815_Cruella'] else True)
 
         # Use join to merge the dataframes
-        df_merged = df_all_indexed.join(df_all_permutation_indexed, how='left')
 
-    return
+    return df_merged
 
 
 def plot_heatmap(df_in, trained = True, pitchshift_option = 'nopitchshift'):
