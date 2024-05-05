@@ -426,6 +426,21 @@ def runlgbmmodel_score(df_use, optimization = False):
     dfx = dfx.loc[:, dfx.columns != col6]
     col7 = 'FerretID'
     dfx = dfx.loc[:, dfx.columns != col7]
+    col8 = 'animal'
+    dfx = dfx.loc[:, dfx.columns != col8]
+    col9 = 'recname'
+    dfx = dfx.loc[:, dfx.columns != col9]
+    col10 = 'stream'
+    dfx = dfx.loc[:, dfx.columns != col10]
+    col11 = 'tdt_electrode_num'
+    dfx = dfx.loc[:, dfx.columns != col11]
+    col12 = 'MeanScore'
+    dfx = dfx.loc[:, dfx.columns != col12]
+    col13 = 'MaxScore'
+    dfx = dfx.loc[:, dfx.columns != col13]
+    col14 = 'clus_id_report'
+    dfx = dfx.loc[:, dfx.columns != col14]
+
 
     #remove any rows
     if optimization == True:
