@@ -384,7 +384,9 @@ def runlgbmmodel_score(df_use, optimization = False):
         df_use['ProbeWord'] = df_use['ProbeWord'].replace({probe: i})
 
 
-    df_use['BrainArea'] = df_use['BrainArea'] .replace({'PEG': 2, 'AEG': 1, 'MEG': 0})
+    df_use['BrainArea'] = df_use['BrainArea'] .replace({'PEG': 2, 'AEG': 1, 'MEG': 0, 'aeg': 1, 'peg': 2, 'meg': 0})
+    #remove all string value rows for brain area from the dataframe
+    df_use = df_use[(df_use['BrainArea'] == 2) | (df_use['BrainArea'] == 0) | (df_use['BrainArea'] == 1)]
     #remove all AEG units
     df_use = df_use[df_use['BrainArea'] != 1]
 
