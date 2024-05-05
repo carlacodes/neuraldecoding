@@ -358,7 +358,8 @@ def runlgbmmodel_score(df_use, optimization = False):
     df_use['ID'] = pd.Categorical(df_use['ID'],categories=unique_IDs, ordered=True)
 
     #relabel the probe word labels to be the same as the paper
-    try:
+    #check if the probe word is a string
+    if isinstance(df_use['ProbeWord'][0], str):
         df_use['ProbeWord'] = df_use['ProbeWord'].replace({ '(2,2)': 'craft', '(3,3)': 'in contrast to', '(4,4)': 'when a', '(5,5)': 'accurate', '(6,6)': 'pink noise', '(7,7)': 'of science', '(8,8)': 'rev. instruments', '(9,9)': 'boats', '(10,10)': 'today',
             '(13,13)': 'sailor', '(15,15)': 'but', '(16,16)': 'researched', '(18,18)': 'took', '(19,19)': 'the vast', '(20,20)': 'today', '(21,21)': 'he takes', '(22,22)': 'becomes', '(23,23)': 'any', '(24,24)': 'more'})
     # df_use['ProbeWord'] = df_use['ProbeWord'].replace(
@@ -366,7 +367,7 @@ def runlgbmmodel_score(df_use, optimization = False):
     #      '(7,7)': 'of science', '(8,8)': 'rev. instruments', '(9,9)': 'boats', '(10,10)': 'today',
     #      '(13,13)': 'sailor', '(15,15)': 'but', '(16,16)': 'researched', '(18,18)': 'took', '(19,19)': 'the vast',
     #      '(20,20)': 'today', '(21,21)': 'he takes', '(22,22)': 'becomes', '(23,23)': 'any', '(24,24)': 'more'})
-    except:
+    else:
         df_use['ProbeWord'] = df_use['ProbeWord'].replace(
         {2.0: 'craft', 3.0: 'in contrast to', 4.0: 'when a', 5.0: 'accurate', 6.0: 'pink noise',
          7.0: 'of science', 8.0: 'rev. instruments', 9.0: 'boats', 10.0: 'today',
