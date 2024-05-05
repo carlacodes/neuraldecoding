@@ -391,6 +391,9 @@ def runlgbmmodel_score(df_use, optimization = False):
     # df_use['BrainArea'] = df_use['BrainArea'].astype('category')
     df_use['ID'] = df_use['ID'].astype('category')
     # df_use['ProbeWord'] = df_use['ProbeWord'].astype('category')
+    #if unit_type exists as a column name drop it
+    if 'unit_type' in df_use.columns:
+        df_use = df_use.drop(columns = 'unit_type')
 
 
     # cast the probe word category as an int
