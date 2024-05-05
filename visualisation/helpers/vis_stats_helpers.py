@@ -404,6 +404,7 @@ def runlgbmmodel_score(df_use, optimization = False):
 
     # df_use["ProbeWord"] = pd.to_numeric(df_use["ProbeWord"])
     df_use["PitchShift"] = pd.to_numeric(df_use["PitchShift"])
+    df_use['BrainArea'] = pd.to_numeric(df_use['BrainArea'])
     df_use["Below_chance"] = pd.to_numeric(df_use["Below-chance"])
     df_use["Score"] = pd.to_numeric(df_use["Score"])
     #only remove the below chance scores
