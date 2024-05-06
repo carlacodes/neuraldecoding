@@ -353,7 +353,7 @@ def generate_rasters(dir):
 
         print(repeating_substring)
         rec_name = repeating_substring
-        high_units_animal = high_units_animal[(high_units_animal['rec_name'] == rec_name) & (high_units_animal['stream'] == stream)]
+        high_units_animal = high_units_animal[(high_units_animal['recname'] == rec_name) & (high_units_animal['stream'] == stream)]
         clust_ids = high_units_animal['ID_small'].to_list()
         brain_area = high_units_animal['BrainArea'].to_list()
 
