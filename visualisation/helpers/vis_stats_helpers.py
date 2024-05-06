@@ -394,8 +394,8 @@ def runlgbmmodel_score(df_use, optimization = False):
     df_use['ID'] = df_use['ID'].astype('category')
     # df_use['ProbeWord'] = df_use['ProbeWord'].astype('category')
     #if unit_type exists as a column name drop it
-    if 'unit_type' in df_use.columns:
-        df_use = df_use.drop(columns = 'unit_type')
+    # if 'unit_type' in df_use.columns:
+    #     df_use = df_use.drop(columns = 'unit_type')
 
 
     # cast the probe word category as an int
@@ -443,6 +443,10 @@ def runlgbmmodel_score(df_use, optimization = False):
     dfx = dfx.loc[:, dfx.columns != col13]
     col14 = 'clus_id_report'
     dfx = dfx.loc[:, dfx.columns != col14]
+    col15 = 'score_permutation'
+    dfx = dfx.loc[:, dfx.columns != col15]
+    col16 = 'unit_type'
+    dfx = dfx.loc[:, dfx.columns != col16]
 
 
     #remove any rows
