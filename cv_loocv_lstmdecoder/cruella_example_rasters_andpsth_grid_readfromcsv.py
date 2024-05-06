@@ -87,12 +87,15 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
         mean_score_for_cluster = cluster_info['MeanScore'].values[0]
         mean_perm_score_for_cluster = cluster_info['score_permutation'].values[:]
         #convert to numpy array
-        mean_perm_score_for_cluster = np.array(mean_perm_score_for_cluster)
+        #take the mean
+        mean_perm_score_for_cluster = np.mean(mean_perm_score_for_cluster)
+        # mean_perm_score_for_cluster = np.array(mean_perm_score_for_cluster)
 
         for idx, probewords in enumerate(probewords_list):
-            for pitchshift_option in [True, False]:
+            for pitchshift_option in [0,1]:
                 #get score for that probeword
-                individual_info = cluster_info[(cluster_info['ProbeWord'] == probewords) & (cluster_info['PitchShift'] == pitchshift_option)]
+                probeword = probewords[0]
+                individual_info = cluster_info[(cluster_info['ProbeWord'] == probeword) & (cluster_info['PitchShift'] == pitchshift_option)]
                 individual_score = individual_info['Score'].values[0]
                 individual_perm_score = individual_info['score_permutation'].values[0]
 
