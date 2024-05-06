@@ -98,6 +98,10 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
                 #get score for that probeword
                 probeword = probewords[0]
                 individual_info = cluster_info[(cluster_info['ProbeWord'] == probeword) & (cluster_info['PitchShift'] == pitchshift_option)]
+                #if individual_info is empty, skip
+                if individual_info.empty:
+                    print('empty individual info:', cluster_id, probeword, pitchshift_option)
+                    continue
                 individual_score = individual_info['Score'].values[0]
                 individual_perm_score = individual_info['score_permutation'].values[0]
 
