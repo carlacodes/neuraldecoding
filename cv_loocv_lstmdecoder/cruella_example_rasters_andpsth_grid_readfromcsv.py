@@ -331,7 +331,7 @@ def generate_rasters(dir):
 
 
         #filter for units that have an ID with the animal in it
-        high_units_animal = high_units[high_units['ID'].str.contains(animal)]
+        high_units_animal = high_units[high_units['animal'].str.contains(animal)]
         # remove trailing steam
         rec_name = folder[:-5]
         #find the unique string
