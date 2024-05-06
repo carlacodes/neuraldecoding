@@ -82,6 +82,8 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
     for j, cluster_id in enumerate(clust_ids):
         #make a figure of 2 columns and 10 rows
         cluster_info = csv_info[csv_info['ID_small'] == cluster_id]
+        #convert cluster_info probeword to int
+        cluster_info['ProbeWord'] = cluster_info['ProbeWord'].astype(int)
         fig, ax = plt.subplots(len(probewords_list), 2, figsize=(10, 30))
         count = 0
         mean_score_for_cluster = cluster_info['MeanScore'].values[0]
