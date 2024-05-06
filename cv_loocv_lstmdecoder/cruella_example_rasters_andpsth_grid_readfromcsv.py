@@ -78,7 +78,8 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
     probewords_list = [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10)]
 
     animal_id_num = animal.split('_')[0]
-
+    #cast clust_ids as int
+    clust_ids = [int(x) for x in clust_ids]
     for j, cluster_id in enumerate(clust_ids):
         #make a figure of 2 columns and 10 rows
         cluster_info = csv_info[csv_info['ID_small'] == cluster_id]
