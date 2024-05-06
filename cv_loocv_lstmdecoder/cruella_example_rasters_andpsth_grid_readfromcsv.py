@@ -318,6 +318,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
                 str(saveDir) + f'/targdist_grid_clusterid_{cluster_id}_{stream}_' + str(
                     cluster_id) + '.svg', bbox_inches='tight')
                 # plt.show()
+        plt.close('all')
 
 
 
