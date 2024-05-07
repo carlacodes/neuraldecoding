@@ -383,7 +383,7 @@ def generate_rasters(dir):
             print('no units found')
             continue
         for talker in [1]:
-            # target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, csv_info =high_units_animal)
+            target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, csv_info =high_units_animal)
             target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, gen_psth=True, csv_info=high_units_animal)
 
 
