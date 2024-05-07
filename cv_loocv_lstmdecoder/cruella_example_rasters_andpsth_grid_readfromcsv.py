@@ -106,9 +106,13 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
                 #if individual_info is empty, skip
                 if individual_info.empty:
                     print('empty individual info:', cluster_id, probeword, pitchshift_option)
-                    continue
-                individual_score = individual_info['Score'].values[0]
-                individual_perm_score = individual_info['score_permutation'].values[0]
+                    individual_score = None
+                    individual_perm_score = None
+                else:
+                    individual_score = individual_info['Score'].values[0]
+                    individual_perm_score = individual_info['score_permutation'].values[0]
+                    individual_score = round(individual_score, 2)
+                    individual_perm_score = round(individual_perm_score, 2)
 
 
                 raster_target, raster_target_compare = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=probewords[0],
@@ -291,8 +295,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
                             ax[idx, 0].set_ylabel('trial number')
 
                         ax[idx, 0].set_xlim(custom_xlim)
-                        individual_score = round(individual_score, 2)
-                        individual_perm_score = round(individual_perm_score, 2)
+
                         ax[idx, 0].set_title(f'Unit: {cluster_id}_{phydir}, \n {animal_id_num}, score: {individual_score}, perm score: {individual_perm_score}')
 
                         ax[idx, 0].text(-0.2, 0.5, probeword_text, horizontalalignment='center',
