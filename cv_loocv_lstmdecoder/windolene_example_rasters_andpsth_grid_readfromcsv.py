@@ -339,8 +339,13 @@ def generate_rasters(dir):
         stream = stream[-4:]
         print(stream)
         folder = str(datapath).split('\\')[-3]
-        with open(datapath / 'new_blocks.pkl', 'rb') as f:
-            new_blocks = pickle.load(f)
+        try:
+            with open(datapath / 'new_blocks.pkl', 'rb') as f:
+                new_blocks = pickle.load(f)
+        except Exception as e:
+            print('no new blocks found, loading old blocks')
+            with open(datapath / 'blocks.pkl', 'rb') as f:
+                new_blocks = pickle.load(f)
 
 
         #filter for units that have an ID with the animal in it
