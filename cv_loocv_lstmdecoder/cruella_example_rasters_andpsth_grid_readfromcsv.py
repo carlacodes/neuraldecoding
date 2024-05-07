@@ -66,7 +66,6 @@ def run_cleaning_of_rasters(blocks, datapath):
         pickle.dump(new_blocks, f)
     return new_blocks
 def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_3', phydir = 'phy', animal = 'F1702_Zola', brain_area = [], gen_psth = False, csv_info = []):
-
     tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_nothreshold_ANDPSTH_03052024/{phydir}/{stream}/')
     #load the high generalizable clusters, csv file
 
@@ -88,10 +87,15 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
         fig, ax = plt.subplots(len(probewords_list), 2, figsize=(10, 30))
         count = 0
         mean_score_for_cluster = cluster_info['MeanScore'].values[0]
+        #round to the nearest 2 decimal places
+        mean_score_for_cluster = round(mean_score_for_cluster, 2)
         mean_perm_score_for_cluster = cluster_info['score_permutation'].values[:]
+        #round to the nearest 2 decimal places
         #convert to numpy array
         #take the mean
         mean_perm_score_for_cluster = np.mean(mean_perm_score_for_cluster)
+        mean_perm_score_for_cluster = round(mean_perm_score_for_cluster, 2)
+
         # mean_perm_score_for_cluster = np.array(mean_perm_score_for_cluster)
 
         for idx, probewords in enumerate(probewords_list):
@@ -372,8 +376,8 @@ def generate_rasters(dir):
             print('no units found')
             continue
         for talker in [1]:
-            target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, csv_info  = high_units_animal)
-            target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, gen_psth=True, csv_info  = high_units_animal)
+            # target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, csv_info =high_units_animal)
+            target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, gen_psth=True, csv_info=high_units_animal)
 
 
 
