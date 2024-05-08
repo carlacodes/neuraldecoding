@@ -57,7 +57,7 @@ def find_repeating_substring(string):
 
     return None
 def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_3', phydir = 'phy', animal = 'F1702_Zola', brain_area = [], gen_psth = False, csv_info = []):
-    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_nothreshold_ANDPSTH_03052024/{phydir}/{stream}/')
+    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_nothreshold_ANDPSTH_08052024/{phydir}/{stream}/')
     #load the high generalizable clusters, csv file
 
     saveDir = tarDir
@@ -329,58 +329,59 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
 
 
 def generate_rasters(dir):
-    datapath_big = Path(f'D:/ms4output_16102023/F1604_Squinty/')
-    animal = str(datapath_big).split('\\')[-1]
-    datapaths = [x for x in datapath_big.glob('**/mountainsort4/phy//') if x.is_dir()]
-    high_units = pd.read_csv(f'G:/neural_chapter/csvs/units_topgenindex_allanimalstrained.csv')
+    for animal in ['F1604_Squinty', 'F1606_Windolene']:
+        datapath_big = Path(f'D:/ms4output_16102023/{animal}/')
+        animal = str(datapath_big).split('\\')[-1]
+        datapaths = [x for x in datapath_big.glob('**/mountainsort4/phy//') if x.is_dir()]
+        high_units = pd.read_csv(f'G:/neural_chapter/csvs/units_topgenindex_allanimalstrained.csv')
 
-    for datapath in datapaths:
-        stream = str(datapath).split('\\')[-3]
-        stream = stream[-4:]
-        print(stream)
-        folder = str(datapath).split('\\')[-3]
-        try:
-            with open(datapath / 'new_blocks.pkl', 'rb') as f:
-                new_blocks = pickle.load(f)
-        except Exception as e:
-            print('no new blocks found, loading old blocks')
-            with open(datapath / 'blocks.pkl', 'rb') as f:
-                new_blocks = pickle.load(f)
-
-
-        #filter for units that have an ID with the animal in it
-        high_units_animal = high_units[high_units['animal'].str.contains(animal)]
-        # remove trailing steam
-        rec_name = folder[:-5]
-        #find the unique string
-        repeating_substring = find_repeating_substring(rec_name)
+        for datapath in datapaths:
+            stream = str(datapath).split('\\')[-3]
+            stream = stream[-4:]
+            print(stream)
+            folder = str(datapath).split('\\')[-3]
+            try:
+                with open(datapath / 'new_blocks.pkl', 'rb') as f:
+                    new_blocks = pickle.load(f)
+            except Exception as e:
+                print('no new blocks found, loading old blocks')
+                with open(datapath / 'blocks.pkl', 'rb') as f:
+                    new_blocks = pickle.load(f)
 
 
-        #remove the repeating substring
+            #filter for units that have an ID with the animal in it
+            high_units_animal = high_units[high_units['animal'].str.contains(animal)]
+            # remove trailing steam
+            rec_name = folder[:-5]
+            #find the unique string
+            repeating_substring = find_repeating_substring(rec_name)
 
-        # find the units that have the phydir
 
-        max_length = len(rec_name) // 2
+            #remove the repeating substring
 
-        for length in range(1, max_length + 1):
-            for i in range(len(rec_name) - length):
-                substring = rec_name[i:i + length]
-                if rec_name.count(substring) > 1:
-                    repeating_substring = substring
-                    break
+            # find the units that have the phydir
 
-        print(repeating_substring)
-        rec_name = repeating_substring
-        high_units_animal = high_units_animal[(high_units_animal['recname'] == rec_name) & (high_units_animal['stream'] == stream)]
-        clust_ids = high_units_animal['ID_small'].to_list()
-        brain_area = high_units_animal['BrainArea'].to_list()
+            max_length = len(rec_name) // 2
 
-        if clust_ids == []:
-            print('no units found')
-            continue
-        for talker in [1]:
-            target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, csv_info =high_units_animal)
-            target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, gen_psth=True, csv_info=high_units_animal)
+            for length in range(1, max_length + 1):
+                for i in range(len(rec_name) - length):
+                    substring = rec_name[i:i + length]
+                    if rec_name.count(substring) > 1:
+                        repeating_substring = substring
+                        break
+
+            print(repeating_substring)
+            rec_name = repeating_substring
+            high_units_animal = high_units_animal[(high_units_animal['recname'] == rec_name) & (high_units_animal['stream'] == stream)]
+            clust_ids = high_units_animal['ID_small'].to_list()
+            brain_area = high_units_animal['BrainArea'].to_list()
+
+            if clust_ids == []:
+                print('no units found')
+                continue
+            for talker in [1]:
+                target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, csv_info =high_units_animal)
+                target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, gen_psth=True, csv_info=high_units_animal)
 
 
 
