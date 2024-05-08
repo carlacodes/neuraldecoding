@@ -454,7 +454,6 @@ def load_classified_report(path):
     else:
         report_path = os.path.join(path, 'quality_metrics_classified.csv')
         #combine the paths
-
         report = pd.read_csv(report_path)  #get the list of multi units and single units
         #the column is called unit_type
         multiunitlist = []
