@@ -327,15 +327,6 @@ def load_scores_and_filter(probewordlist,
     return sorted_df_of_scores
 
 
-def cool_dict_merge(dicts_list):  #ripped this from stackoverflow
-    d = {**dicts_list[0]}
-    for entry in dicts_list[1:]:
-        for k, v in entry.items():
-            d[k] = ([d[k], v] if k in d and type(d[k]) != list
-                    else [*d[k], v] if k in d
-            else v)
-    return d
-
 
 def data_merge(a, b):
     """merges b into a and return merged result
@@ -785,10 +776,6 @@ def main():
 
     plot_major_analysis(df_merged)
     return df_merged
-
-
-def color_by_probeword(probeword):
-    return probe_word_palette[df_full_naive['ProbeWord'].unique().tolist().index(probeword)]
 
 
 def plot_major_analysis(df_merged):
