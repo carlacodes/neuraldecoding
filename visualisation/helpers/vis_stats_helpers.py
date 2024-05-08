@@ -447,7 +447,8 @@ def runlgbmmodel_score(df_use, optimization = False):
     dfx = dfx.loc[:, dfx.columns != col15]
     col16 = 'unit_type'
     dfx = dfx.loc[:, dfx.columns != col16]
-
+    col17 = 'cluster_id'
+    dfx = dfx.loc[:, dfx.columns != col17]
 
     #remove any rows
     if optimization == True:
