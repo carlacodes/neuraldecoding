@@ -136,10 +136,10 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
 
                 try:
                     if probewords[0] == 4 and pitchshift_option == False:
-                        probeword_text = 'when a'
+                        probeword_text = 'but'
                         color_option = 'green'
                     elif probewords[0] == 4 and pitchshift_option == True:
-                        probeword_text = 'when a'
+                        probeword_text = 'but'
                         color_option = 'lightgreen'
 
                     elif probewords[0] == 1 and pitchshift_option == False:
@@ -151,60 +151,86 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
 
 
                     elif probewords[0] == 2 and pitchshift_option == False:
-                        probeword_text = 'craft'
+                        probeword_text = 'sailor'
                         color_option = 'deeppink'
                     elif probewords[0] == 2 and pitchshift_option == True:
-                        probeword_text = 'craft'
+                        probeword_text = 'sailor'
                         color_option = 'pink'
 
                     elif probewords[0] == 3 and pitchshift_option == False:
-                        probeword_text = 'in contrast'
+                        probeword_text = 'accurate'
                         color_option = 'mediumpurple'
                     elif probewords[0] == 3 and pitchshift_option == True:
-                        probeword_text = 'in contrast'
+                        probeword_text = 'accurate'
                         color_option = 'purple'
 
                     elif probewords[0] == 5 and pitchshift_option == False:
-                        probeword_text = 'accurate'
+                        probeword_text = 'researched'
                         color_option = 'black'
 
                     elif probewords[0] == 5 and pitchshift_option == True:
-                        probeword_text = 'accurate'
+                        probeword_text = 'researched'
                         color_option = 'grey'
                     elif probewords[0] == 6 and pitchshift_option == False:
-                        probeword_text = 'pink noise'
+                        probeword_text = 'when a'
                         color_option = 'navy'
                     elif probewords[0] == 6 and pitchshift_option == True:
-                        probeword_text = 'pink noise'
+                        probeword_text = 'when a'
                         color_option = 'lightblue'
 
                     elif probewords[0] == 7 and pitchshift_option == False:
-                        probeword_text = 'of science'
+                        probeword_text = 'took'
                         color_option = 'coral'
                     elif probewords[0] == 7 and pitchshift_option == True:
-                        probeword_text = 'of science'
+                        probeword_text = 'took'
                         color_option = 'orange'
 
 
                     elif probewords[0] == 8 and pitchshift_option == False:
-                        probeword_text = 'rev. instruments'
+                        probeword_text = 'the vast'
                         color_option = 'plum'
                     elif probewords[0] == 8 and pitchshift_option == True:
-                        probeword_text = 'rev. instruments'
+                        probeword_text = 'the vast'
                         color_option = 'darkorchid'
                     elif probewords[0] == 9 and pitchshift_option == False:
-                        probeword_text = 'boats'
+                        probeword_text = 'today'
                         color_option = 'slategrey'
                     elif probewords[0] == 9 and pitchshift_option == True:
-                        probeword_text = 'boats'
+                        probeword_text = 'today'
                         color_option = 'royalblue'
 
                     elif probewords[0] == 10 and pitchshift_option == False:
-                        probeword_text = 'today'
+                        probeword_text = 'he takes'
                         color_option = 'gold'
                     elif probewords[0] == 10 and pitchshift_option == True:
-                        probeword_text = 'today'
+                        probeword_text = 'he takes'
                         color_option = 'yellow'
+                    elif probewords[0] == 11 and pitchshift_option == False:
+                        probeword_text = 'becomes'
+                        color_option = 'green'
+                    elif probewords[0] == 11 and pitchshift_option == True:
+                        probeword_text = 'becomes'
+                        color_option = 'lightgreen'
+                    elif probewords[0] == 12 and pitchshift_option == False:
+                        probeword_text = 'any'
+                        color_option = 'deeppink'
+                    elif probewords[0] == 12 and pitchshift_option == True:
+                        probeword_text = 'any'
+                        color_option = 'pink'
+                    elif probewords[0] == 13 and pitchshift_option == False:
+                        probeword_text = 'more'
+                        color_option = 'plum'
+
+                    elif probewords[0] == 13 and pitchshift_option == True:
+                        probeword_text = 'more'
+                        color_option = 'darkorchid'
+                    elif probewords[0] == 14 and pitchshift_option == False:
+                        probeword_text = 'boats'
+                        color_option = 'slategrey'
+                    elif probewords[0] == 14 and pitchshift_option == True:
+                        probeword_text = 'boats'
+                        color_option = 'royalblue'
+
                     else:
                         probeword_text = 'error'
                         color_option = 'red'

@@ -66,7 +66,7 @@ def run_cleaning_of_rasters(blocks, datapath):
         pickle.dump(new_blocks, f)
     return new_blocks
 def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_3', phydir = 'phy', animal = 'F1702_Zola', brain_area = [], gen_psth = False, csv_info = []):
-    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_nothreshold_ANDPSTH_03052024/{phydir}/{stream}/')
+    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_nothreshold_ANDPSTH_08052024/{phydir}/{stream}/')
     #load the high generalizable clusters, csv file
 
     saveDir = tarDir
