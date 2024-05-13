@@ -1827,10 +1827,13 @@ def plot_major_analysis(df_merged):
     # plot strip plot split by pitch shift
     df_full_pitchsplit_violinplot = df_full
     df_full_pitchsplit_violinplot['ProbeWord'] = df_full_pitchsplit_violinplot['ProbeWord'].replace(
-        {'(2,2)': 'craft', '(3,3)': 'in contrast to', '(4,4)': 'when a', '(5,5)': 'accurate', '(6,6)': 'pink noise',
-         '(7,7)': 'of science', '(8,8)': 'rev. instruments', '(9,9)': 'boats', '(10,10)': 'today',
-         '(13,13)': 'sailor', '(15,15)': 'but', '(16,16)': 'researched', '(18,18)': 'took', '(19,19)': 'the vast',
-         '(20,20)': 'today', '(21,21)': 'he takes', '(22,22)': 'becomes', '(23,23)': 'any', '(24,24)': 'more'})
+        {2.0: 'craft', 3.0: 'in contrast to', 4.0: 'when a', 5.0: 'accurate', 6.0: 'pink noise',
+         7.0: 'of science', 8.0: 'rev. instruments', 9.0: 'boats', 10.0: 'today',
+         13.0: 'sailor', 15.0: 'but', 16.0: 'researched', 18.0: 'took',19.0: 'the vast',
+         20.0: 'today', 21.0: 'he takes', 22.0: 'becomes', 23.0: 'any', 24.0: 'more'})
+
+
+
     upper_quartile = np.percentile(df_full_pitchsplit_violinplot['Score'], 75)
     df_full_pitchsplit_violinplot = df_full_pitchsplit_violinplot[
         df_full_pitchsplit_violinplot['ProbeWord'] != 'he takes']
