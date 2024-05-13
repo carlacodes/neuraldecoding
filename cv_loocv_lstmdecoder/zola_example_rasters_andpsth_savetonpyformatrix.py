@@ -76,6 +76,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
     binsize = 0.01
     window = [0, 0.6]
     probewords_list = [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10)]
+    probewords_list = [ (1,1), (2, 2), (20, 22), (5, 6), (42, 49), (32, 38), (56, 56), (57,57)]
 
     animal_id_num = animal.split('_')[0]
     # clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
@@ -339,7 +340,7 @@ def generate_rasters(dir):
             new_blocks = pickle.load(f)
 
 
-        high_units = pd.read_csv(f'G:/neural_chapter/figures/unit_ids_trained_topgenindex_{animal}.csv')
+        high_units = pd.read_csv(f'G:/neural_chapter/csvs/unit_ids_trained_all_{animal}.csv')
         # remove trailing steam
         rec_name = folder[:-5]
         #find the unique string
