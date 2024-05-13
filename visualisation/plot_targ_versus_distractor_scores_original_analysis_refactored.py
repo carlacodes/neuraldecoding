@@ -812,6 +812,8 @@ def main():
 
 def plot_major_analysis(df_merged):
     # df_full represents trained animals, df_full_naive represents naive animals
+    #remove all rows where the BrainArea is VC
+    df_full = df_merged[df_merged['BrainArea'] != 'VC']
     df_full = df_merged[df_merged['Naive'] == False]
     df_full_naive = df_merged[df_merged['Naive'] == True]
 
