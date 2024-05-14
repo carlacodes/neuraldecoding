@@ -819,28 +819,28 @@ def plot_major_analysis(df_merged):
 
     rel_frac_list_naive, bigconcatenatenaive_ps, bigconcatenatenaive_nonps, rel_frac_list_trained, bigconcatenatetrained_nonps, bigconcatenatetrained_ps = collapse_scores(df_full, df_full_naive)
 
-    fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
-    ax.set_xlim([0, 1])
-    sns.distplot(bigconcatenatetrained_nonps, label='trained', ax=ax, color='purple')
-    sns.distplot(bigconcatenatenaive_nonps, label='naive', ax=ax, color='darkcyan')
-    plt.axvline(x=0, color='black')
-    plt.xlim([0.35, 1])
-    # man whiteney test score
-    plt.title('Control F0 scores between  \n trained and naive animals', fontsize=30)
-    plt.xlabel('Control F0 LSTM decoder scores', fontsize=30)
-
-    plt.ylabel('Density', fontsize=30)
-    ax.set_xticks([0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], labels=[0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], fontsize=20)
-    ax.set_yticks([2, 4, 6, 8, 10, 12], labels=[2, 4, 6, 8, 10, 12], fontsize=20)
-    manwhitscorecontrolf0 = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatenaive_nonps, alternative='greater')
-
-    n1 = len(bigconcatenatetrained_nonps)
-    n2 = len(bigconcatenatenaive_nonps)
-    r_controlf0 = 1 - (2 * manwhitscorecontrolf0.statistic) / (n1 * n2)
-    # ax.legend()
-    plt.savefig('G:/neural_chapter/figures/controlF0distribution13052024intertrialroving.png', dpi=1000,
-                bbox_inches='tight')
-    plt.show()
+    # fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
+    # ax.set_xlim([0, 1])
+    # sns.distplot(bigconcatenatetrained_nonps, label='trained', ax=ax, color='purple')
+    # sns.distplot(bigconcatenatenaive_nonps, label='naive', ax=ax, color='darkcyan')
+    # plt.axvline(x=0, color='black')
+    # plt.xlim([0.35, 1])
+    # # man whiteney test score
+    # plt.title('Control F0 scores between  \n trained and naive animals', fontsize=30)
+    # plt.xlabel('Control F0 LSTM decoder scores', fontsize=30)
+    #
+    # plt.ylabel('Density', fontsize=30)
+    # ax.set_xticks([0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], labels=[0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], fontsize=20)
+    # ax.set_yticks([2, 4, 6, 8, 10, 12], labels=[2, 4, 6, 8, 10, 12], fontsize=20)
+    # manwhitscorecontrolf0 = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatenaive_nonps, alternative='greater')
+    #
+    # n1 = len(bigconcatenatetrained_nonps)
+    # n2 = len(bigconcatenatenaive_nonps)
+    # r_controlf0 = 1 - (2 * manwhitscorecontrolf0.statistic) / (n1 * n2)
+    # # ax.legend()
+    # plt.savefig('G:/neural_chapter/figures/controlF0distribution13052024intertrialroving.png', dpi=1000,
+    #             bbox_inches='tight')
+    # plt.show()
 
 
     for unit_id in df_full_naive['ID']:
@@ -957,7 +957,7 @@ def plot_major_analysis(df_merged):
             df_full_naive = df_full_naive[df_full_naive['ID'] != unit_id]
 
     for unit_id in df_full['ID']:
-        df_full_unit = df_full[df_full['animal'].str.contains(unit_id)]
+        df_full_unit = df_full[df_full['ID'].str.contains(unit_id)]
         # check if all the probe words are below chance
         if np.sum(df_full_unit['Below-chance']) == len(df_full_unit['Below-chance']):
             df_full = df_full[df_full['ID'] != unit_id]
