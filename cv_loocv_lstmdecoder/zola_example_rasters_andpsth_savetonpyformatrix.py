@@ -340,6 +340,7 @@ def generate_rasters(dir):
             new_blocks = pickle.load(f)
 
 
+
         high_units = pd.read_csv(f'G:/neural_chapter/csvs/unit_ids_trained_all_{animal}.csv')
         # remove trailing steam
         rec_name = folder[:-5]
@@ -362,9 +363,12 @@ def generate_rasters(dir):
 
         print(repeating_substring)
         rec_name = repeating_substring
-        high_units = high_units[(high_units['rec_name'] == rec_name) & (high_units['stream'] == stream)]
+        high_units = high_units[(high_units['recname'] == rec_name) & (high_units['stream'] == stream)]
         clust_ids = high_units['ID'].to_list()
         brain_area = high_units['BrainArea'].to_list()
+        clust_ids = [int(str(x).split('.')[0]) for x in clust_ids]
+        #just get the unique numbers
+        clust_ids = list(set(clust_ids))
 
         # if clust_ids == []:
         #     print('no units found')

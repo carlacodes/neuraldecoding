@@ -78,6 +78,10 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
     probewords_list = [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10), (11, 11),
                        (12, 12), (13, 13), (14, 14)]
 
+    probewords_list = [ (3, 3), (6,6), (14,14)]
+
+
+
     animal_id_num = animal.split('_')[0]
     # clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
     #              st.annotations['group'] != 'noise']
@@ -361,9 +365,13 @@ def generate_rasters(dir):
 
         print(repeating_substring)
         rec_name = repeating_substring
-        high_units = high_units[(high_units['rec_name'] == rec_name) & (high_units['stream'] == stream)]
+        high_units = high_units[(high_units['recname'] == rec_name) & (high_units['stream'] == stream)]
         clust_ids = high_units['ID'].to_list()
         brain_area = high_units['BrainArea'].to_list()
+
+        clust_ids = [int(str(x).split('.')[0]) for x in clust_ids]
+        #just get the unique numbers
+        clust_ids = list(set(clust_ids))
 
         # if clust_ids == []:
         #     print('no units found')
