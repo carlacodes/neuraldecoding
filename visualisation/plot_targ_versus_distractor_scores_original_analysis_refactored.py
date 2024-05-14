@@ -957,14 +957,14 @@ def plot_major_analysis(df_merged):
             df_full_naive = df_full_naive[df_full_naive['ID'] != unit_id]
 
     for unit_id in df_full['ID']:
-        df_full_unit = df_full[df_full['ID'].str.contains(unit_id)]
+        df_full_unit = df_full[df_full['animal'].str.contains(unit_id)]
         # check if all the probe words are below chance
         if np.sum(df_full_unit['Below-chance']) == len(df_full_unit['Below-chance']):
             df_full = df_full[df_full['ID'] != unit_id]
 
     df_of_neural_yield = pd.DataFrame(columns=['Animal', 'Number of single units', 'Number of multi units'])
     for animal in ['F1901_Crumble', 'F1902_Eclair', 'F1812_Nala', 'F2003_Orecchiette']:
-        animal_units = df_full_naive[df_full_naive['ID'].str.contains(animal)]
+        animal_units = df_full_naive[df_full_naive['animal'].str.contains(animal)]
         animal_units = animal_units.drop_duplicates(subset=['ID'])
         # save to csv the unit IDs
 
@@ -977,7 +977,7 @@ def plot_major_analysis(df_merged):
 
     df_of_neural_yield = pd.DataFrame(columns=['Animal', 'Number of single units', 'Number of multi units'])
     for animal in ['F1604_Squinty', 'F1606_Windolene', 'F1702_Zola', 'F1815_Cruella', ]:
-        animal_units = df_full[df_full['ID'].str.contains(animal)]
+        animal_units = df_full[df_full['animal'].str.contains(animal)]
         animal_units = animal_units.drop_duplicates(subset=['ID'])
         print(animal, len(animal_units))
         df_of_neural_yield = df_of_neural_yield.append(
@@ -1332,25 +1332,49 @@ def plot_major_analysis(df_merged):
     plt.show()
 
     df_trained_kde = pd.DataFrame({'F0_control': bigconcatenatetrained_nonps, 'F0_roved': bigconcatenatetrained_ps})
-    fig, ax = plt.subplots(1, figsize=(8, 8), dpi=300)
-    sns.kdeplot(df_trained_kde, x='F0_control', y='F0_roved', cmap="Reds", shade=True, shade_lowest=False, ax=ax,
-                label='trained')
-    plt.xlim([0.25, 0.95])
-    plt.xticks([0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9], fontsize=20)
-    plt.xticks(fontsize=20)
-    plt.yticks(fontsize=20)
-    plt.title('F0 control vs. roved, trained animals', fontsize=30)
-    plt.ylabel('F0 roved score', fontsize=30)
-    plt.xlabel('F0 control score', fontsize=30)
-    plt.savefig('G:/neural_chapter/figures/kdeplot_trainedanimals_2_04052024_thesislist_.png', dpi=300, bbox_inches='tight')
-    plt.show()
+    # fig, ax = plt.subplots(1, figsize=(8, 8), dpi=300)
+    # sns.kdeplot(df_trained_kde, x='F0_control', y='F0_roved', cmap="Reds", shade=True, shade_lowest=False, ax=ax,
+    #             label='trained')
+    # plt.xlim([0.25, 0.95])
+    # plt.xticks([0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9], fontsize=20)
+    # plt.xticks(fontsize=20)
+    # plt.yticks(fontsize=20)
+    # plt.title('F0 control vs. roved, trained animals', fontsize=30)
+    # plt.ylabel('F0 roved score', fontsize=30)
+    # plt.xlabel('F0 control score', fontsize=30)
+    # plt.savefig('G:/neural_chapter/figures/kdeplot_trainedanimals_2_04052024_thesislist_.png', dpi=300, bbox_inches='tight')
+    # plt.show()
+    # manwhitscorecontrolf0 = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatenaive_nonps, alternative='greater')
+    #
+    # n1 = len(bigconcatenatetrained_nonps)
+    # n2 = len(bigconcatenatenaive_nonps)
+    # r_controlf0 = 1 - (2 * manwhitscorecontrolf0.statistic) / (n1 * n2)
+    # # ax.legend()
+    # plt.savefig('G:/neural_chapter/figures/controlF0distribution20062023intertrialroving_04052024_thesislist_.png', dpi=1000)
+    # plt.show()
+
+
+    fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
+    ax.set_xlim([0, 1])
+    sns.distplot(bigconcatenatetrained_nonps, label='trained', ax=ax, color='purple')
+    sns.distplot(bigconcatenatenaive_nonps, label='naive', ax=ax, color='darkcyan')
+    plt.axvline(x=0, color='black')
+    plt.xlim([0.35, 1])
+    # man whiteney test score
+    plt.title('Control F0 scores between  \n trained and naive animals', fontsize=30)
+    plt.xlabel('Control F0 LSTM decoder scores', fontsize=30)
+
+    plt.ylabel('Density', fontsize=30)
+    ax.set_xticks([0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], labels=[0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], fontsize=20)
+    ax.set_yticks([2, 4, 6, 8, 10, 12], labels=[2, 4, 6, 8, 10, 12], fontsize=20)
     manwhitscorecontrolf0 = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatenaive_nonps, alternative='greater')
 
     n1 = len(bigconcatenatetrained_nonps)
     n2 = len(bigconcatenatenaive_nonps)
     r_controlf0 = 1 - (2 * manwhitscorecontrolf0.statistic) / (n1 * n2)
     # ax.legend()
-    plt.savefig('G:/neural_chapter/figures/controlF0distribution20062023intertrialroving_04052024_thesislist_.png', dpi=1000)
+    plt.savefig('G:/neural_chapter/figures/controlF0distribution13052024intertrialroving_thesislist.png', dpi=1000,
+                bbox_inches='tight')
     plt.show()
 
     fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)

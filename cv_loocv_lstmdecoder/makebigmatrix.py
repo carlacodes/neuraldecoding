@@ -109,8 +109,8 @@ def generate_matrix_image(dir, trained = True):
     fig, ax = plt.subplots(figsize=(10, 10))  # Adjust the figsize to increase width
     im = ax.imshow(big_matrix, cmap='viridis', aspect='auto')  # Set aspect='auto' to adjust aspect ratio
     ax.set_xticks([0, 10, 20, 30, 40, 50])
-    if trained == False:
-        ax.set_yticks([0, 5, 10, 15])
+    # if trained == False:
+    #     ax.set_yticks([0, 5, 10, 15])
     ax.set_xticklabels([0,0.1,0.2,0.3,0.4,0.5], fontsize = 15)
     ax.set_xlabel('Time (s)', fontsize=20)
     ax.set_ylabel('Unit number', fontsize = 20)
