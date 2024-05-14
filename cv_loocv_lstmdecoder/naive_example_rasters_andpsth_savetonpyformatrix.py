@@ -324,9 +324,9 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
 def generate_rasters(dir):
 
     datapath_big = Path(f'D:/ms4output_16102023/F1815_Cruella/')
-    #Path(f'D:/ms4output_16102023/F1902_Eclair/'),
+    #Path(f'D:/ms4output_16102023/F1902_Eclair/'),Path(f'D:/ms4output_16102023/F1901_Crumble/'),
 
-    for datapath_big in [Path(f'D:/ms4output_16102023/F1901_Crumble/'), Path(f'D:/ms4output_16102023/F1812_Nala/')]:
+    for datapath_big in [ Path(f'D:/ms4output_16102023/F1902_Eclair/')]:
         animal = str(datapath_big).split('\\')[-1]
         datapaths = [x for x in datapath_big.glob('**/mountainsort4/phy//') if x.is_dir()]
         bigoutputfolder = Path(f'E:/rastersms4spikesortinginter/{animal}/npyfiles_dict_highperforming')

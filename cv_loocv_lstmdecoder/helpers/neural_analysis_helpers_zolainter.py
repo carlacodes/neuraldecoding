@@ -874,6 +874,13 @@ def get_word_aligned_raster_zola_cruella(blocks, clust_id, word=None, pitchshift
         if len(df_bhv) == 0:
             print('no applicable trials found for segment:' + str(s))
             continue
+        #print the cluster ids in seg
+        # for st in seg.spiketrains:
+        #     print(f"st.annotations['cluster_id'] = {st.annotations['cluster_id']}, clust_id = {clust_id}")
+            # if st.annotations['cluster_id'] == clust_id:
+            #     print("Matching cluster_id found!")
+            #     print(st.annotations['cluster_id'])
+            #     print('original cluster_id:' + str(clust_id))
 
         unit = [st for st in seg.spiketrains if st.annotations['cluster_id'] == clust_id][0]
 
@@ -1594,9 +1601,9 @@ def split_cluster_base_on_segment(blocks, clust_id, num_clusters=3):
     # new_unit_id = max_cluster_id + 1
     # new_unit_id_2 = new_unit_id + 1
 
-    new_unit_id_1 = clust_id + 0.1
-    new_unit_id_2 = clust_id + 0.2
-    new_unit_id_3 = clust_id + 0.3
+    new_unit_id_1 = clust_id + 100
+    new_unit_id_2 = clust_id + 200
+    new_unit_id_3 = clust_id + 300
     print(f"Debug - Majority Cluster: {majority_cluster}")
     print(f"Debug - Minority Clusters: {minority_clusters}")
     clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains]

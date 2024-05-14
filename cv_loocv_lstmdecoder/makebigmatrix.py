@@ -41,7 +41,7 @@ def generate_matrix_image(dir, trained = True):
     if trained == True:
         animal_list = ['F1702_Zola', 'F1815_Cruella', 'F1604_Squinty', 'F1606_Windolene']
     else:
-        animal_list = ['F2003_Orecchiette']
+        animal_list = ['F2003_Orecchiette', 'F1812_Nala', 'F1901_Crumble', 'F1902_Eclair']
     big_matrix_list = []
     for animal in animal_list:
         print(animal)
@@ -81,7 +81,8 @@ def generate_matrix_image(dir, trained = True):
                     units_with_distractors_in_ID.append(unit_ID_mean)
                     units_with_targ_in_ID.append(unit_ID_target)
 
-                except:
+                except Exception as e:
+                    print(e)
                     continue
 
 
@@ -97,6 +98,8 @@ def generate_matrix_image(dir, trained = True):
         big_matrix_list.append(big_matrix_animal)
     #now plot the big matrix
     #first concatenate the big matrices
+    #remove all empty arrays
+    big_matrix_list = [x for x in big_matrix_list if x.size != 0]
     big_matrix = np.concatenate(big_matrix_list, axis=0)
     #sort by the mean of the first 10 timepoints
     big_matrix = big_matrix[np.argsort(np.mean(big_matrix[:, :], axis=1))]
@@ -121,7 +124,7 @@ def generate_matrix_image(dir, trained = True):
     cbar = plt.colorbar(im, ax=ax)
     cbar.ax.tick_params(labelsize=15)  # Adjust the font size (change 12 to your desired size)
 
-    fig.savefig(f'G:/neural_chapter/figures/big_matrix_highperforming_units_trained_{trained}.png')
+    fig.savefig(f'G:/neural_chapter/figures/big_matrix_highperforming_units_trained_{trained}_14052024_onlythesiswords.png')
     plt.show()
 
 
@@ -135,7 +138,7 @@ def main():
 
     directories = ['zola_2022']  # , 'Trifle_July_2022']
     for dir in directories:
-        generate_matrix_image(dir, trained = True)
+        generate_matrix_image(dir, trained = False)
 
 
 if __name__ == '__main__':

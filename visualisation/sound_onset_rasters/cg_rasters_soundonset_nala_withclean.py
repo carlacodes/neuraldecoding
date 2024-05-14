@@ -40,8 +40,10 @@ def run_cleaning_of_rasters(blocks, datapath):
     clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
                  st.annotations['group'] != 'noise']
     for cluster_id in [14, 28, 16, 7]:
-        new_blocks = split_cluster_base_on_segment_zola(blocks, cluster_id, num_clusters=2)
-    with open(datapath / 'new_blocks.pkl', 'wb') as f:
+        new_blocks = split_cluster_base_on_segment(blocks, cluster_id, num_clusters=3)
+    datapath_save = datapath / 'may14'
+    datapath_save.mkdir(exist_ok=True, parents=True)
+    with open(datapath_save / 'new_blocks.pkl', 'wb') as f:
         pickle.dump(new_blocks, f)
     return new_blocks
 def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshift=True, stream = 'BB_3'):
@@ -118,6 +120,7 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
 def generate_rasters(dir):
     datapath = Path(f'E:\ms4output2\F1812_Nala/nala_01102023/nala_01102023_nala_01102023_BB_5\mountainsort4\phy/')
+    datapath = Path(f'D:\ms4output_16102023\F1812_Nala/nala_01102023/nala_01102023_nala_01102023_BB_5\mountainsort4\phy/')
     stream = str(datapath).split('\\')[-3]
     stream = stream[-4:]
     print(stream)
