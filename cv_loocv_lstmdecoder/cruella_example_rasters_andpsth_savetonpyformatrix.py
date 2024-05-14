@@ -360,8 +360,12 @@ def generate_rasters(dir):
 
         print(repeating_substring)
         rec_name = repeating_substring
-        high_units = high_units[(high_units['rec_name'] == rec_name) & (high_units['stream'] == stream)]
+        high_units = high_units[(high_units['recname'] == rec_name) & (high_units['stream'] == stream)]
         clust_ids = high_units['ID'].to_list()
+        #take the first number before the decimal point
+        clust_ids = [int(str(x).split('.')[0]) for x in clust_ids]
+        #just get the unique numbers
+        clust_ids = list(set(clust_ids))
         brain_area = high_units['BrainArea'].to_list()
 
         # if clust_ids == []:
