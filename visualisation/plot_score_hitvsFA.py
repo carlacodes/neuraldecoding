@@ -685,7 +685,13 @@ def plot_scores_relative_to_permutation_scores(df_all, df_all_permutation):
     #get the fraction
     frac_greater_than_zero = df_all['fraction_greater_than_zero'].sum() / len(df_all)
     #plot the distribution of the scores minus the permutation scores
+    fig, ax = plt.subplots()
     sns.histplot(df_all['score_minus_permutation'])
+    plt.title('Distribution of scores minus permutation scores')
+    plt.xlabel('score minus permutation score')
+    plt.ylabel('count')
+    plt.savefig('G:/neural_chapter/figures/scores_minus_permutation_scores.png', dpi = 300)
+    plt.show()
     #get the mean of the scores minus the permutation scores
     df_all['mean_score_minus_permutation'] = df_all.groupby('cluster_id')['score_minus_permutation'].transform('mean')
     return
@@ -705,8 +711,10 @@ def filter_for_units_used_in_first_analysis(data_in, trained = True):
     #round the cluster id to the nearest 1
     data_in['cluster_id'] = data_in['cluster_id_int'].round()
     data_in['long_unit_id'] = data_in['cluster_id'].astype(str)+'_' +data_in['animal']+'_'+ data_in['recname'] + '_' + data_in['stream']
+    decoding_scores['cluster_id_int'] = decoding_scores['cluster_id'].astype(int)
+    decoding_scores['long_unit_id'] = decoding_scores['cluster_id_int'].astype(str)+'_' +decoding_scores['animal']+'_'+ decoding_scores['recname'] + '_' + decoding_scores['stream']
     #filter so only units in decoding scores are in data_in
-    data_in_filtered = data_in[data_in['long_unit_id'].isin(decoding_scores['ID'])]
+    data_in_filtered = data_in[data_in['long_unit_id'].isin(decoding_scores['long_unit_id'])]
     return data_in_filtered
 
 
