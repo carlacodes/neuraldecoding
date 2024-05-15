@@ -930,7 +930,7 @@ def plot_major_analysis(df_merged):
     # export to csv the amount of units per animal
     df_of_neural_yield = pd.DataFrame(columns=['Animal', 'Number of single units', 'Number of multi units'])
     for animal in ['F1901_Crumble', 'F1902_Eclair', 'F1812_Nala', 'F2003_Orecchiette']:
-        animal_units = df_full_naive[df_full_naive['ID'].str.contains(animal)]
+        animal_units = df_full_naive[df_full_naive['animal'].str.contains(animal)]
         # drop all non unique units
         animal_units = animal_units.drop_duplicates(subset=['ID'])
         print(animal, len(animal_units))
@@ -942,7 +942,7 @@ def plot_major_analysis(df_merged):
     # export to csv the amount of units per animal
     df_of_neural_yield = pd.DataFrame(columns=['Animal', 'Number of single units', 'Number of multi units'])
     for animal in ['F1604_Squinty', 'F1606_Windolene', 'F1702_Zola', 'F1815_Cruella', ]:
-        animal_units = df_full[df_full['ID'].str.contains(animal)]
+        animal_units = df_full[df_full['animal'].str.contains(animal)]
         animal_units = animal_units.drop_duplicates(subset=['ID'])
         print(animal, len(animal_units))
         df_of_neural_yield = df_of_neural_yield.append(
