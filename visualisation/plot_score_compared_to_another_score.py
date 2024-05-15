@@ -540,7 +540,7 @@ def main():
     probewordlist =[ (1,1), (2,2), (3,3), (4,4),(5,5), (6,6), (7,7), (8,8), (9,9), (10,10)]
     probewordlist_l74 = [(1,1), (10, 10), (2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (11, 11), (12, 12),
                              (14, 14)]
-    probewordlist_l74 = [ (3, 3), (6,6), (14,14)]
+    probewordlist_l74 = [ (3, 3), (6,6), (9,9), (14,14)]
 
     animal_list = [ 'F1604_Squinty', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella',]
     # animal_list = ['F1902_Eclair']
@@ -822,7 +822,7 @@ def plot_heatmap_with_comparison(df_in, df_in_perm, trained = True, pitchshift_o
                 value = pivot_df.loc[probeword2, probeword1]
                 pivot_df.loc[probeword1, probeword2] = value
     plt.figure(figsize=(10, 8))
-    sns.heatmap(pivot_df, cmap="YlGnBu", vmin=-0.1, vmax=0.2)
+    sns.heatmap(pivot_df, cmap="YlGnBu")
     if trained == True and pitchshift_option == 'nopitchshift':
         plt.title('Trained Animal LSTM decoding - permutation scores, control F0')
     elif trained == True and pitchshift_option == 'pitchshift':
@@ -866,6 +866,7 @@ def plot_heatmap_with_comparison(df_in, df_in_perm, trained = True, pitchshift_o
     yticks = [map_of_words.get(ytick, ytick) for ytick in yticks]
     plt.xticks(ticks = np.arange(0.5, len(xticks), 1), labels = xticks, rotation = 45)
     plt.yticks(ticks = np.arange(0.5, len(yticks), 1), labels = yticks, rotation = 45)
+    plt.xlabel('Target vs probe word decoding score relative to permutation score')
 
     plt.savefig(f'G:/neural_chapter/figures/heatmap_freeze_and_test_trained_difference_from_perm_{trained}_{pitchshift_option}.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
