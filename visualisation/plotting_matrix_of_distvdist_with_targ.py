@@ -408,53 +408,6 @@ def data_merge(a, b):
 
     return a
 
-def runboostedregressiontreeforlstmscore(df_use):
-    col = 'score'
-    dfx = df_use.loc[:, df_use.columns != col]
-    # remove ferret as possible feature
-    col = 'ferret'
-    dfx = dfx.loc[:, dfx.columns != col]
-
-    X_train, X_test, y_train, y_test = train_test_split(dfx, df_use['score'], test_size=0.2,
-                                                        random_state=42)
-
-    dtrain = lgb.Dataset(X_train, label=y_train)
-    dtest = lgb.Dataset(X_test, label=y_test)
-
-    param = {'max_depth': 2, 'eta': 1, 'objective': 'reg:squarederror'}
-    param['nthread'] = 4
-    param['eval_metric'] = 'auc'
-    evallist = [(dtrain, 'train'), (dtest, 'eval')]
-    xg_reg = lgb.LGBMRegressor(colsample_bytree=0.3, learning_rate=0.1,
-                               max_depth=10, alpha=10, n_estimators=10, verbose=1)
-
-    xg_reg.fit(X_train, y_train, eval_metric='MSE', verbose=1)
-    ypred = xg_reg.predict(X_test)
-    lgb.plot_importance(xg_reg)
-    plt.title('feature importances for the lstm decoding score model')
-    plt.savefig(f'G:/neural_chapter/figures/lightgbm_model_feature_importances.png', dpi = 300)
-    plt.show()
-
-    kfold = KFold(n_splits=10)
-    results = cross_val_score(xg_reg, X_train, y_train, scoring='neg_mean_squared_error', cv=kfold)
-    results_TEST = cross_val_score(xg_reg, X_test, y_test, scoring='neg_mean_squared_error', cv=kfold)
-
-    mse = mean_squared_error(ypred, y_test)
-    print("neg MSE on test set: %.2f" % (np.mean(results_TEST)*100))
-    print("negative MSE on train set: %.2f%%" % (np.mean(results) * 100.0))
-    print(results)
-    shap_values = shap.TreeExplainer(xg_reg).shap_values(dfx)
-    fig, ax = plt.subplots(figsize=(15, 15))
-    # title kwargs still does nothing so need this workaround for summary plots
-
-    fig, ax = plt.subplots(1, figsize=(10, 10), dpi = 300)
-    shap.summary_plot(shap_values,dfx,  max_display=20)
-    plt.savefig(f'G:/neural_chapter/figures/lightgbm_summary_plot.png', dpi = 300)
-    plt.show()
-
-
-    labels = [item.get_text() for item in ax.get_yticklabels()]
-    print(labels)
 
 
 def load_animal_electrode_data(animal, stream):
@@ -798,7 +751,7 @@ def plot_heatmap(df_in, trained = True, pitchshift_option = 'nopitchshift'):
         plt.title('Naive Animal LSTM decoding scores, control F0')
     elif trained == False and pitchshift_option == 'pitchshift':
         plt.title('Naive Animal LSTM decoding scores, roved F0')
-    plt.savefig(f'G:/neural_chapter/figures/heatmap_dist_v_dist_trained_{trained}_{pitchshift_option}.png', dpi = 300)
+    plt.savefig(f'G:/neural_chapter/figures/heatmap_dist_v_dist_trained_{trained}_{pitchshift_option}16052024.png', dpi = 300)
 
     # Show the plot
     map_of_words = {1: 'instruments',  2: 'craft',
@@ -828,7 +781,7 @@ def plot_heatmap(df_in, trained = True, pitchshift_option = 'nopitchshift'):
     yticks = [map_of_words.get(ytick, ytick) for ytick in yticks]
     plt.xticks(ticks = np.arange(0.5, len(xticks), 1), labels = xticks, rotation = 45)
     plt.yticks(ticks = np.arange(0.5, len(yticks), 1), labels = yticks, rotation = 45)
-    plt.savefig(f'G:/neural_chapter/figures/heatmap_dist_v_dist_trained_raw_{trained}.png', dpi = 300, bbox_inches = 'tight')
+    plt.savefig(f'G:/neural_chapter/figures/heatmap_dist_v_dist_trained_raw_{trained}16052024.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
     return
 
@@ -892,7 +845,7 @@ def plot_heatmap_with_comparison(df_in, df_in_perm, trained = True, pitchshift_o
     plt.xticks(ticks = np.arange(0.5, len(xticks), 1), labels = xticks, rotation = 45)
     plt.yticks(ticks = np.arange(0.5, len(yticks), 1), labels = yticks, rotation = 45)
 
-    plt.savefig(f'G:/neural_chapter/figures/heatmap_dist_v_dist_trained_difference_from_perm_{trained}_{pitchshift_option}.png', dpi = 300, bbox_inches = 'tight')
+    plt.savefig(f'G:/neural_chapter/figures/heatmap_dist_v_dist_trained_difference_from_perm_{trained}_{pitchshift_option}16052024.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
     return
 
