@@ -256,11 +256,13 @@ def load_scores_and_filter(probewordlist,
                                 (5, 5): (16, 16),
                                 (7, 7): (18, 18),
                                 (8, 8): (19, 19),
-                                (9, 9): (20, 20),
+                                # (9, 9): (20, 20),
                                 (10, 10): (21, 21),
                                 (11, 11): (22, 22),
                                 (12, 12): (23, 23),
-                                (14, 14): (7, 7)
+                                (14, 14): (7, 7),
+                                (9, 9): (10, 10)
+
                             }
                             probeword1_input_text = probeword_map.get(probeword1, probeword1)
                             probeword2_input_text = probeword_map.get(probeword2, probeword2)
@@ -528,6 +530,10 @@ def main():
     probewordlist =[ (1,1), (2,2), (3,3), (4,4),(5,5), (6,6), (7,7), (8,8), (9,9), (10,10)]
     probewordlist_l74 = [(1,1), (10, 10), (2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (11, 11), (12, 12),
                              (14, 14)]
+
+    probewordlist_l74 = [(1,1), (3, 3), (6,6), (9,9), (14,14)]
+
+
     animal_list = [ 'F1604_Squinty', 'F1901_Crumble', 'F1606_Windolene', 'F1702_Zola','F1815_Cruella', 'F1902_Eclair', 'F1812_Nala',  'F2003_Orecchiette',]
     # animal_list = ['F1902_Eclair']
     report = {}
