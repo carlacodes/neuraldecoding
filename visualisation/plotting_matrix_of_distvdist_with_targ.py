@@ -855,7 +855,22 @@ def plot_heatmap_with_comparison(df_in, df_in_perm, trained = True, pitchshift_o
     plt.show()
     return
 
-
+#
+# def filter_for_units_used_in_first_analysis(data_in, trained = True):
+#     if trained == True:
+#         #filter for the units used in the first analysis
+#         #read the input CSV data
+#         decoding_scores = pd.read_csv('G:/neural_chapter/trained_animals_decoding_scores.csv')
+#     else:
+#         decoding_scores = pd.read_csv('G:/neural_chapter/naive_animals_decoding_scores.csv')
+#     #get the unique UNIT ids from the input data
+#     data_in['cluster_id_int'] = data_in['cluster_id'].astype(int)
+#     #round the cluster id to the nearest 1
+#     data_in['cluster_id'] = data_in['cluster_id_int'].round()
+#     data_in['long_unit_id'] = data_in['cluster_id'].astype(str)+'_' +data_in['animal']+'_'+ data_in['recname'] + '_' + data_in['stream']
+#     #filter so only units in decoding scores are in data_in
+#     data_in_filtered = data_in[data_in['long_unit_id'].isin(decoding_scores['ID'])]
+#     return data_in_filtered
 def filter_for_units_used_in_first_analysis(data_in, trained = True):
     if trained == True:
         #filter for the units used in the first analysis
@@ -868,10 +883,11 @@ def filter_for_units_used_in_first_analysis(data_in, trained = True):
     #round the cluster id to the nearest 1
     data_in['cluster_id'] = data_in['cluster_id_int'].round()
     data_in['long_unit_id'] = data_in['cluster_id'].astype(str)+'_' +data_in['animal']+'_'+ data_in['recname'] + '_' + data_in['stream']
+    decoding_scores['cluster_id_int'] = decoding_scores['cluster_id'].astype(int)
+    decoding_scores['long_unit_id'] = decoding_scores['cluster_id_int'].astype(str)+'_' +decoding_scores['animal']+'_'+ decoding_scores['recname'] + '_' + decoding_scores['stream']
     #filter so only units in decoding scores are in data_in
-    data_in_filtered = data_in[data_in['long_unit_id'].isin(decoding_scores['ID'])]
+    data_in_filtered = data_in[data_in['long_unit_id'].isin(decoding_scores['long_unit_id'])]
     return data_in_filtered
-
 
 
 
