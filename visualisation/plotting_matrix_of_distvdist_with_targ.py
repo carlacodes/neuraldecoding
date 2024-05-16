@@ -240,7 +240,7 @@ def load_scores_and_filter(probewordlist,
                             probeword_map = {
                                 (2, 2): (4, 4),
                                 (5, 6): (2, 2),
-                                (20, 20): (3, 3),
+                                (20, 22): (3, 3),
                                 (42, 49): (5, 5),
                                 (32, 38): (7, 7)
                             }
@@ -305,7 +305,6 @@ def load_scores_and_filter(probewordlist,
                                 elif 's3' in stream:
                                     brain_area = 'MEG'
                                 tdt_position = -1
-                                #NEED TO FIGURE OUT WHAT stream NG_0 IS ON MYRIAD TODO
                                 try:
                                     sorted_df_of_scores = sorted_df_of_scores.append(
                                         {'probeword1': probeword1_input_text[0], 'probeword2': probeword2_input_text[0],
@@ -541,9 +540,9 @@ def load_classified_report(path):
                 #get that tow from the channel pos
 
                 row = channel_pos.iloc[channel_id-1]
-                if row[1] >= 3200 and report['d_prime'][i] > 4:
+                if row[1] >= 3200 and report['d_prime'][i] > 4 and report['isi_violations_ratio'][i] < 0.7:
                     singleunitlist.append(i+1)
-                elif row[1] >= 3200 and report['d_prime'][i] <= 4:
+                elif row[1] >= 3200 and report['d_prime'][i] <= 4 and report['isi_violations_ratio'][i] < 0.7:
                     multiunitlist.append(i+1)
                 else:
                     noiselist.append(i+1)
