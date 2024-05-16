@@ -568,7 +568,7 @@ def main():
     # now create a dictionary of dictionaries, where the first key is the animal name, and the second key is the stream name
     #the value is are the decoding scores for each cluster
 
-    for pitchshift_option in ['nopitchshift', 'pitchshift']:
+    for pitchshift_option in [ 'pitchshift']:
         dictoutput = {}
         df_all_trained = pd.DataFrame()
         df_all_trained_permutation = pd.DataFrame()
@@ -818,7 +818,10 @@ def plot_heatmap_with_comparison(df_in, df_in_perm, trained = True, pitchshift_o
                 value = pivot_df.loc[probeword2, probeword1]
                 pivot_df.loc[probeword1, probeword2] = value
     plt.figure(figsize=(10, 8))
-    sns.heatmap(pivot_df, cmap="YlGnBu", vmin=-0.1, vmax=0.2)
+    if pitchshift_option == 'nopitchshift':
+        sns.heatmap(pivot_df, cmap="YlGnBu", vmin=-0.1, vmax=0.2)
+    else:
+        sns.heatmap(pivot_df, cmap="YlGnBu")
     if trained == True and pitchshift_option == 'nopitchshift':
         plt.title('Trained Animal LSTM balanced accuracy relative to chance, control F0')
     elif trained == True and pitchshift_option == 'pitchshift':
