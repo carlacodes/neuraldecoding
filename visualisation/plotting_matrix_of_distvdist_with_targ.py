@@ -528,6 +528,7 @@ def load_classified_report(path):
 def main():
     probewordlist_zola = [(1,1), (2, 2), (5, 6), (42, 49), (32, 38), (20, 22)]
     probewordlist =[ (1,1), (2,2), (3,3), (4,4),(5,5), (6,6), (7,7), (8,8), (9,9), (10,10)]
+    probewordlist_naive =[ (1,1), (2,2), (3,3), (4,4),(5,5), (6,6), (7,7), (8,8)]
     probewordlist_l74 = [(1,1), (10, 10), (2, 2), (3, 3), (4, 4), (5, 5), (7, 7), (8, 8), (9, 9), (11, 11), (12, 12),
                              (14, 14)]
 
@@ -720,6 +721,17 @@ def main():
         data_naive_filtered = filter_for_units_used_in_first_analysis(df_all_naive, trained = False)
         df_all_trained_filtered_permutation = filter_for_units_used_in_first_analysis(df_all_trained_permutation, trained = True)
         df_all_naive_filtered_permutation = filter_for_units_used_in_first_analysis(df_all_naive_permutation, trained = False)
+        #remove all probe words that have either 9 or 10
+        data_naive_filtered = data_naive_filtered[~data_naive_filtered['probeword1'].isin([9, 10])]
+        df_all_naive_filtered_permutation = df_all_naive_filtered_permutation[~df_all_naive_filtered_permutation['probeword1'].isin([9, 10])]
+
+        data_naive_filtered = data_naive_filtered[~data_naive_filtered['probeword2'].isin([9, 10])]
+        df_all_naive_filtered_permutation = df_all_naive_filtered_permutation[~df_all_naive_filtered_permutation['probeword2'].isin([9, 10])]
+        #remove from index as well
+        data_naive_filtered = data_naive_filtered.reset_index(drop=True)
+        df_all_naive_filtered_permutation = df_all_naive_filtered_permutation.reset_index(drop=True)
+
+
 
         plot_heatmap_with_comparison(data_trained_filtered, df_all_trained_filtered_permutation, trained=True, pitchshift_option=pitchshift_option)
         plot_heatmap_with_comparison(data_naive_filtered, df_all_naive_filtered_permutation, trained=False, pitchshift_option=pitchshift_option)
@@ -808,13 +820,13 @@ def plot_heatmap_with_comparison(df_in, df_in_perm, trained = True, pitchshift_o
     plt.figure(figsize=(10, 8))
     sns.heatmap(pivot_df, cmap="YlGnBu", vmin=-0.1, vmax=0.2)
     if trained == True and pitchshift_option == 'nopitchshift':
-        plt.title('Trained Animal LSTM decoding - permutation scores, control F0')
+        plt.title('Trained Animal LSTM balanced accuracy relative to chance, control F0')
     elif trained == True and pitchshift_option == 'pitchshift':
-        plt.title('Trained Animal LSTM decoding - permutation scores, roved F0')
+        plt.title('Trained Animal LSTM balanced accuracy relative to chance roved F0')
     elif trained == False and pitchshift_option == 'nopitchshift':
-        plt.title('Naive Animal LSTM decoding - permutation scores, control F0')
+        plt.title('Naive Animal LSTM balanced accuracy relative to chance, control F0')
     elif trained == False and pitchshift_option == 'pitchshift':
-        plt.title('Naive Animal LSTM decoding - permutation scores, roved F0')
+        plt.title('Naive Animal LSTM balanced accuracy relative to chance, roved F0')
 
     #use the labels to label the xticks and y ticks
 
