@@ -821,7 +821,7 @@ def plot_heatmap_with_comparison(df_in, df_in_perm, trained = True, pitchshift_o
     if pitchshift_option == 'nopitchshift':
         sns.heatmap(pivot_df, cmap="YlGnBu", vmin=-0.1, vmax=0.2)
     else:
-        sns.heatmap(pivot_df, cmap="YlGnBu")
+        sns.heatmap(pivot_df, cmap="YlGnBu", vmin = -0.06, vmax = 0.15)
     if trained == True and pitchshift_option == 'nopitchshift':
         plt.title('Trained Animal LSTM balanced accuracy relative to chance, control F0')
     elif trained == True and pitchshift_option == 'pitchshift':
