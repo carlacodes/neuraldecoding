@@ -1373,7 +1373,31 @@ def plot_major_analysis(df_merged):
     n2 = len(bigconcatenatenaive_nonps)
     r_controlf0 = 1 - (2 * manwhitscorecontrolf0.statistic) / (n1 * n2)
     # ax.legend()
-    plt.savefig('G:/neural_chapter/figures/controlF0distribution13052024intertrialroving_thesislist.png', dpi=1000,
+    plt.savefig('G:/neural_chapter/figures/controlF0distribution13052024intertrialroving_forconference_.png', dpi=1000,
+                bbox_inches='tight')
+    plt.show()
+
+
+    fig, ax = plt.subplots(1, figsize=(8, 8), dpi=800)
+    ax.set_xlim([0, 1])
+    sns.distplot(bigconcatenatetrained_ps, label='trained', ax=ax, color='purple')
+    sns.distplot(bigconcatenatenaive_ps, label='naive', ax=ax, color='darkcyan')
+    plt.axvline(x=0, color='black')
+    plt.xlim([0.35, 1])
+    # man whiteney test score
+    plt.title('Roved F0 scores between  \n trained and naive animals', fontsize=30)
+    plt.xlabel('Roved F0 LSTM decoder scores', fontsize=30)
+
+    plt.ylabel('Density', fontsize=30)
+    # ax.set_xticks([0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], labels=[0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], fontsize=20)
+    # ax.set_yticks([2, 4, 6, 8, 10, 12], labels=[2, 4, 6, 8, 10, 12], fontsize=20)
+    manwhitscorerovedf0 = mannwhitneyu(bigconcatenatetrained_ps, bigconcatenatenaive_ps, alternative='greater')
+
+    n1 = len(bigconcatenatetrained_ps)
+    n2 = len(bigconcatenatenaive_ps)
+    r_rovedf0 = 1 - (2 * manwhitscorerovedf0.statistic) / (n1 * n2)
+    # ax.legend()
+    plt.savefig('G:/neural_chapter/figures/rovedF0distribution13052024intertrialroving_forconference_.png', dpi=1000,
                 bbox_inches='tight')
     plt.show()
 
@@ -1443,8 +1467,8 @@ def plot_major_analysis(df_merged):
     kstestcontrolf0vsrovednaive = scipy.stats.kstest(bigconcatenatenaive_nonps, bigconcatenatenaive_ps,
                                                      alternative='greater')
     # do a wilcoxon signed rank test
-    wilcoxon_stat = scipy.stats.wilcoxon(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, alternative='two-sided',
-                                         method='approx')
+    wilcoxon_stat = scipy.stats.wilcoxon(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, alternative='greater')
+    manwhitney_stat = mannwhitneyu(bigconcatenatetrained_nonps, bigconcatenatetrained_ps, alternative='two-sided')
 
     # do a wilcoxon signed rank test
     wilcoxon_statnaive = scipy.stats.wilcoxon(bigconcatenatenaive_nonps, bigconcatenatenaive_ps, alternative='greater',

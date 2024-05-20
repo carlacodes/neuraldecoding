@@ -568,7 +568,7 @@ def main():
     # now create a dictionary of dictionaries, where the first key is the animal name, and the second key is the stream name
     #the value is are the decoding scores for each cluster
 
-    for pitchshift_option in [ 'pitchshift']:
+    for pitchshift_option in [ 'nopitchshift']:
         dictoutput = {}
         df_all_trained = pd.DataFrame()
         df_all_trained_permutation = pd.DataFrame()
@@ -735,6 +735,50 @@ def main():
 
         plot_heatmap_with_comparison(data_trained_filtered, df_all_trained_filtered_permutation, trained=True, pitchshift_option=pitchshift_option)
         plot_heatmap_with_comparison(data_naive_filtered, df_all_naive_filtered_permutation, trained=False, pitchshift_option=pitchshift_option)
+        #calculate the mean score between the target word  (probeword1 = 1) and the other probe words
+        data_with_probeword1 = data_trained_filtered[data_trained_filtered['probeword1'] == 1]
+        data_permutation_with_probeword1 = df_all_trained_filtered_permutation[df_all_trained_filtered_permutation['probeword1'] == 1]
+        #get the difference in socre
+        difference = data_with_probeword1['score'] - data_permutation_with_probeword1['score']
+        #get the mean score for the target word
+        mean_score = difference.mean()
+
+        data_without_probeword = data_trained_filtered[data_trained_filtered['probeword1'] != 1]
+        data_permutation_without_probeword = df_all_trained_filtered_permutation[df_all_trained_filtered_permutation['probeword1'] != 1]
+        #get the difference in socre
+        difference = data_without_probeword['score'] - data_permutation_without_probeword['score']
+        #get the mean score for the target word
+        mean_score_without_probeword = difference.mean()
+
+        ##repeat the same for the naive animals
+        data_with_probeword1 = data_naive_filtered[data_naive_filtered['probeword1'] == 1]
+        data_permutation_with_probeword1 = df_all_naive_filtered_permutation[df_all_naive_filtered_permutation['probeword1'] == 1]
+        #get the difference in socre
+        difference = data_with_probeword1['score'] - data_permutation_with_probeword1['score']
+        #get the mean score for the target word
+        mean_score_naive = difference.mean()
+
+        data_without_probeword = data_naive_filtered[data_naive_filtered['probeword1'] != 1]
+        data_permutation_without_probeword = df_all_naive_filtered_permutation[df_all_naive_filtered_permutation['probeword1'] != 1]
+        #get the difference in socre
+        difference = data_without_probeword['score'] - data_permutation_without_probeword['score']
+        #get the mean score for the target word
+        mean_score_without_probeword_naive = difference.mean()
+        print(f'trained animal mean score: {mean_score}')
+
+        print(f'naive animal mean score: {mean_score_naive}')
+        print(f'trained animal mean score without probeword1: {mean_score_without_probeword}')
+        print(f'naive animal mean score without probeword1: {mean_score_without_probeword_naive}')
+        ##add the results to dataframe
+        results = pd.DataFrame({'trained animal': [mean_score], 'naive animal': [mean_score_naive], 'trained animal without probeword1': [mean_score_without_probeword], 'naive animal without probeword1': [mean_score_without_probeword_naive]})
+        results.to_csv(f'G:/neural_chapter/figures/mean_score_comparison_heat_map_{pitchshift_option}.csv')
+
+
+
+        #calculate the mean score between the target word  (probeword1 = 1) and the other probe words
+
+
+
         plot_heatmap(data_trained_filtered, trained = True, pitchshift_option=pitchshift_option)
         plot_heatmap(data_naive_filtered, trained=False, pitchshift_option=pitchshift_option)
     return
