@@ -878,6 +878,16 @@ def plot_major_analysis(df_merged):
                   palette=probe_word_palette,
                   hue='ProbeWord', alpha=0.7, jitter=0.2)
 
+    #run ks test between Brain area and score
+    df_full_naive_meg = df_full_naive[df_full_naive['BrainArea'] == 'MEG']
+    df_full_naive_peg = df_full_naive[df_full_naive['BrainArea'] == 'PEG']
+    from scipy.stats import ks_2samp
+    ks_test_naive_brainarea = ks_2samp(df_full_naive_meg['Score'], df_full_naive_peg['Score'], alternative = 'greater')
+
+    df_full_meg = df_full[df_full['BrainArea'] == 'MEG']
+    df_full_peg = df_full[df_full['BrainArea'] == 'PEG']
+    ks_test_trained_brainarea = ks_2samp( df_full_meg['Score'], df_full_peg['Score'],alternative = 'greater')
+
     # Overlay the data points for below chance scores in grey
     sns.stripplot(x='BrainArea', y='Score', data=df_below_chance_naive, ax=ax, size=3, dodge=False, color='lightgray',
                   alpha=0.5, jitter=0.2)
@@ -1479,16 +1489,16 @@ def plot_major_analysis(df_merged):
     df_trained = pd.DataFrame({'F0_control': bigconcatenatetrained_nonps, 'F0_roved': bigconcatenatetrained_ps})
     df_trained.to_csv('G:/neural_chapter/figures/rovedF0vscontrolF0traineddistribution_20062023intertrialroving.csv')
 
-    z = wilcoxon_stat.zstatistic
-    n = len(bigconcatenatetrained_nonps)
-    effect_size_trained = z / np.sqrt(2 * n)
-    print(effect_size_trained)
-
-    # calculate the effect size
-    # effect size = z/sqrt(n)
-    z = wilcoxon_statnaive.zstatistic
-    n = len(bigconcatenatenaive_nonps)
-    effect_size_naive = z / np.sqrt(2 * n)
+    # z = wilcoxon_stat.zstatistic
+    # n = len(bigconcatenatetrained_nonps)
+    # effect_size_trained = z / np.sqrt(2 * n)
+    # print(effect_size_trained)
+    #
+    # # calculate the effect size
+    # # effect size = z/sqrt(n)
+    # z = wilcoxon_statnaive.zstatistic
+    # n = len(bigconcatenatenaive_nonps)
+    # effect_size_naive = z / np.sqrt(2 * n)
 
     # Calculating Cramér's V for effect size
     def cramers_v(n, ks_statistic):
