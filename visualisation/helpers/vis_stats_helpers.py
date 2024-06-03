@@ -104,7 +104,7 @@ def run_mixed_effects_on_dataframe(combined_df):
         #add unique recording ID to the dataframe, remove the first integer and then add the recording ID
 
     combined_df['Recording_ID'] = combined_df['ID'].str.split('_').str[1:]
-    combined_df['Recording_ID'] = combined_df['recording_id'].str.join('_')
+    combined_df['Recording_ID'] = combined_df['Recording_ID'].str.join('_')
 
     model_formula = "Score ~ Naive +  PitchShift + (Naive * PitchShift )+ ProbeWord + Recording_ID"
     model_formula2 = "Score ~ Naive +  PitchShift + (Naive * PitchShift)"
