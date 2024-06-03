@@ -106,6 +106,9 @@ def run_mixed_effects_on_dataframe(combined_df):
     combined_df['Recording_ID'] = combined_df['ID'].str.split('_').str[1:]
     combined_df['Recording_ID'] = combined_df['Recording_ID'].str.join('_')
 
+    #make recording ID a category
+    combined_df['Recording_ID'] = combined_df['Recording_ID'].astype('category')
+
     model_formula = "Score ~ Naive +  PitchShift + (Naive * PitchShift )+ ProbeWord + Recording_ID"
     model_formula2 = "Score ~ Naive +  PitchShift + (Naive * PitchShift)"
     model_formula3 = "Score ~ Naive +  PitchShift + (Naive * PitchShift) +BrainArea + ProbeWord"
