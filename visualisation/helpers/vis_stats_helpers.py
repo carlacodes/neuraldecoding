@@ -101,9 +101,12 @@ def run_mixed_effects_on_dataframe(combined_df):
             ferret_id = 8
         #add the ferret ID to the dataframe
         combined_df.loc[combined_df['ID'] == unit_id, 'FerretID'] = ferret_id
+        #add unique recording ID to the dataframe, remove the first integer and then add the recording ID
 
+    combined_df['Recording_ID'] = combined_df['ID'].str.split('_').str[1:]
+    combined_df['Recording_ID'] = combined_df['recording_id'].str.join('_')
 
-    model_formula = "Score ~ Naive +  PitchShift + (Naive * PitchShift )+ ProbeWord"
+    model_formula = "Score ~ Naive +  PitchShift + (Naive * PitchShift )+ ProbeWord + Recording_ID"
     model_formula2 = "Score ~ Naive +  PitchShift + (Naive * PitchShift)"
     model_formula3 = "Score ~ Naive +  PitchShift + (Naive * PitchShift) +BrainArea + ProbeWord"
 
