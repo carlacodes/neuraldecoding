@@ -107,9 +107,15 @@ def run_mixed_effects_on_dataframe(combined_df):
     combined_df['Recording_ID'] = combined_df['Recording_ID'].str.join('_')
 
     #make recording ID a category
-    combined_df['Recording_ID'] = combined_df['Recording_ID'].astype('category')
+    # combined_df['Recording_ID'] = combined_df['Recording_ID'].astype('category')
 
-    model_formula = "Score ~ Naive +  PitchShift + (Naive * PitchShift )+ ProbeWord + Recording_ID"
+    #assign a unique number to each recording ID
+    unique_recording_ids = combined_df['Recording_ID'].unique()
+    for i, recording_id in enumerate(unique_recording_ids):
+        combined_df['Recording_ID_Num'] = combined_df['Recording_ID'].replace({recording_id: i})
+
+
+    model_formula = "Score ~ Naive +  PitchShift + (Naive * PitchShift )+ ProbeWord + Recording_ID_Num"
     model_formula2 = "Score ~ Naive +  PitchShift + (Naive * PitchShift)"
     model_formula3 = "Score ~ Naive +  PitchShift + (Naive * PitchShift) +BrainArea + ProbeWord"
 
