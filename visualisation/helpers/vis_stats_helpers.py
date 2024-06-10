@@ -109,10 +109,10 @@ def run_mixed_effects_on_dataframe(combined_df):
     #make recording ID a category
     # combined_df['Recording_ID'] = combined_df['Recording_ID'].astype('category')
 
-    #assign a unique number to each recording ID
+    # Assign a unique number to each recording ID
     unique_recording_ids = combined_df['Recording_ID'].unique()
     for i, recording_id in enumerate(unique_recording_ids):
-        combined_df['Recording_ID_Num'] = combined_df['Recording_ID'].replace({recording_id: i})
+        combined_df.loc[combined_df['Recording_ID'] == recording_id, 'Recording_ID_Num'] = i
 
 
     model_formula = "Score ~ Naive +  PitchShift + (Naive * PitchShift )+ ProbeWord + Recording_ID_Num"
