@@ -115,11 +115,11 @@ def run_mixed_effects_on_dataframe(combined_df):
         combined_df.loc[combined_df['Recording_ID'] == recording_id, 'Recording_ID_Num'] = i
 
 
-    model_formula = "Score ~ Naive +  PitchShift + (Naive * PitchShift )+ ProbeWord + Recording_ID_Num"
+    model_formula = "Score ~ Naive +  PitchShift + (Naive * PitchShift )+ ProbeWord"
     model_formula2 = "Score ~ Naive +  PitchShift + (Naive * PitchShift)"
     model_formula3 = "Score ~ Naive +  PitchShift + (Naive * PitchShift) +BrainArea + ProbeWord"
 
-    mixed_model = smf.mixedlm(model_formula, data=combined_df, groups=combined_df['FerretID'])
+    mixed_model = smf.mixedlm(model_formula, data=combined_df, groups=combined_df['Recording_ID_Num'])
 
     # Fit the model
     result = mixed_model.fit()
