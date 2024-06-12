@@ -1115,8 +1115,8 @@ def plot_major_analysis(df_merged):
         df_full_naive_csv.at[i2, 'ID_small'] = unit_id
 
 
-    df_full_csv = df_full_csv[df_full_csv['MeanScore'] >= 0.70]
-    df_full_naive_csv = df_full_naive_csv[df_full_naive_csv['MeanScore'] >= 0.70]
+    df_full_csv = df_full_csv[df_full_csv['MeanScore'] >= 0.60]
+    df_full_naive_csv = df_full_naive_csv[df_full_naive_csv['MeanScore'] >= 0.60]
 
     df_full_csv.to_csv('G:/neural_chapter/csvs/units_trained_highscore.csv')
     df_full_naive_csv.to_csv('G:/neural_chapter/csvs/units_naive_highscore.csv')

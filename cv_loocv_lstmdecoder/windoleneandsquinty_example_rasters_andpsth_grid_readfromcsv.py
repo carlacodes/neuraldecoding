@@ -57,7 +57,7 @@ def find_repeating_substring(string):
 
     return None
 def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_3', phydir = 'phy', animal = 'F1702_Zola', brain_area = [], gen_psth = False, csv_info = []):
-    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_nothreshold_ANDPSTH_08052024/{phydir}/{stream}/')
+    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_nothreshold_ANDPSTH_12062024/{phydir}/{stream}/')
     #load the high generalizable clusters, csv file
 
     saveDir = tarDir
@@ -359,7 +359,7 @@ def generate_rasters(dir):
         datapath_big = Path(f'D:/ms4output_16102023/{animal}/')
         animal = str(datapath_big).split('\\')[-1]
         datapaths = [x for x in datapath_big.glob('**/mountainsort4/phy//') if x.is_dir()]
-        high_units = pd.read_csv(f'G:/neural_chapter/csvs/units_topgenindex_allanimalstrained.csv')
+        high_units = pd.read_csv(f'G:/neural_chapter/csvs/units_trained_highscore.csv')
 
         for datapath in datapaths:
             stream = str(datapath).split('\\')[-3]
