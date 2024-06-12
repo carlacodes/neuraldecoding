@@ -1,3 +1,4 @@
+import copy
 import os
 
 import matplotlib.pyplot as plt
@@ -1059,6 +1060,8 @@ def plot_major_analysis(df_merged):
         # df_full_pitchsplit_csv_naive_save.at[i, 'rec_name'] = rec_name
         # df_full_pitchsplit_csv_naive_save.at[i, 'stream'] = stream
 
+
+
     # order df_full_pitchsplit_csv_save by score
     df_full_pitchsplit_csv_save = df_full_pitchsplit_csv_save.sort_values(by='MeanScore', ascending=False)
     df_full_pitchsplit_csv_naive_save = df_full_pitchsplit_csv_naive_save.sort_values(by='MeanScore', ascending=False)
@@ -1067,6 +1070,57 @@ def plot_major_analysis(df_merged):
     df_full_pitchsplit_csv_naive_save.to_csv('G:/neural_chapter/csvs/units_topgenindex_allanimalsnaive.csv')
 
     # export the unit IDs
+
+    df_full_csv = copy.deepcopy(df_full)
+    df_full_naive_csv = copy.deepcopy(df_full_naive)
+    #reset the inex column
+    df_full_csv = df_full_csv.reset_index(drop=True)
+    df_full_naive_csv = df_full_naive_csv.reset_index(drop=True)
+
+
+    for unit_id in df_full_csv['ID'].unique():
+        # Check how many scores for that unit are above 60%
+        df_full_pitchsplit_unit = df_full_csv[df_full_csv['ID'] == unit_id]
+
+        # limit the scores to above 50
+        # filter for the above-chance scores
+        mean_scores = df_full_pitchsplit_unit['Score'].mean()
+
+        # add the mean score to the dataframe
+        df_full_csv.loc[df_full_csv['ID'] == unit_id, 'MeanScore'] = mean_scores
+
+    for unit_id in df_full_naive_csv['ID'].unique():
+        df_full_pitchsplit_unit = df_full_csv[df_full_csv['ID'] == unit_id]
+        mean_scores = df_full_pitchsplit_unit['Score'].mean()
+        df_full_naive_csv.loc[df_full_naive_csv['ID'] == unit_id, 'MeanScore'] = mean_scores
+
+    for i2 in range(0, len(df_full_csv)):
+        full_id = df_full_csv.iloc[i2]['ID']
+        components = full_id.split('_')
+        unit_id = components[0]
+        # unit_id = float(unit_id)
+        #
+        # df_full_csv.at[i2, 'ID_small'] = unit_id
+        try:
+            unit_id = float(unit_id)
+            df_full_csv.at[i2, 'ID_small'] = unit_id
+        except ValueError:
+            print(f"Cannot convert ID: {full_id} to float.")
+
+    for i2 in range(0, len(df_full_naive_csv)):
+        full_id = df_full_naive_csv.iloc[i2]['ID']
+        components = full_id.split('_')
+        unit_id = components[0]
+        unit_id = float(unit_id)
+        df_full_naive_csv.at[i2, 'ID_small'] = unit_id
+
+
+    df_full_csv = df_full_csv[df_full_csv['MeanScore'] >= 0.70]
+    df_full_naive_csv = df_full_naive_csv[df_full_naive_csv['MeanScore'] >= 0.70]
+
+    df_full_csv.to_csv('G:/neural_chapter/csvs/units_trained_highscore.csv')
+    df_full_naive_csv.to_csv('G:/neural_chapter/csvs/units_naive_highscore.csv')
+
 
     fig, ax = plt.subplots(figsize=(10, 6))
     sns.scatterplot(x='GenFrac', y='MaxScore', data=df_full_pitchsplit_plot, ax=ax, color='purple')
@@ -1094,8 +1148,26 @@ def plot_major_analysis(df_merged):
     # plt.xlabel('Generalization frac')
     # plt.show()
 
+
+
+
+
     for animal in ['F1815_Cruella', 'F1702_Zola', 'F1604_Squinty', 'F1606_Windolene']:
         # isolate the data for this animal
+        df_full_animal_high_score = df_full[df_full['animal'].str.contains(animal)]
+        for unit_id in df_full_animal_high_score['ID'].unique():
+            # Check how many scores for that unit are above 60%
+            df_full_pitchsplit_unit = df_full_animal_high_score[df_full_animal_high_score['ID'] == unit_id]
+
+
+            # limit the scores to above 50
+            # filter for the above-chance scores
+            mean_scores = df_full_pitchsplit_unit['Score'].mean()
+
+            # add the mean score to the dataframe
+            df_full_animal_high_score.loc[df_full_animal_high_score['ID'] == unit_id, 'MeanScore'] = mean_scores
+        df_full_animal_high_score = df_full_animal_high_score[df_full_animal_high_score['MeanScore'] >= 0.70]
+
         df_full_pitchsplit_plot_animal = df_full_pitchsplit_plot[df_full_pitchsplit_plot['animal'].str.contains(animal)]
         # export the unit IDs for this animal
         #filter for where animal is in the animal column
@@ -1120,6 +1192,7 @@ def plot_major_analysis(df_merged):
             #     ignore_index=True)
         # export the dataframe to csv
         df_full_pitchsplit_plot_animal.to_csv(f'G:/neural_chapter/figures/unit_ids_trained_topgenindex_{animal}.csv')
+        df_full_animal_high_score.to_csv(f'G:/neural_chapter/figures/unit_ids_trained_{animal}_highscore.csv')
     for animal in ['F1815_Cruella', 'F1702_Zola', 'F1604_Squinty', 'F1606_Windolene']:
         # isolate the data for this animal
         df_full_pitchsplit_plot_animal = df_full[df_full['animal'].str.contains(animal)]

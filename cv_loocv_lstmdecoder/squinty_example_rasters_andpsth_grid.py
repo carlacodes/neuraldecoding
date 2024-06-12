@@ -344,7 +344,7 @@ def generate_rasters(dir):
             new_blocks = pickle.load(f)
 
 
-        high_units = pd.read_csv(f'G:/neural_chapter/figures/unit_ids_trained_topgenindex_{animal}.csv')
+        high_units = pd.read_csv(f'G:/neural_chapter/figures/unit_ids_trained_{animal}_highscore.csv')
         # remove trailing steam
         rec_name = folder[:-5]
         #find the unique string

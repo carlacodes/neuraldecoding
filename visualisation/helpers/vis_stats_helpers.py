@@ -147,8 +147,15 @@ def run_mixed_effects_on_dataframe(combined_df):
     #first get the coefficients
 
     coefficients = result.params
+
+    coefficients = result.summary().tables[1]
+    coefficients['Coef.'] = pd.to_numeric(coefficients['Coef.'], errors='coerce')
+    coefficients['Std.Err.'] = pd.to_numeric(coefficients['Std.Err.'], errors='coerce')
+    coefficients['P>|z|'] = pd.to_numeric(coefficients['P>|z|'], errors='coerce')
+
+
     #sort the coefficients by ascending coefficient value
-    coefficients = coefficients.sort_values()
+    coefficients = coefficients.sort_values(by=['Coef.'])
     #get the confidence intervals
     ci = result.conf_int()
     p_values = result.pvalues
@@ -163,11 +170,15 @@ def run_mixed_effects_on_dataframe(combined_df):
     #now plot the coefficients
     fig, ax = plt.subplots(dpi = 300, figsize=(20, 10))
     #sort coefficients index by ascending coefficient value
-    ax.bar(coefficients.index, coefficients, yerr = se, color = 'forestgreen', edgecolor = 'black')
+    #convert the coefficients column to a float
+    ax.bar(coefficients.index, coefficients['Coef.'], yerr = coefficients['Std.Err.'], color = 'forestgreen', edgecolor = 'black')
     #if the p value is less than 0.05, then add a star
     for i, p in enumerate(coefficients.index):
-        if p_values[i] < 0.05:
-            ax.text(i, coefficients[i] + 0.01, '*', fontsize = 20)
+        try:
+            if float(coefficients['P>|z|'][i]) < 0.05:
+                ax.text(i, float(coefficients['Coef.'][i]) + 0.01, '*', fontsize = 20)
+        except:
+            continue
     ax.set_xticks(np.arange(0, len(coefficients.index), 1))
     ax.set_xticklabels(coefficients.index, rotation = 90, fontsize = 16)
     ax.set_ylabel('Coefficient value', fontsize = 20)
