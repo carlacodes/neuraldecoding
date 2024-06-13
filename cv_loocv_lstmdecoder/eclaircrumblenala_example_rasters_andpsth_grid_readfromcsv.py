@@ -66,7 +66,7 @@ def run_cleaning_of_rasters(blocks, datapath):
         pickle.dump(new_blocks, f)
     return new_blocks
 def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_3', phydir = 'phy', animal = 'F1702_Zola', brain_area = [], gen_psth = False, csv_info = []):
-    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_nothreshold_ANDPSTH_13062024_v2/{phydir}/{stream}/')
+    tarDir = Path(f'E:/rastersms4spikesortinginter/{animal}/figs_nothreshold_ANDPSTH_12062024/{phydir}/{stream}/')
     #load the high generalizable clusters, csv file
 
     saveDir = tarDir
@@ -86,11 +86,15 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
         cluster_info = csv_info[csv_info['ID_small'] == cluster_id]
         #convert cluster_info probeword to int
         cluster_info['ProbeWord'] = cluster_info['ProbeWord'].astype(int)
+        fig, ax = plt.subplots(len(probewords_list), 2, figsize=(10, 30))
+        count = 0
         mean_score_for_cluster = cluster_info['MeanScore'].values[0]
         #round to the nearest 2 decimal places
         mean_score_for_cluster = round(mean_score_for_cluster, 2)
         mean_perm_score_for_cluster = cluster_info['score_permutation'].values[:]
-
+        #round to the nearest 2 decimal places
+        #convert to numpy array
+        #take the mean
         mean_perm_score_for_cluster = np.mean(mean_perm_score_for_cluster)
         mean_perm_score_for_cluster = round(mean_perm_score_for_cluster, 2)
 
@@ -102,13 +106,10 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
                 probeword = probewords[0]
                 individual_info = cluster_info[(cluster_info['ProbeWord'] == probeword) & (cluster_info['PitchShift'] == pitchshift_option)]
                 #if individual_info is empty, skip
-                if individual_info.empty and probeword == 1:
-
+                if individual_info.empty:
+                    print('empty individual info:', cluster_id, probeword, pitchshift_option)
                     individual_score = None
                     individual_perm_score = None
-                elif individual_info.empty:
-                    print('empty individual info:', cluster_id, probeword, pitchshift_option)
-                    continue
                 else:
                     individual_score = individual_info['Score'].values[0]
                     individual_perm_score = individual_info['score_permutation'].values[0]
@@ -118,7 +119,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
 
                 raster_target, raster_target_compare = get_word_aligned_raster_zola_cruella(blocks, cluster_id, word=probewords[0],
                                                                                           pitchshift=pitchshift_option,
-                                                                                          correctresp=True,
+                                                                                          correctresp=False,
                                                                                           df_filter=['No Level Cue'], talker = 'female')
                 raster_target = raster_target.reshape(raster_target.shape[0], )
                 if len(raster_target) == 0:
@@ -245,44 +246,26 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
                             # Apply smoothing using Gaussian filter
                             sigma = 0.1  # Smoothing parameter (adjust as needed)
                             smoothed_hist = gaussian_filter1d(hist / (bin_width * len(spiketrains)), sigma=sigma)
-                            fig, ax = plt.subplots(figsize=(5, 5))
-                            # Plot smoothed PSTH within the specified time range
-                            ax.plot(time_axis, smoothed_hist, color=color_option, linewidth=2)
-                            ax.set_ylabel('spikes/s')
-                        else:
-                            fig, ax = plt.subplots(figsize=(5, 5))
-                            rasterplot(spiketrains, c=color_option, histogram_bins=0, axes=ax, s=0.3)
-                            ax.set_ylabel('trial number')
-                            ax.set_xlim(custom_xlim)
 
-                        if probeword == 1:
-                            ax.set_title(f'Unit: {cluster_id}_{phydir}, \n {animal_id_num}')
+                            # Plot smoothed PSTH within the specified time range
+                            ax[idx, 1].plot(time_axis, smoothed_hist, color=color_option, linewidth=2)
+
+                            ax[idx, 1].set_ylabel('spikes/s')
                         else:
-                            ax.set_title(f'Unit: {cluster_id}_{phydir}, \n {animal_id_num}, score: {individual_score}, perm score: {individual_perm_score}')
-                        ax.text(-0.2, 0.5, probeword_text, horizontalalignment='center',
-                                        verticalalignment='center', rotation=90, transform=ax.transAxes)
-                        if gen_psth:
-                            plt.savefig(
-                                str(saveDir) + f'/PSTH_targdist_clusterid_{cluster_id}_{stream}_pitchshift_{pitchshift_option}_{probewords[0]}_' + str(
-                                    cluster_id) + '.png', bbox_inches='tight', dpi = 300)
-                            print('saved')
-                            # plt.savefig(
-                            #     str(saveDir) + f'/PSTH_targdist_clusterid_{cluster_id}_{stream}_pitchshift_{pitchshift_option}_{probewords[0]}_' + str(
-                            #         cluster_id) + '.svg', bbox_inches='tight')
-                        else:
-                            plt.savefig(
-                                str(saveDir) + f'/targdist_clusterid_{cluster_id}_{stream}_pitchshift_{pitchshift_option}_{probewords[0]}_' + str(
-                                    cluster_id) + '.png', bbox_inches='tight', dpi = 300)
-                            print('saved')
-                            # plt.savefig(
-                            #     str(saveDir) + f'/targdist_clusterid_{cluster_id}_{stream}_pitchshift_{pitchshift_option}_{probewords[0]}_' + str(
-                            #         cluster_id) + '.svg', bbox_inches='tight')
+                            rasterplot(spiketrains, c=color_option, histogram_bins=0, axes=ax[idx, 1], s=0.3)
+                            ax[idx, 1].set_ylabel('trial number')
+                            ax[idx, 1].set_xlim(custom_xlim)
+
+                        ax[idx, 1].set_title(f'Unit: {cluster_id}_{phydir}, \n {animal_id_num}, score: {individual_score}, perm score: {individual_perm_score}')
+                        ax[idx, 1].text(-0.2, 0.5, probeword_text, horizontalalignment='center',
+                                        verticalalignment='center', rotation=90, transform=ax[idx, 1].transAxes)
                     else:
                         if gen_psth:
                             # get the array of spiketimes
                             bin_width = 0.01  # Width of the time bins in seconds
                             time_start = -0.1  # Start time for the PSTH (in seconds)
                             time_end = 0.6  # End time for the PSTH (in seconds)
+                            stimulus_onset = 0.0  # Time of the stimulus onset (relative to the PSTH window)
 
                             # Calculate PSTH within the specified time range
                             num_bins = int((time_end - time_start) / bin_width) + 1
@@ -301,134 +284,111 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
                             time_axis = np.linspace(time_start, time_end, num_bins) + bin_width / 2
 
                             # Apply smoothing using Gaussian filter
-                            sigma = 0.1  # Smoothing parameter (adjust as needed)
+                            sigma = 2  # Smoothing parameter (adjust as needed)
                             smoothed_hist = gaussian_filter1d(hist / (bin_width * len(spiketrains)), sigma=sigma)
-                            fig, ax = plt.subplots(figsize=(5, 5))
 
                             # Plot smoothed PSTH within the specified time range
-                            ax.plot(time_axis, smoothed_hist, color=color_option, linewidth=2)
+                            ax[idx, 0].plot(time_axis, smoothed_hist, color=color_option, linewidth=2)
 
-                            ax.set_ylabel('spikes/s')
+                            ax[idx, 0].set_ylabel('spikes/s')
 
                         else:
-                            fig, ax = plt.subplots(figsize=(5, 5))
+                            rasterplot(spiketrains, c=color_option, histogram_bins=0, axes=ax[idx, 0], s=0.3)
+                            ax[idx, 0].set_ylabel('trial number')
 
-                            rasterplot(spiketrains, c=color_option, histogram_bins=0, axes=ax, s=0.3)
-                            ax.set_ylabel('trial number')
+                        ax[idx, 0].set_xlim(custom_xlim)
 
+                        ax[idx, 0].set_title(f'Unit: {cluster_id}_{phydir}, \n {animal_id_num}, score: {individual_score}, perm score: {individual_perm_score}')
 
-                        ax.set_xlim(custom_xlim)
-
-                        if probeword == 1:
-                            ax.set_title(f'Unit: {cluster_id}_{phydir}, \n {animal_id_num}')
-                        else:
-                            ax.set_title(f'Unit: {cluster_id}_{phydir}, \n {animal_id_num}, score: {individual_score}, perm score: {individual_perm_score}')
-
-                        ax.text(-0.2, 0.5, probeword_text, horizontalalignment='center',
-                                        verticalalignment='center', rotation=90, transform=ax.transAxes)
-                        print('test')
-                        if gen_psth:
-                            plt.savefig(
-                                str(saveDir) + f'/PSTH_targdist_clusterid_{cluster_id}_{stream}_pitchshift_{pitchshift_option}_{probewords[0]}_' + str(
-                                    cluster_id) + '.png', bbox_inches='tight', dpi = 300)
-                            print('saved')
-                            # plt.savefig(
-                            #     str(saveDir) + f'/PSTH_targdist_clusterid_{cluster_id}_{stream}_pitchshift_{pitchshift_option}_{probewords[0]}_' + str(
-                            #         cluster_id) + '.svg', bbox_inches='tight')
-                        else:
-                            plt.savefig(
-                                str(saveDir) + f'/targdist_clusterid_{cluster_id}_{stream}_pitchshift_{pitchshift_option}_{probewords[0]}_' + str(
-                                    cluster_id) + '.png', bbox_inches='tight', dpi = 300)
-                            print('saved')
-                        # plt.savefig(
-                        #     str(saveDir) + f'/PSTH{gen_psth}_targdist_clusterid_{cluster_id}_{stream}_pitchshift_{pitchshift_option}_{probewords[0]}_' + str(
-                        #         cluster_id) + '.png', bbox_inches='tight', dpi=300)
-
-
-                    plt.close('all')
+                        ax[idx, 0].text(-0.2, 0.5, probeword_text, horizontalalignment='center',
+                                        verticalalignment='center', rotation=90, transform=ax[idx, 0].transAxes)
                 except Exception:
                     continue
 
 
         # ax[0, 1].set_title('Pitch-shifted F0')
         # ax[0, 0].set_title('Control F0')
-        # plt.subplots_adjust(wspace=0.3, hspace=1.0)
-        #
-        # if gen_psth:
-        #     plt.suptitle(f'PSTHs for {animal}, unit id: {cluster_id}, stream: {stream}, mean score: {mean_score_for_cluster}, mean permutation score: {mean_perm_score_for_cluster}', fontsize=15)
-        #
-        #     plt.savefig(
-        #         str(saveDir) + f'/PSTH_targdist_grid_clusterid_{cluster_id}_{stream}_' + str(
-        #             cluster_id) + '.png', bbox_inches='tight')
-        #     plt.savefig(
-        #         str(saveDir) + f'/PSTH_targdist_grid_clusterid_{cluster_id}_{stream}_' + str(
-        #             cluster_id) + '.svg', bbox_inches='tight')
-        # else:
-        #     plt.suptitle(f'Rasters for {animal}, unit id: {cluster_id}, stream: {stream}, mean score: {mean_score_for_cluster}, mean permutation score: {mean_perm_score_for_cluster}', fontsize=15)
-        #
-        #     plt.savefig(
-        #         str(saveDir) + f'/targdist_grid_clusterid_{cluster_id}_{stream}_' + str(
-        #             cluster_id) + '.png', bbox_inches='tight')
-        #     plt.savefig(
-        #         str(saveDir) + f'/targdist_grid_clusterid_{cluster_id}_{stream}_' + str(
-        #             cluster_id) + '.svg', bbox_inches='tight')
-        #         # plt.show()
-        # plt.close('all')
+        plt.subplots_adjust(wspace=0.3, hspace=1.0)
+
+        if gen_psth:
+            plt.suptitle(f'PSTHs for {animal}, unit id: {cluster_id}, stream: {stream}, mean score: {mean_score_for_cluster}, mean permutation score: {mean_perm_score_for_cluster}', fontsize=15)
+
+            plt.savefig(
+                str(saveDir) + f'/PSTH_targdist_grid_clusterid_{cluster_id}_{stream}_' + str(
+                    cluster_id) + '.png', bbox_inches='tight')
+            plt.savefig(
+                str(saveDir) + f'/PSTH_targdist_grid_clusterid_{cluster_id}_{stream}_' + str(
+                    cluster_id) + '.svg', bbox_inches='tight')
+        else:
+            plt.suptitle(f'Rasters for {animal}, unit id: {cluster_id}, stream: {stream}, mean score: {mean_score_for_cluster}, mean permutation score: {mean_perm_score_for_cluster}', fontsize=15)
+
+            plt.savefig(
+                str(saveDir) + f'/targdist_grid_clusterid_{cluster_id}_{stream}_' + str(
+                    cluster_id) + '.png', bbox_inches='tight')
+            plt.savefig(
+                str(saveDir) + f'/targdist_grid_clusterid_{cluster_id}_{stream}_' + str(
+                    cluster_id) + '.svg', bbox_inches='tight')
+                # plt.show()
+        plt.close('all')
 
 
 
     return
-
+7
 
 
 def generate_rasters(dir):
-    datapath_big = Path(f'D:/ms4output_16102023/F1815_Cruella/')
-    animal = str(datapath_big).split('\\')[-1]
-    datapaths = [x for x in datapath_big.glob('**/mountainsort4/phy//') if x.is_dir()]
-    high_units = pd.read_csv(f'G:/neural_chapter/csvs/units_trained_highscore.csv')
+    for animal in ['F1902_Eclair', 'F1901_Crumble']:
+        datapath_big = Path(f'D:/ms4output_16102023/{animal}/')
+        animal = str(datapath_big).split('\\')[-1]
+        datapaths = [x for x in datapath_big.glob('**/mountainsort4/phy//') if x.is_dir()]
+        high_units = pd.read_csv(f'G:/neural_chapter/csvs/units_naive_highscore.csv')
 
-    for datapath in datapaths:
-        stream = str(datapath).split('\\')[-3]
-        stream = stream[-4:]
-        print(stream)
-        folder = str(datapath).split('\\')[-3]
-        with open(datapath / 'new_blocks.pkl', 'rb') as f:
-            new_blocks = pickle.load(f)
+        for datapath in datapaths:
+            stream = str(datapath).split('\\')[-3]
+            stream = stream[-4:]
+            print(stream)
+            folder = str(datapath).split('\\')[-3]
+            try:
+                with open(datapath / 'new_blocks.pkl', 'rb') as f:
+                    new_blocks = pickle.load(f)
+            except:
+                with open(datapath / 'blocks.pkl', 'rb') as f:
+                    new_blocks = pickle.load(f)
+
+            #filter for units that have an ID with the animal in it
+            high_units_animal = high_units[high_units['animal'].str.contains(animal)]
+            # remove trailing steam
+            rec_name = folder[:-5]
+            #find the unique string
+            repeating_substring = find_repeating_substring(rec_name)
 
 
-        #filter for units that have an ID with the animal in it
-        high_units_animal = high_units[high_units['animal'].str.contains(animal)]
-        # remove trailing steam
-        rec_name = folder[:-5]
-        #find the unique string
-        repeating_substring = find_repeating_substring(rec_name)
+            #remove the repeating substring
 
+            # find the units that have the phydir
 
-        #remove the repeating substring
+            max_length = len(rec_name) // 2
 
-        # find the units that have the phydir
+            for length in range(1, max_length + 1):
+                for i in range(len(rec_name) - length):
+                    substring = rec_name[i:i + length]
+                    if rec_name.count(substring) > 1:
+                        repeating_substring = substring
+                        break
 
-        max_length = len(rec_name) // 2
+            print(repeating_substring)
+            rec_name = repeating_substring
+            high_units_animal = high_units_animal[(high_units_animal['recname'] == rec_name) & (high_units_animal['stream'] == stream)]
+            clust_ids = high_units_animal['ID_small'].to_list()
+            brain_area = high_units_animal['BrainArea'].to_list()
 
-        for length in range(1, max_length + 1):
-            for i in range(len(rec_name) - length):
-                substring = rec_name[i:i + length]
-                if rec_name.count(substring) > 1:
-                    repeating_substring = substring
-                    break
-
-        print(repeating_substring)
-        rec_name = repeating_substring
-        high_units_animal = high_units_animal[(high_units_animal['recname'] == rec_name) & (high_units_animal['stream'] == stream)]
-        clust_ids = high_units_animal['ID_small'].to_list()
-        brain_area = high_units_animal['BrainArea'].to_list()
-
-        if clust_ids == []:
-            print('no units found')
-            continue
-        for talker in [1]:
-            target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, csv_info =high_units_animal)
-            target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, gen_psth=True, csv_info=high_units_animal)
+            if clust_ids == []:
+                print('no units found')
+                continue
+            for talker in [1]:
+                target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, csv_info =high_units_animal)
+                target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, gen_psth=True, csv_info=high_units_animal)
 
 
 

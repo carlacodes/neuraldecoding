@@ -239,7 +239,11 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
                         brain_area_text = brain_area[brain_area['ID'] == cluster_id]['BrainArea'].to_list()[0]
                     except:
                         continue
-                    ax.set_title(f'{cluster_id}_{phydir}_{stream}, \n {animal_id_num}, probe word: {probeword_text}, {pitchshift_text}, {brain_area_text}')
+                    if probeword == 1:
+                        ax.set_title(f'Unit: {cluster_id}_{phydir}, \n {animal_id_num}')
+                    else:
+                        ax.set_title(
+                            f'Unit: {cluster_id}_{phydir}, \n {animal_id_num}, score: {individual_score}, perm score: {individual_perm_score}')
                     # ax.text(-0.1, 0.5, probeword_text, horizontalalignment='center',
                     #                 verticalalignment='center', rotation=90, transform=ax.transAxes)
                     plt.savefig(

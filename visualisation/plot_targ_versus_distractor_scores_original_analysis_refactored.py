@@ -1090,7 +1090,7 @@ def plot_major_analysis(df_merged):
         df_full_csv.loc[df_full_csv['ID'] == unit_id, 'MeanScore'] = mean_scores
 
     for unit_id in df_full_naive_csv['ID'].unique():
-        df_full_pitchsplit_unit = df_full_csv[df_full_csv['ID'] == unit_id]
+        df_full_pitchsplit_unit = df_full_naive_csv[df_full_naive_csv['ID'] == unit_id]
         mean_scores = df_full_pitchsplit_unit['Score'].mean()
         df_full_naive_csv.loc[df_full_naive_csv['ID'] == unit_id, 'MeanScore'] = mean_scores
 
@@ -1116,7 +1116,7 @@ def plot_major_analysis(df_merged):
 
 
     df_full_csv = df_full_csv[df_full_csv['MeanScore'] >= 0.60]
-    df_full_naive_csv = df_full_naive_csv[df_full_naive_csv['MeanScore'] >= 0.60]
+    df_full_naive_csv = df_full_naive_csv[(df_full_naive_csv['MeanScore'] >= 0.30) & (df_full_naive_csv['MeanScore'] <= 0.55)]
 
     df_full_csv.to_csv('G:/neural_chapter/csvs/units_trained_highscore.csv')
     df_full_naive_csv.to_csv('G:/neural_chapter/csvs/units_naive_highscore.csv')

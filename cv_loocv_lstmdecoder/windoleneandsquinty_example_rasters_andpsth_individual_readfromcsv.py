@@ -274,7 +274,10 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
                             ax.set_ylabel('trial number')
                             ax.set_xlim(custom_xlim)
 
-                        ax.set_title(f'Unit: {cluster_id}_{phydir}, \n {animal_id_num}, score: {individual_score}, perm score: {individual_perm_score}')
+                        if probeword == 1:
+                            ax.set_title(f'Unit: {cluster_id}_{phydir}, \n {animal_id_num}')
+                        else:
+                            ax.set_title(f'Unit: {cluster_id}_{phydir}, \n {animal_id_num}, score: {individual_score}, perm score: {individual_perm_score}')
                         ax.text(-0.2, 0.5, probeword_text, horizontalalignment='center',
                                         verticalalignment='center', rotation=90, transform=ax.transAxes)
                         if gen_psth:
