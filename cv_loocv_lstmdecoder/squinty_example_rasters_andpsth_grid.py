@@ -239,7 +239,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
                             time_axis = np.linspace(time_start, time_end, num_bins) + bin_width / 2
 
                             # Apply smoothing using Gaussian filter
-                            sigma = 2  # Smoothing parameter (adjust as needed)
+                            sigma = 0.1  # Smoothing parameter (adjust as needed)
                             smoothed_hist = gaussian_filter1d(hist / (bin_width * len(spiketrains)), sigma=sigma)
 
                             # Plot smoothed PSTH within the specified time range
