@@ -84,6 +84,36 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
     clust_ids = [int(x) for x in clust_ids]
     #only get the unique clust_ids
     clust_ids = list(set(clust_ids))
+
+    word_meaning_dict = {2.0: 'craft', 3.0: 'in contrast to', 4.0: 'when a', 5.0: 'accurate', 6.0: 'pink noise',
+                         7.0: 'of science', 8.0: 'rev. instruments', 9.0: 'boats', 10.0: 'today',
+                         13.0: 'sailor', 15.0: 'but', 16.0: 'researched', 18.0: 'took', 19.0: 'the vast',
+                         20.0: 'today', 21.0: 'he takes', 22.0: 'becomes', 23.0: 'any', 24.0: 'more'}
+    # Reverse the word_meaning_dict
+    number_dict = {v: k for k, v in word_meaning_dict.items()}
+    options_dict = {
+        (2, False): ('when a', 'green'),
+        (2, True): ('when a', 'lightgreen'),
+        (1, False): ('instruments', 'blue'),
+        (1, True): ('instruments', 'skyblue'),
+        (5, False): ('craft', 'deeppink'),
+        (5, True): ('craft', 'pink'),
+        (20, False): ('in contrast', 'mediumpurple'),
+        (20, True): ('in contrast', 'purple'),
+        (42, False): ('accurate', 'black'),
+        (42, True): ('accurate', 'grey'),
+        (56, False): ('pink noise', 'navy'),
+        (56, True): ('pink noise', 'lightblue'),
+        (32, False): ('of science', 'coral'),
+        (32, True): ('of science', 'orange'),
+        (57, False): ('rev. instruments', 'plum'),
+        (57, True): ('rev. instruments', 'darkorchid'),
+        (33, False): ('boats', 'slategrey'),
+        (33, True): ('boats', 'royalblue'),
+        (11, False): ('today', 'gold'),
+        (11, True): ('today', 'yellow')
+    }
+
     for j, cluster_id in enumerate(clust_ids):
         #make a figure of 2 columns and 10 rows
         cluster_info = csv_info[csv_info['ID_small'] == cluster_id]
@@ -107,7 +137,11 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
             for pitchshift_option in [0,1]:
                 #get score for that probeword
                 probeword = probewords[0]
-                individual_info = cluster_info[(cluster_info['ProbeWord'] == probeword) & (cluster_info['PitchShift'] == pitchshift_option)]
+
+                probeword_text, color_option = options_dict.get((probewords[0], pitchshift_option), ('error', 'red'))
+                #find the matching word in probewords
+                number = number_dict.get(probeword_text)
+                individual_info = cluster_info[(cluster_info['ProbeWord'] == number) & (cluster_info['PitchShift'] == pitchshift_option)]
                 #if individual_info is empty, skip
                 if individual_info.empty and probeword == 1:
 

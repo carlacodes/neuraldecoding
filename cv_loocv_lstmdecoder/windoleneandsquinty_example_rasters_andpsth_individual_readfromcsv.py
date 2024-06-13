@@ -65,7 +65,8 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
 
     binsize = 0.01
     window = [0, 0.6]
-    probewords_list = [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10)]
+    # probewords_list = [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10)]
+    probewords_list = [  (3, 3), (6,6), (14,14)]
 
     animal_id_num = animal.split('_')[0]
     #cast clust_ids as int
@@ -90,11 +91,56 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
 
         # mean_perm_score_for_cluster = np.array(mean_perm_score_for_cluster)
 
+        word_meaning_dict = {2.0: 'craft', 3.0: 'in contrast to', 4.0: 'when a', 5.0: 'accurate', 6.0: 'pink noise',
+         7.0: 'of science', 8.0: 'rev. instruments', 9.0: 'boats', 10.0: 'today',
+         13.0: 'sailor', 15.0: 'but', 16.0: 'researched', 18.0: 'took',19.0: 'the vast',
+         20.0: 'today', 21.0: 'he takes', 22.0: 'becomes', 23.0: 'any', 24.0: 'more'}
+        # Reverse the word_meaning_dict
+        number_dict = {v: k for k, v in word_meaning_dict.items()}
+
+        # Get the number for a given probeword_text
+        # Replace 'craft' with the probeword_text you are looking for
+
+        options_dict = {
+            (4, False): ('but', 'green'),
+            (4, True): ('but', 'lightgreen'),
+            (1, False): ('instruments', 'blue'),
+            (1, True): ('instruments', 'skyblue'),
+            (2, False): ('sailor', 'deeppink'),
+            (2, True): ('sailor', 'pink'),
+            (3, False): ('accurate', 'mediumpurple'),
+            (3, True): ('accurate', 'purple'),
+            (5, False): ('researched', 'black'),
+            (5, True): ('researched', 'grey'),
+            (6, False): ('when a', 'navy'),
+            (6, True): ('when a', 'lightblue'),
+            (7, False): ('took', 'coral'),
+            (7, True): ('took', 'orange'),
+            (8, False): ('the vast', 'plum'),
+            (8, True): ('the vast', 'darkorchid'),
+            (9, False): ('today', 'slategrey'),
+            (9, True): ('today', 'royalblue'),
+            (10, False): ('he takes', 'gold'),
+            (10, True): ('he takes', 'yellow'),
+            (11, False): ('becomes', 'green'),
+            (11, True): ('becomes', 'lightgreen'),
+            (12, False): ('any', 'deeppink'),
+            (12, True): ('any', 'pink'),
+            (13, False): ('more', 'plum'),
+            (13, True): ('more', 'darkorchid'),
+            (14, False): ('boats', 'slategrey'),
+            (14, True): ('boats', 'royalblue')
+        }
         for idx, probewords in enumerate(probewords_list):
             for pitchshift_option in [0,1]:
                 #get score for that probeword
                 probeword = probewords[0]
-                individual_info = cluster_info[(cluster_info['ProbeWord'] == probeword) & (cluster_info['PitchShift'] == pitchshift_option)]
+
+                probeword_text, color_option = options_dict.get((probewords[0], pitchshift_option), ('error', 'red'))
+                #find the matching word in probewords
+                number = number_dict.get(probeword_text)
+
+                individual_info = cluster_info[(cluster_info['ProbeWord'] == number) & (cluster_info['PitchShift'] == pitchshift_option)]
                 #if individual_info is empty, skip
                 if individual_info.empty and probeword == 1:
                     individual_score = None

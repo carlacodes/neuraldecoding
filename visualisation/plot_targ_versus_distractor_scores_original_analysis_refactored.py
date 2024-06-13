@@ -543,7 +543,7 @@ def main():
     # probewordlist_l74 = [ (3, 3), (6,6), (14,14)]
     animal_list = ['F1604_Squinty', 'F1901_Crumble', 'F1606_Windolene', 'F1702_Zola', 'F1815_Cruella', 'F1902_Eclair',
                    'F1812_Nala', 'F2003_Orecchiette', ]
-    # animal_list = ['F1702_Zola']
+    animal_list = ['F1604_Squinty']
     report = {}
     singleunitlist = {}
     multiunitlist = {}
@@ -613,28 +613,9 @@ def main():
                                 break
                     print(repeating_substring)
                     rec_name_unique = repeating_substring[0:-1]
-                if animal == 'F1604_Squinty':
-                    df_instance = load_scores_and_filter(probewordlist_l74,
-                                                         saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/{streamtext}/',
-                                                         ferretname=animal_text,
-                                                         singleunitlist=singleunitlist[animal][stream],
-                                                         multiunitlist=multiunitlist[animal][stream],
-                                                         noiselist=noiselist[animal][stream], stream=stream,
-                                                         fullid=animal, report=report[animal][stream],
-                                                         pitchshift_text=pitchshift_option)
-                    df_all = pd.concat([df_all, df_instance])
-                    df_instance_permutation = load_scores_and_filter(probewordlist_l74,
-                                                                     saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/{streamtext}/',
-                                                                     ferretname=animal_text,
-                                                                     singleunitlist=singleunitlist[animal][stream],
-                                                                     multiunitlist=multiunitlist[animal][stream],
-                                                                     noiselist=noiselist[animal][stream], stream=stream,
-                                                                     fullid=animal, report=report[animal][stream],
-                                                                     permutation_scores=True,
-                                                                     pitchshift_text=pitchshift_option)
-                    df_all_permutation.append(df_instance_permutation)
 
-                elif animal == 'F1606_Windolene':
+
+                if animal == 'F1606_Windolene' or 'F1604_Squinty':
                     df_instance = load_scores_and_filter(probewordlist_l74,
                                                          saveDir=f'F:/results_13112023//{animal}/{rec_name_unique}/{streamtext}/',
                                                          ferretname=animal_text,
