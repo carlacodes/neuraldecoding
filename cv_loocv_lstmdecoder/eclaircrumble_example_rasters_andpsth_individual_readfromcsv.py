@@ -382,7 +382,7 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
 
 
 def generate_rasters(dir):
-    for animal in ['F1902_Eclair', 'F1901_Crumble']:
+    for animal in ['F1901_Crumble']:
         datapath_big = Path(f'D:/ms4output_16102023/{animal}/')
         animal = str(datapath_big).split('\\')[-1]
         datapaths = [x for x in datapath_big.glob('**/mountainsort4/phy//') if x.is_dir()]
@@ -393,8 +393,12 @@ def generate_rasters(dir):
             stream = stream[-4:]
             print(stream)
             folder = str(datapath).split('\\')[-3]
-            with open(datapath / 'new_blocks.pkl', 'rb') as f:
-                new_blocks = pickle.load(f)
+            try:
+                with open(datapath / 'new_blocks.pkl', 'rb') as f:
+                    new_blocks = pickle.load(f)
+            except:
+                with open(datapath / 'blocks.pkl', 'rb') as f:
+                    new_blocks = pickle.load(f)
 
 
             #filter for units that have an ID with the animal in it
