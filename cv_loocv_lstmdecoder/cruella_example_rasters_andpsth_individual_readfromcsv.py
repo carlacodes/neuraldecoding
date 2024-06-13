@@ -102,12 +102,13 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
                 probeword = probewords[0]
                 individual_info = cluster_info[(cluster_info['ProbeWord'] == probeword) & (cluster_info['PitchShift'] == pitchshift_option)]
                 #if individual_info is empty, skip
-                if individual_info.empty:
+                if individual_info.empty and probeword == 1:
 
+                    individual_score = None
+                    individual_perm_score = None
+                elif individual_info.empty:
                     print('empty individual info:', cluster_id, probeword, pitchshift_option)
                     continue
-                    # individual_score = None
-                    # individual_perm_score = None
                 else:
                     individual_score = individual_info['Score'].values[0]
                     individual_perm_score = individual_info['score_permutation'].values[0]
@@ -315,7 +316,10 @@ def target_vs_probe_with_raster(blocks, talker=1,  clust_ids = [], stream = 'BB_
 
                         ax.set_xlim(custom_xlim)
 
-                        ax.set_title(f'Unit: {cluster_id}_{phydir}, \n {animal_id_num}, score: {individual_score}, perm score: {individual_perm_score}')
+                        if probeword == 1:
+                            ax.set_title(f'Unit: {cluster_id}_{phydir}, \n {animal_id_num}')
+                        else:
+                            ax.set_title(f'Unit: {cluster_id}_{phydir}, \n {animal_id_num}, score: {individual_score}, perm score: {individual_perm_score}')
 
                         ax.text(-0.2, 0.5, probeword_text, horizontalalignment='center',
                                         verticalalignment='center', rotation=90, transform=ax.transAxes)
