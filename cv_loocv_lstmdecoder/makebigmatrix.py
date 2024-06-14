@@ -131,14 +131,124 @@ def generate_matrix_image(dir, trained = True):
 
             # target_vs_probe_with_raster(new_blocks,clust_ids = clust_ids, talker=talker, stream = stream, phydir=repeating_substring, animal = animal, brain_area = brain_area, gen_psth=True)
 
+def calculate_psth(big_matrix, bin_width=0.01):
+    # Define the bins
+    bins = np.arange(0, big_matrix.shape[1] * bin_width, bin_width)
+
+    # Calculate the PSTH for each row in big_matrix
+    psth = np.array([np.histogram(row, bins)[0] for row in big_matrix])
+
+    # Normalize the PSTH to convert to firing rate
+    psth = psth / bin_width
+
+    return psth
+
+# Calculate the PSTH
+def generate_psth_image(dir, trained=True, bin_width=0.01, plot_target = True):
+    if trained == True:
+        animal_list = ['F1702_Zola', 'F1815_Cruella', 'F1604_Squinty', 'F1606_Windolene']
+    else:
+        animal_list = ['F2003_Orecchiette', 'F1812_Nala', 'F1901_Crumble', 'F1902_Eclair']
+    big_matrix_list = []
+    for animal in animal_list:
+        print(animal)
+        pkl_path = Path(f'E:/rastersms4spikesortinginter/{animal}/npyfiles_dict_highperforming')
+        #load the pkl file
+        with open(pkl_path / 'spiketraindict_means.pkl', 'rb') as f:
+            all_mean_units_for_animal = pickle.load(f)
+        #now sort units with instruments in the ID
+        #get the units with instruments in the ID
+        units_with_targ_in_ID = []
+        units_with_distractors_in_ID = []
+        for individual_dict in all_mean_units_for_animal:
+            unit_ID_dict_dist ={}
+            units_with_instruments_in_ID = {}
+            #predefine the keys
+            for unit in individual_dict:
+                unit_ID_number = unit.split('_')[0]
+                unit_ID_dict_dist[unit_ID_number] = []
+                units_with_instruments_in_ID[unit_ID_number] = []
 
 
+            for unit in individual_dict:
+                if 'instrument' in unit:
+                    unit_ID_number = unit.split('_')[0]
+
+                    units_with_instruments_in_ID[unit_ID_number].append(individual_dict[unit])
+                else:
+                    unit_ID_number = unit.split('_')[0]
+                    unit_ID_dict_dist[unit_ID_number].append(individual_dict[unit])
+            #now take the average of the units with the same ID
+            for unit_id in unit_ID_dict_dist:
+                unit_ID_mean = np.mean(unit_ID_dict_dist[unit_id], axis=0)
+                unit_ID_target = np.mean(units_with_instruments_in_ID[unit_id], axis=0)
+                try:
+                    length = len(unit_ID_mean)
+                    length_target = len(unit_ID_target)
+                    units_with_distractors_in_ID.append(unit_ID_mean)
+                    units_with_targ_in_ID.append(unit_ID_target)
+
+                except Exception as e:
+                    print(e)
+                    continue
+
+
+        #now make a big matrix of all the units, subtract the mean of the units with instruments in the ID
+        #and then plot the matrix
+        #make a big matrix of all the units, first make the list into a numpy array
+        big_matrix_inst = np.array(units_with_targ_in_ID)
+        #remove any nans from big_matrix_dist
+        big_matrix_dist = np.array(units_with_distractors_in_ID)
+        if plot_target:
+            big_matrix_animal =big_matrix_inst
+        else:
+            big_matrix_animal = big_matrix_dist
+        #now append the big matrix to the list of big matrices
+        big_matrix_list.append(big_matrix_animal)
+    #now plot the big matrix
+    #first concatenate the big matrices
+    #remove all empty arrays
+    big_matrix_list = [x for x in big_matrix_list if x.size != 0]
+    big_matrix = np.concatenate(big_matrix_list, axis=0)
+    #sort by the mean of the first 10 timepoints
+    # big_matrix_psth = calculate_psth(big_matrix, bin_width=bin_width)
+    big_matrix = big_matrix[np.argsort(np.mean(big_matrix[:, :], axis=1))]
+    big_matrix_psth = np.mean(big_matrix, axis=0)
+    #get the standard error
+    big_matrix_psth_se = np.std(big_matrix, axis=0) / np.sqrt(big_matrix.shape[0])
+
+    fig, ax = plt.subplots(figsize=(10, 10))  # Adjust the figsize to increase width
+    plt.plot( big_matrix_psth, color='black')
+    #add shading for the standard error
+
+    if trained and plot_target:
+        ax.set_title('PSTH for target, trained', fontsize=20)
+        color_type = 'purple'
+    elif trained and not plot_target:
+        ax.set_title('PSTH for all distractors, trained', fontsize=20)
+        color_type = 'blue'
+    elif not trained and plot_target:
+        ax.set_title('PSTH for target, naive', fontsize=20)
+        color_type = 'lime'
+    else:
+        ax.set_title('PSTH for all distractors, naive', fontsize=20)
+        color_type = 'green'
+    ax.fill_between(np.arange(len(big_matrix_psth)), big_matrix_psth - big_matrix_psth_se, big_matrix_psth + big_matrix_psth_se, color=color_type, alpha=0.5)
+
+    fig.savefig(
+        f'G:/neural_chapter/figures/big_psth_highperforming_units_trained_{trained}_140652024_target_{plot_target}.png')
+    plt.show()
 
 def main():
 
     directories = ['zola_2022']  # , 'Trifle_July_2022']
     for dir in directories:
-        generate_matrix_image(dir, trained = False)
+        # generate_matrix_image(dir, trained = False)
+        generate_psth_image(dir, trained = False, plot_target = True)
+        generate_psth_image(dir, trained=True, plot_target=True)
+
+        generate_psth_image(dir, trained=False, plot_target=False)
+        generate_psth_image(dir, trained=True, plot_target=False)
 
 
 if __name__ == '__main__':
