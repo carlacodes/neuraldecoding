@@ -115,10 +115,10 @@ def generate_matrix_image(dir, trained = True, pitchshift = False):
 
     #now plot the big matrix
     fig, ax = plt.subplots(figsize=(10, 10))
-    if pitch_keyword:
-        cmap_text = 'viridis'
-    else:
+    if pitchshift:
         cmap_text = 'magma'
+    else:
+        cmap_text = 'viridis'
     # Adjust the figsize to increase width
     im = ax.imshow(big_matrix, cmap=cmap_text, aspect='auto')  # Set aspect='auto' to adjust aspect ratio
     ax.set_xticks([0, 10, 20, 30, 40, 50])
@@ -294,11 +294,11 @@ def main():
     for dir in directories:
         # generate_matrix_image(dir, trained = False)
         for pitchshift in [True, False]:
-            generate_psth_image(dir, trained=False, plot_target=True, pitchshift=pitchshift)
-            generate_psth_image(dir, trained=True, plot_target=True, pitchshift=pitchshift)
-
-            generate_psth_image(dir, trained=False, plot_target=False, pitchshift=pitchshift)
-            generate_psth_image(dir, trained=True, plot_target=False, pitchshift=pitchshift)
+            # generate_psth_image(dir, trained=False, plot_target=True, pitchshift=pitchshift)
+            # generate_psth_image(dir, trained=True, plot_target=True, pitchshift=pitchshift)
+            #
+            # generate_psth_image(dir, trained=False, plot_target=False, pitchshift=pitchshift)
+            # generate_psth_image(dir, trained=True, plot_target=False, pitchshift=pitchshift)
             generate_matrix_image(dir, trained=False, pitchshift=pitchshift)
             generate_matrix_image(dir, trained=True, pitchshift=pitchshift)
 
