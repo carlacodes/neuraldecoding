@@ -144,12 +144,17 @@ def calculate_psth(big_matrix, bin_width=0.01):
     return psth
 
 # Calculate the PSTH
-def generate_psth_image(dir, trained=True, bin_width=0.01, plot_target = True):
+def generate_psth_image(dir, trained=True, bin_width=0.01, plot_target = True, pitchshift = False):
     if trained == True:
         animal_list = ['F1702_Zola', 'F1815_Cruella', 'F1604_Squinty', 'F1606_Windolene']
     else:
         animal_list = ['F2003_Orecchiette', 'F1812_Nala', 'F1901_Crumble', 'F1902_Eclair']
     big_matrix_list = []
+    if pitchshift:
+        pitch_keyword = 'inter-roved F0'
+    else:
+        pitch_keyword = 'control F0'
+
     for animal in animal_list:
         print(animal)
         pkl_path = Path(f'E:/rastersms4spikesortinginter/{animal}/npyfiles_dict_highperforming')
@@ -160,17 +165,23 @@ def generate_psth_image(dir, trained=True, bin_width=0.01, plot_target = True):
         #get the units with instruments in the ID
         units_with_targ_in_ID = []
         units_with_distractors_in_ID = []
+        #filter out the units that do not have the pitch keyword
+
         for individual_dict in all_mean_units_for_animal:
             unit_ID_dict_dist ={}
             units_with_instruments_in_ID = {}
             #predefine the keys
             for unit in individual_dict:
+                if pitch_keyword not in unit:
+                    continue
                 unit_ID_number = unit.split('_')[0]
                 unit_ID_dict_dist[unit_ID_number] = []
                 units_with_instruments_in_ID[unit_ID_number] = []
 
 
             for unit in individual_dict:
+                if pitch_keyword not in unit:
+                    continue
                 if 'instrument' in unit:
                     unit_ID_number = unit.split('_')[0]
 
@@ -232,24 +243,36 @@ def generate_psth_image(dir, trained=True, bin_width=0.01, plot_target = True):
     #add shading for the standard error
 
     if trained and plot_target:
-        ax.set_title('PSTH for target, trained', fontsize=20)
-        color_type = 'purple'
+        ax.set_title(f'PSTH for target, trained, {pitch_keyword}', fontsize=20)
+        if pitchshift:
+            color_type = 'purple'
+        else:
+            color_type = 'violet'
     elif trained and not plot_target:
-        ax.set_title('PSTH for all distractors, trained', fontsize=20)
-        color_type = 'blue'
+        ax.set_title(f'PSTH for all distractors, trained, {pitch_keyword}', fontsize=20)
+        if pitchshift:
+            color_type = 'blue'
+        else:
+            color_type = 'cyan'
     elif not trained and plot_target:
-        ax.set_title('PSTH for target, naive', fontsize=20)
-        color_type = 'lime'
+        ax.set_title(f'PSTH for target, naive, {pitch_keyword}', fontsize=20)
+        if pitchshift:
+            color_type = 'lime'
+        else:
+            color_type = 'forestgreen'
     else:
-        ax.set_title('PSTH for all distractors, naive', fontsize=20)
-        color_type = 'green'
+        ax.set_title(f'PSTH for all distractors, naive, {pitch_keyword}', fontsize=20)
+        if pitchshift:
+            color_type = 'green'
+        else:
+            color_type = 'darkgreen'
     ax.fill_between(np.arange(len(big_matrix_psth)), big_matrix_psth - big_matrix_psth_se, big_matrix_psth + big_matrix_psth_se, color=color_type, alpha=0.5)
     ax.set_xticks([0, 10, 20, 30, 40, 50], labels=[0, 0.1, 0.2, 0.3, 0.4, 0.5], fontsize=15)
     ax.set_xlabel('Time (s)', fontsize=20)
     ax.set_ylabel('Firing rate (Normalised)', fontsize=20)
 
     fig.savefig(
-        f'G:/neural_chapter/figures/big_psth_highperforming_units_trained_{trained}_140652024_target_{plot_target}.png')
+        f'G:/neural_chapter/figures/big_psth_highperforming_units_trained_{trained}_140652024_target_{plot_target}_pitchshift_{pitchshift}.png')
     plt.show()
 
 def main():
@@ -257,11 +280,12 @@ def main():
     directories = ['zola_2022']  # , 'Trifle_July_2022']
     for dir in directories:
         # generate_matrix_image(dir, trained = False)
-        generate_psth_image(dir, trained = False, plot_target = True)
-        generate_psth_image(dir, trained=True, plot_target=True)
+        for pitchshift in [True, False]:
+            generate_psth_image(dir, trained=False, plot_target=True, pitchshift=pitchshift)
+            generate_psth_image(dir, trained=True, plot_target=True, pitchshift=pitchshift)
 
-        generate_psth_image(dir, trained=False, plot_target=False)
-        generate_psth_image(dir, trained=True, plot_target=False)
+            generate_psth_image(dir, trained=False, plot_target=False, pitchshift=pitchshift)
+            generate_psth_image(dir, trained=True, plot_target=False, pitchshift=pitchshift)
 
 
 if __name__ == '__main__':
