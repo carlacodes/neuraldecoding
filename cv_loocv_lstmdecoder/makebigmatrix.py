@@ -37,12 +37,16 @@ from scipy import io
 from scipy import stats
 import pickle
 
-def generate_matrix_image(dir, trained = True):
+def generate_matrix_image(dir, trained = True, pitchshift = False):
     if trained == True:
         animal_list = ['F1702_Zola', 'F1815_Cruella', 'F1604_Squinty', 'F1606_Windolene']
     else:
         animal_list = ['F2003_Orecchiette', 'F1812_Nala', 'F1901_Crumble', 'F1902_Eclair']
     big_matrix_list = []
+    if pitchshift:
+        pitch_keyword = 'inter-roved F0'
+    else:
+        pitch_keyword = 'control F0'
     for animal in animal_list:
         print(animal)
         pkl_path = Path(f'E:/rastersms4spikesortinginter/{animal}/npyfiles_dict_highperforming')
@@ -58,12 +62,16 @@ def generate_matrix_image(dir, trained = True):
             units_with_instruments_in_ID = {}
             #predefine the keys
             for unit in individual_dict:
+                if pitch_keyword not in unit:
+                    continue
                 unit_ID_number = unit.split('_')[0]
                 unit_ID_dict_dist[unit_ID_number] = []
                 units_with_instruments_in_ID[unit_ID_number] = []
 
 
             for unit in individual_dict:
+                if pitch_keyword not in unit:
+                    continue
                 if 'instrument' in unit:
                     unit_ID_number = unit.split('_')[0]
 
@@ -106,8 +114,13 @@ def generate_matrix_image(dir, trained = True):
 
 
     #now plot the big matrix
-    fig, ax = plt.subplots(figsize=(10, 10))  # Adjust the figsize to increase width
-    im = ax.imshow(big_matrix, cmap='viridis', aspect='auto')  # Set aspect='auto' to adjust aspect ratio
+    fig, ax = plt.subplots(figsize=(10, 10))
+    if pitch_keyword:
+        cmap_text = 'viridis'
+    else:
+        cmap_text = 'magma'
+    # Adjust the figsize to increase width
+    im = ax.imshow(big_matrix, cmap=cmap_text, aspect='auto')  # Set aspect='auto' to adjust aspect ratio
     ax.set_xticks([0, 10, 20, 30, 40, 50])
     # if trained == False:
     #     ax.set_yticks([0, 5, 10, 15])
@@ -118,13 +131,13 @@ def generate_matrix_image(dir, trained = True):
     im.set_clim(-50, 100)
 
     if trained == True:
-        ax.set_title('Mean target - mean distractor firing rates, trained', fontsize=20)
+        ax.set_title(f'Mean target - mean distractor firing rates, trained, {pitch_keyword}', fontsize=20)
     else:
-        ax.set_title('Mean target - mean distractor firing rates, naive', fontsize=20)
+        ax.set_title(f'Mean target - mean distractor firing rates, naive, {pitch_keyword}', fontsize=20)
     cbar = plt.colorbar(im, ax=ax)
     cbar.ax.tick_params(labelsize=15)  # Adjust the font size (change 12 to your desired size)
 
-    fig.savefig(f'G:/neural_chapter/figures/big_matrix_highperforming_units_trained_{trained}_14052024_onlythesiswords.png')
+    fig.savefig(f'G:/neural_chapter/figures/big_matrix_highperforming_units_trained_{trained}_pitchshift_{pitchshift}_14052024_onlythesiswords.png')
     plt.show()
 
 
@@ -286,6 +299,8 @@ def main():
 
             generate_psth_image(dir, trained=False, plot_target=False, pitchshift=pitchshift)
             generate_psth_image(dir, trained=True, plot_target=False, pitchshift=pitchshift)
+            generate_matrix_image(dir, trained=False, pitchshift=pitchshift)
+            generate_matrix_image(dir, trained=True, pitchshift=pitchshift)
 
 
 if __name__ == '__main__':
