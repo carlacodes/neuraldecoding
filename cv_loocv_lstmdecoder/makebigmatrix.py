@@ -181,15 +181,18 @@ def generate_psth_image(dir, trained=True, bin_width=0.01, plot_target = True):
             #now take the average of the units with the same ID
             for unit_id in unit_ID_dict_dist:
                 #find the maximum rate
-                unit_ID_max = np.max(unit_ID_dict_dist[unit_id], axis=0)
-                unit_ID_max_target = np.max(units_with_instruments_in_ID[unit_id], axis=0)
-                #normalise by the max rate
-                unit_ID_dict_dist[unit_id] = unit_ID_dict_dist[unit_id] / unit_ID_max
-                units_with_instruments_in_ID[unit_id] = units_with_instruments_in_ID[unit_id] / unit_ID_max_target
-
-                unit_ID_mean = np.mean(unit_ID_dict_dist[unit_id], axis=0)
-                unit_ID_target = np.mean(units_with_instruments_in_ID[unit_id], axis=0)
                 try:
+
+                    unit_ID_max = np.max(unit_ID_dict_dist[unit_id], axis=0)
+                    unit_ID_max = np.max(unit_ID_max)
+                    unit_ID_max_target = np.max(units_with_instruments_in_ID[unit_id], axis=0)
+                    unit_ID_max_target = np.max(unit_ID_max_target)
+                    #normalise by the max rate
+                    unit_ID_dict_dist[unit_id] = unit_ID_dict_dist[unit_id] / unit_ID_max
+                    units_with_instruments_in_ID[unit_id] = units_with_instruments_in_ID[unit_id] / unit_ID_max_target
+
+                    unit_ID_mean = np.mean(unit_ID_dict_dist[unit_id], axis=0)
+                    unit_ID_target = np.mean(units_with_instruments_in_ID[unit_id], axis=0)
                     length = len(unit_ID_mean)
                     length_target = len(unit_ID_target)
                     units_with_distractors_in_ID.append(unit_ID_mean)
@@ -243,7 +246,7 @@ def generate_psth_image(dir, trained=True, bin_width=0.01, plot_target = True):
     ax.fill_between(np.arange(len(big_matrix_psth)), big_matrix_psth - big_matrix_psth_se, big_matrix_psth + big_matrix_psth_se, color=color_type, alpha=0.5)
     ax.set_xticks([0, 10, 20, 30, 40, 50], labels=[0, 0.1, 0.2, 0.3, 0.4, 0.5], fontsize=15)
     ax.set_xlabel('Time (s)', fontsize=20)
-    ax.set_ylabel('Firing rate (Hz)', fontsize=20)
+    ax.set_ylabel('Firing rate (Normalised)', fontsize=20)
 
     fig.savefig(
         f'G:/neural_chapter/figures/big_psth_highperforming_units_trained_{trained}_140652024_target_{plot_target}.png')
