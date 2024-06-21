@@ -256,25 +256,25 @@ def generate_psth_image(dir, trained=True, bin_width=0.01, plot_target = True, p
     #add shading for the standard error
 
     if trained and plot_target:
-        ax.set_title(f'PSTH for target, trained, {pitch_keyword}', fontsize=20)
+        ax.set_title(f'PSTH for target, trained', fontsize=20)
         if pitchshift:
             color_type = 'purple'
         else:
             color_type = 'violet'
     elif trained and not plot_target:
-        ax.set_title(f'PSTH for all distractors, trained, {pitch_keyword}', fontsize=20)
+        ax.set_title(f'PSTH for all distractors, trained', fontsize=20)
         if pitchshift:
             color_type = 'blue'
         else:
             color_type = 'cyan'
     elif not trained and plot_target:
-        ax.set_title(f'PSTH for target, naive, {pitch_keyword}', fontsize=20)
+        ax.set_title(f'PSTH for target, naive', fontsize=20)
         if pitchshift:
             color_type = 'lime'
         else:
             color_type = 'forestgreen'
     else:
-        ax.set_title(f'PSTH for all distractors, naive, {pitch_keyword}', fontsize=20)
+        ax.set_title(f'PSTH for all distractors, naive', fontsize=20)
         if pitchshift:
             color_type = 'green'
         else:
