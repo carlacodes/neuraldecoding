@@ -313,6 +313,8 @@ def load_scores_and_filter(probewordlist,
                                         {'probeword1': probeword1_input_text[0], 'pitchshift': cond,
                                          'cluster_id': clus,
                                          'score': np.mean(scores[f'talker{talker}'][comp][cond][score_key][i]),
+                                         'unit_type': unit_type, 'animal': fullid, 'stream': stream_id,
+                                         'recname': recname,
                                          'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position,
                                          'brain_area': brain_area}, ignore_index=True)
                                 elif score_key == 'perm_bal_ac':
@@ -385,6 +387,9 @@ def load_scores_and_filter(probewordlist,
                                         {'probeword1': probeword1_input_text[0], 'pitchshift': cond,
                                          'cluster_id': clus,
                                          'score': np.mean(scores[f'talker{talker}'][comp][cond][score_key][i]),
+                                         'unit_type': unit_type, 'animal': fullid, 'stream': stream_id,
+                                         'recname': recname,
+
                                          'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position,
                                          'brain_area': brain_area}, ignore_index=True)
                                 elif score_key == 'perm_bal_ac':
