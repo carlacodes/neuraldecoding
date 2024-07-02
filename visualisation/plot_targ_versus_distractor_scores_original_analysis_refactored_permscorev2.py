@@ -253,7 +253,7 @@ def load_scores_and_filter(probewordlist,
             comparisons = [comp for comp in scores[f'talker{talker}']]
             for comp in comparisons:
                 for cond in ['pitchshift', 'nopitchshift']:
-                    for i, clus in enumerate(scores[f'talker{talker}'][comp][cond]['cluster_id']):
+                    for i, clus in enumerate(np.unique(scores[f'talker{talker}'][comp][cond]['cluster_id'])):
                         stream_small = stream[-4:]
                         clust_text = str(clus) + '_' + fullid + '_' + recname + '_' + stream_small
                         # print(i, clus)
