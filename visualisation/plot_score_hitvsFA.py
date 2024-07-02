@@ -696,6 +696,11 @@ def plot_scores_relative_to_permutation_scores(df_all, df_all_permutation):
     plt.show()
     #get the mean of the scores minus the permutation scores
     df_all['mean_score_minus_permutation'] = df_all.groupby('cluster_id')['score_minus_permutation'].transform('mean')
+
+    df_squinty = df_all[df_all['animal'] == 'F1604_Squinty']
+    df_squinty_myriad4 = df_squinty[df_squinty['recname'] == 'BB2BB3_squinty_MYRIAD4']
+    df_squinty_myriad4_bb3 = df_squinty_myriad4[df_squinty_myriad4['stream'] == 'BB_3']
+    df_squinty_myriad4_bb3_unit14 = df_squinty_myriad4_bb3[df_squinty_myriad4_bb3['cluster_id'] == 14]
     return
 
 
