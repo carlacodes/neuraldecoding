@@ -325,14 +325,25 @@ def load_scores_and_filter(probewordlist,
                                 tdt_position = -1
                                 #NEED TO FIGURE OUT WHAT stream NG_0 IS ON MYRIAD TODO
                                 try:
-                                    sorted_df_of_scores = sorted_df_of_scores.append(
-                                        {'probeword1': probeword1_input_text[0], 'pitchshift': cond,
-                                         'cluster_id': clus,
-                                         'score': scores[f'talker{talker}'][comp][cond][score_key][i],
-                                         'unit_type': unit_type, 'animal': fullid, 'stream': stream_id,
-                                         'recname': recname,
-                                         'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position,
-                                         'brain_area': brain_area}, ignore_index=True)
+                                    if score_key == 'lstm_balanced_avg':
+
+                                        sorted_df_of_scores = sorted_df_of_scores.append(
+                                            {'probeword1': probeword1_input_text[0], 'pitchshift': cond,
+                                             'cluster_id': clus,
+                                             'score': np.mean(scores[f'talker{talker}'][comp][cond][score_key][i]),
+                                             'unit_type': unit_type, 'animal': fullid, 'stream': stream_id,
+                                             'recname': recname,
+                                             'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position,
+                                             'brain_area': brain_area}, ignore_index=True)
+                                    elif score_key == 'perm_bal_ac':
+                                        sorted_df_of_scores = sorted_df_of_scores.append(
+                                            {'probeword1': probeword1_input_text[0], 'pitchshift': cond,
+                                             'cluster_id': clus,
+                                             'score': np.percentile(scores[f'talker{talker}'][comp][cond][score_key][i], 97.5),
+                                             'unit_type': unit_type, 'animal': fullid, 'stream': stream_id,
+                                             'recname': recname,
+                                             'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position,
+                                             'brain_area': brain_area}, ignore_index=True)
                                 except Exception as e:
                                     print(e)
                                     continue
@@ -357,14 +368,24 @@ def load_scores_and_filter(probewordlist,
                                 except Exception as e:
                                     print(e)
                                     continue
+                                if score_key == 'lstm_balanced_avg':
+                                    sorted_df_of_scores = sorted_df_of_scores.append(
+                                        {'probeword1': probeword1_input_text[0], 'pitchshift': cond,
+                                         'cluster_id': clus,
+                                         'score': np.mean(scores[f'talker{talker}'][comp][cond][score_key][i]),
+                                         'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position,
+                                         'brain_area': brain_area}, ignore_index=True)
+                                elif score_key == 'perm_bal_ac':
+                                    #take the upper confidence interval
+                                    
+                                    sorted_df_of_scores = sorted_df_of_scores.append(
+                                        {'probeword1': probeword1_input_text[0], 'pitchshift': cond,
+                                         'cluster_id': clus,
+                                         'score': np.percentile(scores[f'talker{talker}'][comp][cond][score_key][i][0], 97.5),
+                                         'unit_type': unit_type, 'animal': fullid, 'stream': stream_id, 'recname': recname,
+                                         'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position,
+                                         'brain_area': brain_area}, ignore_index=True)
 
-                                sorted_df_of_scores = sorted_df_of_scores.append(
-                                    {'probeword1': probeword1_input_text[0], 'pitchshift': cond,
-                                     'cluster_id': clus,
-                                     'score': scores[f'talker{talker}'][comp][cond][score_key][i],
-                                     'unit_type': unit_type, 'animal': fullid, 'stream': stream_id, 'recname': recname,
-                                     'clus_id_report': clus_id_report, 'tdt_electrode_num': tdt_position,
-                                     'brain_area': brain_area}, ignore_index=True)
                             elif fullid == 'F2003_Orecchiette':
                                 if 'mod' in stream:
                                     brain_area = 'PEG'
