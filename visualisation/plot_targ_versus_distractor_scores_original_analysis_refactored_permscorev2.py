@@ -581,7 +581,7 @@ def main():
     # probewordlist_l74 = [ (3, 3), (6,6), (14,14)]
     animal_list = ['F1604_Squinty', 'F1901_Crumble', 'F1606_Windolene', 'F1702_Zola', 'F1815_Cruella', 'F1902_Eclair',
                    'F1812_Nala', 'F2003_Orecchiette', ]
-    animal_list = ['F1815_Cruella']
+    # animal_list = ['F1815_Cruella']
     report = {}
     singleunitlist = {}
     multiunitlist = {}
