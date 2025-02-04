@@ -48,7 +48,8 @@ def extract_spike_data(raster: np.ndarray, cluster_id: int, word_id: int, pitchs
             'unit_id': cluster_id,
             'distractor_word_id': word_id if trial > np.max(raster['trial_num']) // 2 else 1,
             'spike_times': trial_spikes.tolist(),  # Store spike times as a list
-            'pitch_shift': pitchshift
+            'pitch_shift': pitchshift,
+            'trial_id': trial
         })
     return spike_data
 
