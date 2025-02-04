@@ -38,13 +38,16 @@ def process_raster(blocks: List[Any], cluster_id: int, word: int, pitchshift: bo
         return np.array([])
 
 def extract_spike_data(raster: np.ndarray, cluster_id: int, word_id: int, pitchshift: bool) -> List[Dict[str, Any]]:
-    """Extract spike data from raster and return a list of dictionaries."""
+    """Extract spike data from raster and return a list of dictionaries, grouped by trial."""
     spike_data = []
-    for spike in raster:
+    unique_trials = np.unique(raster['trial_num'])
+
+    for trial in unique_trials:
+        trial_spikes = raster[raster['trial_num'] == trial]['spike_time']
         spike_data.append({
             'unit_id': cluster_id,
-            'distractor_word_id': word_id if spike['trial_num'] > np.max(raster['trial_num']) // 2 else 1,
-            'spike_time': spike['spike_time'],
+            'distractor_word_id': word_id if trial > np.max(raster['trial_num']) // 2 else 1,
+            'spike_times': trial_spikes.tolist(),  # Store spike times as a list
             'pitch_shift': pitchshift
         })
     return spike_data
@@ -87,7 +90,7 @@ def target_vs_probe_with_raster(blocks: List[Any], talker: int = 1, probewords: 
         # Combine target and probe trials
         raster_combined = np.concatenate([raster_target, raster_probe])
 
-        # Extract spike data
+        # Extract spike data (grouped by trial)
         spike_data = extract_spike_data(raster_combined, cluster_id, probeword, pitchshift)
         results.extend(spike_data)
 
