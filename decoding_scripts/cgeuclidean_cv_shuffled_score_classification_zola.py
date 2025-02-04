@@ -506,8 +506,8 @@ def run_classification(dir, datapath, ferretid):
 
 
 def main():
-    binned_spikes = np.load('../binned_spikes.npy')
-    choices = np.load('../choices.npy') + 1
+    binned_spikes = np.load('../archived_data/binned_spikes.npy')
+    choices = np.load('../archived_data/choices.npy') + 1
     print(binned_spikes.shape, choices.shape)
     print(choices[:10])
     directories = ['zola_2022']  # , 'Trifle_July_2022']

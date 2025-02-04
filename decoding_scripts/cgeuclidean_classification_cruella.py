@@ -581,8 +581,8 @@ def main():
     # gdd.download_file_from_google_drive(file_id='1W3TwEtC0Z6Qmbfuz8_AWRiQHfuDb9FIS',
     #                                     dest_path='./Binned_data.zip',
     #                                     unzip=True)
-    binned_spikes = np.load('../binned_spikes.npy')
-    choices = np.load('../choices.npy') + 1
+    binned_spikes = np.load('../archived_data/binned_spikes.npy')
+    choices = np.load('../archived_data/choices.npy') + 1
     print(binned_spikes.shape, choices.shape)
     print(choices[:10])
     directories = ['Cruella_2022']  # , 'Trifle_July_2022']
