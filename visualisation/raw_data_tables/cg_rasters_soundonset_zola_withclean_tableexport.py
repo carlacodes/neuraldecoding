@@ -23,7 +23,7 @@ from datetime import datetime
 from astropy.stats import bootstrap
 import sklearn
 from instruments.helpers.util import simple_xy_axes, set_font_axes
-from instruments.helpers.neural_analysis_helpers import get_soundonset_alignedraster, split_cluster_base_on_segment_zola,  get_word_aligned_raster
+from instruments.helpers.neural_analysis_helpers import get_soundonset_alignedraster, split_cluster_base_on_segment_zola, get_soundonset_alignedraster_tabular, get_word_aligned_raster
 from instruments.helpers.euclidean_classification_minimal_function import classify_sweeps
 # Import standard packages
 import numpy as np
@@ -69,7 +69,7 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
         filter = ['No Level Cue']  # , 'Non Correction Trials']
 
         # try:
-        raster_target, raster_target_compare = get_soundonset_alignedraster(blocks, cluster_id, df_filter=filter)
+        raster_target, raster_target_compare = get_soundonset_alignedraster_tabular(blocks, cluster_id, df_filter=filter)
         raster_target = raster_target.reshape(raster_target.shape[0], )
 
         bins = np.arange(window[0], window[1], binsize)

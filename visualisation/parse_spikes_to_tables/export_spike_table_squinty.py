@@ -77,22 +77,22 @@ def target_vs_probe_with_raster(blocks: List[Any], talker: int = 1, probewords: 
     for cluster_id in clust_ids:
         logging.info(f'Processing cluster {cluster_id}')
 
-        # Process target trials
-        raster_target = process_raster(blocks, cluster_id, word=1, pitchshift=pitchshift, df_filter=TARGET_FILTER)
-        if raster_target.size == 0:
-            continue
+        # # Process target trials
+        # raster_target = process_raster(blocks, cluster_id, word=1, pitchshift=pitchshift, df_filter=TARGET_FILTER)
+        # if raster_target.size == 0:
+        #     continue
 
         # Process probe trials
         raster_probe = process_raster(blocks, cluster_id, word=probeword, pitchshift=pitchshift, df_filter=PROBE_FILTER)
         if raster_probe.size == 0:
             continue
-        raster_probe['trial_num'] += np.max(raster_target['trial_num'])
+        # raster_probe['trial_num'] += np.max(raster_target['trial_num'])
 
         # Combine target and probe trials
-        raster_combined = np.concatenate([raster_target, raster_probe])
+        raster_combined = np.concatenate([raster_probe])
 
         # Extract spike data (grouped by trial)
-        spike_data = extract_spike_data(raster_combined, cluster_id, probeword, pitchshift)
+        spike_data = extract_spike_data(raster_probe, cluster_id, probeword, pitchshift)
         results.extend(spike_data)
 
         # Group spikes by trial for raster plot
