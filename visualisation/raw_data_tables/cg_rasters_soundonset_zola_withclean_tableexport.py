@@ -81,7 +81,8 @@ def generate_rasters(save_dir='D:/spkvisanddecodeproj2/analysisscriptsmodcg/visu
             spike_time_dict = get_spike_times_tabular(blocks)
 
             # Save the spike_time_dict with the ferret name and stream in the filename
-            save_filename = f"{ferret_name}_{stream}_spike_times.pkl"
+            folder_name = str(datapath).split('\\')[2]
+            save_filename = f"{ferret_name}_{stream}_{folder_name}_spike_times.pkl"
             save_path = save_dir / save_filename
             with open(save_path, 'wb') as f:
                 pickle.dump(spike_time_dict, f)
