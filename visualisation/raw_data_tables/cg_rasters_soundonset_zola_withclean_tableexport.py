@@ -29,6 +29,7 @@ def run_cleaning_of_rasters(blocks, datapath):
     with open(datapath / 'new_blocks.pkl', 'wb') as f:
         pickle.dump(new_blocks, f)
     return new_blocks
+
 def get_spike_times_tabular(blocks):
     clust_ids = [st.annotations['cluster_id'] for st in blocks[0].segments[0].spiketrains if
                  st.annotations['group'] != 'noise']
@@ -54,9 +55,12 @@ def get_spike_times_tabular(blocks):
 
 
 def generate_rasters(save_dir='D:/spkvisanddecodeproj2/analysisscriptsmodcg/visualisation/data'):
-    base_path = Path('E:/ms4output2')
+    # base_path = Path('E:/ms4output2/F1604_Squinty')
+    base_path = Path('D:/ms4output_16102023/')
+
     save_dir = Path(save_dir)
     save_dir.mkdir(parents=True, exist_ok=True)
+    failed_data_path_list = []
 
     for subfolder in base_path.glob('**/phy'):
         if not subfolder.name.endswith('.phy'):
@@ -66,27 +70,32 @@ def generate_rasters(save_dir='D:/spkvisanddecodeproj2/analysisscriptsmodcg/visu
             stream = stream[-4:]
             ferret_name = str(datapath).split('\\')[2]  # Assuming the ferret name is the third element in the path
             print(f"Processing stream: {stream} for ferret: {ferret_name}")
-
             try:
                 with open(datapath / 'new_blocks.pkl', 'rb') as f:
                     blocks = pickle.load(f)
             except:
-                try:
-                    with open(datapath / 'blocks.pkl', 'rb') as f:
-                        blocks = pickle.load(f)
-                except:
-                    print(f"No blocks found for {datapath}")
-                    continue
-
-            spike_time_dict = get_spike_times_tabular(blocks)
+                # try:
+                #     with open(datapath / 'blocks.pkl', 'rb') as f:
+                #         blocks = pickle.load(f)
+                # except:
+                print(f"No blocks found for {datapath}")
+                # failed_data_path_list.append(datapath)
+                continue
+            try:
+                spike_time_dict = get_spike_times_tabular(blocks)
+            except Exception as e:
+                print(f"Error processing {datapath}: {e}")
+                failed_data_path_list.append(datapath)
+                continue
 
             # Save the spike_time_dict with the ferret name and stream in the filename
-            folder_name = str(datapath).split('\\')[2]
-            save_filename = f"{ferret_name}_{stream}_{folder_name}_spike_times.pkl"
+            folder_name = str(datapath).split('\\')[3]
+            save_filename = f"{ferret_name}_{stream}_{folder_name}_spike_times_v2.pkl"
             save_path = save_dir / save_filename
             with open(save_path, 'wb') as f:
                 pickle.dump(spike_time_dict, f)
             print(f"Saved spike times to {save_path}")
+    return failed_data_path_list
 
 
 def main():

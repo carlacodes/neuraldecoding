@@ -118,25 +118,42 @@ def target_vs_probe_with_raster(blocks, talker=1, probewords=[20, 22], pitchshif
 
 def generate_rasters(dir):
     datapath = Path(f'E:\ms4output2\F1604_Squinty\BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold\BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold_BB2BB3_squinty_MYRIAD3_23092023_58noiseleveledit3medthreshold_BB_2\mountainsort4\phy/')
+    # [WindowsPath(
+    #     'E:/ms4output2/F1604_Squinty/BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold/BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold_BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold_BB_2/mountainsort4/phy'),
+    #  WindowsPath(
+    #      'E:/ms4output2/F1604_Squinty/BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold/BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold_BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold_BB_3/mountainsort4/phy'),
+    #  WindowsPath(
+    #      'E:/ms4output2/F1604_Squinty/BB2BB3_squinty_MYRIAD1_23092023/BB2BB3_squinty_MYRIAD1_23092023_BB2BB3_squinty_MYRIAD1_23092023_BB_2/mountainsort4/phy'),
+    #  WindowsPath(
+    #      'E:/ms4output2/F1604_Squinty/BB2BB3_squinty_MYRIAD1_23092023/BB2BB3_squinty_MYRIAD1_23092023_BB2BB3_squinty_MYRIAD1_23092023_BB_3/mountainsort4/phy')]
+    datapaths = [
+    'E:/ms4output2/F1604_Squinty/BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold/BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold_BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold_BB_2/mountainsort4/phy',
+    'E:/ms4output2/F1604_Squinty/BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold/BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold_BB2BB3_squinty_MYRIAD2_23092023_58noiseleveledit3medthreshold_BB_3/mountainsort4/phy',
+    'E:/ms4output2/F1604_Squinty/BB2BB3_squinty_MYRIAD1_23092023/BB2BB3_squinty_MYRIAD1_23092023_BB2BB3_squinty_MYRIAD1_23092023_BB_2/mountainsort4/phy',
+    'E:/ms4output2/F1604_Squinty/BB2BB3_squinty_MYRIAD1_23092023/BB2BB3_squinty_MYRIAD1_23092023_BB2BB3_squinty_MYRIAD1_23092023_BB_3/mountainsort4/phy'
+]
+    for folder_name in datapaths:
+        stream = str(datapath).split('\\')[-3]
+        stream = stream[-4:]
+        print(stream)
+        with open(datapath / 'blocks.pkl', 'rb') as f:
+            blocks = pickle.load(f)
+        scores = {}
+        probewords_list = [(2,2),]
+        new_blocks = run_cleaning_of_rasters(blocks, Path(folder_name))
+        #save as pkl
+        # with open(datapath / 'new_blocks.pkl', 'wb') as f:
+        #     pickle.dump(new_blocks, f)
 
-    stream = str(datapath).split('\\')[-3]
-    stream = stream[-4:]
-    print(stream)
-    with open(datapath / 'blocks.pkl', 'rb') as f:
-        blocks = pickle.load(f)
-    scores = {}
-    probewords_list = [(2,2),]
 
-
-    for probeword in probewords_list:
-        print('now starting')
-        print(probeword)
-        for talker in [1]:
-            new_blocks = run_cleaning_of_rasters(blocks, datapath)
-
-
-            # target_vs_probe_with_raster(blocks, talker=talker,probewords=probeword,pitchshift=False)
-            target_vs_probe_with_raster(new_blocks, talker=talker,probewords=probeword,pitchshift=False, stream = stream)
+        # for probeword in probewords_list:
+        #     print('now starting')
+        #     print(probeword)
+        #     for talker in [1]:
+        #
+        #
+        #         # target_vs_probe_with_raster(blocks, talker=talker,probewords=probeword,pitchshift=False)
+        #         target_vs_probe_with_raster(new_blocks, talker=talker,probewords=probeword,pitchshift=False, stream = stream)
 
 
 
